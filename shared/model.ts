@@ -110,6 +110,50 @@ export interface DataMeta {
 // Pairs are ordered by the game's position in games.json, then roleIndex.
 export type CompanyGamesFile = Record<string, number[]>;
 
+// stats.json
+export interface CountryStats {
+  code: string; // ISO alpha-2
+  region: string;
+  subregion: string;
+  population: number | null;
+  studios: number; // located companies
+  gamesLed: number; // games whose lead studio is here
+  gamesPerMillion: number | null;
+  genres: Record<string, number>; // genre id → games led here
+}
+
+export interface YearStats {
+  year: number;
+  total: number;
+  indie: number; // IGDB genre "Indie"
+  majorPublisher: number; // published by one of majorPublishers or a company they own
+}
+
+export interface StatsFile {
+  countries: CountryStats[]; // sorted by gamesLed, highest first
+  regions: { region: string; gamesLed: number; genres: Record<string, number> }[];
+  years: YearStats[];
+  // The 25 companies that published the most games in the set. "Major publisher" is this
+  // list, not an industry label: no source marks games as AAA.
+  majorPublishers: { companyId: number; name: string; games: number }[];
+  populationSource: { name: string; url: string; licence: string; retrieved: string };
+}
+
+// flows.json: how work moves between countries. One entry per (role, from, to) where
+// `from` is the lead studio's country and `to` is the other company's country.
+// Same-country pairs are included (from === to). Lead roles are never in this file.
+export interface CountryFlow {
+  role: RoleType;
+  from: string;
+  to: string;
+  games: number;
+  examples: number[]; // up to 3 game ids, most popular first
+}
+
+export interface FlowsFile {
+  flows: CountryFlow[]; // sorted by games, highest first
+}
+
 export const SCHEMA_VERSION = 1;
 export const DETAIL_CHUNK_SIZE = 250;
 

@@ -9,7 +9,13 @@ export const STAGE_FILES = {
   wikidataGames: 'wikidata-games.json',
   wikidataCompanies: 'wikidata-companies.json',
   mobygames: 'mobygames.json',
+  population: 'population.json',
 } as const;
+
+export interface RawPopulation {
+  retrieved: string; // ISO date
+  countries: Record<string, { population: number; year: number | null; qid: string }>; // key: ISO alpha-2
+}
 
 export interface RawIgdbInvolvedCompany {
   id: number;
