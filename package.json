@@ -9,10 +9,12 @@
     "pipeline": "tsx pipeline/src/run.ts",
     "validate": "tsx pipeline/src/validate.ts",
     "test": "vitest run",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "fixture": "tsx pipeline/src/fixture.ts"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
+    "all-the-cities": "^3.1.0",
     "dotenv": "^16.4.5",
     "tsx": "^4.19.0",
     "typescript": "^5.6.0",
