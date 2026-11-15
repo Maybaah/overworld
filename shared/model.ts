@@ -103,7 +103,13 @@ export interface DataMeta {
 //   games.json               GameSummary[], sorted by popularity (most popular first)
 //   details/<n>.json         GameDetail[] for games at positions n*detailChunkSize .. in games.json
 //   steam.json               Record<steamAppId, gameId>
+//   company-games.json       CompanyGamesFile, loaded when a company is opened
 //   flows.json, stats.json   Phase 4 aggregates
+// Every (game, role) a company has, keyed by company id, as flat pairs
+// [gameId, roleIndex, gameId, roleIndex, ...] where roleIndex is the position in ROLE_TYPES.
+// Pairs are ordered by the game's position in games.json, then roleIndex.
+export type CompanyGamesFile = Record<string, number[]>;
+
 export const SCHEMA_VERSION = 1;
 export const DETAIL_CHUNK_SIZE = 250;
 
