@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import type { Company, DataMeta, GameDetail, GameSummary } from '../../shared/model';
+import type { CompanyGamesFile, Company, DataMeta, FlowsFile, GameDetail, GameSummary, StatsFile } from '../../shared/model';
 import { emit } from './emit';
 import { merge } from './merge';
 import { buildSpotCheck, formatSummary, parseValidateArgs, runValidation, validateOutput } from './validate';
@@ -14,7 +14,10 @@ let out: string;
 beforeEach(async () => {
   dir = mkdtempSync(join(tmpdir(), 'validate-'));
   out = join(dir, 'data');
-  await emit(merge(syntheticInput(30)), { outDir: out, reportDir: join(dir, 'reports') });
+  await emit(merge(syntheticInput(30)), { outDir: out, reportDir: join(dir, 'reports') }, {
+    retrieved: '2026-01-01',
+    countries: { JP: { population: 124_000_000, year: 2024, qid: 'Q17' }, US: { population: 340_000_000, year: 2024, qid: 'Q30' } },
+  });
 });
 afterEach(() => rmSync(dir, { recursive: true, force: true }));
 
@@ -39,6 +42,9 @@ describe('validateOutput', () => {
     expect(r.flaggedCompanies.length).toBe(r.precision.none.count);
     expect(r.roleCounts.lead_developer).toBe(30);
     expect(r.countryOnlyLeadShare.total).toBe(30);
+    for (const f of ['company-games.json', 'stats.json', 'flows.json']) expect(existsSync(join(out, f))).toBe(true);
+    expect(r.checks.map((c) => c.name)).toEqual(expect.arrayContaining(['company-games', 'stats-file', 'flows-file']));
+    expect(r.insights.topCountriesByGamesLed.length).toBeGreaterThan(0);
     expect(Object.values(r.leadBasisCounts).reduce((a, b) => a + b, 0)).toBe(30);
   });
 
@@ -160,6 +166,47 @@ describe('validateOutput', () => {
     expect(failed()).toContain('company-game-count');
   });
 
+  it('catches a missing company-games.json', () => {
+    rmSync(join(out, 'company-games.json'));
+    expect(failed()).toEqual(['company-games']);
+  });
+
+  it('catches a company-games pair that disagrees with the details', () => {
+    edit<CompanyGamesFile>('company-games.json', (f) => { f['1']!.push(2, 0); });
+    expect(failed()).toContain('company-games');
+  });
+
+  it('catches a (company, game, role) missing from company-games.json', () => {
+    edit<CompanyGamesFile>('company-games.json', (f) => { f['1']!.splice(0, 2); });
+    expect(failed()).toContain('company-games');
+  });
+
+  it('catches a company without an entry in company-games.json', () => {
+    edit<CompanyGamesFile>('company-games.json', (f) => { delete f['1']; });
+    expect(failed()).toContain('company-games');
+  });
+
+  it('catches missing or malformed stats.json', () => {
+    edit<StatsFile>('stats.json', (s) => { (s as unknown as { years: unknown }).years = 'x'; });
+    expect(failed()).toEqual(['stats-file']);
+    rmSync(join(out, 'stats.json'));
+    expect(failed()).toEqual(['stats-file']);
+  });
+
+  it('catches a stats gamesLed sum that does not match the games with a lead country', () => {
+    edit<StatsFile>('stats.json', (s) => { s.countries[0]!.gamesLed += 1; });
+    expect(failed()).toEqual(['stats-file']);
+  });
+
+  it('catches missing flows.json, unknown examples and lead_developer flows', () => {
+    edit<FlowsFile>('flows.json', (f) => { f.flows.push({ role: 'publisher', from: 'JP', to: 'US', games: 1, examples: [987654] }); });
+    expect(failed()).toEqual(['flows-file']);
+    edit<FlowsFile>('flows.json', (f) => { f.flows = [{ role: 'lead_developer', from: 'JP', to: 'US', games: 1, examples: [1] }]; });
+    expect(failed()).toEqual(['flows-file']);
+    rmSync(join(out, 'flows.json'));
+    expect(failed()).toEqual(['flows-file']);
+  });
+
   it('fails cleanly when files are missing', () => {
     rmSync(join(out, 'games.json'));
     const r = validateOutput(out);
@@ -177,6 +224,10 @@ describe('validation reports', () => {
     const md = readFileSync(join(reportDir, 'validation.md'), 'utf8');
     expect(md).toContain('Verdict: PASS');
     expect(md).toContain('| lead_developer | 30 |');
+    expect(md).toContain('## Insights');
+    expect(md).toContain('Top 10 countries by games led');
+    expect(md).toContain('Top 10 localization flows');
+    expect(md).toContain('Top 10 QA flows');
     expect(JSON.parse(readFileSync(join(reportDir, 'validation.json'), 'utf8')).ok).toBe(true);
   });
 

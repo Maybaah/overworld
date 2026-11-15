@@ -75,6 +75,28 @@ describe('merge: lead studio (c)', () => {
     expect(rolesOf(r, 1).find((x) => x.companyId === 1)!.role).toBe('co_developer');
   });
 
+  it('several developers: a Wikidata item link beats a label match', () => {
+    const r = merge(input({
+      companies: [company(1, 'Alpha Studio'), company(2, 'Beta Works')],
+      games: [game(1, [row(10, 1, { developer: true }), row(11, 2, { developer: true })])],
+      wikidataCompanies: [wdCompany(2, { qid: 'Q222' })],
+      wikidataGames: [wdGame(1, ['Alpha Studio'], { developers: [{ qid: 'Q999', label: 'Alpha Studio' }, { qid: 'Q222', label: 'Different label' }] })],
+    }));
+    expect(r.games[0]!.leadCompanyId).toBe(2);
+    expect(r.details[0]!.leadBasis).toBe('igdb_developer_confirmed_by_wikidata');
+  });
+
+  it('no developer: a Wikidata item link finds the lead although the label differs', () => {
+    const r = merge(input({
+      companies: [company(1, 'Pub Inc'), company(2, 'Odd Name')],
+      games: [game(1, [row(10, 1, { publisher: true }), row(11, 2, { supporting: true })])],
+      wikidataCompanies: [wdCompany(2, { qid: 'Q222' })],
+      wikidataGames: [wdGame(1, [], { developers: [{ qid: 'Q222', label: 'Completely other' }] })],
+    }));
+    expect(r.games[0]!.leadCompanyId).toBe(2);
+    expect(r.details[0]!.leadBasis).toBe('wikidata_developer');
+  });
+
   it('several developers: the first matching Wikidata developer wins when several match', () => {
     const r = merge(input({
       companies: [company(1, 'First Studio'), company(2, 'Second Studio')],
@@ -262,10 +284,12 @@ describe('merge: MobyGames roles (e)', () => {
     expect(rolesOf(r, 1).filter((x) => x.companyId === 2).map((x) => x.role)).toEqual(['support']);
   });
 
-  it('adds MobyGames attribution only when MobyGames data was used', () => {
+  it('adds MobyGames attribution only when a MobyGames role landed in the output', () => {
     const base = { companies: [company(1, 'A')], games: [game(1, [row(10, 1, { developer: true })])] };
     expect(merge(input({ ...base, moby: null })).meta.attribution.map((a) => a.source)).toEqual(['igdb', 'wikidata']);
-    expect(merge(input({ ...base, moby: [moby(1, [])] })).meta.attribution.map((a) => a.source)).toEqual(['igdb', 'wikidata', 'mobygames']);
+    expect(merge(input({ ...base, moby: [moby(1, [])] })).meta.attribution.map((a) => a.source)).toEqual(['igdb', 'wikidata']);
+    const used = moby(1, [{ id: 3, name: 'Elsewhere', role: 'Graphics' }]);
+    expect(merge(input({ ...base, moby: [used] })).meta.attribution.map((a) => a.source)).toEqual(['igdb', 'wikidata', 'mobygames']);
   });
 });
 

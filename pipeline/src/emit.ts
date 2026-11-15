@@ -1,13 +1,16 @@
 import { mkdir, readdir, rm } from 'node:fs/promises';
 import path from 'node:path';
 import { DETAIL_CHUNK_SIZE } from '../../shared/model';
+import { buildAggregates } from './aggregates';
 import type { MergeResult } from './merge';
+import type { RawPopulation } from './raw';
 import type { PipelineConfig } from './config';
 import { writeJson } from './stageio';
 
 export async function emit(
   result: MergeResult,
   config: Pick<PipelineConfig, 'outDir' | 'reportDir'>,
+  population: RawPopulation | null = null,
 ): Promise<void> {
   const { outDir, reportDir } = config;
   const detailsDir = path.join(outDir, 'details');
@@ -33,5 +36,9 @@ export async function emit(
   await writeJson(path.join(outDir, 'companies.json'), companies);
   await writeJson(path.join(outDir, 'games.json'), result.games);
   await writeJson(path.join(outDir, 'steam.json'), steam);
+  const aggregates = buildAggregates({ ...result, companies }, population);
+  await writeJson(path.join(outDir, 'company-games.json'), aggregates.companyGames);
+  await writeJson(path.join(outDir, 'stats.json'), aggregates.stats);
+  await writeJson(path.join(outDir, 'flows.json'), aggregates.flows);
   await writeJson(path.join(reportDir, 'merge-report.json'), result.report, true);
 }

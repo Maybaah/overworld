@@ -4,6 +4,10 @@ import { fileURLToPath } from 'node:url';
 import {
   ROLE_TYPES,
   type Company,
+  type CompanyGamesFile,
+  type CountryFlow,
+  type FlowsFile,
+  type StatsFile,
   type DataMeta,
   type GameCompanyRole,
   type GameDetail,
@@ -39,6 +43,14 @@ export interface ValidationResult {
   flaggedCompanies: FlaggedCompany[];
   countryOnlyLeadShare: { count: number; total: number; percent: number };
   leadBasisCounts: Record<string, number>;
+  insights: Insights;
+}
+
+export interface Insights {
+  topCountriesByGamesLed: { code: string; name: string; gamesLed: number }[];
+  topCountriesPerMillion: { code: string; name: string; gamesLed: number; gamesPerMillion: number }[];
+  topLocalizationFlows: CountryFlow[];
+  topQaFlows: CountryFlow[];
 }
 
 const MAX_EXAMPLES = 10;
@@ -71,6 +83,7 @@ function emptyResult(check: Check): ValidationResult {
     flaggedCompanies: [],
     countryOnlyLeadShare: { count: 0, total: 0, percent: 0 },
     leadBasisCounts: {},
+    insights: { topCountriesByGamesLed: [], topCountriesPerMillion: [], topLocalizationFlows: [], topQaFlows: [] },
   };
 }
 
@@ -93,6 +106,45 @@ function validCoord(lat: unknown, lng: unknown): boolean {
 
 function pct(n: number, total: number): number {
   return total === 0 ? 0 : Math.round((n / total) * 1000) / 10;
+}
+
+function readOptional<T>(file: string, check: Check): T | null {
+  if (!existsSync(file)) {
+    check.fail(`${path.basename(file)} is missing`);
+    return null;
+  }
+  try {
+    return readJson<T>(file);
+  } catch (e) {
+    check.fail(`${path.basename(file)} is not valid JSON: ${(e as Error).message}`);
+    return null;
+  }
+}
+
+function isObject(v: unknown): v is Record<string, unknown> {
+  return typeof v === 'object' && v !== null && !Array.isArray(v);
+}
+
+function statsProblems(stats: unknown): string[] {
+  if (!isObject(stats)) return ['stats.json is not an object'];
+  const problems: string[] = [];
+  for (const key of ['countries', 'regions', 'years', 'majorPublishers']) {
+    if (!Array.isArray(stats[key])) problems.push(`stats.${key} is not an array`);
+  }
+  if (!isObject(stats.populationSource)) problems.push('stats.populationSource is missing');
+  if (Array.isArray(stats.countries)) {
+    for (const c of stats.countries as unknown[]) {
+      if (!isObject(c) || typeof c.code !== 'string' || typeof c.gamesLed !== 'number' || !isObject(c.genres)) {
+        problems.push(`malformed country entry ${JSON.stringify(c).slice(0, 80)}`);
+      }
+    }
+  }
+  if (Array.isArray(stats.years)) {
+    for (const y of stats.years as unknown[]) {
+      if (!isObject(y) || typeof y.year !== 'number' || typeof y.total !== 'number') problems.push(`malformed year entry ${JSON.stringify(y).slice(0, 80)}`);
+    }
+  }
+  return problems.slice(0, MAX_EXAMPLES);
 }
 
 export function validateOutput(outDir: string): ValidationResult {
@@ -264,7 +316,72 @@ export function validateOutput(outDir: string): ValidationResult {
   const gameCount = new Check('company-game-count', 'every company has gameCount above 0');
   for (const c of companies) if (!(c.gameCount > 0)) gameCount.fail(`company ${c.id} "${c.name}" has gameCount ${c.gameCount}`);
 
-  const checks = [missing, chunkCheck, dupCompanies, dupGames, leads, sourcesCheck, coords, refs, sorted, roleTypes, counts, gameCount].map((c) => c.result());
+  const cgCheck = new Check('company-games', 'company-games.json exists and matches the (company, game, role) rows in the details chunks');
+  const companyGames = readOptional<CompanyGamesFile>(path.join(outDir, 'company-games.json'), cgCheck);
+  if (companyGames) {
+    const position = new Map(games.map((g, i) => [g.id, i]));
+    const expected = new Map<string, Set<string>>();
+    for (const d of detailByGame.values()) {
+      for (const r of d.roles ?? []) {
+        const key = String(r.companyId);
+        if (!expected.has(key)) expected.set(key, new Set());
+        expected.get(key)!.add(`${d.id}:${ROLE_TYPES.indexOf(r.role)}`);
+      }
+    }
+    for (const c of companies) if (!(String(c.id) in companyGames)) cgCheck.fail(`company ${c.id} has no entry`);
+    for (const [key, flat] of Object.entries(companyGames)) {
+      if (!Array.isArray(flat) || flat.length % 2 !== 0) {
+        cgCheck.fail(`company ${key}: entry is not a flat list of pairs`);
+        continue;
+      }
+      const want = expected.get(key) ?? new Set<string>();
+      const got = new Set<string>();
+      let prev: [number, number] = [-1, -1];
+      for (let i = 0; i < flat.length; i += 2) {
+        const gameId = flat[i]!;
+        const roleIndex = flat[i + 1]!;
+        const id = `${gameId}:${roleIndex}`;
+        if (!want.has(id)) cgCheck.fail(`company ${key}: pair [${gameId}, ${roleIndex}] is not in the details`);
+        if (got.has(id)) cgCheck.fail(`company ${key}: pair [${gameId}, ${roleIndex}] appears twice`);
+        got.add(id);
+        const pos = position.get(gameId) ?? -1;
+        if (pos < prev[0] || (pos === prev[0] && roleIndex < prev[1])) cgCheck.fail(`company ${key}: pairs out of order at game ${gameId}`);
+        prev = [pos, roleIndex];
+      }
+      for (const id of want) if (!got.has(id)) cgCheck.fail(`company ${key}: details row ${id} (game:role) is missing from company-games.json`);
+    }
+    for (const key of expected.keys()) if (!(key in companyGames)) cgCheck.fail(`company ${key} has roles but no entry`);
+  }
+
+  const statsCheck = new Check('stats-file', 'stats.json is well formed and its gamesLed sum equals the games whose lead studio has a country');
+  const stats = readOptional<StatsFile>(path.join(outDir, 'stats.json'), statsCheck);
+  if (stats) {
+    for (const problem of statsProblems(stats)) statsCheck.fail(problem);
+    if (statsCheck.count === 0) {
+      const withCountry = games.filter((g) => companyById.get(g.leadCompanyId)?.country).length;
+      const sum = stats.countries.reduce((a, c) => a + c.gamesLed, 0);
+      if (sum !== withCountry) statsCheck.fail(`countries[].gamesLed sums to ${sum}, expected ${withCountry}`);
+    }
+  }
+
+  const flowsCheck = new Check('flows-file', 'flows.json is well formed, examples exist in games.json, no lead_developer flow');
+  const flowsFile = readOptional<FlowsFile>(path.join(outDir, 'flows.json'), flowsCheck);
+  if (flowsFile) {
+    if (!Array.isArray(flowsFile.flows)) flowsCheck.fail('flows.json has no flows array');
+    else {
+      for (const f of flowsFile.flows) {
+        const label = `flow ${f?.role} ${f?.from}->${f?.to}`;
+        if (!f || !known.has(f.role) || typeof f.from !== 'string' || typeof f.to !== 'string' || typeof f.games !== 'number' || !Array.isArray(f.examples)) {
+          flowsCheck.fail(`${label}: malformed`);
+          continue;
+        }
+        if (f.role === 'lead_developer') flowsCheck.fail(`${label}: lead_developer must not be a flow`);
+        for (const id of f.examples) if (!gameIds.has(id)) flowsCheck.fail(`${label}: example game ${id} not in games.json`);
+      }
+    }
+  }
+
+  const checks = [missing, chunkCheck, dupCompanies, dupGames, leads, sourcesCheck, coords, refs, sorted, roleTypes, counts, gameCount, cgCheck, statsCheck, flowsCheck].map((c) => c.result());
 
   const precision = {} as ValidationResult['precision'];
   for (const p of PRECISIONS) {
@@ -291,6 +408,26 @@ export function validateOutput(outDir: string): ValidationResult {
     flaggedCompanies,
     countryOnlyLeadShare: { count: countryLeads, total: games.length, percent: pct(countryLeads, games.length) },
     leadBasisCounts,
+    insights: buildInsights(statsCheck.count === 0 ? stats : null, flowsCheck.count === 0 ? flowsFile : null),
+  };
+}
+
+function buildInsights(stats: StatsFile | null, flows: FlowsFile | null): Insights {
+  const name = (code: string) => countryName(code) ?? code;
+  const countries = stats?.countries ?? [];
+  const flowList = flows?.flows ?? [];
+  return {
+    topCountriesByGamesLed: [...countries]
+      .sort((a, b) => b.gamesLed - a.gamesLed || a.code.localeCompare(b.code))
+      .slice(0, 10)
+      .map((c) => ({ code: c.code, name: name(c.code), gamesLed: c.gamesLed })),
+    topCountriesPerMillion: countries
+      .filter((c) => c.gamesLed >= 5 && c.gamesPerMillion !== null)
+      .sort((a, b) => b.gamesPerMillion! - a.gamesPerMillion! || a.code.localeCompare(b.code))
+      .slice(0, 10)
+      .map((c) => ({ code: c.code, name: name(c.code), gamesLed: c.gamesLed, gamesPerMillion: c.gamesPerMillion! })),
+    topLocalizationFlows: flowList.filter((f) => f.role === 'localization').slice(0, 10),
+    topQaFlows: flowList.filter((f) => f.role === 'qa').slice(0, 10),
   };
 }
 
@@ -317,6 +454,17 @@ export function formatSummary(result: ValidationResult, topFlagged = 50): string
     lines.push(`Top ${Math.min(topFlagged, result.flaggedCompanies.length)} by game count`, '', '| Id | Name | Games |', '| ---: | --- | ---: |');
     for (const c of result.flaggedCompanies.slice(0, topFlagged)) lines.push(`| ${c.id} | ${c.name.replace(/\|/g, '\\|')} | ${c.gameCount} |`);
   }
+  const ins = result.insights;
+  lines.push('', '## Insights', '', '### Top 10 countries by games led', '', '| Country | Games led |', '| --- | ---: |');
+  for (const c of ins.topCountriesByGamesLed) lines.push(`| ${c.name} (${c.code}) | ${c.gamesLed} |`);
+  lines.push('', '### Top 10 countries by games per million people (at least 5 games led)', '', '| Country | Games led | Per million |', '| --- | ---: | ---: |');
+  for (const c of ins.topCountriesPerMillion) lines.push(`| ${c.name} (${c.code}) | ${c.gamesLed} | ${c.gamesPerMillion} |`);
+  const flowTable = (title: string, flows: CountryFlow[]) => {
+    lines.push('', `### ${title}`, '', '| From | To | Games |', '| --- | --- | ---: |');
+    for (const f of flows) lines.push(`| ${f.from} | ${f.to} | ${f.games} |`);
+  };
+  flowTable('Top 10 localization flows (lead studio country to localizer country)', ins.topLocalizationFlows);
+  flowTable('Top 10 QA flows (lead studio country to QA country)', ins.topQaFlows);
   return lines.join('\n') + '\n';
 }
 

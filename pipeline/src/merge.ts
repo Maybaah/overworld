@@ -214,6 +214,18 @@ export function merge(input: MergeInput): MergeResult {
       return out;
     };
 
+    const pickByWikidata = (candidates: RawIgdbInvolvedCompany[]): RawIgdbInvolvedCompany | undefined => {
+      for (const dev of wdGame?.developers ?? []) {
+        const hit = candidates.find((r) => wdCompanyById.get(r.company)?.qid === dev.qid);
+        if (hit) return hit;
+      }
+      for (const label of wdLabels) {
+        const hit = candidates.find((r) => normName.get(r.company) === label);
+        if (hit) return hit;
+      }
+      return undefined;
+    };
+
     let pool = firstRowOfCompany((r) => r.developer && !r.porting && !r.supporting);
     if (pool.length === 0) pool = firstRowOfCompany((r) => r.developer);
 
@@ -225,27 +237,21 @@ export function merge(input: MergeInput): MergeResult {
       leadId = pool[0]!.company;
       basis = 'igdb_single_developer';
     } else if (pool.length > 1) {
-      for (const label of wdLabels) {
-        const hit = pool.find((r) => normName.get(r.company) === label);
-        if (hit) {
-          leadId = hit.company;
-          basis = 'igdb_developer_confirmed_by_wikidata';
-          break;
-        }
+      const hit = pickByWikidata(pool);
+      if (hit) {
+        leadId = hit.company;
+        basis = 'igdb_developer_confirmed_by_wikidata';
       }
       if (leadId === null) {
         leadId = pool[0]!.company;
         basis = 'igdb_first_developer';
       }
     } else {
-      for (const label of wdLabels) {
-        const hit = rows.find((r) => normName.get(r.company) === label);
-        if (hit) {
-          leadId = hit.company;
-          basis = 'wikidata_developer';
-          leadRef = wikidataRef(wdGame!.qid);
-          break;
-        }
+      const hit = pickByWikidata(rows);
+      if (hit && wdGame) {
+        leadId = hit.company;
+        basis = 'wikidata_developer';
+        leadRef = wikidataRef(wdGame.qid);
       }
       if (leadId === null && moby) {
         for (const mr of moby.roles) {
@@ -499,7 +505,7 @@ export function merge(input: MergeInput): MergeResult {
     { source: 'igdb', name: 'IGDB', url: 'https://www.igdb.com', licence: 'IGDB API terms (Twitch Developer Service Agreement)' },
     { source: 'wikidata', name: 'Wikidata', url: 'https://www.wikidata.org', licence: 'CC0 1.0' },
   ];
-  if (input.moby !== null && input.moby.length > 0) {
+  if (details.some((d) => d.roles.some((r) => r.source.source === 'mobygames'))) {
     attribution.push({
       source: 'mobygames',
       name: 'MobyGames',

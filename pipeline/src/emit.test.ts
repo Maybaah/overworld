@@ -43,7 +43,7 @@ describe('emit', () => {
     const n = DETAIL_CHUNK_SIZE * 2 + 5;
     const result = big(n);
     await emit(result, cfg);
-    expect(readdirSync(cfg.outDir).sort()).toEqual(['companies.json', 'details', 'games.json', 'meta.json', 'steam.json']);
+    expect(readdirSync(cfg.outDir).sort()).toEqual(['companies.json', 'company-games.json', 'details', 'flows.json', 'games.json', 'meta.json', 'stats.json', 'steam.json']);
     expect(readdirSync(join(cfg.outDir, 'details')).sort()).toEqual(['0.json', '1.json', '2.json']);
     const chunk = (i: number) => JSON.parse(readFileSync(join(cfg.outDir, 'details', `${i}.json`), 'utf8'));
     expect(chunk(0)).toHaveLength(DETAIL_CHUNK_SIZE);
@@ -55,6 +55,16 @@ describe('emit', () => {
     expect(steam['1000']).toBe(1);
     expect(steam['1002']).toBe(3);
     expect(Object.keys(steam)).toHaveLength(Math.ceil(n / 2));
+  });
+
+  it('writes company-games, stats and flows, using the population when given', async () => {
+    await emit(big(6), cfg, { retrieved: '2026-01-01', countries: { JP: { population: 1_000_000, year: 2024, qid: 'Q17' } } });
+    const cg = JSON.parse(readFileSync(join(cfg.outDir, 'company-games.json'), 'utf8'));
+    expect(Object.keys(cg)).toEqual(['1', '2', '3']);
+    expect(cg['1']).toEqual([1, 0, 4, 0]);
+    const stats = JSON.parse(readFileSync(join(cfg.outDir, 'stats.json'), 'utf8'));
+    expect(stats.populationSource.retrieved).toBe('2026-01-01');
+    expect(JSON.parse(readFileSync(join(cfg.outDir, 'flows.json'), 'utf8'))).toEqual({ flows: [] });
   });
 
   it('writes compact data files and a pretty report', async () => {

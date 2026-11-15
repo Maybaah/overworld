@@ -5,6 +5,7 @@ import { emit } from './emit';
 import { merge, type Specialty } from './merge';
 import { STAGE_FILES } from './raw';
 import type {
+  RawPopulation,
   RawIgdbCompany,
   RawIgdbGame,
   RawIgdbGenre,
@@ -15,10 +16,11 @@ import type {
 import { readJson, readJsonIfExists } from './stageio';
 import { runIgdbStage } from './stages/igdb';
 import { runMobygamesStage } from './stages/mobygames';
+import { runPopulationStage } from './stages/population';
 import { runWikidataStage } from './stages/wikidata';
 import { parseValidateArgs, runValidation } from './validate';
 
-export const STAGE_NAMES = ['igdb', 'wikidata', 'mobygames', 'merge', 'validate'] as const;
+export const STAGE_NAMES = ['igdb', 'wikidata', 'population', 'mobygames', 'merge', 'validate'] as const;
 export type StageName = (typeof STAGE_NAMES)[number];
 
 export type StageFn = (config: PipelineConfig) => Promise<unknown> | unknown;
@@ -39,6 +41,7 @@ export async function runMergeStage(config: PipelineConfig): Promise<Record<stri
   const wikidataGames = (await readJsonIfExists<RawWikidataGame[]>(file(STAGE_FILES.wikidataGames))) ?? [];
   const wikidataCompanies = (await readJsonIfExists<RawWikidataCompany[]>(file(STAGE_FILES.wikidataCompanies))) ?? [];
   const moby = await readJsonIfExists<RawMobyGame[]>(file(STAGE_FILES.mobygames));
+  const population = await readJsonIfExists<RawPopulation>(file(STAGE_FILES.population));
   const specialties = (await readJsonIfExists<Specialty[]>(path.join(config.curatedDir, 'company-specialties.json'))) ?? [];
 
   const result = merge({
@@ -46,7 +49,7 @@ export async function runMergeStage(config: PipelineConfig): Promise<Record<stri
     gameLimit: config.gameLimit,
     now: new Date(),
   });
-  await emit(result, config);
+  await emit(result, config, population);
   return {
     games: result.games.length,
     companies: result.companies.length,
@@ -65,6 +68,7 @@ export function runValidateStage(config: PipelineConfig, argv: string[] = proces
 export const defaultStages: StageMap = {
   igdb: runIgdbStage,
   wikidata: runWikidataStage,
+  population: runPopulationStage,
   mobygames: runMobygamesStage,
   merge: runMergeStage,
   validate: (config) => runValidateStage(config),

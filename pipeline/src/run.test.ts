@@ -34,7 +34,7 @@ function stubs(calls: string[], over: Partial<StageMap> = {}): StageMap {
     calls.push(name);
     return { games: 3 };
   };
-  return { igdb: mk('igdb'), wikidata: mk('wikidata'), mobygames: mk('mobygames'), merge: mk('merge'), validate: mk('validate'), ...over };
+  return { igdb: mk('igdb'), wikidata: mk('wikidata'), population: mk('population'), mobygames: mk('mobygames'), merge: mk('merge'), validate: mk('validate'), ...over };
 }
 
 beforeEach(() => {
@@ -51,7 +51,7 @@ describe('runPipeline', () => {
   it('runs the stages in order and logs start and end lines with counts and seconds', async () => {
     const calls: string[] = [];
     await runPipeline(config(), stubs(calls));
-    expect(calls).toEqual(['igdb', 'wikidata', 'mobygames', 'merge', 'validate']);
+    expect(calls).toEqual(['igdb', 'wikidata', 'population', 'mobygames', 'merge', 'validate']);
     expect(logs).toContain('[igdb] start');
     expect(logs.find((l) => l.startsWith('[merge] done'))).toMatch(/^\[merge\] done in \d+\.\ds \(games=3\)$/);
   });
@@ -69,7 +69,7 @@ describe('runPipeline', () => {
   it('skips MobyGames with a log line when there is no API key', async () => {
     const calls: string[] = [];
     await runPipeline(config({ mobygamesApiKey: null }), stubs(calls));
-    expect(calls).toEqual(['igdb', 'wikidata', 'merge', 'validate']);
+    expect(calls).toEqual(['igdb', 'wikidata', 'population', 'merge', 'validate']);
     expect(logs.some((l) => l.startsWith('[mobygames]') && /skipped/.test(l))).toBe(true);
   });
 
@@ -85,7 +85,7 @@ describe('runPipeline', () => {
   });
 
   it('exposes the five stages', () => {
-    expect([...STAGE_NAMES]).toEqual(['igdb', 'wikidata', 'mobygames', 'merge', 'validate']);
+    expect([...STAGE_NAMES]).toEqual(['igdb', 'wikidata', 'population', 'mobygames', 'merge', 'validate']);
   });
 });
 
@@ -103,6 +103,7 @@ describe('merge and validate stages', () => {
     const cfg = config();
     const counts = await runMergeStage(cfg);
     expect(counts.games).toBe(30);
+    expect(existsSync(join(cfg.outDir, 'stats.json'))).toBe(true);
     expect(existsSync(join(cfg.outDir, 'meta.json'))).toBe(true);
     expect(existsSync(join(cfg.reportDir, 'merge-report.json'))).toBe(true);
     expect(runValidateStage(cfg, ['--sample=3'])).toEqual({ ok: true, failedChecks: 0 });
