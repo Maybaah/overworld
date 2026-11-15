@@ -1,5 +1,5 @@
-import { DETAIL_CHUNK_SIZE, detailChunkOf } from '@shared';
-import type { Company, DataMeta, GameDetail, GameSummary } from '@shared';
+import { DETAIL_CHUNK_SIZE, ROLE_TYPES, detailChunkOf } from '@shared';
+import type { Company, CompanyGamesFile, DataMeta, GameDetail, GameSummary, RoleType } from '@shared';
 
 export interface CoreData {
   meta: DataMeta;
@@ -32,11 +32,13 @@ export function chunkOf(position: number, chunkSize: number): number {
 let corePromise: Promise<CoreData> | null = null;
 let positions: Map<number, number> | null = null;
 const chunks = new Map<number, Promise<GameDetail[]>>();
+let companyGamesPromise: Promise<Map<number, CompanyGameEntry[]>> | null = null;
 
 export function resetLoader(): void {
   corePromise = null;
   positions = null;
   chunks.clear();
+  companyGamesPromise = null;
 }
 
 export function loadCore(): Promise<CoreData> {
@@ -79,4 +81,31 @@ export async function loadGameDetail(gameId: number): Promise<GameDetail> {
   const detail = guess?.id === gameId ? guess : chunk.find((d) => d.id === gameId);
   if (!detail) throw new Error(`Game ${gameId} missing from details/${n}.json`);
   return detail;
+}
+
+export interface CompanyGameEntry {
+  gameId: number;
+  role: RoleType;
+}
+
+export function loadCompanyGames(): Promise<Map<number, CompanyGameEntry[]>> {
+  if (!companyGamesPromise) {
+    const promise = fetchJson<CompanyGamesFile>('company-games.json').then((file) => {
+      const map = new Map<number, CompanyGameEntry[]>();
+      for (const [id, flat] of Object.entries(file)) {
+        const entries: CompanyGameEntry[] = [];
+        for (let i = 0; i + 1 < flat.length; i += 2) {
+          const role = ROLE_TYPES[flat[i + 1]!];
+          if (role !== undefined) entries.push({ gameId: flat[i]!, role });
+        }
+        map.set(Number(id), entries);
+      }
+      return map;
+    });
+    companyGamesPromise = promise;
+    promise.catch(() => {
+      if (companyGamesPromise === promise) companyGamesPromise = null;
+    });
+  }
+  return companyGamesPromise;
 }

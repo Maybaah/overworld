@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { GameDetail } from '@shared';
-import { chunkOf, loadCore, loadGameDetail, resetLoader } from './loader';
+import { chunkOf, loadCompanyGames, loadCore, loadGameDetail, resetLoader } from './loader';
 import { company, game } from './testData';
 
 const CHUNK = 250;
@@ -33,6 +33,7 @@ beforeEach(() => {
     if (url.endsWith('/games.json')) return json(games);
     const m = /details\/(\d+)\.json$/.exec(url);
     if (m) return json(chunkFile(Number(m[1])));
+    if (url.endsWith('/company-games.json')) return json({ '7': [5000, 0, 5001, 3, 5001, 4], '8': [] });
     return json({}, 404);
   });
   vi.stubGlobal('fetch', fetchMock);
@@ -130,5 +131,30 @@ describe('loadGameDetail', () => {
       return json(games);
     });
     await expect(loadGameDetail(5000)).resolves.toMatchObject({ id: 5000 });
+  });
+});
+
+describe('loadCompanyGames', () => {
+  it('decodes flat pairs into role entries', async () => {
+    const map = await loadCompanyGames();
+    expect(map.get(7)).toEqual([
+      { gameId: 5000, role: 'lead_developer' },
+      { gameId: 5001, role: 'publisher' },
+      { gameId: 5001, role: 'localization' },
+    ]);
+    expect(map.get(8)).toEqual([]);
+    expect(map.get(9)).toBeUndefined();
+  });
+
+  it('fetches once for repeated and concurrent calls', async () => {
+    await Promise.all([loadCompanyGames(), loadCompanyGames()]);
+    await loadCompanyGames();
+    expect(fetchMock.mock.calls.filter((c) => (c[0] as string).endsWith('/company-games.json'))).toHaveLength(1);
+  });
+
+  it('retries after a failure', async () => {
+    fetchMock.mockImplementationOnce(async () => json({}, 500));
+    await expect(loadCompanyGames()).rejects.toThrow(/HTTP 500/);
+    await expect(loadCompanyGames()).resolves.toBeInstanceOf(Map);
   });
 });

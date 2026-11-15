@@ -1,0 +1,16 @@
+:root {
+  --bg: #07090d;
+  --surface: rgba(13, 17, 24, 0.86);
+  --surface-solid: #0d1118;
+  --border: #1f2733;
+  --text: #e6e9ef;
+  --muted: #8a93a3;
+  --accent: #f0e442;
+  --focus: #56b4e9;
+  --radius: 10px;
+  --space: 8px;
+  --blur: 12px;
+  --font-display: 'Space Grotesk', system-ui, sans-serif;
+  --font-text: 'IBM Plex Sans', system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+}

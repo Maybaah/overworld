@@ -2,12 +2,13 @@ import { describe, expect, it } from 'vitest';
 import { mkdtempSync, readFileSync, readdirSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { ROLE_TYPES } from '../../shared/model';
 import { generateFixture, writeFixture } from './fixture';
 
 const fixture = generateFixture();
 
 function snapshot(dir: string): string {
-  const files = ['meta.json', 'companies.json', 'games.json', 'steam.json'];
+  const files = ['meta.json', 'companies.json', 'games.json', 'steam.json', 'company-games.json'];
   const parts = files.map((f) => readFileSync(join(dir, f), 'utf8'));
   for (const f of readdirSync(join(dir, 'details')).sort()) parts.push(readFileSync(join(dir, 'details', f), 'utf8'));
   return parts.join('\n');
@@ -67,5 +68,39 @@ describe('fixture generator', () => {
     const nullYear = fixture.games.filter((g) => g.year === null).length / fixture.games.length;
     expect(nullYear).toBeGreaterThan(0.015);
     expect(nullYear).toBeLessThan(0.05);
+  });
+
+  it('writes a valid company-games.json', () => {
+    const dir = mkdtempSync(join(tmpdir(), 'fx-cg-'));
+    try {
+      writeFixture(dir, fixture);
+      const file = JSON.parse(readFileSync(join(dir, 'company-games.json'), 'utf8')) as Record<string, number[]>;
+      const position = new Map(fixture.games.map((g, i) => [g.id, i]));
+      const companyIds = new Set(fixture.companies.map((c) => String(c.id)));
+      let pairs = 0;
+      for (const [id, flat] of Object.entries(file)) {
+        expect(companyIds.has(id)).toBe(true);
+        expect(flat.length % 2).toBe(0);
+        let prev = -1;
+        for (let i = 0; i < flat.length; i += 2) {
+          const pos = position.get(flat[i]!);
+          expect(pos).toBeDefined();
+          const roleIndex = flat[i + 1]!;
+          expect(roleIndex).toBeGreaterThanOrEqual(0);
+          expect(roleIndex).toBeLessThan(ROLE_TYPES.length);
+          const key = pos! * ROLE_TYPES.length + roleIndex;
+          expect(key).toBeGreaterThan(prev);
+          prev = key;
+          pairs++;
+        }
+      }
+      const expected = new Set<string>();
+      for (const d of fixture.details) for (const r of d.roles) expected.add(`${r.companyId}|${d.id}|${ROLE_TYPES.indexOf(r.role)}`);
+      expect(pairs).toBe(expected.size);
+      const lead = fixture.games[0]!;
+      expect(file[String(lead.leadCompanyId)]).toContain(lead.id);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
   });
 });

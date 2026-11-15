@@ -1,0 +1,677 @@
+.ow-root {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  color: var(--text);
+  font-family: var(--font-text);
+  font-size: 14px;
+  line-height: 1.45;
+  z-index: 10;
+}
+
+.ow-root *,
+.ow-root *::before,
+.ow-root *::after {
+  box-sizing: border-box;
+}
+
+.ow-root button,
+.ow-root input {
+  font: inherit;
+  color: inherit;
+}
+
+.ow-root :focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.ow-root h2,
+.ow-root h3,
+.ow-root p,
+.ow-root ul,
+.ow-root dl,
+.ow-root dd {
+  margin: 0;
+  padding: 0;
+}
+
+.ow-root ul {
+  list-style: none;
+}
+
+.ow-root a {
+  color: var(--text);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.ow-mono {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.ow-muted {
+  color: var(--muted);
+}
+
+.ow-small {
+  font-size: 12px;
+}
+
+.ow-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.ow-panel {
+  pointer-events: auto;
+  background: var(--surface);
+  backdrop-filter: blur(var(--blur));
+  -webkit-backdrop-filter: blur(var(--blur));
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.ow-header {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  pointer-events: none;
+}
+
+.ow-wordmark {
+  pointer-events: auto;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 20px;
+  letter-spacing: 0;
+}
+
+.ow-search {
+  position: relative;
+  pointer-events: auto;
+  width: 280px;
+}
+
+.ow-search-input {
+  width: 100%;
+  height: 40px;
+  padding: 0 16px;
+  background: var(--surface);
+  backdrop-filter: blur(var(--blur));
+  -webkit-backdrop-filter: blur(var(--blur));
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.ow-search-input::placeholder {
+  color: var(--muted);
+}
+
+.ow-search-input:disabled {
+  opacity: 0.6;
+}
+
+.ow-search-list,
+.ow-search-empty {
+  position: absolute;
+  top: 48px;
+  left: 0;
+  right: 0;
+  background: var(--surface-solid);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.ow-search-list[hidden] {
+  display: none;
+}
+
+.ow-search-empty {
+  padding: 8px 16px;
+}
+
+.ow-search-option {
+  display: flex;
+  flex-direction: column;
+  padding: 8px 16px;
+  cursor: pointer;
+}
+
+.ow-search-option[data-active='true'] {
+  background: #19212d;
+}
+
+.ow-search-main {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.ow-search-name {
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ow-search-sub {
+  font-size: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ow-load-error {
+  position: absolute;
+  top: 72px;
+  left: 16px;
+  padding: 8px 16px;
+}
+
+.ow-left {
+  position: absolute;
+  top: 72px;
+  left: 16px;
+  bottom: 16px;
+  width: 340px;
+  max-width: calc(100vw - 32px);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 16px;
+  pointer-events: none;
+}
+
+.ow-right {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  bottom: 64px;
+  width: 380px;
+  max-width: calc(100vw - 32px);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  pointer-events: none;
+}
+
+.ow-place,
+.ow-card {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  max-height: 100%;
+}
+
+.ow-place {
+  flex: 0 1 auto;
+}
+
+.ow-panel-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 16px 16px 8px;
+}
+
+.ow-panel-body {
+  overflow-y: auto;
+  padding: 8px 16px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-height: 0;
+}
+
+.ow-title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.ow-subtitle {
+  font-family: var(--font-text);
+  font-weight: 500;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.ow-card-top {
+  display: flex;
+  gap: 16px;
+  min-width: 0;
+}
+
+.ow-card-title {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.ow-cover {
+  flex: none;
+  width: 88px;
+  aspect-ratio: 3 / 4;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: #121823;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ow-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.ow-cover-empty {
+  font-size: 12px;
+  text-align: center;
+}
+
+.ow-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.ow-tag {
+  font-size: 12px;
+  padding: 0 8px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--text);
+}
+
+.ow-tag-indie {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.ow-icon-btn {
+  flex: none;
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.ow-icon-btn:hover {
+  background: #19212d;
+}
+
+.ow-link-btn {
+  background: none;
+  border: 0;
+  padding: 0;
+  text-align: left;
+  cursor: pointer;
+  font-weight: 500;
+  text-decoration: underline;
+  text-decoration-color: var(--border);
+  text-underline-offset: 3px;
+}
+
+.ow-link-btn:hover {
+  text-decoration-color: var(--text);
+}
+
+.ow-more-btn {
+  margin-top: 8px;
+  padding: 4px 16px;
+  min-height: 32px;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.ow-more-btn:hover {
+  background: #19212d;
+}
+
+.ow-error {
+  border: 1px solid #5a2a2a;
+  border-radius: 8px;
+  padding: 8px 16px;
+}
+
+.ow-lead p + p {
+  margin-top: 4px;
+}
+
+.ow-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ow-row-main,
+.ow-row-inline {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.ow-source {
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.ow-role-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ow-role-group[data-dimmed='true'] .ow-list {
+  opacity: 0.5;
+}
+
+.ow-swatch {
+  flex: none;
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  border: 2px solid;
+  display: inline-block;
+}
+
+.ow-swatch-off {
+  background: transparent;
+}
+
+.ow-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+}
+
+.ow-stat dt {
+  font-size: 12px;
+}
+
+.ow-stat dd {
+  font-size: 16px;
+}
+
+.ow-sources {
+  overflow-wrap: anywhere;
+}
+
+.ow-legend {
+  flex: none;
+  margin-top: auto;
+  padding: 8px;
+}
+
+.ow-legend-toggle {
+  display: none;
+}
+
+.ow-legend-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.ow-legend-row {
+  width: 100%;
+  min-height: 32px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 8px;
+  background: transparent;
+  border: 0;
+  border-radius: 8px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.ow-legend-row:hover {
+  background: #19212d;
+}
+
+.ow-legend-row[aria-disabled='true'] {
+  cursor: default;
+}
+
+.ow-legend-label {
+  flex: 1;
+}
+
+.ow-legend-row[data-off='true'] .ow-legend-label {
+  text-decoration: line-through;
+  color: var(--muted);
+}
+
+.ow-legend-note,
+.ow-legend-count {
+  font-size: 12px;
+}
+
+.ow-slider {
+  position: absolute;
+  left: 50%;
+  bottom: 16px;
+  transform: translateX(-50%);
+  width: clamp(320px, calc(100vw - 800px), 720px);
+  padding: 8px 16px 8px;
+}
+
+.ow-slider-top {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.ow-year {
+  font-size: 28px;
+  line-height: 1.2;
+  min-width: 4ch;
+}
+
+.ow-slider-total {
+  margin-left: auto;
+  font-size: 12px;
+  text-align: right;
+}
+
+.ow-slider-total .ow-mono {
+  color: var(--text);
+}
+
+.ow-track {
+  position: relative;
+  height: 40px;
+  margin-top: 4px;
+}
+
+.ow-bars {
+  position: absolute;
+  inset: 0 8px 12px;
+  width: calc(100% - 16px);
+  height: calc(100% - 12px);
+}
+
+.ow-bar {
+  fill: #3a4658;
+}
+
+.ow-bar-future {
+  fill: #1c2431;
+}
+
+.ow-range {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  background: transparent;
+  -webkit-appearance: none;
+  appearance: none;
+  cursor: pointer;
+}
+
+.ow-range::-webkit-slider-runnable-track {
+  height: 4px;
+  margin-top: 16px;
+  background: var(--border);
+  border-radius: 2px;
+}
+
+.ow-range::-moz-range-track {
+  height: 4px;
+  background: var(--border);
+  border-radius: 2px;
+}
+
+.ow-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px;
+  height: 24px;
+  margin-top: -10px;
+  border-radius: 4px;
+  background: var(--accent);
+  border: 0;
+}
+
+.ow-range::-moz-range-thumb {
+  width: 16px;
+  height: 24px;
+  border-radius: 4px;
+  background: var(--accent);
+  border: 0;
+}
+
+.ow-slider-ends {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+}
+
+.ow-attribution {
+  position: absolute;
+  right: 16px;
+  bottom: 16px;
+  max-width: 340px;
+  padding: 8px 16px;
+  font-size: 12px;
+}
+
+.ow-fixture-note {
+  color: var(--accent);
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+@media (max-width: 1100px) {
+  .ow-slider {
+    width: clamp(320px, calc(100vw - 740px), 720px);
+  }
+}
+
+@media (max-width: 759px) {
+  .ow-header {
+    right: 16px;
+    gap: 8px;
+  }
+
+  .ow-search {
+    flex: 1;
+    width: auto;
+  }
+
+  .ow-left,
+  .ow-right {
+    display: contents;
+  }
+
+  .ow-place,
+  .ow-card {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: auto;
+    max-height: 62vh;
+    border-radius: var(--radius) var(--radius) 0 0;
+  }
+
+  .ow-root[data-front='game'] .ow-place,
+  .ow-root[data-front='place'] .ow-card {
+    display: none;
+  }
+
+  .ow-root[data-sheet='true'] .ow-slider,
+  .ow-root[data-sheet='true'] .ow-legend,
+  .ow-root[data-sheet='true'] .ow-attribution {
+    display: none;
+  }
+
+  .ow-slider {
+    left: 8px;
+    right: 8px;
+    bottom: 56px;
+    width: auto;
+    transform: none;
+  }
+
+  .ow-attribution {
+    left: 8px;
+    right: 8px;
+    bottom: 8px;
+    max-width: none;
+  }
+
+  .ow-legend {
+    position: absolute;
+    left: 8px;
+    bottom: 188px;
+    padding: 0;
+  }
+
+  .ow-legend-toggle {
+    display: block;
+    min-height: 40px;
+    padding: 0 16px;
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+  }
+
+  .ow-legend-list {
+    display: none;
+    padding: 0 8px 8px;
+    min-width: 220px;
+  }
+
+  .ow-legend[data-open='true'] .ow-legend-list {
+    display: flex;
+  }
+}

@@ -8,6 +8,7 @@ import {
   ROLE_TYPES,
   SCHEMA_VERSION,
   type Company,
+  type CompanyGamesFile,
   type DataMeta,
   type GameCompanyRole,
   type GameDetail,
@@ -65,6 +66,7 @@ export interface Fixture {
   games: GameSummary[];
   details: GameDetail[];
   steam: Record<string, number>;
+  companyGames: CompanyGamesFile;
 }
 
 function mulberry32(seed: number) {
@@ -295,6 +297,20 @@ export function generateFixture(seed = 20260101): Fixture {
     byId.get(g.leadCompanyId)!.leadCount++;
   }
 
+  const companyGames: CompanyGamesFile = {};
+  for (const d of details) {
+    const perCompany = new Map<number, Set<number>>();
+    for (const role of d.roles) {
+      let set = perCompany.get(role.companyId);
+      if (!set) perCompany.set(role.companyId, (set = new Set()));
+      set.add(ROLE_TYPES.indexOf(role.role));
+    }
+    for (const [companyId, set] of perCompany) {
+      const flat = (companyGames[String(companyId)] ??= []);
+      for (const roleIndex of [...set].sort((a, b) => a - b)) flat.push(d.id, roleIndex);
+    }
+  }
+
   const meta: DataMeta = {
     generatedAt: '2026-01-01T00:00:00.000Z',
     schemaVersion: SCHEMA_VERSION,
@@ -308,7 +324,7 @@ export function generateFixture(seed = 20260101): Fixture {
     ],
   };
 
-  return { meta, companies, games, details, steam };
+  return { meta, companies, games, details, steam, companyGames };
 }
 
 export function writeFixture(outDir: string, fixture: Fixture = generateFixture()): void {
@@ -319,6 +335,7 @@ export function writeFixture(outDir: string, fixture: Fixture = generateFixture(
   write('companies.json', fixture.companies);
   write('games.json', fixture.games);
   write('steam.json', fixture.steam);
+  write('company-games.json', fixture.companyGames);
   const size = fixture.meta.detailChunkSize;
   for (let n = 0; n < fixture.meta.detailChunks; n++) {
     write(`details/${n}.json`, fixture.details.slice(n * size, (n + 1) * size));
