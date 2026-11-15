@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useStore } from './data/store';
+import { GlobeView } from './globe/GlobeView';
 
 const shell = {
   minHeight: '100vh',
@@ -13,10 +14,18 @@ const shell = {
 } as const;
 
 const badge = {
+  position: 'fixed',
+  right: 12,
+  bottom: 12,
+  zIndex: 5,
   border: '1px solid #e6e9ef',
   borderRadius: 4,
   padding: '2px 8px',
   fontSize: 12,
+  color: '#e6e9ef',
+  background: 'rgba(7, 9, 13, 0.8)',
+  fontFamily: 'system-ui, sans-serif',
+  pointerEvents: 'none',
 } as const;
 
 export function App() {
@@ -29,18 +38,20 @@ export function App() {
     void init();
   }, [init]);
 
+  if (status !== 'ready' || !meta) {
+    return (
+      <div style={shell}>
+        {status === 'loading' && <span>Loading...</span>}
+        {status === 'error' && <span role="alert">Failed to load data: {error}</span>}
+      </div>
+    );
+  }
+
   return (
-    <div style={shell}>
-      {status === 'loading' && <span>Loading...</span>}
-      {status === 'error' && <span role="alert">Failed to load data: {error}</span>}
-      {status === 'ready' && meta && (
-        <>
-          <span>
-            {meta.counts.games.toLocaleString('en-US')} games · {meta.counts.companies.toLocaleString('en-US')} companies
-          </span>
-          {meta.fixture && <span style={badge}>Sample data</span>}
-        </>
-      )}
-    </div>
+    <>
+      <GlobeView />
+      {/* overlay: mount the UI overlay component here */}
+      {meta.fixture && <span style={badge}>Sample data</span>}
+    </>
   );
 }
