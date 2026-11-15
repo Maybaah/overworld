@@ -84,6 +84,7 @@ export interface GameDetail {
 export interface DataMeta {
   generatedAt: string;
   schemaVersion: number;
+  fixture?: boolean; // true for generated sample data, never for pipeline output
   counts: {
     games: number;
     companies: number;
