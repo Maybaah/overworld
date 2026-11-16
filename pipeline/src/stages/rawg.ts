@@ -7,7 +7,7 @@ import { readJsonIfExists, writeJson } from '../stageio';
 const API = 'https://api.rawg.io/api/games';
 const PAGE_SIZE = 40;
 // Games are read most-added first until "added" drops below this; calibration later decides what counts.
-export const RAWG_ADDED_FLOOR = 20;
+export const RAWG_ADDED_FLOOR = 12;
 const MAX_PAGES = 3000;
 
 export interface RawgDeps {
