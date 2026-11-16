@@ -25,7 +25,7 @@ import type {
   WikidataMatchBasis,
 } from './raw';
 import { countryCentre, numericToAlpha2 } from './countries';
-import { normalizeCompanyName } from './names';
+import { normalizeCompanyName, sameCompanyLoosely } from './names';
 
 export type SpecialtyRole = 'localization' | 'qa' | 'art' | 'audio';
 
@@ -435,6 +435,10 @@ export function merge(input: MergeInput): MergeResult {
         const role = mapMobyRole(mr.roleName);
         const label = normalizeCompanyName(mr.companyName);
         let companyId = label ? involvedIds.find((id) => normName.get(id) === label) : undefined;
+        if (companyId === undefined && label) {
+          const loose = [...new Set(involvedIds)].filter((id) => sameCompanyLoosely(companyById.get(id)!.name, mr.companyName));
+          if (loose.length === 1) companyId = loose[0];
+        }
         if (companyId === undefined && label) {
           const global = idsByName.get(label);
           if (global && global.length === 1) companyId = global[0];

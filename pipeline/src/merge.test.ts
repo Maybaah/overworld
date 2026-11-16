@@ -238,6 +238,19 @@ describe('merge: MobyGames roles (e)', () => {
     expect(r.companies.find((c) => c.id === 2)!.sources.map((s) => s.source)).toContain('mobygames');
   });
 
+  it('links a MobyGames company to an involved company by a loose name match', () => {
+    const r = merge(input({
+      companies: [company(1, 'Telltale Games'), company(2, 'Panic')],
+      games: [game(1, [row(10, 1, { developer: true }), row(11, 2, { publisher: true })])],
+      moby: [moby(1, [
+        { id: 5, name: 'Telltale, Inc.', role: 'Developed by' },
+        { id: 6, name: 'Panic Button', role: 'Ported by' },
+      ])],
+    }));
+    expect(r.companies.map((c) => c.id)).toEqual([1, 2, MOBY_ONLY_COMPANY_OFFSET + 6]);
+    expect(r.companies.find((c) => c.id === 1)!.sources.map((s) => s.source)).toContain('mobygames');
+  });
+
   it('creates a MobyGames-only company when the name is ambiguous globally', () => {
     const r = merge(input({
       companies: [company(1, 'Alpha'), company(2, 'Twin'), company(3, 'Twin Inc')],

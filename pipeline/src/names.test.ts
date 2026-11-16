@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { normalizeCompanyName as n } from './names';
+import { normalizeCompanyName as n, sameCompanyLoosely } from './names';
 
 describe('normalizeCompanyName', () => {
   it('lower-cases, strips diacritics and punctuation, collapses spaces', () => {
@@ -12,7 +12,12 @@ describe('normalizeCompanyName', () => {
   it('drops trailing legal words', () => {
     expect(n('Capcom Co., Ltd.')).toBe('capcom');
     expect(n('Valve Corporation')).toBe('valve');
-    expect(n('Bohemia Interactive s.r.o.')).toBe('bohemia interactive sro');
+    expect(n('Bohemia Interactive s.r.o.')).toBe('bohemia interactive');
+    expect(n('Techland Sp. z o.o.')).toBe('techland');
+    expect(n('Playdead ApS')).toBe('playdead');
+    expect(n('Larian Studios NV')).toBe('larian studios');
+    expect(n('Asobo Studio S.A.R.L.')).toBe('asobo studio');
+    expect(n('Zaum Studio OÜ')).toBe('zaum studio');
     expect(n('Mojang AB')).toBe('mojang');
     expect(n('Rovio Entertainment Oy')).toBe('rovio entertainment');
     expect(n('Konami Digital Entertainment K.K.')).toBe('konami digital entertainment');
@@ -39,5 +44,20 @@ describe('normalizeCompanyName', () => {
 
   it('keeps non-latin names', () => {
     expect(n('株式会社 カプコン')).toBe('株式会社 カプコン');
+  });
+});
+
+describe('sameCompanyLoosely', () => {
+  it('ignores generic words, spacing and a parent-name prefix', () => {
+    expect(sameCompanyLoosely('Telltale, Inc.', 'Telltale Games')).toBe(true);
+    expect(sameCompanyLoosely('Zaum Studio OÜ', 'ZA/UM')).toBe(true);
+    expect(sameCompanyLoosely('SIE Santa Monica Studio', 'Santa Monica Studio')).toBe(true);
+    expect(sameCompanyLoosely('Deep Silver Volition, LLC', 'Volition')).toBe(true);
+    expect(sameCompanyLoosely('Bungie Studios', 'Bungie')).toBe(true);
+  });
+  it('does not join different companies', () => {
+    expect(sameCompanyLoosely('Warner Bros. Interactive Entertainment Inc.', 'WB Games')).toBe(false);
+    expect(sameCompanyLoosely('Panic Button', 'Panic')).toBe(false);
+    expect(sameCompanyLoosely('EA', 'EA Sports')).toBe(false);
   });
 });

@@ -97,8 +97,36 @@ describe('pickByTitle', () => {
   it('rejects a same-title game more than a year away', () => {
     expect(pickByTitle(doom, [mg(1, 'Doom', '1993')])).toBeNull();
   });
-  it('rejects a tie', () => {
-    expect(pickByTitle(doom, [mg(1, 'Doom', '2016'), mg(2, 'Doom', '2016')])).toBeNull();
+  it('breaks a same-title tie by platform count, then earliest date', () => {
+    const two = [
+      { platform_id: 3, name: 'Windows', release_date: '2016-06-01' },
+      { platform_id: 141, name: 'PlayStation 4', release_date: '2016-06-01' },
+    ];
+    expect(pickByTitle(doom, [mg(1, 'Doom', '2016'), mg(2, 'Doom', '2016', { platforms: two })])?.game_id).toBe(2);
+    expect(pickByTitle(doom, [mg(1, 'Doom', '2016-07'), mg(2, 'Doom', '2016-05')])?.game_id).toBe(2);
+  });
+  it('prefers the candidate sharing companies with IGDB over platform count', () => {
+    const ac = game(7, [], { name: "Assassin's Creed", firstReleaseDate: Date.UTC(2007, 10, 13) / 1000 });
+    const many = ['J2ME', 'BREW', 'iPhone'].map((name, i) => ({ platform_id: i, name, release_date: '2007-11' }));
+    const mobile = mg(1, "Assassin's Creed", '2007-11', { platforms: many, developers: [{ id: 1, name: 'Gameloft S.A.' }] });
+    const main = mg(2, "Assassin's Creed", '2007-11-14', { developers: [{ id: 2, name: 'Ubisoft Montreal Inc.' }] });
+    expect(pickByTitle(ac, [mobile, main], ['Ubisoft Montreal', 'Ubisoft Entertainment'])?.game_id).toBe(2);
+  });
+  it('allows two years for a single same-title candidate', () => {
+    const red = game(2, [], { name: 'Pokémon Red Version', firstReleaseDate: Date.UTC(1996, 1, 27) / 1000 });
+    expect(pickByTitle(red, [mg(5, 'Pokémon Red Version', '1998-09-28')], ['Dev 5'])?.game_id).toBe(5);
+    expect(pickByTitle(red, [mg(5, 'Pokémon Red Version', '1998-09-28')], ['Someone Else'])).toBeNull();
+  });
+  it('matches a title with or without its subtitle when the year agrees', () => {
+    const hs = game(3, [], { name: 'Hearthstone', firstReleaseDate: Date.UTC(2014, 2, 11) / 1000 });
+    expect(pickByTitle(hs, [mg(7, 'Hearthstone: Heroes of Warcraft', '2014-03-11')], ['Dev 7 Inc.'])?.game_id).toBe(7);
+    expect(pickByTitle(hs, [mg(7, 'Hearthstone: Heroes of Warcraft', '2014-03-11')], ['Nobody'])).toBeNull();
+    const d2 = game(4, [], { name: 'Doom II: Hell on Earth', firstReleaseDate: Date.UTC(1994, 9, 10) / 1000 });
+    expect(pickByTitle(d2, [mg(8, 'Doom II', '1994')], ['Dev 8'])?.game_id).toBe(8);
+    const destiny = game(6, [], { name: 'Destiny', firstReleaseDate: Date.UTC(2014, 8, 9) / 1000 });
+    expect(pickByTitle(destiny, [mg(10, 'Destiny: The Taken King - Legendary Edition', '2015')], ['Dev 10'])).toBeNull();
+    const ac = game(5, [], { name: "Assassin's Creed: Valhalla", firstReleaseDate: Date.UTC(2020, 10, 10) / 1000 });
+    expect(pickByTitle(ac, [mg(9, "Assassin's Creed", '2007')])).toBeNull();
   });
 });
 

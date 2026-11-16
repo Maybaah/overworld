@@ -2,7 +2,8 @@ import { createHash } from 'node:crypto';
 import path from 'node:path';
 import { createHttp, type Http } from '../http';
 import type { PipelineConfig } from '../config';
-import { STAGE_FILES, type RawIgdbGame, type RawMobyCompanyRole, type RawMobyGame } from '../raw';
+import { normalizeCompanyName, sameCompanyLoosely } from '../names';
+import { STAGE_FILES, type RawIgdbCompany, type RawIgdbGame, type RawMobyCompanyRole, type RawMobyGame } from '../raw';
 import { readJsonIfExists, writeJson } from '../stageio';
 
 const API = 'https://api.mobygames.com/v2/games';
@@ -12,6 +13,7 @@ const STEAM_BATCH = 5; // API rejects more than 5 Steam ids per request
 const TITLE_PAGES = 3;
 const PAGE_SIZE = 100;
 const YEAR_TOLERANCE = 1;
+const WIDE_YEAR_TOLERANCE = 2;
 export const MOBY_REPORT_FILE = 'mobygames-report.json';
 
 interface MobyCompany {
@@ -71,19 +73,65 @@ function igdbYear(game: RawIgdbGame): number | null {
   return game.firstReleaseDate === null ? null : new Date(game.firstReleaseDate * 1000).getUTCFullYear();
 }
 
-export function pickByTitle(game: RawIgdbGame, candidates: MobyApiGame[]): MobyApiGame | null {
-  const wanted = normalizeTitle(game.name);
-  const same = candidates.filter((c) => normalizeTitle(c.title) === wanted);
-  if (same.length === 0) return null;
-  const year = igdbYear(game);
-  if (year === null) return same.length === 1 ? same[0]! : null;
-  const scored = same
-    .map((c) => ({ c, d: Math.abs((mobyFirstYear(c) ?? Infinity) - year) }))
-    .filter((s) => s.d <= YEAR_TOLERANCE)
-    .sort((a, b) => a.d - b.d);
+function mainTitle(title: string): string {
+  return normalizeTitle(title.split(/:| - /)[0] ?? title);
+}
+
+function firstDate(game: MobyApiGame): string {
+  return (game.platforms ?? []).map((p) => p.release_date ?? '9999').sort()[0] ?? '9999';
+}
+
+const NOT_THE_GAME = /\b(edition|collection|bundle|pack|anthology|trilogy|season pass|expansion|dlc|soundtrack|demo)\b/i;
+
+export function sharedCompanies(game: MobyApiGame, igdbNames: string[]): number {
+  const moby = [...(game.developers ?? []), ...(game.publishers ?? [])].map((c) => c.name);
+  return new Set(
+    moby.filter((m) => igdbNames.some((n) => normalizeCompanyName(n) === normalizeCompanyName(m) || sameCompanyLoosely(n, m))),
+  ).size;
+}
+
+function closest(
+  year: number,
+  pool: MobyApiGame[],
+  tolerance: number,
+  breakTies: boolean,
+  igdbNames: string[],
+): MobyApiGame | null {
+  const scored = pool
+    .map((c) => ({ c, d: Math.abs((mobyFirstYear(c) ?? Infinity) - year), shared: sharedCompanies(c, igdbNames) }))
+    .filter((s) => s.d <= tolerance)
+    .sort(
+      (a, b) =>
+        a.d - b.d ||
+        b.shared - a.shared ||
+        (b.c.platforms?.length ?? 0) - (a.c.platforms?.length ?? 0) ||
+        firstDate(a.c).localeCompare(firstDate(b.c)) ||
+        a.c.game_id - b.c.game_id,
+    );
   if (scored.length === 0) return null;
-  if (scored.length > 1 && scored[0]!.d === scored[1]!.d) return null;
-  return scored[0]!.c;
+  const best = scored[0]!;
+  if (!breakTies && scored.length > 1 && best.d === scored[1]!.d) return null;
+  if (best.d > YEAR_TOLERANCE && best.shared === 0) return null;
+  return best.c;
+}
+
+export function pickByTitle(game: RawIgdbGame, candidates: MobyApiGame[], igdbNames: string[] = []): MobyApiGame | null {
+  const wanted = normalizeTitle(game.name);
+  const year = igdbYear(game);
+  const same = candidates.filter((c) => normalizeTitle(c.title) === wanted);
+  if (same.length > 0) {
+    if (year === null) return same.length === 1 ? same[0]! : null;
+    return closest(year, same, same.length === 1 ? WIDE_YEAR_TOLERANCE : YEAR_TOLERANCE, true, igdbNames);
+  }
+  if (year === null) return null;
+  const wantedMain = mainTitle(game.name);
+  const near = candidates.filter((c) => {
+    const t = normalizeTitle(c.title);
+    if (NOT_THE_GAME.test(c.title)) return false;
+    return (wantedMain !== wanted && t === wantedMain) || (mainTitle(c.title) !== t && mainTitle(c.title) === wanted);
+  });
+  const hit = closest(year, near, YEAR_TOLERANCE, false, igdbNames);
+  return hit && sharedCompanies(hit, igdbNames) > 0 ? hit : null;
 }
 
 export function toRoles(game: MobyApiGame): RawMobyCompanyRole[] {
@@ -137,6 +185,11 @@ export async function runMobygamesStage(
   }
   const igdbGames = await readJsonIfExists<RawIgdbGame[]>(path.join(config.stageDir, STAGE_FILES.igdbGames));
   if (!igdbGames) throw new Error('mobygames: igdb stage file missing, run the igdb stage first');
+  const igdbCompanies =
+    (await readJsonIfExists<RawIgdbCompany[]>(path.join(config.stageDir, STAGE_FILES.igdbCompanies))) ?? [];
+  const companyName = new Map(igdbCompanies.map((c) => [c.id, c.name]));
+  const namesOf = (g: RawIgdbGame) =>
+    [...new Set(g.involvedCompanies.map((r) => companyName.get(r.company)).filter((n): n is string => !!n))];
   const games = [...igdbGames]
     .sort((a, b) => b.totalRatingCount - a.totalRatingCount || a.id - b.id)
     .slice(0, config.gameLimit);
@@ -209,7 +262,7 @@ export async function runMobygamesStage(
     const results = await query(params);
     const claimed = new Set<number>();
     for (const g of batch) {
-      const hit = pickByTitle(g, results);
+      const hit = pickByTitle(g, results, namesOf(g));
       if (hit) {
         matches.set(g.id, { moby: hit, basis: 'steam_batch' });
         claimed.add(hit.game_id);
@@ -243,13 +296,13 @@ export async function runMobygamesStage(
         ['limit', String(PAGE_SIZE)],
         ['offset', String(page * PAGE_SIZE)],
       ]);
-      hit = pickByTitle(g, results);
+      hit = pickByTitle(g, results, namesOf(g));
       if (results.length < PAGE_SIZE) break;
     }
     if (hit) matches.set(g.id, { moby: hit, basis: 'title' });
     else {
       const fuzzy = await query([['title', title], ['fuzzy', 'true'], ['limit', '10']]);
-      const f = pickByTitle(g, fuzzy);
+      const f = pickByTitle(g, fuzzy, namesOf(g));
       if (f) matches.set(g.id, { moby: f, basis: 'title_fuzzy' });
     }
     progress(i + 1, rest.length, 'single');
