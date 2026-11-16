@@ -4,16 +4,20 @@ A 3D globe that shows where video games were made.
 
 Every game sits at its lead developer studio. Open a game and arcs go out to every other company that worked on it, colored by role: co-development, port, publisher, localization, QA, outsourced art and audio. A game made by several studios in several countries is the main thing the globe is built to show.
 
-![The Witcher 3 on the globe, with arcs to its publishers and port studio](docs/screenshots/real-f-game-arcs.png)
+The globe is a satellite map with country and city names. Each place shows the cover of the most popular game made there, and the covers change as you move the year slider.
+
+![Europe at city level: satellite map with city names and game covers](docs/screenshots/real-c-orbit-city-europe.png)
+
+![A game opened: its cover at the lead studio and arcs to every company that worked on it](docs/screenshots/real-f-game-arcs.png)
 
 ## What it does
 
-- **Explore** – studio points grouped by country, city and studio as you zoom; search; a card per game with every company, its role and a link to the source record; a year slider from 1970 to now.
-- **Guess** – a picture from a game, you click the globe where you think it was made, score by distance, five rounds.
-- **My globe** – enter a public Steam profile and see where your library comes from.
+- **Explore** – places grouped by country, city and studio as you zoom, each shown by a game cover; search; a card per game with every company, its role and a link to the source record; a year slider from 1970 to now.
+- **My globe** – enter a public Steam profile (or try a sample library) and see where your games come from, e.g. "42% of your games come from the United States".
 - **Insights** – games per capita by country, genres by region, indie and major-publisher output over time, and where outside work flows between countries.
+- **Sharing** – a share button with a card image; every game has its own link-preview page.
 
-Status: the data pipeline and the Explore mode are complete and tested. Guess and My globe are built; Insights and share cards are in progress. See [PROGRESS.md](PROGRESS.md) for the current state and the decisions behind it.
+Status: the data pipeline, Explore, My globe, Insights and sharing are built, tested and reviewed in a real browser. A guess-the-location game is built but not released yet (it opens only with `?mode=guess`). Localization, QA and art/audio links are nearly empty until a source that records them is added. See [PROGRESS.md](PROGRESS.md) for the current state and the decisions behind it, and `reports/` for the validation, review and performance reports.
 
 ## How the data is made
 
@@ -108,6 +112,7 @@ docs/                API research notes and screenshots
 - Headquarters, coordinates and population: [Wikidata](https://www.wikidata.org), CC0.
 - City names and coordinates for corrections: [GeoNames](https://www.geonames.org), CC BY 4.0, through the `all-the-cities` package.
 - Country shapes: [Natural Earth](https://www.naturalearthdata.com) through `world-atlas`.
+- Satellite imagery: Sentinel-2 cloudless – <https://s2maps.eu> by EOX IT Services GmbH (Contains modified Copernicus Sentinel data 2016 & 2017), CC BY 4.0.
 - Game library data in My globe: Steam Web API. Overworld is not affiliated with Valve or Steam.
 
 Overworld is not affiliated with or endorsed by IGDB, Twitch, Wikidata, MobyGames, Valve or any game company. Game titles and artwork belong to their owners.
