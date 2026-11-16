@@ -161,7 +161,7 @@ describe('runMobygamesStage', () => {
     ];
     const api = fakeApi((p) => {
       const steam = p.getAll('steam_app_id');
-      if (steam.length > 1 || (steam.length === 1 && p.get('limit'))) return [mg(73001, 'The Witcher 3: Wild Hunt', '2015-05-18'), mg(9, 'Moby Name', '2012')];
+      if (steam.length > 1) return [mg(73001, 'The Witcher 3: Wild Hunt', '2015-05-18'), mg(9, 'Moby Name', '2012'), mg(10, 'Other', '2012')];
       if (steam[0] === '111') return [mg(9, 'Moby Name', '2012')];
       if (p.get('title') === 'Console Only') return [mg(20, 'Console Only', '2018-01-30'), mg(21, 'Console Only 2', '2019')];
       return [];
@@ -177,6 +177,30 @@ describe('runMobygamesStage', () => {
       expect(p.get('include')).toContain('developers');
     }
     expect(api.calls.some((p) => p.get('fuzzy') === 'true' && p.get('title') === 'Nowhere')).toBe(true);
+  });
+
+  it('sends at most 5 Steam ids per request and pairs a lone leftover result', async () => {
+    const games = [
+      game(1, [], { name: 'Many Ids', totalRatingCount: 9, steamAppIds: [1, 2, 3, 4, 5, 6, 7] }),
+      game(2, [], { name: 'Two Ids', totalRatingCount: 8, steamAppIds: [8, 9, 11, 12, 13] }),
+      game(3, [], { name: 'Not On Moby Steam', totalRatingCount: 7, steamAppIds: [10] }),
+    ];
+    const api = fakeApi((p) => {
+      const steam = p.getAll('steam_app_id');
+      if (steam.includes('1')) return [mg(50, 'Many Ids', '2010')];
+      if (steam.includes('8')) return [mg(60, 'Renamed', '2010')];
+      return [];
+    });
+    const { out, report } = await run(games, api);
+    expect(api.calls.every((p) => p.getAll('steam_app_id').length <= 5)).toBe(true);
+    expect(out.map((g) => [g.igdbGameId, g.mobyGameId])).toEqual([[1, 50], [2, 60]]);
+    expect(report.byBasis.steam_batch).toBe(2);
+    expect(api.calls.filter((p) => p.getAll('steam_app_id').length === 1 && p.get('steam_app_id') === '10')).toHaveLength(1);
+  });
+
+  it('fails loudly on 422 instead of caching an empty answer', async () => {
+    const err = await run([game(1, [], { name: 'A' })], fakeApi(() => 422)).catch((e: Error) => e);
+    expect((err as Error).message).toContain('422');
   });
 
   it('serves repeat runs from the cache without network', async () => {

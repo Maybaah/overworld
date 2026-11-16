@@ -8,7 +8,7 @@ import { readJsonIfExists, writeJson } from '../stageio';
 const API = 'https://api.mobygames.com/v2/games';
 const INCLUDE = 'game_id,title,moby_url,platforms,developers,publishers';
 const MIN_INTERVAL_MS = 5_200;
-const STEAM_BATCH = 100;
+const STEAM_BATCH = 5; // API rejects more than 5 Steam ids per request
 const TITLE_PAGES = 3;
 const PAGE_SIZE = 100;
 const YEAR_TOLERANCE = 1;
@@ -171,7 +171,7 @@ export async function runMobygamesStage(
     let body: { games?: MobyApiGame[] } = {};
     if (res.ok) {
       body = JSON.parse(text) as { games?: MobyApiGame[] };
-    } else if (res.status !== 404 && res.status !== 422) {
+    } else if (res.status !== 404) {
       throw new Error(`MobyGames request failed: HTTP ${res.status} ${text.slice(0, 200)}`);
     }
     const out = body.games ?? [];
@@ -187,35 +187,48 @@ export async function runMobygamesStage(
     log(`mobygames ${phase}: ${done}/${total}, matched ${matches.size}, requests ${requests}, cached ${cached}, ${mins} min`);
   };
 
+  const steamIds = (g: RawIgdbGame) => g.steamAppIds.slice(0, STEAM_BATCH);
   const withSteam = games.filter((g) => g.steamAppIds.length > 0);
   const batches: RawIgdbGame[][] = [];
   let current: RawIgdbGame[] = [];
   let ids = 0;
   for (const g of withSteam) {
-    if (ids + g.steamAppIds.length > STEAM_BATCH && current.length) {
+    if (ids + steamIds(g).length > STEAM_BATCH && current.length) {
       batches.push(current);
       current = [];
       ids = 0;
     }
     current.push(g);
-    ids += g.steamAppIds.length;
+    ids += steamIds(g).length;
   }
   if (current.length) batches.push(current);
 
+  const steamSettled = new Set<number>();
   for (const [i, batch] of batches.entries()) {
-    const params: [string, string][] = batch.flatMap((g) => g.steamAppIds.map((s): [string, string] => ['steam_app_id', String(s)]));
-    const results = await query([...params, ['limit', String(PAGE_SIZE)]]);
+    const params = batch.flatMap((g) => steamIds(g).map((s): [string, string] => ['steam_app_id', String(s)]));
+    const results = await query(params);
+    const claimed = new Set<number>();
     for (const g of batch) {
       const hit = pickByTitle(g, results);
-      if (hit) matches.set(g.id, { moby: hit, basis: 'steam_batch' });
+      if (hit) {
+        matches.set(g.id, { moby: hit, basis: 'steam_batch' });
+        claimed.add(hit.game_id);
+      }
     }
-    log(`mobygames steam batches: ${i + 1}/${batches.length}, matched ${matches.size}`);
+    const open = batch.filter((g) => !matches.has(g.id));
+    const unclaimed = results.filter((r) => !claimed.has(r.game_id));
+    if (open.length === 1 && unclaimed.length === 1) {
+      matches.set(open[0]!.id, { moby: unclaimed[0]!, basis: 'steam_batch' });
+    } else if (unclaimed.length === 0) {
+      for (const g of open) steamSettled.add(g.id);
+    }
+    progress(i + 1, batches.length, 'steam batches');
   }
 
   const rest = games.filter((g) => !matches.has(g.id));
   for (const [i, g] of rest.entries()) {
-    if (g.steamAppIds.length > 0) {
-      const results = await query(g.steamAppIds.map((s): [string, string] => ['steam_app_id', String(s)]));
+    if (g.steamAppIds.length > 0 && !steamSettled.has(g.id)) {
+      const results = await query(steamIds(g).map((s): [string, string] => ['steam_app_id', String(s)]));
       if (results.length === 1) {
         matches.set(g.id, { moby: results[0]!, basis: 'steam_single' });
         progress(i + 1, rest.length, 'single');
