@@ -172,9 +172,11 @@
     }
   ],
   "leadBasisCounts": {
+    "curated": 11,
+    "igdb_developer_heuristic": 98,
     "igdb_single_developer": 8642,
     "igdb_developer_confirmed_by_wikidata": 929,
-    "igdb_first_developer": 358,
+    "igdb_first_developer": 249,
     "wikidata_developer": 37,
     "mobygames_developer": 0
   },
@@ -184,9 +186,9 @@
     "name": 540
   },
   "companiesByPrecision": {
-    "city": 2261,
-    "country": 2645,
-    "none": 1335
+    "city": 2289,
+    "country": 2592,
+    "none": 1360
   },
   "rejectedWikidataMatches": [
     {
@@ -194,98 +196,112 @@
       "name": "Certain Affinity",
       "wikidataQid": "Q5065045",
       "wikidataCountry": "US",
-      "igdbCountry": "CA"
+      "igdbCountry": "CA",
+      "wikidataCity": "Austin"
     },
     {
       "companyId": 1027,
       "name": "Distinctive Software, Inc.",
       "wikidataQid": "Q907331",
       "wikidataCountry": "CA",
-      "igdbCountry": "GB"
+      "igdbCountry": "GB",
+      "wikidataCity": "Vancouver"
     },
     {
       "companyId": 1567,
       "name": "Midas Interactive Entertainment",
       "wikidataQid": "Q6841107",
       "wikidataCountry": "GB",
-      "igdbCountry": "NL"
+      "igdbCountry": "NL",
+      "wikidataCity": null
     },
     {
       "companyId": 1929,
       "name": "Play It",
       "wikidataQid": "Q11819507",
       "wikidataCountry": "PL",
-      "igdbCountry": "GB"
+      "igdbCountry": "GB",
+      "wikidataCity": "Bielsko-Biała"
     },
     {
       "companyId": 2579,
       "name": "Hip Interactive",
       "wikidataQid": "Q3135798",
       "wikidataCountry": "CA",
-      "igdbCountry": "US"
+      "igdbCountry": "US",
+      "wikidataCity": "Mississauga"
     },
     {
       "companyId": 2814,
       "name": "Human Soft",
       "wikidataQid": "Q3143111",
       "wikidataCountry": "US",
-      "igdbCountry": "HU"
+      "igdbCountry": "HU",
+      "wikidataCity": "San Diego"
     },
     {
       "companyId": 3634,
       "name": "Sperasoft",
       "wikidataQid": "Q65133729",
       "wikidataCountry": "RU",
-      "igdbCountry": "US"
+      "igdbCountry": "US",
+      "wikidataCity": null
     },
     {
       "companyId": 3727,
       "name": "Aeria Games",
       "wikidataQid": "Q2700879",
       "wikidataCountry": "DE",
-      "igdbCountry": "GB"
+      "igdbCountry": "GB",
+      "wikidataCity": "Berlin"
     },
     {
       "companyId": 6485,
       "name": "DWANGO",
       "wikidataQid": "Q1045458",
       "wikidataCountry": "US",
-      "igdbCountry": "JP"
+      "igdbCountry": "JP",
+      "wikidataCity": null
     },
     {
       "companyId": 7486,
       "name": "Game Factory Interactive",
       "wikidataQid": "Q4039243",
       "wikidataCountry": "CY",
-      "igdbCountry": "RU"
+      "igdbCountry": "RU",
+      "wikidataCity": "Nicosia"
     },
     {
       "companyId": 10689,
       "name": "HeroCraft",
       "wikidataQid": "Q1573432",
       "wikidataCountry": "CY",
-      "igdbCountry": "RU"
+      "igdbCountry": "RU",
+      "wikidataCity": "Nicosia"
     },
     {
       "companyId": 12965,
       "name": "Emerald Software",
       "wikidataQid": "Q10967334",
       "wikidataCountry": "IE",
-      "igdbCountry": "GB"
+      "igdbCountry": "GB",
+      "wikidataCity": "Waterford"
     },
     {
       "companyId": 23686,
       "name": "Novotrade International",
       "wikidataQid": "Q262292",
       "wikidataCountry": "US",
-      "igdbCountry": "HU"
+      "igdbCountry": "HU",
+      "wikidataCity": "Palo Alto"
     },
     {
       "companyId": 72025,
       "name": "Hibernum Créations",
       "wikidataQid": "Q52084103",
       "wikidataCountry": "CA",
-      "igdbCountry": "US"
+      "igdbCountry": "US",
+      "wikidataCity": "Montreal"
     }
   ],
   "countryMismatches": [
@@ -294,343 +310,280 @@
       "name": "The Creative Assembly",
       "wikidataQid": "Q611508",
       "wikidataCountry": "AU",
-      "igdbCountry": "GB"
+      "igdbCountry": "GB",
+      "wikidataCity": "Horsham"
     },
     {
       "companyId": 144,
       "name": "GSC Game World",
       "wikidataQid": "Q1425861",
       "wikidataCountry": "UA",
-      "igdbCountry": "CZ"
+      "igdbCountry": "CZ",
+      "wikidataCity": "Kyiv"
     },
     {
       "companyId": 213,
       "name": "Infogrames",
       "wikidataQid": "Q527336",
       "wikidataCountry": "US",
-      "igdbCountry": "FR"
+      "igdbCountry": "FR",
+      "wikidataCity": "New York City"
     },
     {
       "companyId": 260,
       "name": "Argonaut Games",
       "wikidataQid": "Q256907",
       "wikidataCountry": "GB",
-      "igdbCountry": "US"
-    },
-    {
-      "companyId": 268,
-      "name": "Global Star Software",
-      "wikidataQid": "Q97061185",
-      "wikidataCountry": "US",
-      "igdbCountry": "CA"
+      "igdbCountry": "US",
+      "wikidataCity": "London"
     },
     {
       "companyId": 269,
       "name": "Enlight Software Limited",
       "wikidataQid": "Q2023846",
       "wikidataCountry": "CN",
-      "igdbCountry": "GB"
+      "igdbCountry": "GB",
+      "wikidataCity": "Hong Kong"
     },
     {
       "companyId": 314,
       "name": "4A Games",
       "wikidataQid": "Q2077224",
       "wikidataCountry": "MT",
-      "igdbCountry": "UA"
+      "igdbCountry": "UA",
+      "wikidataCity": "Sliema"
     },
     {
       "companyId": 423,
       "name": "Deep Silver",
       "wikidataQid": "Q1420772",
       "wikidataCountry": "DE",
-      "igdbCountry": "AT"
+      "igdbCountry": "AT",
+      "wikidataCity": "Hamburg"
     },
     {
       "companyId": 489,
       "name": "Mindscape",
       "wikidataQid": "Q1570468",
       "wikidataCountry": "US",
-      "igdbCountry": "NL"
+      "igdbCountry": "NL",
+      "wikidataCity": "Novato"
     },
     {
       "companyId": 575,
       "name": "Impressions Games",
       "wikidataQid": "Q2299192",
       "wikidataCountry": "US",
-      "igdbCountry": "GB"
+      "igdbCountry": "GB",
+      "wikidataCity": "Cambridge"
     },
     {
       "companyId": 710,
       "name": "Mastiff",
       "wikidataQid": "Q6785541",
       "wikidataCountry": "JP",
-      "igdbCountry": "US"
+      "igdbCountry": "US",
+      "wikidataCity": "Tokyo"
     },
     {
       "companyId": 716,
       "name": "Natsume Inc.",
       "wikidataQid": "Q3772556",
       "wikidataCountry": "JP",
-      "igdbCountry": "US"
-    },
-    {
-      "companyId": 755,
-      "name": "Namco Bandai Partners",
-      "wikidataQid": "Q6961447",
-      "wikidataCountry": "AU",
-      "igdbCountry": "JP"
+      "igdbCountry": "US",
+      "wikidataCity": "Shinjuku"
     },
     {
       "companyId": 805,
       "name": "Other Ocean Interactive",
       "wikidataQid": "Q31641433",
       "wikidataCountry": "US",
-      "igdbCountry": "CA"
+      "igdbCountry": "CA",
+      "wikidataCity": "Emeryville"
     },
     {
       "companyId": 811,
       "name": "Appaloosa Interactive",
       "wikidataQid": "Q262292",
       "wikidataCountry": "US",
-      "igdbCountry": "HU"
+      "igdbCountry": "HU",
+      "wikidataCity": "Palo Alto"
     },
     {
       "companyId": 873,
       "name": "Cloud Imperium Games Corporation",
       "wikidataQid": "Q16540469",
       "wikidataCountry": "US",
-      "igdbCountry": "GB"
+      "igdbCountry": "GB",
+      "wikidataCity": "Los Angeles"
     },
     {
       "companyId": 1285,
       "name": "King",
       "wikidataQid": "Q2680856",
       "wikidataCountry": "GB",
-      "igdbCountry": "SE"
+      "igdbCountry": "SE",
+      "wikidataCity": "London"
+    },
+    {
+      "companyId": 1295,
+      "name": "Point of View",
+      "wikidataQid": "Q3016309",
+      "wikidataCountry": "NL",
+      "igdbCountry": "US",
+      "wikidataCity": "Eindhoven"
     },
     {
       "companyId": 1702,
       "name": "ND Games",
       "wikidataQid": "Q5337654",
       "wikidataCountry": "US",
-      "igdbCountry": "RU"
+      "igdbCountry": "RU",
+      "wikidataCity": "Pasadena"
     },
     {
       "companyId": 2001,
       "name": "2K Play",
       "wikidataQid": "Q28225",
       "wikidataCountry": "US",
-      "igdbCountry": "CA"
+      "igdbCountry": "CA",
+      "wikidataCity": "Novato"
     },
     {
       "companyId": 2015,
       "name": "Whoopee Camp",
       "wikidataQid": "Q212076",
       "wikidataCountry": "US",
-      "igdbCountry": "JP"
+      "igdbCountry": "JP",
+      "wikidataCity": "Tulsa"
     },
     {
       "companyId": 2410,
       "name": "Frogwares",
       "wikidataQid": "Q2541023",
       "wikidataCountry": "IE",
-      "igdbCountry": "UA"
+      "igdbCountry": "UA",
+      "wikidataCity": "Dublin"
     },
     {
       "companyId": 2473,
       "name": "Pathea Games",
       "wikidataQid": "Q64014139",
       "wikidataCountry": "CN",
-      "igdbCountry": "US"
-    },
-    {
-      "companyId": 2671,
-      "name": "Cenega Publishing",
-      "wikidataQid": "Q11689554",
-      "wikidataCountry": "PL",
-      "igdbCountry": "CZ"
+      "igdbCountry": "US",
+      "wikidataCity": "Chongqing"
     },
     {
       "companyId": 3098,
       "name": "Gamania",
       "wikidataQid": "Q697493",
       "wikidataCountry": "JP",
-      "igdbCountry": "TW"
+      "igdbCountry": "TW",
+      "wikidataCity": "Minato"
     },
     {
       "companyId": 3491,
       "name": "GOG.com",
       "wikidataQid": "Q1486288",
       "wikidataCountry": "CY",
-      "igdbCountry": "PL"
+      "igdbCountry": "PL",
+      "wikidataCity": "Larnaca"
     },
     {
       "companyId": 4796,
       "name": "Studio MDHR",
       "wikidataQid": "Q105450826",
       "wikidataCountry": "CA",
-      "igdbCountry": "US"
-    },
-    {
-      "companyId": 6032,
-      "name": "Amazing Seasun Game",
-      "wikidataQid": "Q17066954",
-      "wikidataCountry": "CN",
-      "igdbCountry": "US"
-    },
-    {
-      "companyId": 6379,
-      "name": "CIRCLE Entertainment",
-      "wikidataQid": "Q72368711",
-      "wikidataCountry": "CN",
-      "igdbCountry": "HK"
-    },
-    {
-      "companyId": 7299,
-      "name": "Ink Stains Games",
-      "wikidataQid": "Q130393972",
-      "wikidataCountry": "GB",
-      "igdbCountry": "RU"
+      "igdbCountry": "US",
+      "wikidataCity": "Oakville"
     },
     {
       "companyId": 7795,
       "name": "Battlestate Games",
       "wikidataQid": "Q59198303",
       "wikidataCountry": "RU",
-      "igdbCountry": "GB"
+      "igdbCountry": "GB",
+      "wikidataCity": "Saint Petersburg"
     },
     {
       "companyId": 7914,
       "name": "Lazy Bear Games",
       "wikidataQid": "Q23759377",
       "wikidataCountry": "RU",
-      "igdbCountry": "LT"
-    },
-    {
-      "companyId": 9043,
-      "name": "Ravenscourt",
-      "wikidataQid": "Q109928766",
-      "wikidataCountry": "AT",
-      "igdbCountry": "DE"
-    },
-    {
-      "companyId": 10322,
-      "name": "Guard Crush Games",
-      "wikidataQid": "Q97301884",
-      "wikidataCountry": "CA",
-      "igdbCountry": "FR"
-    },
-    {
-      "companyId": 10364,
-      "name": "Awaceb",
-      "wikidataQid": "Q32060794",
-      "wikidataCountry": "FR",
-      "igdbCountry": "NC"
+      "igdbCountry": "LT",
+      "wikidataCity": "Saint Petersburg"
     },
     {
       "companyId": 10999,
       "name": "Commodore Business Machines, Inc.",
       "wikidataQid": "Q208305",
       "wikidataCountry": "US",
-      "igdbCountry": "CA"
+      "igdbCountry": "CA",
+      "wikidataCity": "West Chester"
     },
     {
       "companyId": 11665,
       "name": "Softnyx",
       "wikidataQid": "Q2747690",
       "wikidataCountry": "KR",
-      "igdbCountry": "KP"
-    },
-    {
-      "companyId": 12485,
-      "name": "AtomTeam",
-      "wikidataQid": "Q61959692",
-      "wikidataCountry": "LV",
-      "igdbCountry": "RU"
+      "igdbCountry": "KP",
+      "wikidataCity": "Geumcheon District"
     },
     {
       "companyId": 13469,
       "name": "Nekki",
       "wikidataQid": "Q106435531",
       "wikidataCountry": "CY",
-      "igdbCountry": "DE"
-    },
-    {
-      "companyId": 14266,
-      "name": "Mundfish",
-      "wikidataQid": "Q106070909",
-      "wikidataCountry": "RU",
-      "igdbCountry": "CY"
-    },
-    {
-      "companyId": 14753,
-      "name": "Dapper Penguin Studios",
-      "wikidataQid": "Q109444944",
-      "wikidataCountry": "US",
-      "igdbCountry": "ES"
+      "igdbCountry": "DE",
+      "wikidataCity": "Limassol"
     },
     {
       "companyId": 15683,
       "name": "Toplitz Productions",
       "wikidataQid": "Q104601232",
       "wikidataCountry": "AT",
-      "igdbCountry": "DE"
+      "igdbCountry": "DE",
+      "wikidataCity": "Irdning"
     },
     {
       "companyId": 16956,
       "name": "Arc System Works America",
       "wikidataQid": "Q2617855",
       "wikidataCountry": "JP",
-      "igdbCountry": "US"
-    },
-    {
-      "companyId": 18474,
-      "name": "1C Entertainment",
-      "wikidataQid": "Q60978211",
-      "wikidataCountry": "PL",
-      "igdbCountry": "CZ"
+      "igdbCountry": "US",
+      "wikidataCity": "Kōhoku-ku"
     },
     {
       "companyId": 19904,
       "name": "Blue Brain Games",
       "wikidataQid": "Q101213292",
       "wikidataCountry": "SK",
-      "igdbCountry": "CZ"
-    },
-    {
-      "companyId": 20460,
-      "name": "Outfit7",
-      "wikidataQid": "Q7112063",
-      "wikidataCountry": "SI",
-      "igdbCountry": "CY"
-    },
-    {
-      "companyId": 28530,
-      "name": "Recreate Games",
-      "wikidataQid": "Q122766590",
-      "wikidataCountry": "KR",
-      "igdbCountry": "CN"
+      "igdbCountry": "CZ",
+      "wikidataCity": "Bratislava"
     },
     {
       "companyId": 40242,
       "name": "Cognosphere",
       "wikidataQid": "Q28686397",
       "wikidataCountry": "CN",
-      "igdbCountry": "SG"
+      "igdbCountry": "SG",
+      "wikidataCity": "Shanghai"
     },
     {
       "companyId": 41399,
       "name": "NeoBards Entertainment",
       "wikidataQid": "Q114873956",
       "wikidataCountry": "CN",
-      "igdbCountry": "TW"
+      "igdbCountry": "TW",
+      "wikidataCity": "Hong Kong"
     },
     {
       "companyId": 42624,
       "name": "Odyssey Interactive",
       "wikidataQid": "Q123312606",
       "wikidataCountry": "CA",
-      "igdbCountry": "US"
+      "igdbCountry": "US",
+      "wikidataCity": "Waterloo"
     }
   ],
   "unmatchedSupportCompanies": [
@@ -1931,35 +1884,2323 @@
     }
   ],
   "unusedLocationCorrections": [],
-  "countryFromGames": 485,
-  "leadStudiosWithoutCity": [
+  "countryFromGames": 460,
+  "cityFromParent": [
+    {
+      "companyId": 93,
+      "name": "Square Enix 1st Production Department",
+      "parentId": 26,
+      "parentName": "Square Enix",
+      "city": "Tokyo"
+    },
+    {
+      "companyId": 335,
+      "name": "Square Product Development Division 3",
+      "parentId": 250,
+      "parentName": "Square",
+      "city": "Tokyo"
+    },
+    {
+      "companyId": 336,
+      "name": "Square Enix Product Development Division 3",
+      "parentId": 26,
+      "parentName": "Square Enix",
+      "city": "Tokyo"
+    },
+    {
+      "companyId": 337,
+      "name": "Square Enix Product Development Division 4",
+      "parentId": 26,
+      "parentName": "Square Enix",
+      "city": "Tokyo"
+    },
+    {
+      "companyId": 655,
+      "name": "Capcom Production Studio 3",
+      "parentId": 37,
+      "parentName": "Capcom",
+      "city": "Osaka"
+    },
     {
       "companyId": 660,
       "name": "Capcom Production Studio 1",
-      "precision": "country",
-      "country": "JP",
-      "ledGames": 17
+      "parentId": 37,
+      "parentName": "Capcom",
+      "city": "Osaka"
     },
+    {
+      "companyId": 663,
+      "name": "Capcom Production Studio 4",
+      "parentId": 37,
+      "parentName": "Capcom",
+      "city": "Osaka"
+    },
+    {
+      "companyId": 773,
+      "name": "Nintendo EAD Tokyo Software Development Group No.1",
+      "parentId": 421,
+      "parentName": "Nintendo Entertainment Analysis & Development",
+      "city": "Kyoto"
+    },
+    {
+      "companyId": 799,
+      "name": "Square Enix Product Development Division 1",
+      "parentId": 26,
+      "parentName": "Square Enix",
+      "city": "Tokyo"
+    },
+    {
+      "companyId": 801,
+      "name": "Square Enix Product Development Division 5",
+      "parentId": 26,
+      "parentName": "Square Enix",
+      "city": "Tokyo"
+    },
+    {
+      "companyId": 866,
+      "name": "Nintendo SPD Production Group No. 2",
+      "parentId": 2935,
+      "parentName": "Nintendo SPD",
+      "city": "Kyoto"
+    },
+    {
+      "companyId": 892,
+      "name": "Capcom Production Studio 2",
+      "parentId": 37,
+      "parentName": "Capcom",
+      "city": "Osaka"
+    },
+    {
+      "companyId": 1048,
+      "name": "Nintendo EAD Software Development Group No.4",
+      "parentId": 421,
+      "parentName": "Nintendo Entertainment Analysis & Development",
+      "city": "Kyoto"
+    },
+    {
+      "companyId": 1103,
+      "name": "Nintendo EAD Software Development Group No.1",
+      "parentId": 421,
+      "parentName": "Nintendo Entertainment Analysis & Development",
+      "city": "Kyoto"
+    },
+    {
+      "companyId": 1112,
+      "name": "Square Product Development Division 2",
+      "parentId": 250,
+      "parentName": "Square",
+      "city": "Tokyo"
+    },
+    {
+      "companyId": 1246,
+      "name": "Nintendo EAD Software Development Group No.2",
+      "parentId": 421,
+      "parentName": "Nintendo Entertainment Analysis & Development",
+      "city": "Kyoto"
+    },
+    {
+      "companyId": 1276,
+      "name": "Nintendo SPD Software Development Group",
+      "parentId": 2935,
+      "parentName": "Nintendo SPD",
+      "city": "Kyoto"
+    },
+    {
+      "companyId": 1366,
+      "name": "Nintendo EAD Software Development Group No.3",
+      "parentId": 421,
+      "parentName": "Nintendo Entertainment Analysis & Development",
+      "city": "Kyoto"
+    },
+    {
+      "companyId": 1977,
+      "name": "Nintendo SPD Production Group No. 4",
+      "parentId": 2935,
+      "parentName": "Nintendo SPD",
+      "city": "Kyoto"
+    },
+    {
+      "companyId": 2327,
+      "name": "Sega AM3",
+      "parentId": 112,
+      "parentName": "Sega",
+      "city": "Tokyo"
+    },
+    {
+      "companyId": 2342,
+      "name": "Nintendo EAD Software Development Group No.5",
+      "parentId": 421,
+      "parentName": "Nintendo Entertainment Analysis & Development",
+      "city": "Kyoto"
+    },
+    {
+      "companyId": 2674,
+      "name": "Nintendo SPD Production Group No. 1",
+      "parentId": 2935,
+      "parentName": "Nintendo SPD",
+      "city": "Kyoto"
+    },
+    {
+      "companyId": 2862,
+      "name": "Square Enix Product Development Division 8",
+      "parentId": 26,
+      "parentName": "Square Enix",
+      "city": "Tokyo"
+    },
+    {
+      "companyId": 4452,
+      "name": "Square Product Development Division 6",
+      "parentId": 250,
+      "parentName": "Square",
+      "city": "Tokyo"
+    },
+    {
+      "companyId": 5544,
+      "name": "Square Product Development Division 4",
+      "parentId": 250,
+      "parentName": "Square",
+      "city": "Tokyo"
+    },
+    {
+      "companyId": 10938,
+      "name": "Square Enix Product Development Division 2",
+      "parentId": 26,
+      "parentName": "Square Enix",
+      "city": "Tokyo"
+    },
+    {
+      "companyId": 19281,
+      "name": "Square Enix Business Division 3",
+      "parentId": 26,
+      "parentName": "Square Enix",
+      "city": "Tokyo"
+    },
+    {
+      "companyId": 22924,
+      "name": "Sega CS2 R&D",
+      "parentId": 112,
+      "parentName": "Sega",
+      "city": "Tokyo"
+    },
+    {
+      "companyId": 23018,
+      "name": "Square Enix Business Division 2",
+      "parentId": 26,
+      "parentName": "Square Enix",
+      "city": "Tokyo"
+    },
+    {
+      "companyId": 42265,
+      "name": "Capcom Development Division 1",
+      "parentId": 37,
+      "parentName": "Capcom",
+      "city": "Osaka"
+    },
+    {
+      "companyId": 42454,
+      "name": "Capcom Development Division 2",
+      "parentId": 37,
+      "parentName": "Capcom",
+      "city": "Osaka"
+    },
+    {
+      "companyId": 45209,
+      "name": "Nintendo EPD Production Group No. 3",
+      "parentId": 7902,
+      "parentName": "Nintendo Entertainment Planning & Development",
+      "city": "Kyoto"
+    },
+    {
+      "companyId": 45210,
+      "name": "Nintendo EPD Production Group No. 4",
+      "parentId": 7902,
+      "parentName": "Nintendo Entertainment Planning & Development",
+      "city": "Kyoto"
+    },
+    {
+      "companyId": 45211,
+      "name": "Nintendo EPD Production Group No. 5",
+      "parentId": 7902,
+      "parentName": "Nintendo Entertainment Planning & Development",
+      "city": "Kyoto"
+    },
+    {
+      "companyId": 45212,
+      "name": "Nintendo EPD Production Group No. 7",
+      "parentId": 7902,
+      "parentName": "Nintendo Entertainment Planning & Development",
+      "city": "Kyoto"
+    },
+    {
+      "companyId": 45213,
+      "name": "Nintendo EPD Production Group No. 8",
+      "parentId": 7902,
+      "parentName": "Nintendo Entertainment Planning & Development",
+      "city": "Kyoto"
+    },
+    {
+      "companyId": 45214,
+      "name": "Nintendo EPD Production Group No. 9",
+      "parentId": 7902,
+      "parentName": "Nintendo Entertainment Planning & Development",
+      "city": "Kyoto"
+    },
+    {
+      "companyId": 45215,
+      "name": "Nintendo EPD Production Group No. 10",
+      "parentId": 7902,
+      "parentName": "Nintendo Entertainment Planning & Development",
+      "city": "Kyoto"
+    },
+    {
+      "companyId": 52267,
+      "name": "Square Enix Business Division 5",
+      "parentId": 26,
+      "parentName": "Square Enix",
+      "city": "Tokyo"
+    },
+    {
+      "companyId": 52915,
+      "name": "Square Enix Business Division 1",
+      "parentId": 26,
+      "parentName": "Square Enix",
+      "city": "Tokyo"
+    },
+    {
+      "companyId": 52931,
+      "name": "Square Enix Business Division 8",
+      "parentId": 26,
+      "parentName": "Square Enix",
+      "city": "Tokyo"
+    },
+    {
+      "companyId": 52934,
+      "name": "Square Enix Business Division 4",
+      "parentId": 26,
+      "parentName": "Square Enix",
+      "city": "Tokyo"
+    },
+    {
+      "companyId": 52975,
+      "name": "Square Product Development Division 1",
+      "parentId": 250,
+      "parentName": "Square",
+      "city": "Tokyo"
+    },
+    {
+      "companyId": 53010,
+      "name": "Square Product Development Division 5",
+      "parentId": 250,
+      "parentName": "Square",
+      "city": "Tokyo"
+    },
+    {
+      "companyId": 53015,
+      "name": "Square Enix Product Development Division 7",
+      "parentId": 26,
+      "parentName": "Square Enix",
+      "city": "Tokyo"
+    },
+    {
+      "companyId": 53029,
+      "name": "Square Enix Product Development Division 9",
+      "parentId": 26,
+      "parentName": "Square Enix",
+      "city": "Tokyo"
+    },
+    {
+      "companyId": 53031,
+      "name": "Square Enix Business Division 6",
+      "parentId": 26,
+      "parentName": "Square Enix",
+      "city": "Tokyo"
+    },
+    {
+      "companyId": 53032,
+      "name": "Square Enix Product Development Division 10",
+      "parentId": 26,
+      "parentName": "Square Enix",
+      "city": "Tokyo"
+    },
+    {
+      "companyId": 53042,
+      "name": "Square Enix Business Division 9",
+      "parentId": 26,
+      "parentName": "Square Enix",
+      "city": "Tokyo"
+    },
+    {
+      "companyId": 53134,
+      "name": "Square Enix Business Division 11",
+      "parentId": 26,
+      "parentName": "Square Enix",
+      "city": "Tokyo"
+    },
+    {
+      "companyId": 53150,
+      "name": "Square Osaka Development Department",
+      "parentId": 250,
+      "parentName": "Square",
+      "city": "Tokyo"
+    },
+    {
+      "companyId": 65520,
+      "name": "Nintendo EPD Production Group No. 6",
+      "parentId": 7902,
+      "parentName": "Nintendo Entertainment Planning & Development",
+      "city": "Kyoto"
+    },
+    {
+      "companyId": 73545,
+      "name": "Nintendo EPD Co-Production Group",
+      "parentId": 7902,
+      "parentName": "Nintendo Entertainment Planning & Development",
+      "city": "Kyoto"
+    }
+  ],
+  "unusedLeadOverrides": [],
+  "lowConfidenceLeads": [
+    {
+      "gameId": 11208,
+      "name": "NieR:Automata",
+      "companyId": 852,
+      "company": "PlatinumGames",
+      "others": [
+        {
+          "companyId": 53031,
+          "name": "Square Enix Business Division 6"
+        }
+      ]
+    },
+    {
+      "gameId": 359,
+      "name": "Final Fantasy XV",
+      "companyId": 23018,
+      "company": "Square Enix Business Division 2",
+      "others": [
+        {
+          "companyId": 37969,
+          "name": "Luminous Productions"
+        }
+      ]
+    },
+    {
+      "gameId": 306,
+      "name": "Far Cry",
+      "companyId": 122,
+      "company": "Crytek Frankfurt",
+      "others": [
+        {
+          "companyId": 249,
+          "name": "Crytek"
+        }
+      ]
+    },
+    {
+      "gameId": 11397,
+      "name": "Yakuza 0",
+      "companyId": 19080,
+      "company": "Ryu Ga Gotoku Studio",
+      "others": [
+        {
+          "companyId": 15878,
+          "name": "Sega Games"
+        }
+      ]
+    },
+    {
+      "gameId": 2180,
+      "name": "Super Mario 3D World",
+      "companyId": 421,
+      "company": "Nintendo Entertainment Analysis & Development",
+      "others": [
+        {
+          "companyId": 70,
+          "name": "Nintendo"
+        }
+      ]
+    },
+    {
+      "gameId": 482,
+      "name": "Silent Hill 3",
+      "companyId": 10446,
+      "company": "Team Silent",
+      "others": [
+        {
+          "companyId": 159,
+          "name": "Konami Computer Entertainment Tokyo"
+        }
+      ]
+    },
+    {
+      "gameId": 3812,
+      "name": "Ryse: Son of Rome",
+      "companyId": 122,
+      "company": "Crytek Frankfurt",
+      "others": [
+        {
+          "companyId": 249,
+          "name": "Crytek"
+        }
+      ]
+    },
+    {
+      "gameId": 2349,
+      "name": "Mario Kart 7",
+      "companyId": 1103,
+      "company": "Nintendo EAD Software Development Group No.1",
+      "others": [
+        {
+          "companyId": 70,
+          "name": "Nintendo"
+        }
+      ]
+    },
+    {
+      "gameId": 386,
+      "name": "Final Fantasy XIV Online",
+      "companyId": 336,
+      "company": "Square Enix Product Development Division 3",
+      "others": [
+        {
+          "companyId": 52267,
+          "name": "Square Enix Business Division 5"
+        },
+        {
+          "companyId": 38128,
+          "name": "Square Enix Creative Business Unit III"
+        },
+        {
+          "companyId": 54647,
+          "name": "Square Enix Creative Studio 3"
+        }
+      ]
+    },
+    {
+      "gameId": 7339,
+      "name": "Super Mario Maker",
+      "companyId": 1048,
+      "company": "Nintendo EAD Software Development Group No.4",
+      "others": [
+        {
+          "companyId": 70,
+          "name": "Nintendo"
+        }
+      ]
+    },
+    {
+      "gameId": 9621,
+      "name": "Super Smash Bros. for Nintendo 3DS",
+      "companyId": 3958,
+      "company": "Bandai Namco Games",
+      "others": [
+        {
+          "companyId": 876,
+          "name": "Sora"
+        }
+      ]
+    },
+    {
+      "gameId": 28168,
+      "name": "Code Vein",
+      "companyId": 2216,
+      "company": "Shift",
+      "others": [
+        {
+          "companyId": 22721,
+          "name": "Bandai Namco Studios"
+        }
+      ]
+    },
+    {
+      "gameId": 1653,
+      "name": "Streets of Rage 2",
+      "companyId": 1568,
+      "company": "Ancient",
+      "others": [
+        {
+          "companyId": 23611,
+          "name": "MNM Software"
+        },
+        {
+          "companyId": 21727,
+          "name": "Shout! Designworks"
+        },
+        {
+          "companyId": 2201,
+          "name": "H.I.C."
+        }
+      ]
+    },
+    {
+      "gameId": 3195,
+      "name": "Assassin's Creed III: Liberation",
+      "companyId": 840,
+      "company": "Ubisoft Sofia",
+      "others": [
+        {
+          "companyId": 899,
+          "name": "Ubisoft Milan"
+        }
+      ]
+    },
+    {
+      "gameId": 8118,
+      "name": "Disney's Aladdin",
+      "companyId": 1238,
+      "company": "Virgin Games USA",
+      "others": [
+        {
+          "companyId": 141,
+          "name": "Virgin Interactive Entertainment (Europe) Ltd."
+        }
+      ]
+    },
+    {
+      "gameId": 103339,
+      "name": "Super Mario Party",
+      "companyId": 1100,
+      "company": "NDCube",
+      "others": [
+        {
+          "companyId": 70,
+          "name": "Nintendo"
+        }
+      ]
+    },
+    {
+      "gameId": 662,
+      "name": "Dawn of Discovery",
+      "companyId": 647,
+      "company": "Related Designs",
+      "others": [
+        {
+          "companyId": 7923,
+          "name": "Blue Byte"
+        }
+      ]
+    },
+    {
+      "gameId": 2482,
+      "name": "The Godfather",
+      "companyId": 598,
+      "company": "Headgate Studios",
+      "others": [
+        {
+          "companyId": 1268,
+          "name": "Page 44 Studios"
+        }
+      ]
+    },
+    {
+      "gameId": 7337,
+      "name": "Captain Toad: Treasure Tracker",
+      "companyId": 1246,
+      "company": "Nintendo EAD Software Development Group No.2",
+      "others": [
+        {
+          "companyId": 70,
+          "name": "Nintendo"
+        }
+      ]
+    },
+    {
+      "gameId": 20744,
+      "name": "Ōkami HD",
+      "companyId": 2055,
+      "company": "Clover Studio",
+      "others": [
+        {
+          "companyId": 37,
+          "name": "Capcom"
+        }
+      ]
+    },
+    {
+      "gameId": 199116,
+      "name": "Brotato",
+      "companyId": 46856,
+      "company": "Blobfish",
+      "others": [
+        {
+          "companyId": 41607,
+          "name": "Erabit Studios"
+        }
+      ]
+    },
+    {
+      "gameId": 2977,
+      "name": "Mortal Kombat: Komplete Edition",
+      "companyId": 392,
+      "company": "High Voltage Software",
+      "others": [
+        {
+          "companyId": 48,
+          "name": "NetherRealm Studios"
+        }
+      ]
+    },
+    {
+      "gameId": 150045,
+      "name": "Resident Evil: Revelations",
+      "companyId": 37,
+      "company": "Capcom",
+      "others": [
+        {
+          "companyId": 321,
+          "name": "Tose"
+        }
+      ]
+    },
+    {
+      "gameId": 27744,
+      "name": "House Flipper",
+      "companyId": 15207,
+      "company": "Empyrean",
+      "others": [
+        {
+          "companyId": 16099,
+          "name": "Frozen District"
+        },
+        {
+          "companyId": 17947,
+          "name": "Ultimate Games"
+        }
+      ]
+    },
+    {
+      "gameId": 20048,
+      "name": "Darksiders II: Deathinitive Edition",
+      "companyId": 825,
+      "company": "Vigil Games",
+      "others": [
+        {
+          "companyId": 10075,
+          "name": "THQ Nordic"
+        },
+        {
+          "companyId": 10809,
+          "name": "Gunfire Games"
+        }
+      ]
+    },
+    {
+      "gameId": 12529,
+      "name": "Gravity Rush Remastered",
+      "companyId": 400,
+      "company": "SCE Japan Studio",
+      "others": [
+        {
+          "companyId": 7219,
+          "name": "Project Siren"
+        }
+      ]
+    },
+    {
+      "gameId": 24881,
+      "name": "Kingdom: New Lands",
+      "companyId": 7081,
+      "company": "Licorice",
+      "others": [
+        {
+          "companyId": 7080,
+          "name": "Noio"
+        }
+      ]
+    },
+    {
+      "gameId": 3119,
+      "name": "Metin2",
+      "companyId": 1471,
+      "company": "Ymir Entertainment Co., Ltd",
+      "others": [
+        {
+          "companyId": 7622,
+          "name": "Webzen"
+        }
+      ]
+    },
+    {
+      "gameId": 2172,
+      "name": "Nintendo Land",
+      "companyId": 1246,
+      "company": "Nintendo EAD Software Development Group No.2",
+      "others": [
+        {
+          "companyId": 70,
+          "name": "Nintendo"
+        }
+      ]
+    },
+    {
+      "gameId": 13686,
+      "name": "Kingdom: Classic",
+      "companyId": 7080,
+      "company": "Noio",
+      "others": [
+        {
+          "companyId": 7081,
+          "name": "Licorice"
+        }
+      ]
+    },
+    {
+      "gameId": 1912,
+      "name": "Warface",
+      "companyId": 920,
+      "company": "Crytek Kiev",
+      "others": [
+        {
+          "companyId": 6965,
+          "name": "Allods Team"
+        },
+        {
+          "companyId": 21424,
+          "name": "MY.GAMES"
+        },
+        {
+          "companyId": 46468,
+          "name": "Astrum Entertainment"
+        }
+      ]
+    },
+    {
+      "gameId": 294661,
+      "name": "Content Warning",
+      "companyId": 62311,
+      "company": "Zorro",
+      "others": [
+        {
+          "companyId": 62310,
+          "name": "Wilnyl"
+        },
+        {
+          "companyId": 62312,
+          "name": "Philip"
+        },
+        {
+          "companyId": 62313,
+          "name": "thePetHen"
+        },
+        {
+          "companyId": 62314,
+          "name": "Skog"
+        }
+      ]
+    },
+    {
+      "gameId": 158980,
+      "name": "Final Fantasy",
+      "companyId": 321,
+      "company": "Tose",
+      "others": [
+        {
+          "companyId": 52311,
+          "name": "Square Enix Creative Business Unit IV"
+        }
+      ]
+    },
+    {
+      "gameId": 11560,
+      "name": "AER: Memories of Old",
+      "companyId": 9945,
+      "company": "Forgotten Key",
+      "others": [
+        {
+          "companyId": 2248,
+          "name": "Daedalic Entertainment"
+        }
+      ]
+    },
+    {
+      "gameId": 4695,
+      "name": "Twisted Metal",
+      "companyId": 2402,
+      "company": "Eat Sleep Play Inc.",
+      "others": [
+        {
+          "companyId": 11644,
+          "name": "SingleTrac"
+        }
+      ]
+    },
+    {
+      "gameId": 28311,
+      "name": "Bendy and the Ink Machine",
+      "companyId": 12579,
+      "company": "TheMeatly Games, Ltd.",
+      "others": [
+        {
+          "companyId": 24377,
+          "name": "Joey Drew Studios"
+        }
+      ]
+    },
+    {
+      "gameId": 11214,
+      "name": "World of Final Fantasy",
+      "companyId": 321,
+      "company": "Tose",
+      "others": [
+        {
+          "companyId": 19281,
+          "name": "Square Enix Business Division 3"
+        }
+      ]
+    },
+    {
+      "gameId": 381,
+      "name": "Metal Gear Solid: Portable Ops",
+      "companyId": 170,
+      "company": "Kojima Productions",
+      "others": [
+        {
+          "companyId": 312,
+          "name": "Konami Computer Entertainment Japan"
+        }
+      ]
+    },
+    {
+      "gameId": 13163,
+      "name": "Syberia 3",
+      "companyId": 3906,
+      "company": "Anuman Interactive",
+      "others": [
+        {
+          "companyId": 5283,
+          "name": "Microids"
+        }
+      ]
+    },
+    {
+      "gameId": 9151,
+      "name": "Super Punch-Out!!",
+      "companyId": 45549,
+      "company": "Locomotive Corporation",
+      "others": [
+        {
+          "companyId": 13332,
+          "name": "Nintendo R&D3"
+        }
+      ]
+    },
+    {
+      "gameId": 7340,
+      "name": "Mario Party 10",
+      "companyId": 1100,
+      "company": "NDCube",
+      "others": [
+        {
+          "companyId": 2935,
+          "name": "Nintendo SPD"
+        },
+        {
+          "companyId": 70,
+          "name": "Nintendo"
+        }
+      ]
+    },
+    {
+      "gameId": 24423,
+      "name": "Pokémon Trading Card Game Online",
+      "companyId": 11012,
+      "company": "Electrified Games",
+      "others": [
+        {
+          "companyId": 11013,
+          "name": "Sleepy Giant Entertainment"
+        },
+        {
+          "companyId": 11014,
+          "name": "Plexipixel"
+        },
+        {
+          "companyId": 11015,
+          "name": "Inversoft"
+        }
+      ]
+    },
+    {
+      "gameId": 122338,
+      "name": "Ring Fit Adventure",
+      "companyId": 7902,
+      "company": "Nintendo Entertainment Planning & Development",
+      "others": [
+        {
+          "companyId": 45210,
+          "name": "Nintendo EPD Production Group No. 4"
+        }
+      ]
+    },
+    {
+      "gameId": 27344,
+      "name": "Barotrauma",
+      "companyId": 17818,
+      "company": "FakeFish",
+      "others": [
+        {
+          "companyId": 10341,
+          "name": "Undertow Games"
+        }
+      ]
+    },
+    {
+      "gameId": 54548,
+      "name": "Dragon Quest Builders 2",
+      "companyId": 1394,
+      "company": "Omega Force",
+      "others": [
+        {
+          "companyId": 52267,
+          "name": "Square Enix Business Division 5"
+        }
+      ]
+    },
+    {
+      "gameId": 99071,
+      "name": "Hypnospace Outlaw",
+      "companyId": 32259,
+      "company": "Michael Lasch",
+      "others": [
+        {
+          "companyId": 32260,
+          "name": "ThatWhichIs Media"
+        },
+        {
+          "companyId": 6064,
+          "name": "Tendershoot"
+        }
+      ]
+    },
+    {
+      "gameId": 139708,
+      "name": "Devour",
+      "companyId": 29262,
+      "company": "Joe Fender",
+      "others": [
+        {
+          "companyId": 29260,
+          "name": "Straight Back Games"
+        }
+      ]
+    },
+    {
+      "gameId": 197202,
+      "name": "Escape the Backrooms",
+      "companyId": 42714,
+      "company": "Fancy Games",
+      "others": [
+        {
+          "companyId": 3869,
+          "name": "Blackbird Interactive"
+        }
+      ]
+    },
+    {
+      "gameId": 1579,
+      "name": "Spyro: Enter the Dragonfly",
+      "companyId": 2043,
+      "company": "Equinoxe",
+      "others": [
+        {
+          "companyId": 2044,
+          "name": "Check Six Games"
+        }
+      ]
+    },
+    {
+      "gameId": 221,
+      "name": "Phantasmagoria",
+      "companyId": 32,
+      "company": "Sierra On-Line",
+      "others": [
+        {
+          "companyId": 343,
+          "name": "Kronos Digital Entertainment"
+        },
+        {
+          "companyId": 5042,
+          "name": "Infini Entertainment Technology"
+        }
+      ]
+    },
+    {
+      "gameId": 18967,
+      "name": "Valkyria Chronicles Remastered",
+      "companyId": 2676,
+      "company": "Media.Vision",
+      "others": [
+        {
+          "companyId": 15878,
+          "name": "Sega Games"
+        },
+        {
+          "companyId": 14087,
+          "name": "Sega Corporation"
+        }
+      ]
+    },
+    {
+      "gameId": 6291,
+      "name": "Virtua Tennis",
+      "companyId": 2327,
+      "company": "Sega AM3",
+      "others": [
+        {
+          "companyId": 1906,
+          "name": "Hitmaker"
+        }
+      ]
+    },
+    {
+      "gameId": 9862,
+      "name": "International Superstar Soccer Deluxe",
+      "companyId": 5292,
+      "company": "Konami Computer Entertainment Osaka",
+      "others": [
+        {
+          "companyId": 161,
+          "name": "Konami Digital Entertainment"
+        },
+        {
+          "companyId": 2571,
+          "name": "Major A"
+        }
+      ]
+    },
+    {
+      "gameId": 152424,
+      "name": "Terra Nil",
+      "companyId": 2603,
+      "company": "Free Lives Games",
+      "others": [
+        {
+          "companyId": 21046,
+          "name": "Clockwork Acorn"
+        }
+      ]
+    },
+    {
+      "gameId": 74548,
+      "name": "Tennis",
+      "companyId": 1809,
+      "company": "Nintendo R&D1",
+      "others": [
+        {
+          "companyId": 73961,
+          "name": "Iwasaki Giken Kogyo"
+        }
+      ]
+    },
+    {
+      "gameId": 266690,
+      "name": "Paper Mario: The Thousand-Year Door",
+      "companyId": 25077,
+      "company": "Intelligent Systems",
+      "others": [
+        {
+          "companyId": 65520,
+          "name": "Nintendo EPD Production Group No. 6"
+        }
+      ]
+    },
+    {
+      "gameId": 59843,
+      "name": "Pikmin 4",
+      "companyId": 7902,
+      "company": "Nintendo Entertainment Planning & Development",
+      "others": [
+        {
+          "companyId": 2821,
+          "name": "Eighting"
+        },
+        {
+          "companyId": 45215,
+          "name": "Nintendo EPD Production Group No. 10"
+        }
+      ]
+    },
+    {
+      "gameId": 165206,
+      "name": "Doom",
+      "companyId": 184,
+      "company": "id Software",
+      "others": [
+        {
+          "companyId": 187,
+          "name": "Nerve Software"
+        }
+      ]
+    },
+    {
+      "gameId": 24515,
+      "name": "Deceit",
+      "companyId": 11159,
+      "company": "Automaton",
+      "others": [
+        {
+          "companyId": 40042,
+          "name": "World Makers"
+        }
+      ]
+    },
+    {
+      "gameId": 152247,
+      "name": "Redfall",
+      "companyId": 35055,
+      "company": "Arkane Austin",
+      "others": [
+        {
+          "companyId": 47087,
+          "name": "Roundhouse Studios"
+        }
+      ]
+    },
+    {
+      "gameId": 221823,
+      "name": "Assassin's Creed Brotherhood",
+      "companyId": 38,
+      "company": "Ubisoft Montreal",
+      "others": [
+        {
+          "companyId": 794,
+          "name": "Virtuos"
+        }
+      ]
+    },
+    {
+      "gameId": 3018,
+      "name": "Unepic",
+      "companyId": 1416,
+      "company": "Francisco Téllez de Meneses",
+      "others": [
+        {
+          "companyId": 30339,
+          "name": "@unepic_fran"
+        }
+      ]
+    },
+    {
+      "gameId": 21899,
+      "name": "Final Fantasy X HD Remaster",
+      "companyId": 794,
+      "company": "Virtuos",
+      "others": [
+        {
+          "companyId": 19281,
+          "name": "Square Enix Business Division 3"
+        }
+      ]
+    },
+    {
+      "gameId": 86807,
+      "name": "Sonic CD",
+      "companyId": 875,
+      "company": "Blit Software",
+      "others": [
+        {
+          "companyId": 25754,
+          "name": "Christian Whitehead"
+        }
+      ]
+    },
+    {
+      "gameId": 224439,
+      "name": "God of War: Chains of Olympus",
+      "companyId": 431,
+      "company": "Ready At Dawn",
+      "others": [
+        {
+          "companyId": 15512,
+          "name": "SCE Santa Monica Studio"
+        }
+      ]
+    },
+    {
+      "gameId": 1815,
+      "name": "Dragon Quest IV: Chapters of the Chosen",
+      "companyId": 2254,
+      "company": "ArtePiazza",
+      "others": [
+        {
+          "companyId": 53029,
+          "name": "Square Enix Product Development Division 9"
+        },
+        {
+          "companyId": 11757,
+          "name": "Cattle Call"
+        }
+      ]
+    },
+    {
+      "gameId": 4601,
+      "name": "Hogan's Alley",
+      "companyId": 1809,
+      "company": "Nintendo R&D1",
+      "others": [
+        {
+          "companyId": 73961,
+          "name": "Iwasaki Giken Kogyo"
+        }
+      ]
+    },
+    {
+      "gameId": 8902,
+      "name": "Hyperdimension Neptunia Re;Birth1",
+      "companyId": 2252,
+      "company": "Compile Heart",
+      "others": [
+        {
+          "companyId": 3055,
+          "name": "Felistella"
+        }
+      ]
+    },
+    {
+      "gameId": 121503,
+      "name": "Doom II",
+      "companyId": 187,
+      "company": "Nerve Software",
+      "others": [
+        {
+          "companyId": 184,
+          "name": "id Software"
+        }
+      ]
+    },
+    {
+      "gameId": 3573,
+      "name": "Pilotwings 64",
+      "companyId": 13332,
+      "company": "Nintendo R&D3",
+      "others": [
+        {
+          "companyId": 1830,
+          "name": "Paradigm Simulation"
+        },
+        {
+          "companyId": 421,
+          "name": "Nintendo Entertainment Analysis & Development"
+        }
+      ]
+    },
+    {
+      "gameId": 5122,
+      "name": "Rhythm Heaven Fever",
+      "companyId": 2674,
+      "company": "Nintendo SPD Production Group No. 1",
+      "others": [
+        {
+          "companyId": 2270,
+          "name": "TNX"
+        }
+      ]
+    },
+    {
+      "gameId": 18239,
+      "name": "Plug & Play",
+      "companyId": 8387,
+      "company": "Mario von Rickenbach",
+      "others": [
+        {
+          "companyId": 9367,
+          "name": "Michael Frei"
+        }
+      ]
+    },
+    {
+      "gameId": 7467,
+      "name": "Tokyo Jungle",
+      "companyId": 400,
+      "company": "SCE Japan Studio",
+      "others": [
+        {
+          "companyId": 3092,
+          "name": "Crispy's!"
+        }
+      ]
+    },
+    {
+      "gameId": 516,
+      "name": "Of Orcs and Men",
+      "companyId": 405,
+      "company": "Spiders",
+      "others": [
+        {
+          "companyId": 404,
+          "name": "Cyanide Studio"
+        }
+      ]
+    },
+    {
+      "gameId": 1405,
+      "name": "Hawken",
+      "companyId": 2736,
+      "company": "Adhesive Games",
+      "others": [
+        {
+          "companyId": 7557,
+          "name": "Reloaded Games"
+        }
+      ]
+    },
+    {
+      "gameId": 15901,
+      "name": "StarTropics",
+      "companyId": 13332,
+      "company": "Nintendo R&D3",
+      "others": [
+        {
+          "companyId": 45549,
+          "name": "Locomotive Corporation"
+        }
+      ]
+    },
+    {
+      "gameId": 81173,
+      "name": "Marie's Room",
+      "companyId": 15490,
+      "company": "Kenny Guillaume",
+      "others": [
+        {
+          "companyId": 15491,
+          "name": "Dagmar Blommaert"
+        }
+      ]
+    },
+    {
+      "gameId": 191797,
+      "name": "House Flipper 2",
+      "companyId": 15207,
+      "company": "Empyrean",
+      "others": [
+        {
+          "companyId": 16099,
+          "name": "Frozen District"
+        }
+      ]
+    },
+    {
+      "gameId": 9214,
+      "name": "Dragon Quest Heroes: The World Tree's Woe and the Blight Below",
+      "companyId": 858,
+      "company": "Koei Tecmo Games",
+      "others": [
+        {
+          "companyId": 1394,
+          "name": "Omega Force"
+        },
+        {
+          "companyId": 53031,
+          "name": "Square Enix Business Division 6"
+        },
+        {
+          "companyId": 2161,
+          "name": "Armor Project"
+        },
+        {
+          "companyId": 11740,
+          "name": "Bird Studio"
+        }
+      ]
+    },
+    {
+      "gameId": 158982,
+      "name": "Final Fantasy III",
+      "companyId": 321,
+      "company": "Tose",
+      "others": [
+        {
+          "companyId": 52311,
+          "name": "Square Enix Creative Business Unit IV"
+        }
+      ]
+    },
+    {
+      "gameId": 158983,
+      "name": "Final Fantasy IV",
+      "companyId": 321,
+      "company": "Tose",
+      "others": [
+        {
+          "companyId": 52311,
+          "name": "Square Enix Creative Business Unit IV"
+        }
+      ]
+    },
+    {
+      "gameId": 16585,
+      "name": "Dragon Quest V: Hand of the Heavenly Bride",
+      "companyId": 2254,
+      "company": "ArtePiazza",
+      "others": [
+        {
+          "companyId": 53029,
+          "name": "Square Enix Product Development Division 9"
+        }
+      ]
+    },
+    {
+      "gameId": 17828,
+      "name": "20XX",
+      "companyId": 9050,
+      "company": "Batterystaple Games",
+      "others": [
+        {
+          "companyId": 7540,
+          "name": "Fire Hose Games"
+        }
+      ]
+    },
+    {
+      "gameId": 127344,
+      "name": "Bravely Default II",
+      "companyId": 23306,
+      "company": "Clay Tech Works",
+      "others": [
+        {
+          "companyId": 35895,
+          "name": "Team Asano"
+        },
+        {
+          "companyId": 52310,
+          "name": "Square Enix Creative Business Unit II"
+        }
+      ]
+    },
+    {
+      "gameId": 156151,
+      "name": "Nickelodeon All-Star Brawl",
+      "companyId": 26794,
+      "company": "Fair Play Labs",
+      "others": [
+        {
+          "companyId": 8382,
+          "name": "Ludosity"
+        }
+      ]
+    },
+    {
+      "gameId": 224438,
+      "name": "God of War: Ghost of Sparta",
+      "companyId": 431,
+      "company": "Ready At Dawn",
+      "others": [
+        {
+          "companyId": 15512,
+          "name": "SCE Santa Monica Studio"
+        }
+      ]
+    },
+    {
+      "gameId": 907,
+      "name": "TOCA Race Driver 3",
+      "companyId": 412,
+      "company": "Codemasters Southam",
+      "others": [
+        {
+          "companyId": 411,
+          "name": "Robosoft Technologies"
+        },
+        {
+          "companyId": 439,
+          "name": "Sumo Digital"
+        }
+      ]
+    },
+    {
+      "gameId": 2732,
+      "name": "Hexic HD",
+      "companyId": 1227,
+      "company": "Carbonated Games",
+      "others": [
+        {
+          "companyId": 4123,
+          "name": "Alexey Pajitnov"
+        }
+      ]
+    },
+    {
+      "gameId": 3491,
+      "name": "F-Zero: Maximum Velocity",
+      "companyId": 1809,
+      "company": "Nintendo R&D1",
+      "others": [
+        {
+          "companyId": 1100,
+          "name": "NDCube"
+        }
+      ]
+    },
+    {
+      "gameId": 18532,
+      "name": "Ice Hockey",
+      "companyId": 32471,
+      "company": "Nintendo R&D4",
+      "others": [
+        {
+          "companyId": 9507,
+          "name": "Pax Softonica"
+        }
+      ]
+    },
+    {
+      "gameId": 187151,
+      "name": "How Fish Is Made",
+      "companyId": 50463,
+      "company": "Wrong Organ",
+      "others": [
+        {
+          "companyId": 45007,
+          "name": "KASURAGA"
+        }
+      ]
+    },
+    {
+      "gameId": 10088,
+      "name": "Hohokum",
+      "companyId": 5447,
+      "company": "Honeyslug",
+      "others": [
+        {
+          "companyId": 18659,
+          "name": "Richard Hogg"
+        },
+        {
+          "companyId": 15512,
+          "name": "SCE Santa Monica Studio"
+        }
+      ]
+    },
+    {
+      "gameId": 11602,
+      "name": "Road Redemption",
+      "companyId": 946,
+      "company": "Saber Interactive",
+      "others": [
+        {
+          "companyId": 6113,
+          "name": "Dark Seas Interactive"
+        },
+        {
+          "companyId": 11883,
+          "name": "EQ-Games"
+        },
+        {
+          "companyId": 6115,
+          "name": "Pixel Dash Studios"
+        }
+      ]
+    },
+    {
+      "gameId": 55092,
+      "name": "Secret of Mana",
+      "companyId": 19732,
+      "company": "Q Studios",
+      "others": [
+        {
+          "companyId": 52931,
+          "name": "Square Enix Business Division 8"
+        }
+      ]
+    },
+    {
+      "gameId": 134438,
+      "name": "Kingdoms of Amalur: Re-Reckoning",
+      "companyId": 579,
+      "company": "Big Huge Games",
+      "others": [
+        {
+          "companyId": 8892,
+          "name": "Kaiko"
+        }
+      ]
+    },
+    {
+      "gameId": 221822,
+      "name": "Assassin's Creed II",
+      "companyId": 794,
+      "company": "Virtuos",
+      "others": [
+        {
+          "companyId": 38,
+          "name": "Ubisoft Montreal"
+        }
+      ]
+    },
+    {
+      "gameId": 1817,
+      "name": "Dragon Quest VI: Realms of Revelation",
+      "companyId": 2254,
+      "company": "ArtePiazza",
+      "others": [
+        {
+          "companyId": 52931,
+          "name": "Square Enix Business Division 8"
+        }
+      ]
+    },
+    {
+      "gameId": 2576,
+      "name": "Dragon Ball Z: Supersonic Warriors",
+      "companyId": 1218,
+      "company": "Arc System Works",
+      "others": [
+        {
+          "companyId": 1215,
+          "name": "Banpresto"
+        }
+      ]
+    },
+    {
+      "gameId": 7024,
+      "name": "Juiced 2: Hot Import Nights",
+      "companyId": 1278,
+      "company": "Paradigm Entertainment",
+      "others": [
+        {
+          "companyId": 2572,
+          "name": "Juice Games"
+        }
+      ]
+    },
+    {
+      "gameId": 11488,
+      "name": "Dropsy",
+      "companyId": 8333,
+      "company": "A Jolly Corpse",
+      "others": [
+        {
+          "companyId": 6064,
+          "name": "Tendershoot"
+        }
+      ]
+    },
+    {
+      "gameId": 80174,
+      "name": "Mario's Super Picross",
+      "companyId": 21480,
+      "company": "Ape",
+      "others": [
+        {
+          "companyId": 800,
+          "name": "Jupiter Corporation"
+        }
+      ]
+    },
+    {
+      "gameId": 158985,
+      "name": "Final Fantasy VI",
+      "companyId": 321,
+      "company": "Tose",
+      "others": [
+        {
+          "companyId": 52311,
+          "name": "Square Enix Creative Business Unit IV"
+        }
+      ]
+    },
+    {
+      "gameId": 392,
+      "name": "Final Fantasy XII: Revenant Wings",
+      "companyId": 345,
+      "company": "Think & Feel",
+      "others": [
+        {
+          "companyId": 799,
+          "name": "Square Enix Product Development Division 1"
+        }
+      ]
+    },
+    {
+      "gameId": 2705,
+      "name": "Just Dance 3",
+      "companyId": 433,
+      "company": "Ubisoft Reflections",
+      "others": [
+        {
+          "companyId": 38,
+          "name": "Ubisoft Montreal"
+        }
+      ]
+    },
+    {
+      "gameId": 4492,
+      "name": "Urban Strike: The Sequel to Jungle Strike",
+      "companyId": 15300,
+      "company": "Foley Hi-Tech Systems",
+      "others": [
+        {
+          "companyId": 38886,
+          "name": "Granite Bay Software"
+        }
+      ]
+    },
+    {
+      "gameId": 80138,
+      "name": "BanG Dream! Girls Band Party!",
+      "companyId": 16217,
+      "company": "Craft Egg",
+      "others": [
+        {
+          "companyId": 45141,
+          "name": "Bushiroad Games"
+        }
+      ]
+    },
+    {
+      "gameId": 329132,
+      "name": "Ninja Gaiden II Black",
+      "companyId": 769,
+      "company": "Team NINJA",
+      "others": [
+        {
+          "companyId": 18532,
+          "name": "Koei Tecmo"
+        }
+      ]
+    },
+    {
+      "gameId": 3851,
+      "name": "Catwoman",
+      "companyId": 260,
+      "company": "Argonaut Games",
+      "others": [
+        {
+          "companyId": 14546,
+          "name": "Electronic Arts UK"
+        }
+      ]
+    },
+    {
+      "gameId": 29526,
+      "name": "Kindergarten",
+      "companyId": 3828,
+      "company": "SmashGames",
+      "others": [
+        {
+          "companyId": 53491,
+          "name": "Con Man Games"
+        }
+      ]
+    },
+    {
+      "gameId": 54220,
+      "name": "Persona Q2: New Cinema Labyrinth",
+      "companyId": 9969,
+      "company": "P Studio",
+      "others": [
+        {
+          "companyId": 7727,
+          "name": "Lancarse"
+        }
+      ]
+    },
+    {
+      "gameId": 180960,
+      "name": "Kid A Mnesia Exhibition",
+      "companyId": 38540,
+      "company": "[namethemachine]",
+      "others": [
+        {
+          "companyId": 38539,
+          "name": "Arbitrarily Good Productions"
+        }
+      ]
+    },
+    {
+      "gameId": 221824,
+      "name": "Assassin's Creed Revelations",
+      "companyId": 38,
+      "company": "Ubisoft Montreal",
+      "others": [
+        {
+          "companyId": 794,
+          "name": "Virtuos"
+        }
+      ]
+    },
+    {
+      "gameId": 243,
+      "name": "Who Wants to Be a Millionaire",
+      "companyId": 193,
+      "company": "Jellyvision",
+      "others": [
+        {
+          "companyId": 194,
+          "name": "Hothouse Creations"
+        }
+      ]
+    },
+    {
+      "gameId": 3699,
+      "name": "The Settlers II: 10th Anniversary",
+      "companyId": 3116,
+      "company": "Funatics Development",
+      "others": [
+        {
+          "companyId": 7923,
+          "name": "Blue Byte"
+        }
+      ]
+    },
+    {
+      "gameId": 6168,
+      "name": "Insanely Twisted Shadow Planet",
+      "companyId": 2696,
+      "company": "Shadow Planet Productions",
+      "others": [
+        {
+          "companyId": 2697,
+          "name": "Fuelcell Games"
+        },
+        {
+          "companyId": 2698,
+          "name": "Gagne International"
+        }
+      ]
+    },
+    {
+      "gameId": 6201,
+      "name": "TOCA Race Driver 2",
+      "companyId": 412,
+      "company": "Codemasters Southam",
+      "others": [
+        {
+          "companyId": 439,
+          "name": "Sumo Digital"
+        }
+      ]
+    },
+    {
+      "gameId": 11076,
+      "name": "Drawn to Death",
+      "companyId": 10332,
+      "company": "The Bartlet Jones Supernatural Detective Agency",
+      "others": [
+        {
+          "companyId": 2170,
+          "name": "SIE San Diego Studio"
+        }
+      ]
+    },
+    {
+      "gameId": 13894,
+      "name": "Time Crisis 3",
+      "companyId": 323,
+      "company": "Nextech",
+      "others": [
+        {
+          "companyId": 263,
+          "name": "Namco"
+        }
+      ]
+    },
+    {
+      "gameId": 77494,
+      "name": "Wilmot's Warehouse",
+      "companyId": 18659,
+      "company": "Richard Hogg",
+      "others": [
+        {
+          "companyId": 12224,
+          "name": "Hollow Ponds"
+        }
+      ]
+    },
+    {
+      "gameId": 390,
+      "name": "LEGO Racers 2",
+      "companyId": 1523,
+      "company": "Attention To Detail",
+      "others": [
+        {
+          "companyId": 1385,
+          "name": "Pocket Studios"
+        },
+        {
+          "companyId": 2349,
+          "name": "Attention Software"
+        }
+      ]
+    },
+    {
+      "gameId": 3337,
+      "name": "Excitebike 64",
+      "companyId": 1748,
+      "company": "Left Field Productions",
+      "others": [
+        {
+          "companyId": 70,
+          "name": "Nintendo"
+        }
+      ]
+    },
+    {
+      "gameId": 10238,
+      "name": "Depression Quest",
+      "companyId": 5541,
+      "company": "Zoe Quinn",
+      "others": [
+        {
+          "companyId": 47149,
+          "name": "Patrick Lindsey"
+        },
+        {
+          "companyId": 47148,
+          "name": "Isaac Schankler"
+        },
+        {
+          "companyId": 47147,
+          "name": "The Quinnspiracy"
+        }
+      ]
+    },
+    {
+      "gameId": 15823,
+      "name": "Where the Water Tastes Like Wine",
+      "companyId": 7893,
+      "company": "Dim Bulb Games",
+      "others": [
+        {
+          "companyId": 6352,
+          "name": "Serenity Forge"
+        }
+      ]
+    },
+    {
+      "gameId": 18220,
+      "name": "Rhythm Heaven Megamix",
+      "companyId": 2674,
+      "company": "Nintendo SPD Production Group No. 1",
+      "others": [
+        {
+          "companyId": 70,
+          "name": "Nintendo"
+        }
+      ]
+    },
+    {
+      "gameId": 119346,
+      "name": "Songs of Conquest",
+      "companyId": 999,
+      "company": "Coffee Stain Studios",
+      "others": [
+        {
+          "companyId": 20504,
+          "name": "Lavapotion"
+        }
+      ]
+    },
+    {
+      "gameId": 131660,
+      "name": "No One Lives Under the Lighthouse",
+      "companyId": 41741,
+      "company": "Marevo Collective",
+      "others": [
+        {
+          "companyId": 24517,
+          "name": "Sowoke Entertainment Bureau"
+        }
+      ]
+    },
+    {
+      "gameId": 328140,
+      "name": "Look Outside",
+      "companyId": 33043,
+      "company": "Francis Coulombe",
+      "others": [
+        {
+          "companyId": 21285,
+          "name": "FrankieSmileShow"
+        }
+      ]
+    },
+    {
+      "gameId": 7813,
+      "name": "Patapon 2",
+      "companyId": 1216,
+      "company": "Pyramid",
+      "others": [
+        {
+          "companyId": 400,
+          "name": "SCE Japan Studio"
+        }
+      ]
+    },
+    {
+      "gameId": 27685,
+      "name": "Soda Dungeon",
+      "companyId": 21937,
+      "company": "AN Productions",
+      "others": [
+        {
+          "companyId": 21938,
+          "name": "Poxpower"
+        }
+      ]
+    },
+    {
+      "gameId": 131653,
+      "name": "Tiny Bunny",
+      "companyId": 24546,
+      "company": "RUzura Interactive",
+      "others": [
+        {
+          "companyId": 24545,
+          "name": "Saikono"
+        }
+      ]
+    },
+    {
+      "gameId": 11858,
+      "name": "God Eater Resurrection",
+      "companyId": 2216,
+      "company": "Shift",
+      "others": [
+        {
+          "companyId": 22721,
+          "name": "Bandai Namco Studios"
+        }
+      ]
+    },
+    {
+      "gameId": 27088,
+      "name": "Party Hard 2",
+      "companyId": 12608,
+      "company": "Kverta",
+      "others": [
+        {
+          "companyId": 12049,
+          "name": "Pinokl Games"
+        }
+      ]
+    },
+    {
+      "gameId": 149980,
+      "name": "Dragon Quest III HD-2D Remake",
+      "companyId": 1221,
+      "company": "Artdink",
+      "others": [
+        {
+          "companyId": 66148,
+          "name": "Square Enix Creative Studio 5"
+        }
+      ]
+    },
+    {
+      "gameId": 158984,
+      "name": "Final Fantasy V",
+      "companyId": 321,
+      "company": "Tose",
+      "others": [
+        {
+          "companyId": 52311,
+          "name": "Square Enix Creative Business Unit IV"
+        }
+      ]
+    },
+    {
+      "gameId": 6345,
+      "name": "Casper",
+      "companyId": 458,
+      "company": "Funcom",
+      "others": [
+        {
+          "companyId": 2774,
+          "name": "G3 Interactive"
+        }
+      ]
+    },
+    {
+      "gameId": 14678,
+      "name": "A Good Snowman is Hard to Build",
+      "companyId": 7049,
+      "company": "Draknek & Friends",
+      "others": [
+        {
+          "companyId": 7278,
+          "name": "Alan Hazelden"
+        }
+      ]
+    },
+    {
+      "gameId": 5231,
+      "name": "Tony Hawk's Downhill Jam",
+      "companyId": 741,
+      "company": "Toys for Bob",
+      "others": [
+        {
+          "companyId": 814,
+          "name": "SuperVillain Studios"
+        }
+      ]
+    },
+    {
+      "gameId": 19599,
+      "name": "Mario Party: Star Rush",
+      "companyId": 1100,
+      "company": "NDCube",
+      "others": [
+        {
+          "companyId": 70,
+          "name": "Nintendo"
+        }
+      ]
+    },
+    {
+      "gameId": 20950,
+      "name": "Lifeless Planet: Premier Edition",
+      "companyId": 6352,
+      "company": "Serenity Forge",
+      "others": [
+        {
+          "companyId": 8300,
+          "name": "Stage 2 Studios"
+        }
+      ]
+    },
+    {
+      "gameId": 3613,
+      "name": "Disney's Tigger's Honey Hunt",
+      "companyId": 95,
+      "company": "Disney Interactive",
+      "others": [
+        {
+          "companyId": 1846,
+          "name": "DokiDenki Studio"
+        }
+      ]
+    },
+    {
+      "gameId": 6514,
+      "name": "Monsters, Inc. Scream Team",
+      "companyId": 1241,
+      "company": "Artificial Mind & Movement",
+      "others": [
+        {
+          "companyId": 426,
+          "name": "Disney Interactive Studios"
+        }
+      ]
+    },
+    {
+      "gameId": 6964,
+      "name": "Def Jam: Icon",
+      "companyId": 2558,
+      "company": "EA Chicago",
+      "others": [
+        {
+          "companyId": 2959,
+          "name": "Def Jam"
+        }
+      ]
+    },
+    {
+      "gameId": 8384,
+      "name": "Gish",
+      "companyId": 7034,
+      "company": "Cryptic Sea",
+      "others": [
+        {
+          "companyId": 4672,
+          "name": "Edmund McMillen"
+        }
+      ]
+    },
+    {
+      "gameId": 33569,
+      "name": "True Fear: Forsaken Souls - Part 1",
+      "companyId": 10870,
+      "company": "Goblinz Studio",
+      "others": [
+        {
+          "companyId": 4612,
+          "name": "The Digital Lounge"
+        }
+      ]
+    },
+    {
+      "gameId": 37064,
+      "name": "Transference",
+      "companyId": 38,
+      "company": "Ubisoft Montreal",
+      "others": [
+        {
+          "companyId": 12937,
+          "name": "SpectreVision"
+        }
+      ]
+    },
+    {
+      "gameId": 115036,
+      "name": "Ring of Pain",
+      "companyId": 21660,
+      "company": "Twice Different",
+      "others": [
+        {
+          "companyId": 21659,
+          "name": "Simon Boxer"
+        }
+      ]
+    },
+    {
+      "gameId": 221740,
+      "name": "Suika Game",
+      "companyId": 49963,
+      "company": "popIn",
+      "others": [
+        {
+          "companyId": 53271,
+          "name": "Aladdin X"
+        }
+      ]
+    },
+    {
+      "gameId": 288983,
+      "name": "The Roottrees Are Dead",
+      "companyId": 53257,
+      "company": "Jeremy Johnston",
+      "others": [
+        {
+          "companyId": 53258,
+          "name": "Evil Trout"
+        }
+      ]
+    },
+    {
+      "gameId": 2917,
+      "name": "Chaos Legion",
+      "companyId": 1360,
+      "company": "Capcom Production Studio 6",
+      "others": [
+        {
+          "companyId": 5837,
+          "name": "MiCROViSion"
+        }
+      ]
+    },
+    {
+      "gameId": 3664,
+      "name": "Kid Icarus: Of Myths and Monsters",
+      "companyId": 1809,
+      "company": "Nintendo R&D1",
+      "others": [
+        {
+          "companyId": 321,
+          "name": "Tose"
+        }
+      ]
+    }
+  ],
+  "steamIdsContested": 0,
+  "leadStudiosWithoutCity": [
     {
       "companyId": 159,
       "name": "Konami Computer Entertainment Tokyo",
       "precision": "country",
       "country": "JP",
       "ledGames": 14
-    },
-    {
-      "companyId": 892,
-      "name": "Capcom Production Studio 2",
-      "precision": "country",
-      "country": "JP",
-      "ledGames": 12
-    },
-    {
-      "companyId": 1246,
-      "name": "Nintendo EAD Software Development Group No.2",
-      "precision": "country",
-      "country": "JP",
-      "ledGames": 11
     },
     {
       "companyId": 732,
@@ -1969,10 +4210,10 @@
       "ledGames": 10
     },
     {
-      "companyId": 1366,
-      "name": "Nintendo EAD Software Development Group No.3",
+      "companyId": 144,
+      "name": "GSC Game World",
       "precision": "country",
-      "country": "JP",
+      "country": "CZ",
       "ledGames": 9
     },
     {
@@ -1983,24 +4224,10 @@
       "ledGames": 9
     },
     {
-      "companyId": 42265,
-      "name": "Capcom Development Division 1",
+      "companyId": 213,
+      "name": "Infogrames",
       "precision": "country",
-      "country": "JP",
-      "ledGames": 9
-    },
-    {
-      "companyId": 92,
-      "name": "NovaLogic",
-      "precision": "country",
-      "country": "US",
-      "ledGames": 8
-    },
-    {
-      "companyId": 93,
-      "name": "Square Enix 1st Production Department",
-      "precision": "country",
-      "country": "JP",
+      "country": "FR",
       "ledGames": 8
     },
     {
@@ -2008,13 +4235,6 @@
       "name": "Project Aces",
       "precision": "country",
       "country": "JP",
-      "ledGames": 8
-    },
-    {
-      "companyId": 1241,
-      "name": "Artificial Mind & Movement",
-      "precision": "country",
-      "country": "CA",
       "ledGames": 8
     },
     {
@@ -2032,32 +4252,11 @@
       "ledGames": 8
     },
     {
-      "companyId": 663,
-      "name": "Capcom Production Studio 4",
-      "precision": "country",
-      "country": "JP",
-      "ledGames": 7
-    },
-    {
       "companyId": 2340,
       "name": "Codemasters Birmingham",
       "precision": "country",
       "country": "GB",
       "ledGames": 7
-    },
-    {
-      "companyId": 2674,
-      "name": "Nintendo SPD Production Group No. 1",
-      "precision": "country",
-      "country": "JP",
-      "ledGames": 7
-    },
-    {
-      "companyId": 655,
-      "name": "Capcom Production Studio 3",
-      "precision": "country",
-      "country": "JP",
-      "ledGames": 6
     },
     {
       "companyId": 2236,
@@ -2074,13 +4273,6 @@
       "ledGames": 6
     },
     {
-      "companyId": 19281,
-      "name": "Square Enix Business Division 3",
-      "precision": "country",
-      "country": "JP",
-      "ledGames": 6
-    },
-    {
       "companyId": 32471,
       "name": "Nintendo R&D4",
       "precision": "country",
@@ -2088,17 +4280,10 @@
       "ledGames": 6
     },
     {
-      "companyId": 45304,
-      "name": "Square Enix Creative Business Unit I",
+      "companyId": 575,
+      "name": "Impressions Games",
       "precision": "country",
-      "country": "JP",
-      "ledGames": 6
-    },
-    {
-      "companyId": 799,
-      "name": "Square Enix Product Development Division 1",
-      "precision": "country",
-      "country": "JP",
+      "country": "GB",
       "ledGames": 5
     },
     {
@@ -2106,13 +4291,6 @@
       "name": "Interplay Productions",
       "precision": "country",
       "country": "US",
-      "ledGames": 5
-    },
-    {
-      "companyId": 1048,
-      "name": "Nintendo EAD Software Development Group No.4",
-      "precision": "country",
-      "country": "JP",
       "ledGames": 5
     },
     {
@@ -2165,13 +4343,6 @@
       "ledGames": 5
     },
     {
-      "companyId": 45209,
-      "name": "Nintendo EPD Production Group No. 3",
-      "precision": "country",
-      "country": "JP",
-      "ledGames": 5
-    },
-    {
       "companyId": 51808,
       "name": "100 Cozy Games",
       "precision": "none",
@@ -2179,24 +4350,10 @@
       "ledGames": 5
     },
     {
-      "companyId": 52975,
-      "name": "Square Product Development Division 1",
-      "precision": "country",
-      "country": "JP",
-      "ledGames": 5
-    },
-    {
       "companyId": 24,
       "name": "Sierra Entertainment",
       "precision": "country",
       "country": "US",
-      "ledGames": 4
-    },
-    {
-      "companyId": 335,
-      "name": "Square Product Development Division 3",
-      "precision": "country",
-      "country": "JP",
       "ledGames": 4
     },
     {
@@ -2214,10 +4371,10 @@
       "ledGames": 4
     },
     {
-      "companyId": 801,
-      "name": "Square Enix Product Development Division 5",
+      "companyId": 805,
+      "name": "Other Ocean Interactive",
       "precision": "country",
-      "country": "JP",
+      "country": "CA",
       "ledGames": 4
     },
     {
@@ -2228,10 +4385,10 @@
       "ledGames": 4
     },
     {
-      "companyId": 1238,
-      "name": "Virgin Games USA",
-      "precision": "none",
-      "country": null,
+      "companyId": 2009,
+      "name": "United Game Artists",
+      "precision": "country",
+      "country": "JP",
       "ledGames": 4
     },
     {
@@ -2246,20 +4403,6 @@
       "name": "Animation Arts",
       "precision": "country",
       "country": "DE",
-      "ledGames": 4
-    },
-    {
-      "companyId": 2327,
-      "name": "Sega AM3",
-      "precision": "country",
-      "country": "JP",
-      "ledGames": 4
-    },
-    {
-      "companyId": 2342,
-      "name": "Nintendo EAD Software Development Group No.5",
-      "precision": "country",
-      "country": "JP",
       "ledGames": 4
     },
     {
@@ -2319,10 +4462,10 @@
       "ledGames": 4
     },
     {
-      "companyId": 7097,
-      "name": "Thunder Lotus",
+      "companyId": 7914,
+      "name": "Lazy Bear Games",
       "precision": "country",
-      "country": "CA",
+      "country": "LT",
       "ledGames": 4
     },
     {
@@ -2335,13 +4478,6 @@
     {
       "companyId": 9957,
       "name": "Byking Inc.",
-      "precision": "country",
-      "country": "JP",
-      "ledGames": 4
-    },
-    {
-      "companyId": 10938,
-      "name": "Square Enix Product Development Division 2",
       "precision": "country",
       "country": "JP",
       "ledGames": 4
@@ -2396,13 +4532,6 @@
       "ledGames": 4
     },
     {
-      "companyId": 32841,
-      "name": "Mimimi Games",
-      "precision": "country",
-      "country": "DE",
-      "ledGames": 4
-    },
-    {
       "companyId": 38177,
       "name": "PlaySide",
       "precision": "country",
@@ -2412,13 +4541,6 @@
     {
       "companyId": 42627,
       "name": "Capcom Planning Room 2",
-      "precision": "country",
-      "country": "JP",
-      "ledGames": 4
-    },
-    {
-      "companyId": 45211,
-      "name": "Nintendo EPD Production Group No. 5",
       "precision": "country",
       "country": "JP",
       "ledGames": 4
@@ -2452,17 +4574,10 @@
       "ledGames": 3
     },
     {
-      "companyId": 337,
-      "name": "Square Enix Product Development Division 4",
+      "companyId": 489,
+      "name": "Mindscape",
       "precision": "country",
-      "country": "JP",
-      "ledGames": 3
-    },
-    {
-      "companyId": 515,
-      "name": "Razorworks Studios",
-      "precision": "country",
-      "country": "GB",
+      "country": "NL",
       "ledGames": 3
     },
     {
@@ -2480,6 +4595,13 @@
       "ledGames": 3
     },
     {
+      "companyId": 716,
+      "name": "Natsume Inc.",
+      "precision": "country",
+      "country": "US",
+      "ledGames": 3
+    },
+    {
       "companyId": 720,
       "name": "Infogrames Europe",
       "precision": "country",
@@ -2487,15 +4609,8 @@
       "ledGames": 3
     },
     {
-      "companyId": 773,
-      "name": "Nintendo EAD Tokyo Software Development Group No.1",
-      "precision": "country",
-      "country": "JP",
-      "ledGames": 3
-    },
-    {
-      "companyId": 866,
-      "name": "Nintendo SPD Production Group No. 2",
+      "companyId": 874,
+      "name": "Smilebit",
       "precision": "country",
       "country": "JP",
       "ledGames": 3
@@ -2515,24 +4630,17 @@
       "ledGames": 3
     },
     {
-      "companyId": 1103,
-      "name": "Nintendo EAD Software Development Group No.1",
-      "precision": "country",
-      "country": "JP",
-      "ledGames": 3
-    },
-    {
-      "companyId": 1112,
-      "name": "Square Product Development Division 2",
-      "precision": "country",
-      "country": "JP",
-      "ledGames": 3
-    },
-    {
       "companyId": 1140,
       "name": "Digital Anvil",
       "precision": "country",
       "country": "US",
+      "ledGames": 3
+    },
+    {
+      "companyId": 1238,
+      "name": "Virgin Games USA",
+      "precision": "none",
+      "country": null,
       "ledGames": 3
     },
     {
@@ -2557,10 +4665,24 @@
       "ledGames": 3
     },
     {
+      "companyId": 1639,
+      "name": "Cellar Door Games",
+      "precision": "country",
+      "country": "CA",
+      "ledGames": 3
+    },
+    {
       "companyId": 1663,
       "name": "Suspicious Developments",
       "precision": "country",
       "country": "GB",
+      "ledGames": 3
+    },
+    {
+      "companyId": 1817,
+      "name": "Z-Axis",
+      "precision": "country",
+      "country": "US",
       "ledGames": 3
     },
     {
@@ -2582,13 +4704,6 @@
       "name": "Tate Interactive",
       "precision": "none",
       "country": null,
-      "ledGames": 3
-    },
-    {
-      "companyId": 2009,
-      "name": "United Game Artists",
-      "precision": "country",
-      "country": "JP",
       "ledGames": 3
     },
     {
@@ -2631,6 +4746,153 @@
       "name": "Team Andromeda",
       "precision": "country",
       "country": "JP",
+      "ledGames": 3
+    },
+    {
+      "companyId": 2462,
+      "name": "Messhof",
+      "precision": "country",
+      "country": "US",
+      "ledGames": 3
+    },
+    {
+      "companyId": 2470,
+      "name": "RuneStorm",
+      "precision": "none",
+      "country": null,
+      "ledGames": 3
+    },
+    {
+      "companyId": 2473,
+      "name": "Pathea Games",
+      "precision": "country",
+      "country": "US",
+      "ledGames": 3
+    },
+    {
+      "companyId": 2501,
+      "name": "Overhaul Games",
+      "precision": "none",
+      "country": null,
+      "ledGames": 3
+    },
+    {
+      "companyId": 2766,
+      "name": "Tomorrow Corporation",
+      "precision": "country",
+      "country": "US",
+      "ledGames": 3
+    },
+    {
+      "companyId": 2941,
+      "name": "Games Farm",
+      "precision": "country",
+      "country": "SK",
+      "ledGames": 3
+    },
+    {
+      "companyId": 3828,
+      "name": "SmashGames",
+      "precision": "none",
+      "country": null,
+      "ledGames": 3
+    },
+    {
+      "companyId": 4111,
+      "name": "Midway Studios San Diego",
+      "precision": "country",
+      "country": "US",
+      "ledGames": 3
+    },
+    {
+      "companyId": 4532,
+      "name": "Xatrix Entertainment",
+      "precision": "country",
+      "country": "US",
+      "ledGames": 3
+    },
+    {
+      "companyId": 4605,
+      "name": "Sigma Team",
+      "precision": "country",
+      "country": "RU",
+      "ledGames": 3
+    },
+    {
+      "companyId": 4777,
+      "name": "SkyGoblin",
+      "precision": "country",
+      "country": "SE",
+      "ledGames": 3
+    },
+    {
+      "companyId": 5157,
+      "name": "HuniePot",
+      "precision": "country",
+      "country": "US",
+      "ledGames": 3
+    },
+    {
+      "companyId": 5326,
+      "name": "Camouflaj",
+      "precision": "country",
+      "country": "US",
+      "ledGames": 3
+    },
+    {
+      "companyId": 5792,
+      "name": "Mouldy Toof Studios",
+      "precision": "country",
+      "country": "GB",
+      "ledGames": 3
+    },
+    {
+      "companyId": 5887,
+      "name": "Matthew Brown",
+      "precision": "country",
+      "country": "GB",
+      "ledGames": 3
+    },
+    {
+      "companyId": 6054,
+      "name": "Uppercut Games",
+      "precision": "country",
+      "country": "AU",
+      "ledGames": 3
+    },
+    {
+      "companyId": 6079,
+      "name": "Hangar 13",
+      "precision": "country",
+      "country": "GB",
+      "ledGames": 3
+    },
+    {
+      "companyId": 6187,
+      "name": "Robot Gentleman Studios",
+      "precision": "country",
+      "country": "PL",
+      "ledGames": 3
+    },
+    {
+      "companyId": 6369,
+      "name": "The Brotherhood Games",
+      "precision": "country",
+      "country": "ZA",
+      "ledGames": 3
+    },
+    {
+      "companyId": 7049,
+      "name": "Draknek & Friends",
+      "precision": "country",
+      "country": "GB",
+      "ledGames": 3
+    },
+    {
+      "companyId": 7068,
+      "name": "Lonely Troops",
+      "precision": "country",
+      "country": "SK",
       "ledGames": 3
     }
   ]

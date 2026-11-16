@@ -80,8 +80,8 @@
 - Game id: 143114, popularity rank 2631 of 9966, popularity 61
 - IGDB: https://www.igdb.com/games/total-war-warhammer-iii
 - Lead studio: The Creative Assembly (company 111)
-  - Location: Horsham, Australia; -36.716666666, 142.2; precision city
-  - Location source: https://www.wikidata.org/wiki/Q611508
+  - Location: Horsham, United Kingdom; 51.06314, -0.32757; precision city
+  - Location source: https://en.wikipedia.org/wiki/The_Creative_Assembly
 - Lead chosen by: igdb_single_developer
 
 | Company | Role | Platform | Source |
@@ -105,36 +105,33 @@
 | Madruga Works | lead_developer |  | https://www.igdb.com/games/dawn-of-man |
 | Madruga Works | publisher |  | https://www.igdb.com/games/dawn-of-man |
 
-## Beyond Oasis (1994)
+## Homeworld: Deserts of Kharak (2016)
 
-- Game id: 15299, popularity rank 3847 of 9966, popularity 38
-- IGDB: https://www.igdb.com/games/beyond-oasis
-- Lead studio: Ancient (company 1568)
-  - Location: Hino, Japan; 35.671277777, 139.395138888; precision city
-  - Location source: https://www.wikidata.org/wiki/Q2845962
+- Game id: 15444, popularity rank 3847 of 9966, popularity 38
+- IGDB: https://www.igdb.com/games/homeworld-deserts-of-kharak
+- Lead studio: Blackbird Interactive (company 3869)
+  - Location: Vancouver, Canada; 49.260833333, -123.113888888; precision city
+  - Location source: https://www.wikidata.org/wiki/Q22906795
 - Lead chosen by: igdb_single_developer
 
 | Company | Role | Platform | Source |
 | --- | --- | --- | --- |
-| Ancient | lead_developer |  | https://www.igdb.com/games/beyond-oasis |
-| Sega | publisher |  | https://www.igdb.com/games/beyond-oasis |
-| Sega of America | publisher |  | https://www.igdb.com/games/beyond-oasis |
-| Sega Europe | publisher |  | https://www.igdb.com/games/beyond-oasis |
-| Sega Enterprises, Ltd. | publisher |  | https://www.igdb.com/games/beyond-oasis |
+| Blackbird Interactive | lead_developer |  | https://www.igdb.com/games/homeworld-deserts-of-kharak |
+| Gearbox Software | publisher |  | https://www.igdb.com/games/homeworld-deserts-of-kharak |
 
-## Eastshade (2019)
+## That Dragon, Cancer (2016)
 
-- Game id: 17480, popularity rank 4199 of 9966, popularity 34
-- IGDB: https://www.igdb.com/games/eastshade
-- Lead studio: Eastshade Studios (company 8776)
+- Game id: 15925, popularity rank 4199 of 9966, popularity 34
+- IGDB: https://www.igdb.com/games/that-dragon-cancer
+- Lead studio: Numinous Games (company 7913)
   - Location: United States; 38, -97; precision country
-  - Location source: https://www.igdb.com/companies/eastshade-studios
+  - Location source: https://www.igdb.com/companies/numinous-games
 - Lead chosen by: igdb_single_developer
 
 | Company | Role | Platform | Source |
 | --- | --- | --- | --- |
-| Eastshade Studios | lead_developer |  | https://www.igdb.com/games/eastshade |
-| Eastshade Studios | publisher |  | https://www.igdb.com/games/eastshade |
+| Numinous Games | lead_developer |  | https://www.igdb.com/games/that-dragon-cancer |
+| Numinous Games | publisher |  | https://www.igdb.com/games/that-dragon-cancer |
 
 ## Bejeweled (2001)
 
@@ -165,39 +162,42 @@
 | Game Freak | lead_developer |  | https://www.igdb.com/games/beast-of-reincarnation |
 | Fictions | publisher |  | https://www.igdb.com/games/beast-of-reincarnation |
 
-## Knights of the Temple: Infernal Crusade (2004)
+## Resident Evil: The Mercenaries 3D (2011)
 
-- Game id: 1222, popularity rank 5725 of 9966, popularity 22
-- IGDB: https://www.igdb.com/games/knights-of-the-temple-infernal-crusade
-- Lead studio: Starbreeze Studios (company 280)
-  - Location: Stockholm, Sweden; 59.329444444, 18.068611111; precision city
-  - Location source: https://www.wikidata.org/wiki/Q2298950
+- Game id: 976, popularity rank 5725 of 9966, popularity 22
+- IGDB: https://www.igdb.com/games/resident-evil-the-mercenaries-3d
+- Lead studio: Capcom (company 37)
+  - Location: Osaka, Japan; 34.681111111, 135.509722222; precision city
+  - Location source: https://www.wikidata.org/wiki/Q14428
+- Lead chosen by: igdb_developer_confirmed_by_wikidata
+
+| Company | Role | Platform | Source |
+| --- | --- | --- | --- |
+| Capcom | lead_developer |  | https://www.igdb.com/games/resident-evil-the-mercenaries-3d |
+| Tose | co_developer |  | https://www.igdb.com/games/resident-evil-the-mercenaries-3d |
+| Capcom | publisher |  | https://www.igdb.com/games/resident-evil-the-mercenaries-3d |
+
+## Total War Saga: Thrones of Britannia (2018)
+
+- Game id: 44102, popularity rank 6049 of 9966, popularity 21
+- IGDB: https://www.igdb.com/games/total-war-saga-thrones-of-britannia
+- Lead studio: The Creative Assembly (company 111)
+  - Location: Horsham, United Kingdom; 51.06314, -0.32757; precision city
+  - Location source: https://en.wikipedia.org/wiki/The_Creative_Assembly
 - Lead chosen by: igdb_single_developer
 
 | Company | Role | Platform | Source |
 | --- | --- | --- | --- |
-| Starbreeze Studios | lead_developer |  | https://www.igdb.com/games/knights-of-the-temple-infernal-crusade |
-| TDK Mediactive | publisher |  | https://www.igdb.com/games/knights-of-the-temple-infernal-crusade |
-
-## Yu-Gi-Oh! GX Tag Force 3 (2008)
-
-- Game id: 44494, popularity rank 6049 of 9966, popularity 21
-- IGDB: https://www.igdb.com/games/yu-gi-oh-gx-tag-force-3
-- Lead studio: Konami (company 129)
-  - Location: Tokyo, Japan; 35.689444444, 139.691666666; precision city
-  - Location source: https://www.wikidata.org/wiki/Q45700
-- Lead chosen by: igdb_single_developer
-
-| Company | Role | Platform | Source |
-| --- | --- | --- | --- |
-| Konami | lead_developer |  | https://www.igdb.com/games/yu-gi-oh-gx-tag-force-3 |
+| The Creative Assembly | lead_developer |  | https://www.igdb.com/games/total-war-saga-thrones-of-britannia |
+| Sega | publisher |  | https://www.igdb.com/games/total-war-saga-thrones-of-britannia |
+| Sega Games | publisher |  | https://www.igdb.com/games/total-war-saga-thrones-of-britannia |
 
 ## Klax (1990)
 
 - Game id: 4484, popularity rank 6679 of 9966, popularity 18
 - IGDB: https://www.igdb.com/games/klax
 - Lead studio: Atari Games (company 1746)
-  - Location: San Jose, United States; 37.434722222, -121.895; precision city
+  - Location: Milpitas, United States; 37.434722222, -121.895; precision city
   - Location source: https://www.wikidata.org/wiki/Q1061580
 - Lead chosen by: igdb_developer_confirmed_by_wikidata
 
@@ -228,19 +228,20 @@
 | Mobimon | publisher |  | https://www.igdb.com/games/love-live-school-idol-festival |
 | MariyGames | publisher |  | https://www.igdb.com/games/love-live-school-idol-festival |
 
-## Power Rangers Time Force (2001)
+## Z: Steel Soldiers (2001)
 
-- Game id: 3293, popularity rank 7551 of 9966, popularity 15
-- IGDB: https://www.igdb.com/games/power-rangers-time-force
-- Lead studio: Natsume Inc. (company 716)
-  - Location: Tokyo, Japan; 35.693888888, 139.703416666; precision city
-  - Location source: https://www.wikidata.org/wiki/Q3772556
-- Lead chosen by: wikidata_developer
+- Game id: 3276, popularity rank 7551 of 9966, popularity 15
+- IGDB: https://www.igdb.com/games/z-steel-soldiers
+- Lead studio: The Bitmap Brothers (company 1714)
+  - Location: London, United Kingdom; 51.5073, -0.061; precision city
+  - Location source: https://www.wikidata.org/wiki/Q2164685
+- Lead chosen by: igdb_single_developer
 
 | Company | Role | Platform | Source |
 | --- | --- | --- | --- |
-| Natsume Inc. | lead_developer |  | https://www.wikidata.org/wiki/Q3284571 |
-| THQ | publisher |  | https://www.igdb.com/games/power-rangers-time-force |
+| The Bitmap Brothers | lead_developer |  | https://www.igdb.com/games/z-steel-soldiers |
+| SCi Games | publisher |  | https://www.igdb.com/games/z-steel-soldiers |
+| EON Digital Entertainment | publisher |  | https://www.igdb.com/games/z-steel-soldiers |
 
 ## Starship Troopers: Extermination (2024)
 
@@ -270,20 +271,19 @@
 | EarthWork Games | lead_developer |  | https://www.igdb.com/games/forts |
 | EarthWork Games | publisher |  | https://www.igdb.com/games/forts |
 
-## TBH: Task Bar Hero (2026)
+## Football Manager 26 (2025)
 
-- Game id: 372510, popularity rank 9166 of 9966, popularity 12
-- IGDB: https://www.igdb.com/games/tbh-task-bar-hero
-- Lead studio: Nugem Studio (company 75237)
-  - Location: unknown; no coordinates; precision none
-  - Location source: none
-- Lead chosen by: igdb_first_developer
+- Game id: 365487, popularity rank 9166 of 9966, popularity 12
+- IGDB: https://www.igdb.com/games/football-manager-26
+- Lead studio: Sports Interactive (company 486)
+  - Location: London, United Kingdom; 51.507222222, -0.1275; precision city
+  - Location source: https://www.wikidata.org/wiki/Q2567775
+- Lead chosen by: igdb_single_developer
 
 | Company | Role | Platform | Source |
 | --- | --- | --- | --- |
-| Nugem Studio | lead_developer |  | https://www.igdb.com/games/tbh-task-bar-hero |
-| Tesseract Studio | co_developer |  | https://www.igdb.com/games/tbh-task-bar-hero |
-| Nugem Studio | publisher |  | https://www.igdb.com/games/tbh-task-bar-hero |
+| Sports Interactive | lead_developer |  | https://www.igdb.com/games/football-manager-26 |
+| Sega | publisher |  | https://www.igdb.com/games/football-manager-26 |
 
 ## Aerial_Knight's Never Yield (2021)
 

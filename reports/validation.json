@@ -105,18 +105,25 @@
       "passed": true,
       "count": 0,
       "examples": []
+    },
+    {
+      "name": "company-location-fields",
+      "description": "located companies have a location source and basis; city precision has a city name; precision none has no basis",
+      "passed": true,
+      "count": 0,
+      "examples": []
     }
   ],
   "totals": {
     "games": 9966,
     "companies": 6241,
-    "roles": 29265
+    "roles": 29269
   },
   "roleCounts": {
     "lead_developer": 9966,
-    "co_developer": 1546,
+    "co_developer": 1547,
     "port": 1395,
-    "publisher": 15227,
+    "publisher": 15230,
     "localization": 1,
     "qa": 0,
     "art": 1,
@@ -125,16 +132,16 @@
   },
   "precision": {
     "city": {
-      "count": 2261,
-      "percent": 36.2
+      "count": 2289,
+      "percent": 36.7
     },
     "country": {
-      "count": 2645,
-      "percent": 42.4
+      "count": 2592,
+      "percent": 41.5
     },
     "none": {
-      "count": 1335,
-      "percent": 21.4
+      "count": 1360,
+      "percent": 21.8
     }
   },
   "flaggedCompanies": [
@@ -344,6 +351,11 @@
       "gameCount": 4
     },
     {
+      "id": 10603,
+      "name": "doseone",
+      "gameCount": 4
+    },
+    {
       "id": 12755,
       "name": "NEC Avenue, Ltd.",
       "gameCount": 4
@@ -366,6 +378,11 @@
     {
       "id": 36900,
       "name": "DreadXP",
+      "gameCount": 4
+    },
+    {
+      "id": 38886,
+      "name": "Granite Bay Software",
       "gameCount": 4
     },
     {
@@ -431,6 +448,11 @@
     {
       "id": 1791,
       "name": "Acclaim Japan",
+      "gameCount": 3
+    },
+    {
+      "id": 1858,
+      "name": "Epic/Sony Records",
       "gameCount": 3
     },
     {
@@ -584,6 +606,11 @@
       "gameCount": 3
     },
     {
+      "id": 38076,
+      "name": "Keita Takahashi",
+      "gameCount": 3
+    },
+    {
       "id": 38100,
       "name": "MediaKite Distribution",
       "gameCount": 3
@@ -671,11 +698,6 @@
     {
       "id": 1828,
       "name": "Dual Corporation",
-      "gameCount": 2
-    },
-    {
-      "id": 1858,
-      "name": "Epic/Sony Records",
       "gameCount": 2
     },
     {
@@ -829,6 +851,11 @@
       "gameCount": 2
     },
     {
+      "id": 6219,
+      "name": "Dingo",
+      "gameCount": 2
+    },
+    {
       "id": 7258,
       "name": "Electrocoin",
       "gameCount": 2
@@ -929,6 +956,11 @@
       "gameCount": 2
     },
     {
+      "id": 12432,
+      "name": "Bitbaboon",
+      "gameCount": 2
+    },
+    {
       "id": 12539,
       "name": "101XP",
       "gameCount": 2
@@ -959,13 +991,18 @@
       "gameCount": 2
     },
     {
+      "id": 13246,
+      "name": "Resonair",
+      "gameCount": 2
+    },
+    {
       "id": 13327,
       "name": "Techland Publishing",
       "gameCount": 2
     },
     {
-      "id": 14283,
-      "name": "Nifflas Games",
+      "id": 13769,
+      "name": "GemaYue",
       "gameCount": 2
     },
     {
@@ -1229,6 +1266,11 @@
       "gameCount": 2
     },
     {
+      "id": 33130,
+      "name": "Deca Games",
+      "gameCount": 2
+    },
+    {
       "id": 33325,
       "name": "N4bA",
       "gameCount": 2
@@ -1404,6 +1446,11 @@
       "gameCount": 1
     },
     {
+      "id": 534,
+      "name": "Sick Puppies",
+      "gameCount": 1
+    },
+    {
       "id": 550,
       "name": "Gamestorm",
       "gameCount": 1
@@ -1421,6 +1468,11 @@
     {
       "id": 679,
       "name": "Tri-Synergy",
+      "gameCount": 1
+    },
+    {
+      "id": 682,
+      "name": "Reactor Zero",
       "gameCount": 1
     },
     {
@@ -1674,6 +1726,11 @@
       "gameCount": 1
     },
     {
+      "id": 2008,
+      "name": "AM3",
+      "gameCount": 1
+    },
+    {
       "id": 2044,
       "name": "Check Six Games",
       "gameCount": 1
@@ -1866,6 +1923,11 @@
     {
       "id": 2655,
       "name": "SIDE UK Ltd",
+      "gameCount": 1
+    },
+    {
+      "id": 2686,
+      "name": "Midway Chicago",
       "gameCount": 1
     },
     {
@@ -2209,6 +2271,11 @@
       "gameCount": 1
     },
     {
+      "id": 4455,
+      "name": "Sega AM5",
+      "gameCount": 1
+    },
+    {
       "id": 4456,
       "name": "Moonlite Software",
       "gameCount": 1
@@ -2226,6 +2293,11 @@
     {
       "id": 4512,
       "name": "The Dome",
+      "gameCount": 1
+    },
+    {
+      "id": 4513,
+      "name": "Unexpected Development",
       "gameCount": 1
     },
     {
@@ -2301,6 +2373,11 @@
     {
       "id": 5083,
       "name": "Reverge Labs",
+      "gameCount": 1
+    },
+    {
+      "id": 5086,
+      "name": "Vladimir Romanyuk",
       "gameCount": 1
     },
     {
@@ -2396,6 +2473,11 @@
     {
       "id": 6103,
       "name": "GRIP Entertainment",
+      "gameCount": 1
+    },
+    {
+      "id": 6113,
+      "name": "Dark Seas Interactive",
       "gameCount": 1
     },
     {
@@ -2521,6 +2603,11 @@
     {
       "id": 7029,
       "name": "93 Games Studio",
+      "gameCount": 1
+    },
+    {
+      "id": 7057,
+      "name": "Ty Taylor & Mario Castañeda",
       "gameCount": 1
     },
     {
@@ -2924,8 +3011,18 @@
       "gameCount": 1
     },
     {
+      "id": 9986,
+      "name": "A-Lim",
+      "gameCount": 1
+    },
+    {
       "id": 10072,
       "name": "Peakstar Software",
+      "gameCount": 1
+    },
+    {
+      "id": 10073,
+      "name": "Synergy",
       "gameCount": 1
     },
     {
@@ -3046,6 +3143,11 @@
     {
       "id": 10884,
       "name": "Americana Software Limited",
+      "gameCount": 1
+    },
+    {
+      "id": 10942,
+      "name": "Splendy Interactive",
       "gameCount": 1
     },
     {
@@ -3354,6 +3456,11 @@
       "gameCount": 1
     },
     {
+      "id": 12869,
+      "name": "Software Country",
+      "gameCount": 1
+    },
+    {
       "id": 12937,
       "name": "SpectreVision",
       "gameCount": 1
@@ -3376,6 +3483,11 @@
     {
       "id": 13181,
       "name": "VIVA Games",
+      "gameCount": 1
+    },
+    {
+      "id": 13188,
+      "name": "LINE Corporation",
       "gameCount": 1
     },
     {
@@ -3766,6 +3878,11 @@
     {
       "id": 17050,
       "name": "NA Otaku Publishing Ltd.",
+      "gameCount": 1
+    },
+    {
+      "id": 17087,
+      "name": "Grapeshot Games",
       "gameCount": 1
     },
     {
@@ -4259,11 +4376,6 @@
       "gameCount": 1
     },
     {
-      "id": 22121,
-      "name": "4G",
-      "gameCount": 1
-    },
-    {
       "id": 22138,
       "name": "Windwalk Games",
       "gameCount": 1
@@ -4754,11 +4866,6 @@
       "gameCount": 1
     },
     {
-      "id": 25727,
-      "name": "Bungie West",
-      "gameCount": 1
-    },
-    {
       "id": 25738,
       "name": "Noisestorm",
       "gameCount": 1
@@ -4969,6 +5076,11 @@
       "gameCount": 1
     },
     {
+      "id": 27515,
+      "name": "Instinct Design",
+      "gameCount": 1
+    },
+    {
       "id": 27534,
       "name": "CTA Developments",
       "gameCount": 1
@@ -5144,6 +5256,11 @@
       "gameCount": 1
     },
     {
+      "id": 29118,
+      "name": "Zynga With Friends",
+      "gameCount": 1
+    },
+    {
       "id": 29146,
       "name": "Oddshot Games",
       "gameCount": 1
@@ -5186,6 +5303,11 @@
     {
       "id": 30158,
       "name": "Oslo Albet",
+      "gameCount": 1
+    },
+    {
+      "id": 30162,
+      "name": "CSG Imagesoft",
       "gameCount": 1
     },
     {
@@ -5839,6 +5961,11 @@
       "gameCount": 1
     },
     {
+      "id": 38487,
+      "name": "TECOPARK",
+      "gameCount": 1
+    },
+    {
       "id": 38539,
       "name": "Arbitrarily Good Productions",
       "gameCount": 1
@@ -6404,6 +6531,11 @@
       "gameCount": 1
     },
     {
+      "id": 54993,
+      "name": "Universal Studios Digital Arts",
+      "gameCount": 1
+    },
+    {
       "id": 55091,
       "name": "Inline Assembly",
       "gameCount": 1
@@ -6815,44 +6947,283 @@
     }
   ],
   "countryOnlyLeadShare": {
-    "count": 2643,
+    "count": 2469,
     "total": 9966,
-    "percent": 26.5
+    "percent": 24.8
   },
   "leadBasisCounts": {
     "igdb_single_developer": 8642,
     "igdb_developer_confirmed_by_wikidata": 929,
-    "igdb_first_developer": 358,
+    "igdb_first_developer": 249,
+    "curated": 11,
+    "igdb_developer_heuristic": 98,
     "wikidata_developer": 37
   },
-  "leadStudiosWithoutCity": [
+  "warnings": [
     {
-      "id": 660,
-      "name": "Capcom Production Studio 1",
-      "precision": "country",
-      "country": "JP",
-      "ledGames": 17
+      "name": "Coordinates far from the stated country",
+      "description": "Overseas territories and distant branch offices can appear here legitimately.",
+      "count": 1,
+      "items": [
+        "company 17928 \"Metronomik\" (MY, Kuala Lumpur): 1205 km from the country centre, limit 811 km"
+      ]
+    }
+  ],
+  "lowConfidenceLeads": [
+    {
+      "gameId": 11208,
+      "name": "NieR:Automata",
+      "lead": "PlatinumGames",
+      "others": [
+        "Square Enix Business Division 6"
+      ]
     },
+    {
+      "gameId": 359,
+      "name": "Final Fantasy XV",
+      "lead": "Square Enix Business Division 2",
+      "others": [
+        "Luminous Productions"
+      ]
+    },
+    {
+      "gameId": 306,
+      "name": "Far Cry",
+      "lead": "Crytek Frankfurt",
+      "others": [
+        "Crytek"
+      ]
+    },
+    {
+      "gameId": 11397,
+      "name": "Yakuza 0",
+      "lead": "Ryu Ga Gotoku Studio",
+      "others": [
+        "Sega Games"
+      ]
+    },
+    {
+      "gameId": 2180,
+      "name": "Super Mario 3D World",
+      "lead": "Nintendo Entertainment Analysis & Development",
+      "others": [
+        "Nintendo"
+      ]
+    },
+    {
+      "gameId": 482,
+      "name": "Silent Hill 3",
+      "lead": "Team Silent",
+      "others": [
+        "Konami Computer Entertainment Tokyo"
+      ]
+    },
+    {
+      "gameId": 3812,
+      "name": "Ryse: Son of Rome",
+      "lead": "Crytek Frankfurt",
+      "others": [
+        "Crytek"
+      ]
+    },
+    {
+      "gameId": 2349,
+      "name": "Mario Kart 7",
+      "lead": "Nintendo EAD Software Development Group No.1",
+      "others": [
+        "Nintendo"
+      ]
+    },
+    {
+      "gameId": 386,
+      "name": "Final Fantasy XIV Online",
+      "lead": "Square Enix Product Development Division 3",
+      "others": [
+        "Square Enix Creative Business Unit III",
+        "Square Enix Business Division 5",
+        "Square Enix Creative Studio 3"
+      ]
+    },
+    {
+      "gameId": 7339,
+      "name": "Super Mario Maker",
+      "lead": "Nintendo EAD Software Development Group No.4",
+      "others": [
+        "Nintendo"
+      ]
+    },
+    {
+      "gameId": 9621,
+      "name": "Super Smash Bros. for Nintendo 3DS",
+      "lead": "Bandai Namco Games",
+      "others": [
+        "Sora"
+      ]
+    },
+    {
+      "gameId": 28168,
+      "name": "Code Vein",
+      "lead": "Shift",
+      "others": [
+        "Bandai Namco Studios"
+      ]
+    },
+    {
+      "gameId": 1653,
+      "name": "Streets of Rage 2",
+      "lead": "Ancient",
+      "others": [
+        "H.I.C.",
+        "Shout! Designworks",
+        "MNM Software"
+      ]
+    },
+    {
+      "gameId": 3195,
+      "name": "Assassin's Creed III: Liberation",
+      "lead": "Ubisoft Sofia",
+      "others": [
+        "Ubisoft Milan"
+      ]
+    },
+    {
+      "gameId": 8118,
+      "name": "Disney's Aladdin",
+      "lead": "Virgin Games USA",
+      "others": [
+        "Virgin Interactive Entertainment (Europe) Ltd."
+      ]
+    },
+    {
+      "gameId": 103339,
+      "name": "Super Mario Party",
+      "lead": "NDCube",
+      "others": [
+        "Nintendo"
+      ]
+    },
+    {
+      "gameId": 662,
+      "name": "Dawn of Discovery",
+      "lead": "Related Designs",
+      "others": [
+        "Blue Byte"
+      ]
+    },
+    {
+      "gameId": 2482,
+      "name": "The Godfather",
+      "lead": "Headgate Studios",
+      "others": [
+        "Page 44 Studios"
+      ]
+    },
+    {
+      "gameId": 7337,
+      "name": "Captain Toad: Treasure Tracker",
+      "lead": "Nintendo EAD Software Development Group No.2",
+      "others": [
+        "Nintendo"
+      ]
+    },
+    {
+      "gameId": 20744,
+      "name": "Ōkami HD",
+      "lead": "Clover Studio",
+      "others": [
+        "Capcom"
+      ]
+    },
+    {
+      "gameId": 199116,
+      "name": "Brotato",
+      "lead": "Blobfish",
+      "others": [
+        "Erabit Studios"
+      ]
+    },
+    {
+      "gameId": 2977,
+      "name": "Mortal Kombat: Komplete Edition",
+      "lead": "High Voltage Software",
+      "others": [
+        "NetherRealm Studios"
+      ]
+    },
+    {
+      "gameId": 150045,
+      "name": "Resident Evil: Revelations",
+      "lead": "Capcom",
+      "others": [
+        "Tose"
+      ]
+    },
+    {
+      "gameId": 27744,
+      "name": "House Flipper",
+      "lead": "Empyrean",
+      "others": [
+        "Frozen District",
+        "Ultimate Games"
+      ]
+    },
+    {
+      "gameId": 20048,
+      "name": "Darksiders II: Deathinitive Edition",
+      "lead": "Vigil Games",
+      "others": [
+        "THQ Nordic",
+        "Gunfire Games"
+      ]
+    },
+    {
+      "gameId": 12529,
+      "name": "Gravity Rush Remastered",
+      "lead": "SCE Japan Studio",
+      "others": [
+        "Project Siren"
+      ]
+    },
+    {
+      "gameId": 24881,
+      "name": "Kingdom: New Lands",
+      "lead": "Licorice",
+      "others": [
+        "Noio"
+      ]
+    },
+    {
+      "gameId": 3119,
+      "name": "Metin2",
+      "lead": "Ymir Entertainment Co., Ltd",
+      "others": [
+        "Webzen"
+      ]
+    },
+    {
+      "gameId": 2172,
+      "name": "Nintendo Land",
+      "lead": "Nintendo EAD Software Development Group No.2",
+      "others": [
+        "Nintendo"
+      ]
+    },
+    {
+      "gameId": 13686,
+      "name": "Kingdom: Classic",
+      "lead": "Noio",
+      "others": [
+        "Licorice"
+      ]
+    }
+  ],
+  "leadStudiosWithoutCity": [
     {
       "id": 159,
       "name": "Konami Computer Entertainment Tokyo",
       "precision": "country",
       "country": "JP",
       "ledGames": 14
-    },
-    {
-      "id": 892,
-      "name": "Capcom Production Studio 2",
-      "precision": "country",
-      "country": "JP",
-      "ledGames": 12
-    },
-    {
-      "id": 1246,
-      "name": "Nintendo EAD Software Development Group No.2",
-      "precision": "country",
-      "country": "JP",
-      "ledGames": 11
     },
     {
       "id": 732,
@@ -6862,10 +7233,10 @@
       "ledGames": 10
     },
     {
-      "id": 1366,
-      "name": "Nintendo EAD Software Development Group No.3",
+      "id": 144,
+      "name": "GSC Game World",
       "precision": "country",
-      "country": "JP",
+      "country": "CZ",
       "ledGames": 9
     },
     {
@@ -6876,24 +7247,10 @@
       "ledGames": 9
     },
     {
-      "id": 42265,
-      "name": "Capcom Development Division 1",
+      "id": 213,
+      "name": "Infogrames",
       "precision": "country",
-      "country": "JP",
-      "ledGames": 9
-    },
-    {
-      "id": 92,
-      "name": "NovaLogic",
-      "precision": "country",
-      "country": "US",
-      "ledGames": 8
-    },
-    {
-      "id": 93,
-      "name": "Square Enix 1st Production Department",
-      "precision": "country",
-      "country": "JP",
+      "country": "FR",
       "ledGames": 8
     },
     {
@@ -6901,13 +7258,6 @@
       "name": "Project Aces",
       "precision": "country",
       "country": "JP",
-      "ledGames": 8
-    },
-    {
-      "id": 1241,
-      "name": "Artificial Mind & Movement",
-      "precision": "country",
-      "country": "CA",
       "ledGames": 8
     },
     {
@@ -6925,32 +7275,11 @@
       "ledGames": 8
     },
     {
-      "id": 663,
-      "name": "Capcom Production Studio 4",
-      "precision": "country",
-      "country": "JP",
-      "ledGames": 7
-    },
-    {
       "id": 2340,
       "name": "Codemasters Birmingham",
       "precision": "country",
       "country": "GB",
       "ledGames": 7
-    },
-    {
-      "id": 2674,
-      "name": "Nintendo SPD Production Group No. 1",
-      "precision": "country",
-      "country": "JP",
-      "ledGames": 7
-    },
-    {
-      "id": 655,
-      "name": "Capcom Production Studio 3",
-      "precision": "country",
-      "country": "JP",
-      "ledGames": 6
     },
     {
       "id": 2236,
@@ -6967,13 +7296,6 @@
       "ledGames": 6
     },
     {
-      "id": 19281,
-      "name": "Square Enix Business Division 3",
-      "precision": "country",
-      "country": "JP",
-      "ledGames": 6
-    },
-    {
       "id": 32471,
       "name": "Nintendo R&D4",
       "precision": "country",
@@ -6981,17 +7303,10 @@
       "ledGames": 6
     },
     {
-      "id": 45304,
-      "name": "Square Enix Creative Business Unit I",
+      "id": 575,
+      "name": "Impressions Games",
       "precision": "country",
-      "country": "JP",
-      "ledGames": 6
-    },
-    {
-      "id": 799,
-      "name": "Square Enix Product Development Division 1",
-      "precision": "country",
-      "country": "JP",
+      "country": "GB",
       "ledGames": 5
     },
     {
@@ -6999,13 +7314,6 @@
       "name": "Interplay Productions",
       "precision": "country",
       "country": "US",
-      "ledGames": 5
-    },
-    {
-      "id": 1048,
-      "name": "Nintendo EAD Software Development Group No.4",
-      "precision": "country",
-      "country": "JP",
       "ledGames": 5
     },
     {
@@ -7058,13 +7366,6 @@
       "ledGames": 5
     },
     {
-      "id": 45209,
-      "name": "Nintendo EPD Production Group No. 3",
-      "precision": "country",
-      "country": "JP",
-      "ledGames": 5
-    },
-    {
       "id": 51808,
       "name": "100 Cozy Games",
       "precision": "none",
@@ -7072,24 +7373,10 @@
       "ledGames": 5
     },
     {
-      "id": 52975,
-      "name": "Square Product Development Division 1",
-      "precision": "country",
-      "country": "JP",
-      "ledGames": 5
-    },
-    {
       "id": 24,
       "name": "Sierra Entertainment",
       "precision": "country",
       "country": "US",
-      "ledGames": 4
-    },
-    {
-      "id": 335,
-      "name": "Square Product Development Division 3",
-      "precision": "country",
-      "country": "JP",
       "ledGames": 4
     },
     {
@@ -7107,10 +7394,10 @@
       "ledGames": 4
     },
     {
-      "id": 801,
-      "name": "Square Enix Product Development Division 5",
+      "id": 805,
+      "name": "Other Ocean Interactive",
       "precision": "country",
-      "country": "JP",
+      "country": "CA",
       "ledGames": 4
     },
     {
@@ -7121,10 +7408,10 @@
       "ledGames": 4
     },
     {
-      "id": 1238,
-      "name": "Virgin Games USA",
-      "precision": "none",
-      "country": null,
+      "id": 2009,
+      "name": "United Game Artists",
+      "precision": "country",
+      "country": "JP",
       "ledGames": 4
     },
     {
@@ -7139,20 +7426,6 @@
       "name": "Animation Arts",
       "precision": "country",
       "country": "DE",
-      "ledGames": 4
-    },
-    {
-      "id": 2327,
-      "name": "Sega AM3",
-      "precision": "country",
-      "country": "JP",
-      "ledGames": 4
-    },
-    {
-      "id": 2342,
-      "name": "Nintendo EAD Software Development Group No.5",
-      "precision": "country",
-      "country": "JP",
       "ledGames": 4
     },
     {
@@ -7212,10 +7485,10 @@
       "ledGames": 4
     },
     {
-      "id": 7097,
-      "name": "Thunder Lotus",
+      "id": 7914,
+      "name": "Lazy Bear Games",
       "precision": "country",
-      "country": "CA",
+      "country": "LT",
       "ledGames": 4
     },
     {
@@ -7228,13 +7501,6 @@
     {
       "id": 9957,
       "name": "Byking Inc.",
-      "precision": "country",
-      "country": "JP",
-      "ledGames": 4
-    },
-    {
-      "id": 10938,
-      "name": "Square Enix Product Development Division 2",
       "precision": "country",
       "country": "JP",
       "ledGames": 4
@@ -7289,13 +7555,6 @@
       "ledGames": 4
     },
     {
-      "id": 32841,
-      "name": "Mimimi Games",
-      "precision": "country",
-      "country": "DE",
-      "ledGames": 4
-    },
-    {
       "id": 38177,
       "name": "PlaySide",
       "precision": "country",
@@ -7305,13 +7564,6 @@
     {
       "id": 42627,
       "name": "Capcom Planning Room 2",
-      "precision": "country",
-      "country": "JP",
-      "ledGames": 4
-    },
-    {
-      "id": 45211,
-      "name": "Nintendo EPD Production Group No. 5",
       "precision": "country",
       "country": "JP",
       "ledGames": 4
@@ -7345,17 +7597,10 @@
       "ledGames": 3
     },
     {
-      "id": 337,
-      "name": "Square Enix Product Development Division 4",
+      "id": 489,
+      "name": "Mindscape",
       "precision": "country",
-      "country": "JP",
-      "ledGames": 3
-    },
-    {
-      "id": 515,
-      "name": "Razorworks Studios",
-      "precision": "country",
-      "country": "GB",
+      "country": "NL",
       "ledGames": 3
     },
     {
@@ -7373,6 +7618,13 @@
       "ledGames": 3
     },
     {
+      "id": 716,
+      "name": "Natsume Inc.",
+      "precision": "country",
+      "country": "US",
+      "ledGames": 3
+    },
+    {
       "id": 720,
       "name": "Infogrames Europe",
       "precision": "country",
@@ -7380,15 +7632,8 @@
       "ledGames": 3
     },
     {
-      "id": 773,
-      "name": "Nintendo EAD Tokyo Software Development Group No.1",
-      "precision": "country",
-      "country": "JP",
-      "ledGames": 3
-    },
-    {
-      "id": 866,
-      "name": "Nintendo SPD Production Group No. 2",
+      "id": 874,
+      "name": "Smilebit",
       "precision": "country",
       "country": "JP",
       "ledGames": 3
@@ -7408,24 +7653,17 @@
       "ledGames": 3
     },
     {
-      "id": 1103,
-      "name": "Nintendo EAD Software Development Group No.1",
-      "precision": "country",
-      "country": "JP",
-      "ledGames": 3
-    },
-    {
-      "id": 1112,
-      "name": "Square Product Development Division 2",
-      "precision": "country",
-      "country": "JP",
-      "ledGames": 3
-    },
-    {
       "id": 1140,
       "name": "Digital Anvil",
       "precision": "country",
       "country": "US",
+      "ledGames": 3
+    },
+    {
+      "id": 1238,
+      "name": "Virgin Games USA",
+      "precision": "none",
+      "country": null,
       "ledGames": 3
     },
     {
@@ -7450,10 +7688,24 @@
       "ledGames": 3
     },
     {
+      "id": 1639,
+      "name": "Cellar Door Games",
+      "precision": "country",
+      "country": "CA",
+      "ledGames": 3
+    },
+    {
       "id": 1663,
       "name": "Suspicious Developments",
       "precision": "country",
       "country": "GB",
+      "ledGames": 3
+    },
+    {
+      "id": 1817,
+      "name": "Z-Axis",
+      "precision": "country",
+      "country": "US",
       "ledGames": 3
     },
     {
@@ -7475,13 +7727,6 @@
       "name": "Tate Interactive",
       "precision": "none",
       "country": null,
-      "ledGames": 3
-    },
-    {
-      "id": 2009,
-      "name": "United Game Artists",
-      "precision": "country",
-      "country": "JP",
       "ledGames": 3
     },
     {
@@ -7525,6 +7770,153 @@
       "precision": "country",
       "country": "JP",
       "ledGames": 3
+    },
+    {
+      "id": 2462,
+      "name": "Messhof",
+      "precision": "country",
+      "country": "US",
+      "ledGames": 3
+    },
+    {
+      "id": 2470,
+      "name": "RuneStorm",
+      "precision": "none",
+      "country": null,
+      "ledGames": 3
+    },
+    {
+      "id": 2473,
+      "name": "Pathea Games",
+      "precision": "country",
+      "country": "US",
+      "ledGames": 3
+    },
+    {
+      "id": 2501,
+      "name": "Overhaul Games",
+      "precision": "none",
+      "country": null,
+      "ledGames": 3
+    },
+    {
+      "id": 2766,
+      "name": "Tomorrow Corporation",
+      "precision": "country",
+      "country": "US",
+      "ledGames": 3
+    },
+    {
+      "id": 2941,
+      "name": "Games Farm",
+      "precision": "country",
+      "country": "SK",
+      "ledGames": 3
+    },
+    {
+      "id": 3828,
+      "name": "SmashGames",
+      "precision": "none",
+      "country": null,
+      "ledGames": 3
+    },
+    {
+      "id": 4111,
+      "name": "Midway Studios San Diego",
+      "precision": "country",
+      "country": "US",
+      "ledGames": 3
+    },
+    {
+      "id": 4532,
+      "name": "Xatrix Entertainment",
+      "precision": "country",
+      "country": "US",
+      "ledGames": 3
+    },
+    {
+      "id": 4605,
+      "name": "Sigma Team",
+      "precision": "country",
+      "country": "RU",
+      "ledGames": 3
+    },
+    {
+      "id": 4777,
+      "name": "SkyGoblin",
+      "precision": "country",
+      "country": "SE",
+      "ledGames": 3
+    },
+    {
+      "id": 5157,
+      "name": "HuniePot",
+      "precision": "country",
+      "country": "US",
+      "ledGames": 3
+    },
+    {
+      "id": 5326,
+      "name": "Camouflaj",
+      "precision": "country",
+      "country": "US",
+      "ledGames": 3
+    },
+    {
+      "id": 5792,
+      "name": "Mouldy Toof Studios",
+      "precision": "country",
+      "country": "GB",
+      "ledGames": 3
+    },
+    {
+      "id": 5887,
+      "name": "Matthew Brown",
+      "precision": "country",
+      "country": "GB",
+      "ledGames": 3
+    },
+    {
+      "id": 6054,
+      "name": "Uppercut Games",
+      "precision": "country",
+      "country": "AU",
+      "ledGames": 3
+    },
+    {
+      "id": 6079,
+      "name": "Hangar 13",
+      "precision": "country",
+      "country": "GB",
+      "ledGames": 3
+    },
+    {
+      "id": 6187,
+      "name": "Robot Gentleman Studios",
+      "precision": "country",
+      "country": "PL",
+      "ledGames": 3
+    },
+    {
+      "id": 6369,
+      "name": "The Brotherhood Games",
+      "precision": "country",
+      "country": "ZA",
+      "ledGames": 3
+    },
+    {
+      "id": 7049,
+      "name": "Draknek & Friends",
+      "precision": "country",
+      "country": "GB",
+      "ledGames": 3
+    },
+    {
+      "id": 7068,
+      "name": "Lonely Troops",
+      "precision": "country",
+      "country": "SK",
+      "ledGames": 3
     }
   ],
   "insights": {
@@ -7532,37 +7924,37 @@
       {
         "code": "US",
         "name": "United States",
-        "gamesLed": 2598
+        "gamesLed": 2586
       },
       {
         "code": "JP",
         "name": "Japan",
-        "gamesLed": 2572
+        "gamesLed": 2571
       },
       {
         "code": "GB",
         "name": "United Kingdom",
-        "gamesLed": 1051
+        "gamesLed": 1078
       },
       {
         "code": "CA",
         "name": "Canada",
-        "gamesLed": 587
+        "gamesLed": 588
       },
       {
         "code": "FR",
         "name": "France",
-        "gamesLed": 348
+        "gamesLed": 356
       },
       {
         "code": "SE",
         "name": "Sweden",
-        "gamesLed": 274
+        "gamesLed": 277
       },
       {
         "code": "DE",
         "name": "Germany",
-        "gamesLed": 249
+        "gamesLed": 251
       },
       {
         "code": "PL",
@@ -7570,22 +7962,22 @@
         "gamesLed": 229
       },
       {
-        "code": "AU",
-        "name": "Australia",
-        "gamesLed": 159
-      },
-      {
         "code": "RU",
         "name": "Russia",
-        "gamesLed": 148
+        "gamesLed": 143
+      },
+      {
+        "code": "AU",
+        "name": "Australia",
+        "gamesLed": 140
       }
     ],
     "topCountriesPerMillion": [
       {
         "code": "SE",
         "name": "Sweden",
-        "gamesLed": 274,
-        "gamesPerMillion": 25.83
+        "gamesLed": 277,
+        "gamesPerMillion": 26.11
       },
       {
         "code": "FI",
@@ -7596,8 +7988,8 @@
       {
         "code": "JP",
         "name": "Japan",
-        "gamesLed": 2572,
-        "gamesPerMillion": 20.78
+        "gamesLed": 2571,
+        "gamesPerMillion": 20.77
       },
       {
         "code": "IS",
@@ -7606,40 +7998,40 @@
         "gamesPerMillion": 16.47
       },
       {
+        "code": "GB",
+        "name": "United Kingdom",
+        "gamesLed": 1078,
+        "gamesPerMillion": 16.01
+      },
+      {
         "code": "CA",
         "name": "Canada",
-        "gamesLed": 587,
-        "gamesPerMillion": 15.87
+        "gamesLed": 588,
+        "gamesPerMillion": 15.9
       },
       {
         "code": "CY",
         "name": "Cyprus",
-        "gamesLed": 21,
-        "gamesPerMillion": 15.61
-      },
-      {
-        "code": "GB",
-        "name": "United Kingdom",
-        "gamesLed": 1051,
-        "gamesPerMillion": 15.61
-      },
-      {
-        "code": "MT",
-        "name": "Malta",
-        "gamesLed": 7,
-        "gamesPerMillion": 12.65
+        "gamesLed": 20,
+        "gamesPerMillion": 14.87
       },
       {
         "code": "DK",
         "name": "Denmark",
-        "gamesLed": 67,
-        "gamesPerMillion": 11.51
+        "gamesLed": 69,
+        "gamesPerMillion": 11.85
       },
       {
         "code": "US",
         "name": "United States",
-        "gamesLed": 2598,
-        "gamesPerMillion": 7.64
+        "gamesLed": 2586,
+        "gamesPerMillion": 7.6
+      },
+      {
+        "code": "CZ",
+        "name": "Czechia",
+        "gamesLed": 75,
+        "gamesPerMillion": 6.87
       }
     ],
     "topLocalizationFlows": [],
