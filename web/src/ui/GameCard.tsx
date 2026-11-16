@@ -4,7 +4,7 @@ import type { GameCompanyRole, RoleType } from '@shared';
 import { useStore } from '../data/store';
 import { ROLE_META } from '../data/roles';
 import { CloseButton, LinkButton, SourceLink, Swatch } from './parts';
-import { LEAD_BASIS_TEXT, placeLabel, precisionText } from './format';
+import { LEAD_BASIS_TEXT, placeLabel, precisionText, formatPlayers, PLAYERS_BASIS_TEXT } from './format';
 import { ShareButton } from '../share/ShareButton';
 import { gameCardSpec } from '../share/card';
 import { gameLink, SHARE_PAGE_LIMIT } from '../share/urlState';
@@ -66,6 +66,12 @@ export function GameCard() {
           <div className="ow-card-title">
             <h2 className="ow-title">{game.name}</h2>
             <p className="ow-mono">{game.year ?? 'Year unknown'}</p>
+            {detail?.players ? (
+              <p className="ow-muted ow-small">
+                <span className="ow-mono">≈ {formatPlayers(detail.players)}</span> players
+                {detail.playersBasis ? ` · ${PLAYERS_BASIS_TEXT[detail.playersBasis]}` : ''}
+              </p>
+            ) : null}
             {(genres.length > 0 || game.indie) && (
               <ul className="ow-tags" aria-label="Genres">
                 {genres.map((g) => (

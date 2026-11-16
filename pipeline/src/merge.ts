@@ -67,6 +67,7 @@ export interface MergeInput {
   resolveCity: (label: string, lat: number, lng: number) => string;
   resolveCountry: (lat: number, lng: number) => string | null;
   gameLimit: number;
+  rawgUsed?: boolean; // RAWG adds took part in choosing the games; its terms ask for a link wherever its data is used
   now: Date;
 }
 
@@ -431,6 +432,10 @@ export function merge(input: MergeInput): MergeResult {
 
     const sources: SourceRef[] = [gameRef];
     if (wdGame) sources.push(wikidataRef(wdGame.qid));
+    if (game.playersBasis === 'steam' && game.steamAppId !== null) {
+      sources.push({ source: 'steam', id: String(game.steamAppId), url: `https://store.steampowered.com/app/${game.steamAppId}/` });
+    }
+    if (input.rawgUsed) sources.push({ source: 'rawg', id: 'players', url: 'https://rawg.io' });
 
     if (moby) {
       sources.push({ source: 'mobygames', id: String(moby.mobyGameId), url: moby.url });
@@ -791,6 +796,8 @@ export function merge(input: MergeInput): MergeResult {
     steamAppId: ownSteamId.get(w.raw.id) ?? null,
     roles: w.roles,
     sources: w.sources,
+    players: w.raw.players ?? null,
+    playersBasis: w.raw.playersBasis ?? null,
   }));
 
   const rolesByType = Object.fromEntries(ROLE_TYPES.map((r) => [r, 0])) as Record<RoleType, number>;
@@ -816,6 +823,13 @@ export function merge(input: MergeInput): MergeResult {
       url: 'https://www.mobygames.com',
       licence: 'MobyGames API terms',
     });
+  }
+
+  if (kept.some((w) => w.raw.playersBasis === 'steam')) {
+    attribution.push({ source: 'steam', name: 'Steam', url: 'https://store.steampowered.com', licence: 'Steam Web API terms' });
+  }
+  if (input.rawgUsed) {
+    attribution.push({ source: 'rawg', name: 'RAWG', url: 'https://rawg.io', licence: 'RAWG API terms: free for non-commercial use with an active link' });
   }
 
   const meta: DataMeta = {

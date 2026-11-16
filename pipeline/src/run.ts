@@ -44,6 +44,7 @@ export async function runMergeStage(config: PipelineConfig): Promise<Record<stri
   const wikidataGames = (await readJsonIfExists<RawWikidataGame[]>(file(STAGE_FILES.wikidataGames))) ?? [];
   const wikidataCompanies = (await readJsonIfExists<RawWikidataCompany[]>(file(STAGE_FILES.wikidataCompanies))) ?? [];
   const moby = await readJsonIfExists<RawMobyGame[]>(file(STAGE_FILES.mobygames));
+  const rawgUsed = (await readJsonIfExists<unknown[]>(file(STAGE_FILES.rawg)))?.length ? true : false;
   const population = await readJsonIfExists<RawPopulation>(file(STAGE_FILES.population));
   const specialties = (await readJsonIfExists<Specialty[]>(path.join(config.curatedDir, 'company-specialties.json'))) ?? [];
 
@@ -56,6 +57,7 @@ export async function runMergeStage(config: PipelineConfig): Promise<Record<stri
   const result = merge({
     games, companies, genres, wikidataGames, wikidataCompanies, moby, specialties, locationCorrections,
     leadOverrides,
+    rawgUsed,
     resolveCity: cityIndex.resolveCity,
     resolveCountry: cityIndex.resolveCountry,
     gameLimit: config.gameLimit,

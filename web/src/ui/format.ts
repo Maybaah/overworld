@@ -1,4 +1,4 @@
-import type { Company, LeadBasis, SourceName } from '@shared';
+import type { Company, LeadBasis, SourceName, PlayersBasis } from '@shared';
 
 let regionNames: Intl.DisplayNames | null | undefined;
 
@@ -33,6 +33,8 @@ export const SOURCE_LABEL: Record<SourceName, string> = {
   igdb: 'IGDB',
   wikidata: 'Wikidata',
   mobygames: 'MobyGames',
+  steam: 'Steam',
+  rawg: 'RAWG',
   curated: 'Curated',
 };
 
@@ -50,4 +52,19 @@ export function precisionText(precision: Company['precision']): string {
 
 export function formatCount(n: number): string {
   return n.toLocaleString('en-US');
+}
+
+export const PLAYERS_BASIS_TEXT: Record<PlayersBasis, string> = {
+  steam: 'estimate from Steam reviews',
+  igdb_played: 'estimate from IGDB players',
+  rawg_added: 'estimate from RAWG libraries',
+  igdb_ratings: 'estimate from IGDB ratings',
+};
+
+// 6300 -> "6.3K", 1240000 -> "1.2M"
+export function formatPlayers(n: number): string {
+  if (n >= 1e9) return `${(n / 1e9).toFixed(n >= 1e10 ? 0 : 1)}B`;
+  if (n >= 1e6) return `${(n / 1e6).toFixed(n >= 1e7 ? 0 : 1)}M`;
+  if (n >= 1e3) return `${(n / 1e3).toFixed(n >= 1e4 ? 0 : 1)}K`;
+  return String(Math.round(n));
 }

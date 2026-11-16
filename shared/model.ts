@@ -1,4 +1,4 @@
-export const SOURCE_NAMES = ['igdb', 'wikidata', 'mobygames', 'curated'] as const;
+export const SOURCE_NAMES = ['igdb', 'wikidata', 'mobygames', 'steam', 'rawg', 'curated'] as const;
 export type SourceName = (typeof SOURCE_NAMES)[number];
 
 export interface SourceRef {
@@ -104,7 +104,12 @@ export interface GameDetail {
   steamAppId: number | null;
   roles: GameCompanyRole[];
   sources: SourceRef[];
+  // Estimated players and the signal it came from (pipeline/src/audience.ts); null in rating-only runs.
+  players?: number | null;
+  playersBasis?: PlayersBasis | null;
 }
+
+export type PlayersBasis = 'steam' | 'igdb_played' | 'rawg_added' | 'igdb_ratings';
 
 export interface DataMeta {
   generatedAt: string;
