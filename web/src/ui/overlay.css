@@ -247,7 +247,7 @@
   position: absolute;
   top: 16px;
   right: 16px;
-  bottom: 64px;
+  bottom: 120px;
   width: 380px;
   max-width: calc(100vw - 32px);
   display: flex;
