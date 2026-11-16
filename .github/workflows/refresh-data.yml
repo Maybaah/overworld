@@ -20,6 +20,9 @@ concurrency:
 
 jobs:
   build:
+    # The schedule only runs once the repository variable REFRESH_ENABLED is set to "true"
+    # (after the API keys are stored as secrets and Pages is switched on).
+    if: github.event_name == 'workflow_dispatch' || vars.REFRESH_ENABLED == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 60
     steps:
@@ -58,6 +61,7 @@ jobs:
         env:
           VITE_BASE: /${{ github.event.repository.name }}/
           VITE_DATA_BASE: /${{ github.event.repository.name }}/data
+          SITE_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}
         run: npm run build --prefix web
 
       - uses: actions/upload-pages-artifact@v3
