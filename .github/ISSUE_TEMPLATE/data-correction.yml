@@ -1,0 +1,41 @@
+name: Data correction
+description: A studio is in the wrong place, or a game has the wrong lead studio
+labels: [data]
+body:
+  - type: dropdown
+    id: kind
+    attributes:
+      label: What is wrong?
+      options:
+        - Studio location (wrong city, or no city)
+        - Lead studio of a game
+        - Role of a company on a game
+        - Something else
+    validations:
+      required: true
+  - type: input
+    id: subject
+    attributes:
+      label: Game or studio
+      description: Name, and the IGDB link from the source link in the app if you have it
+    validations:
+      required: true
+  - type: textarea
+    id: current
+    attributes:
+      label: What Overworld shows now
+    validations:
+      required: true
+  - type: textarea
+    id: correct
+    attributes:
+      label: What it should show
+    validations:
+      required: true
+  - type: input
+    id: evidence
+    attributes:
+      label: Evidence link
+      description: A page that states the fact (the company's own site, or its Wikipedia article). Search-result pages do not count.
+    validations:
+      required: true

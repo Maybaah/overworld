@@ -1,0 +1,27 @@
+name: Bug
+description: Something in the app or the pipeline does not work
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you did, what you expected, what you got instead
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+    validations:
+      required: true
+  - type: input
+    id: where
+    attributes:
+      label: Where
+      description: Browser and operating system for the app, or Node version and command for the pipeline
+  - type: textarea
+    id: output
+    attributes:
+      label: Console output or screenshot
+      description: Remove any API keys before pasting
