@@ -91,18 +91,22 @@ function mapInvolvedCompany(v: unknown): RawIgdbInvolvedCompany | null {
   };
 }
 
-function steamAppId(externals: unknown, f: GameFieldNames): number | null {
+function steamAppIds(externals: unknown, f: GameFieldNames): number[] {
+  const ids: number[] = [];
   for (const e of list(externals)) {
     if (!isRow(e) || refId(e[f.externalGameSource]) !== STEAM_SOURCE_ID) continue;
     const uid = typeof e.uid === 'string' ? e.uid.trim() : typeof e.uid === 'number' ? String(e.uid) : '';
-    if (/^\d+$/.test(uid)) return Number.parseInt(uid, 10);
+    if (!/^\d+$/.test(uid)) continue;
+    const id = Number.parseInt(uid, 10);
+    if (!ids.includes(id)) ids.push(id);
   }
-  return null;
+  return ids;
 }
 
 function mapGame(v: Row, f: GameFieldNames): RawIgdbGame | null {
   const id = numOrNull(v.id);
   if (id === null) return null;
+  const steamIds = steamAppIds(v.external_games, f);
   return {
     id,
     name: str(v.name),
@@ -123,7 +127,8 @@ function mapGame(v: Row, f: GameFieldNames): RawIgdbGame | null {
     involvedCompanies: list(v.involved_companies)
       .map(mapInvolvedCompany)
       .filter((c): c is RawIgdbInvolvedCompany => c !== null),
-    steamAppId: steamAppId(v.external_games, f),
+    steamAppId: steamIds[0] ?? null,
+    steamAppIds: steamIds,
   };
 }
 

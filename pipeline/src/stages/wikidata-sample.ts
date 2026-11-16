@@ -115,6 +115,7 @@ function buildSample(): { games: RawIgdbGame[]; companies: RawIgdbCompany[] } {
       screenshots: [],
       involvedCompanies: involved,
       steamAppId: null,
+      steamAppIds: [],
     };
   });
   return { games, companies };

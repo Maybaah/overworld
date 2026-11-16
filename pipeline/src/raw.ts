@@ -39,7 +39,8 @@ export interface RawIgdbGame {
   cover: string | null; // image_id
   screenshots: string[]; // image_ids, at most 5
   involvedCompanies: RawIgdbInvolvedCompany[];
-  steamAppId: number | null;
+  steamAppId: number | null; // first Steam id listed
+  steamAppIds: number[]; // every Steam id listed for the game
 }
 
 export interface RawIgdbCompany {

@@ -222,6 +222,7 @@ describe('runIgdbStage', () => {
         { id: 2, company: 909, developer: false, publisher: true, porting: false, supporting: false },
       ],
       steamAppId: 292030,
+      steamAppIds: [292030],
     });
     expect(games[1]).toEqual({
       id: 7,
@@ -239,6 +240,7 @@ describe('runIgdbStage', () => {
         { id: 9, company: 3, developer: false, publisher: false, porting: false, supporting: false },
       ],
       steamAppId: null,
+      steamAppIds: [],
     });
     expect(games[2]!.steamAppId).toBeNull();
 

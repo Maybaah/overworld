@@ -203,6 +203,7 @@ export function generateFixture(seed = 20260101): Fixture {
       lng,
       precision,
       locationSource: precision === 'none' ? null : curated(),
+      locationBasis: precision === 'city' ? 'headquarters' : precision === 'country' ? 'country' : null,
       founded,
       parentId: id > 1 && rand() < 0.05 ? 1 + Math.floor(rand() * (id - 1)) : null,
       firstYear: null,

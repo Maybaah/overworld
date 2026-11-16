@@ -50,6 +50,7 @@ function igdbGame(id: number, companyIds: number[], slug = `game-${id}`): RawIgd
       supporting: false,
     })),
     steamAppId: null,
+    steamAppIds: [],
   };
 }
 

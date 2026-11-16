@@ -25,6 +25,23 @@ export type RoleType = (typeof ROLE_TYPES)[number];
 // 'none' = no location at all; the company is listed in the validation report and not drawn.
 export type LocationPrecision = 'city' | 'country' | 'none';
 
+// How the location was found, so a weak one can be told from a strong one.
+//   'correction'   – hand-kept correction with an evidence link.
+//   'headquarters' – Wikidata headquarters statement.
+//   'located_in'   – Wikidata located-in statement.
+//   'formation'    – Wikidata place of formation (the studio may have moved since).
+//   'parent'       – an internal division placed at its parent company's city.
+//   'country'      – only the company's country is known.
+//   'games_origin' – country taken from the country of origin of the games it leads.
+export type LocationBasis =
+  | 'correction'
+  | 'headquarters'
+  | 'located_in'
+  | 'formation'
+  | 'parent'
+  | 'country'
+  | 'games_origin';
+
 export interface Company {
   id: number;
   name: string;
@@ -34,6 +51,7 @@ export interface Company {
   lng: number | null;
   precision: LocationPrecision;
   locationSource: SourceRef | null;
+  locationBasis: LocationBasis | null;
   founded: number | null;
   parentId: number | null;
   firstYear: number | null;
@@ -44,9 +62,16 @@ export interface Company {
 }
 
 // How the lead studio was chosen, so a wrong pick can be traced.
+//   'curated'                 – hand-kept override with an evidence link.
+//   'igdb_developer_heuristic' – several IGDB developers; the others mostly do ports or sit
+//                                outside the game's country of origin.
+//   'igdb_first_developer'     – several IGDB developers and nothing to tell them apart;
+//                                the first one entered. Lowest confidence.
 export type LeadBasis =
+  | 'curated'
   | 'igdb_single_developer'
   | 'igdb_developer_confirmed_by_wikidata'
+  | 'igdb_developer_heuristic'
   | 'igdb_first_developer'
   | 'wikidata_developer'
   | 'mobygames_developer';
@@ -154,7 +179,7 @@ export interface FlowsFile {
   flows: CountryFlow[]; // sorted by games, highest first
 }
 
-export const SCHEMA_VERSION = 1;
+export const SCHEMA_VERSION = 2;
 export const DETAIL_CHUNK_SIZE = 250;
 
 export function detailChunkOf(positionInGames: number): number {

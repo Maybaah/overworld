@@ -19,9 +19,12 @@ export function countryName(code: string | null): string {
 }
 
 export const LEAD_BASIS_TEXT: Record<LeadBasis, string> = {
+  curated: 'Set by hand from a cited source.',
   igdb_single_developer: 'IGDB lists a single developer for this game.',
   igdb_developer_confirmed_by_wikidata: 'IGDB names this developer and Wikidata confirms it.',
-  igdb_first_developer: 'IGDB lists several developers; this is the first one named.',
+  igdb_developer_heuristic:
+    'IGDB lists several developers; the others mostly do ports or sit outside the game’s country of origin.',
+  igdb_first_developer: 'IGDB lists several developers; this is the first one named. Low confidence.',
   wikidata_developer: 'Taken from the developer recorded on Wikidata.',
   mobygames_developer: 'Taken from the developer recorded on MobyGames.',
 };

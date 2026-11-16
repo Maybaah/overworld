@@ -10,6 +10,7 @@ export function company(id: number, over: Partial<Company> = {}): Company {
     lng: 139.69,
     precision: 'city',
     locationSource: null,
+    locationBasis: 'headquarters',
     founded: null,
     parentId: null,
     firstYear: null,
