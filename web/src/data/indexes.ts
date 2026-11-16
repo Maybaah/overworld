@@ -28,7 +28,8 @@ export interface Indexes {
 }
 
 export function cityKey(country: string, city: string): string {
-  return `${country}|${city}`;
+  const folded = city.normalize('NFD').replace(/\p{M}/gu, '');
+  return `${country}|${folded}`;
 }
 
 interface Acc {

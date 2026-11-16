@@ -55,4 +55,16 @@ describe('buildIndexes', () => {
     expect(idx.cities.flatMap((c) => c.companyIds)).not.toContain(6);
     expect(idx.companyById.has(6)).toBe(true);
   });
+
+  it('groups city spellings that differ only by accents', () => {
+    const idx = buildIndexes(
+      [
+        company(1, { country: 'CA', city: 'Montreal', lat: 45.5, lng: -73.57 }),
+        company(2, { country: 'CA', city: 'Montréal', lat: 45.51, lng: -73.56 }),
+      ],
+      [],
+    );
+    expect(idx.cities.map((c) => c.key)).toEqual(['CA|Montreal']);
+    expect(idx.cities[0]!.companyIds).toEqual([1, 2]);
+  });
 });
