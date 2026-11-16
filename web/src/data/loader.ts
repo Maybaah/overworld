@@ -1,5 +1,5 @@
 import { DETAIL_CHUNK_SIZE, ROLE_TYPES, detailChunkOf } from '@shared';
-import type { Company, CompanyGamesFile, DataMeta, GameDetail, GameSummary, RoleType } from '@shared';
+import type { Company, CompanyGamesFile, DataMeta, FlowsFile, GameDetail, GameSummary, RoleType, StatsFile } from '@shared';
 
 export interface CoreData {
   meta: DataMeta;
@@ -125,4 +125,34 @@ export function loadSteamMap(): Promise<Record<string, number>> {
     });
   }
   return steamMapPromise;
+}
+
+let statsPromise: Promise<StatsFile> | null = null;
+let flowsPromise: Promise<FlowsFile> | null = null;
+
+export function resetInsightsCache(): void {
+  statsPromise = null;
+  flowsPromise = null;
+}
+
+export function loadStats(): Promise<StatsFile> {
+  if (!statsPromise) {
+    const promise = fetchJson<StatsFile>('stats.json');
+    statsPromise = promise;
+    promise.catch(() => {
+      if (statsPromise === promise) statsPromise = null;
+    });
+  }
+  return statsPromise;
+}
+
+export function loadFlows(): Promise<FlowsFile> {
+  if (!flowsPromise) {
+    const promise = fetchJson<FlowsFile>('flows.json');
+    flowsPromise = promise;
+    promise.catch(() => {
+      if (flowsPromise === promise) flowsPromise = null;
+    });
+  }
+  return flowsPromise;
 }

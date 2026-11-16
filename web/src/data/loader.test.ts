@@ -1,6 +1,17 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { GameDetail } from '@shared';
-import { chunkOf, loadCompanyGames, loadCore, loadGameDetail, loadSteamMap, resetLoader, resetSteamMapCache } from './loader';
+import {
+  chunkOf,
+  loadCompanyGames,
+  loadCore,
+  loadFlows,
+  loadGameDetail,
+  loadSteamMap,
+  loadStats,
+  resetInsightsCache,
+  resetLoader,
+  resetSteamMapCache,
+} from './loader';
 import { company, game } from './testData';
 
 const CHUNK = 250;
@@ -28,6 +39,7 @@ let fetchMock: ReturnType<typeof vi.fn>;
 beforeEach(() => {
   resetLoader();
   resetSteamMapCache();
+  resetInsightsCache();
   fetchMock = vi.fn(async (url: string) => {
     if (url.endsWith('/meta.json')) return json(meta);
     if (url.endsWith('/companies.json')) return json([company(1)]);
@@ -36,6 +48,8 @@ beforeEach(() => {
     if (m) return json(chunkFile(Number(m[1])));
     if (url.endsWith('/steam.json')) return json({ '10': 5000, '20': 5001 });
     if (url.endsWith('/company-games.json')) return json({ '7': [5000, 0, 5001, 3, 5001, 4], '8': [] });
+    if (url.endsWith('/stats.json')) return json({ countries: [], years: [] });
+    if (url.endsWith('/flows.json')) return json({ flows: [] });
     return json({}, 404);
   });
   vi.stubGlobal('fetch', fetchMock);
@@ -174,5 +188,27 @@ describe('loadSteamMap', () => {
     fetchMock.mockImplementationOnce(async () => json({}, 500));
     await expect(loadSteamMap()).rejects.toThrow(/steam\.json: HTTP 500/);
     await expect(loadSteamMap()).resolves.toEqual({ '10': 5000, '20': 5001 });
+  });
+});
+
+describe('loadStats and loadFlows', () => {
+  it('load once for repeated and concurrent calls', async () => {
+    const [a, b] = await Promise.all([loadStats(), loadStats()]);
+    expect(b).toBe(a);
+    await loadStats();
+    const [f] = await Promise.all([loadFlows(), loadFlows()]);
+    await loadFlows();
+    expect(f).toEqual({ flows: [] });
+    expect(fetchMock.mock.calls.filter((c) => (c[0] as string).endsWith('/stats.json'))).toHaveLength(1);
+    expect(fetchMock.mock.calls.filter((c) => (c[0] as string).endsWith('/flows.json'))).toHaveLength(1);
+  });
+
+  it('retry after a failure', async () => {
+    fetchMock.mockImplementationOnce(async () => json({}, 500));
+    await expect(loadStats()).rejects.toThrow(/stats\.json: HTTP 500/);
+    await expect(loadStats()).resolves.toBeDefined();
+    fetchMock.mockImplementationOnce(async () => json({}, 500));
+    await expect(loadFlows()).rejects.toThrow(/flows\.json: HTTP 500/);
+    await expect(loadFlows()).resolves.toBeDefined();
   });
 });
