@@ -10,7 +10,8 @@ import {
 } from '../raw';
 import { readJsonIfExists, writeJson } from '../stageio';
 import { calibrate, estimatePlayers, PLAYER_FLOOR, type AudienceSignals } from '../audience';
-import type { RawSteamApp } from '../raw';
+import type { RawRawgGame, RawSteamApp } from '../raw';
+import { normalizeTitle } from './mobygames';
 
 const TOKEN_URL = 'https://id.twitch.tv/oauth2/token';
 const API_BASE = 'https://api.igdb.com/v4';
@@ -394,6 +395,42 @@ export async function runIgdbStage(
     }
     log(`Steam: ${reviews.size} apps with reviews, ${[...signals.values()].filter((x) => x.steamReviews).length} games`);
     for (const g of collected.values()) sig(g.id).ratingCount = g.totalRatingCount;
+
+    const rawg = await readJsonIfExists<RawRawgGame[]>(path.join(config.stageDir, STAGE_FILES.rawg));
+    if (rawg && rawg.length > 0) {
+      // RAWG has no IGDB ids, so its games are matched by title and year to the games already in the pool.
+      const titles = new Map<string, { id: number; year: number | null }[]>();
+      const addTitle = (id: number, name: string, year: number | null) => {
+        const key = normalizeTitle(name);
+        if (!key) return;
+        const list = titles.get(key) ?? [];
+        list.push({ id, year });
+        titles.set(key, list);
+      };
+      for (const g of collected.values()) addTitle(g.id, g.name, g.firstReleaseDate ? new Date(g.firstReleaseDate * 1000).getUTCFullYear() : null);
+      const unnamed = [...signals.keys()].filter((id) => !collected.has(id));
+      for (let i = 0; i < unnamed.length; i += ID_BATCH) {
+        const rows = await postRows(
+          'games',
+          `fields name,first_release_date; where id = (${unnamed.slice(i, i + ID_BATCH).join(',')}) & ${fields.gameType} = (${GAME_TYPE_IDS.join(',')}) & involved_companies != null; limit ${ID_BATCH};`,
+        );
+        for (const r of rows) {
+          const id = numOrNull(r.id);
+          const date = numOrNull(r.first_release_date);
+          if (id !== null) addTitle(id, str(r.name), date ? new Date(date * 1000).getUTCFullYear() : null);
+        }
+        if ((i / ID_BATCH) % 40 === 0) log(`IGDB titles for RAWG matching: ${Math.min(i + ID_BATCH, unnamed.length)}/${unnamed.length}`);
+      }
+      let matched = 0;
+      for (const r of rawg) {
+        const cands = (titles.get(normalizeTitle(r.name)) ?? []).filter((c) => r.year === null || c.year === null || Math.abs(c.year - r.year) <= 1);
+        if (cands.length !== 1) continue;
+        const s = sig(cands[0]!.id);
+        s.rawgAdded = Math.max(s.rawgAdded ?? 0, r.added);
+        matched++;
+      }
+      log(`RAWG: ${matched} of ${rawg.length} games matched to IGDB by title and year`);
+    }
 
     const calibration = calibrate(signals.values());
     log(
