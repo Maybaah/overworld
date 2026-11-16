@@ -128,9 +128,9 @@ export function buildRoleArcs(input: ArcInput): RoleArcs {
         startLng: leadPos.lng,
         endLat: pos.lat,
         endLng: pos.lng,
-        color: withAlpha(ROLE_META[role].color, approx ? 0.55 : 0.95),
+        color: withAlpha(ROLE_META[role].color, approx ? 0.7 : 1),
         altitude: base + k * HEIGHT_STEP,
-        stroke: approx ? 0.2 : 0.45,
+        stroke: approx ? 0.35 : 0.7,
         approx,
       });
     });
