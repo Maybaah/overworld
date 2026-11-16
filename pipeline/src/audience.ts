@@ -58,11 +58,12 @@ export function calibrate(games: Iterable<AudienceSignals>): Calibration {
   };
 }
 
-// The strongest signal wins; Steam is preferred whenever it exists because it is the only one in real people.
+// The strongest signal wins: each one sees only part of the audience (Steam only PC, IGDB only its own users),
+// and a game linked to a tiny Steam app (a demo, a delisted edition) must not lose its console audience.
 export function estimatePlayers(s: AudienceSignals, c: Calibration): { players: number; basis: AudienceBasis } | null {
-  const steam = steamEstimate(s);
-  if (steam !== null) return { players: Math.round(steam), basis: 'steam' };
   const options: [number, AudienceBasis][] = [];
+  const steam = steamEstimate(s);
+  if (steam !== null) options.push([steam, 'steam']);
   if (s.igdbPlayed && c.igdbPlayed) options.push([s.igdbPlayed * c.igdbPlayed, 'igdb_played']);
   if (s.rawgAdded && c.rawgAdded) options.push([s.rawgAdded * c.rawgAdded, 'rawg_added']);
   if (s.ratingCount && c.ratingCount) options.push([s.ratingCount * c.ratingCount, 'igdb_ratings']);

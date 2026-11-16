@@ -24,8 +24,9 @@ describe('calibrate and estimatePlayers', () => {
     expect(c.pairs.igdbPlayed).toBe(40);
   });
 
-  it('prefers Steam, else the strongest calibrated signal', () => {
-    expect(estimatePlayers({ steamReviews: 150, igdbPlayed: 1 }, c)).toEqual({ players: 6_000, basis: 'steam' });
+  it('takes the strongest signal, Steam included', () => {
+    expect(estimatePlayers({ steamReviews: 150, igdbPlayed: 0.00001 }, c)).toEqual({ players: 6_000, basis: 'steam' });
+    expect(estimatePlayers({ steamReviews: 10, igdbPlayed: 0.0002 }, c)!.basis).toBe('igdb_played');
     const console = estimatePlayers({ igdbPlayed: 0.00002, ratingCount: 1 }, c)!;
     expect(console.basis).toBe('igdb_played');
     expect(console.players).toBeCloseTo(8_000, -2);

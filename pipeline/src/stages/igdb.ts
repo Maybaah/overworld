@@ -20,6 +20,8 @@ const COMPANY_BATCH = 500;
 const MAX_SCREENSHOTS = 5;
 const GAME_TYPE_IDS = [0, 8, 9];
 const STEAM_SOURCE_ID = 1;
+// Adult games stay off the globe: their covers would fill the mosaic.
+const EROTIC_THEME = 42;
 // In the audience pass the rating pass reads every game with at least this many IGDB ratings.
 const RATING_FLOOR = 25;
 const PLAYED_TYPE = 4;
@@ -60,7 +62,7 @@ const gameFields = (f: GameFieldNames) =>
 function gamesQuery(f: GameFieldNames, offset: number, minRating = 1): string {
   return (
     `fields ${gameFields(f)}; ` +
-    `where ${f.gameType} = (${GAME_TYPE_IDS.join(',')}) & total_rating_count >= ${minRating} & involved_companies != null; ` +
+    `where ${f.gameType} = (${GAME_TYPE_IDS.join(',')}) & total_rating_count >= ${minRating} & involved_companies != null & themes != (${EROTIC_THEME}); ` +
     `sort total_rating_count desc; limit ${PAGE_SIZE}; offset ${offset};`
   );
 }
@@ -68,7 +70,7 @@ function gamesQuery(f: GameFieldNames, offset: number, minRating = 1): string {
 function gamesByIdQuery(f: GameFieldNames, ids: number[]): string {
   return (
     `fields ${gameFields(f)}; ` +
-    `where id = (${ids.join(',')}) & ${f.gameType} = (${GAME_TYPE_IDS.join(',')}) & involved_companies != null; ` +
+    `where id = (${ids.join(',')}) & ${f.gameType} = (${GAME_TYPE_IDS.join(',')}) & involved_companies != null & themes != (${EROTIC_THEME}); ` +
     `limit ${ids.length};`
   );
 }
