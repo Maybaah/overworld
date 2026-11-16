@@ -1,10 +1,10 @@
 import * as THREE from 'three';
-import { ATLAS, slotCount, slotOrigin, slotUv, SlotCache, type AtlasLayout } from './atlasSlots';
+import { ATLAS, atlasHeight, slotCount, slotOrigin, slotUv, SlotCache, type AtlasLayout } from './atlasSlots';
 
 export const MAX_IN_FLIGHT = 4;
 const UPLOADS_PER_FRAME = 2;
 
-export function coverUrl(id: string, size: 'cover_small' | 'cover_big' = 'cover_small'): string {
+export function coverUrl(id: string, size: 'cover_small' | 'cover_big' | '1080p' = 'cover_small'): string {
   return `https://images.igdb.com/igdb/image/upload/t_${size}/${id}.jpg`;
 }
 
@@ -35,7 +35,7 @@ export class CoverAtlas {
     private readonly mipmaps = true,
   ) {
     this.slots = new SlotCache<string>(slotCount(layout));
-    const t = new THREE.DataTexture(null, layout.size, layout.size, THREE.RGBAFormat, THREE.UnsignedByteType);
+    const t = new THREE.DataTexture(null, layout.size, atlasHeight(layout), THREE.RGBAFormat, THREE.UnsignedByteType);
     t.source.dataReady = false;
     t.generateMipmaps = this.mipmaps;
     t.minFilter = this.mipmaps ? THREE.LinearMipmapLinearFilter : THREE.LinearFilter;

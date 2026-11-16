@@ -5,11 +5,14 @@ import type { MosaicCell, MosaicMesh } from './mosaic/build';
 import type { MosaicRequest, MosaicResponse, WorkerGame } from './mosaic/protocol';
 import { GLOBE_RADIUS } from './outline';
 
+// Three sharpness tiers; a cell gets the next tier once it shows its cover taller than the current tier's pixels.
 const LOW: AtlasLayout = { size: 3072, slotW: 64, slotH: 88, imageW: 60, imageH: 85 };
-const HIGH: AtlasLayout = { size: 2048, slotW: 136, slotH: 192, imageW: 132, imageH: 187 };
-const HIGH_CAPACITY = 150;
-const HIGH_MIN_PX = 45;
+const MID: AtlasLayout = { size: 4096, height: 2048, slotW: 268, slotH: 378, imageW: 264, imageH: 374 };
+const TOP: AtlasLayout = { size: 3072, height: 2176, slotW: 768, slotH: 1088, imageW: 762, imageH: 1080 };
+const MID_CAPACITY = 75;
+const TOP_CAPACITY = 8;
 const TABLE_W = 2048;
+const STRIDE = 3;
 const BASE_COLOR = new THREE.Color('#4a5466');
 
 const VERTEX = `
@@ -19,11 +22,13 @@ varying vec2 vUv;
 flat varying vec4 vLow;
 flat varying vec4 vHigh;
 flat varying float vCell;
+flat varying vec4 vTop;
 ivec2 at(int k) { return ivec2(k % ${TABLE_W}, k / ${TABLE_W}); }
 void main() {
   int c = int(aCell + 0.5);
-  vLow = texelFetch(uTable, at(2 * c), 0);
-  vHigh = texelFetch(uTable, at(2 * c + 1), 0);
+  vLow = texelFetch(uTable, at(${STRIDE} * c), 0);
+  vHigh = texelFetch(uTable, at(${STRIDE} * c + 1), 0);
+  vTop = texelFetch(uTable, at(${STRIDE} * c + 2), 0);
   vCell = aCell;
   vUv = uv;
   gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
@@ -33,6 +38,7 @@ void main() {
 const FRAGMENT = `
 uniform sampler2D uLow;
 uniform sampler2D uHigh;
+uniform sampler2D uTop;
 uniform vec3 uBase;
 uniform float uHover;
 uniform float uSelected;
@@ -40,13 +46,15 @@ uniform float uDim;
 varying vec2 vUv;
 flat varying vec4 vLow;
 flat varying vec4 vHigh;
+flat varying vec4 vTop;
 flat varying float vCell;
 float hash(float n) { return fract(sin(n * 12.9898) * 43758.5453); }
 vec2 inRect(vec4 r, vec2 uv) { return vec2(mix(r.x, r.z, uv.x), mix(r.y, r.w, 1.0 - uv.y)); }
 void main() {
   vec2 uv = clamp(vUv, 0.0, 1.0);
   vec3 col;
-  if (vHigh.x >= 0.0) col = textureLod(uHigh, inRect(vHigh, uv), 0.0).rgb;
+  if (vTop.x >= 0.0) col = textureLod(uTop, inRect(vTop, uv), 0.0).rgb;
+  else if (vHigh.x >= 0.0) col = textureLod(uHigh, inRect(vHigh, uv), 0.0).rgb;
   else if (vLow.x >= 0.0) col = textureLod(uLow, inRect(vLow, uv), 0.0).rgb;
   else col = uBase * (0.75 + 0.5 * hash(vCell + 1.0));
   float hover = 1.0 - step(0.5, abs(vCell - uHover));
@@ -71,6 +79,8 @@ export class MosaicLayer {
   private readonly worker: Worker;
   private readonly low: CoverAtlas;
   private readonly high: CoverAtlas;
+  private readonly top: CoverAtlas;
+  private pixelRatio = 1;
   private readonly material: THREE.ShaderMaterial;
   private readonly lineMaterial = new THREE.LineBasicMaterial({ color: '#05070b', transparent: true, opacity: 0.85 });
   private readonly mesh: THREE.Mesh;
@@ -94,7 +104,9 @@ export class MosaicLayer {
     clock: () => number,
   ) {
     this.low = new CoverAtlas(renderer, clock, LOW, (id) => coverUrl(id), 8, false);
-    this.high = new CoverAtlas(renderer, clock, HIGH, (id) => coverUrl(id, 'cover_big'), 4, false);
+    this.high = new CoverAtlas(renderer, clock, MID, (id) => coverUrl(id, 'cover_big'), 4, false);
+    this.top = new CoverAtlas(renderer, clock, TOP, (id) => coverUrl(id, '1080p'), 2, false);
+    this.pixelRatio = renderer.getPixelRatio();
     this.table = this.makeTable(1);
     this.material = new THREE.ShaderMaterial({
       vertexShader: VERTEX,
@@ -103,6 +115,7 @@ export class MosaicLayer {
         uTable: { value: this.table },
         uLow: { value: this.low.texture },
         uHigh: { value: this.high.texture },
+        uTop: { value: this.top.texture },
         uBase: { value: BASE_COLOR },
         uHover: { value: -1 },
         uSelected: { value: -1 },
@@ -176,7 +189,7 @@ export class MosaicLayer {
       applyMs: this.applyMs,
       frameMs: this.frameMs,
       lowLoaded: this.low.loadedCount(),
-      highLoaded: this.high.loadedCount(),
+      highLoaded: this.high.loadedCount() + this.top.loadedCount(),
     };
   }
 
@@ -196,10 +209,13 @@ export class MosaicLayer {
   private frameInner(camera: THREE.PerspectiveCamera, heightPx: number): boolean {
     if (this.needHigh && this.cells.length > 0) {
       this.needHigh = false;
-      this.high.want(this.pickHigh(camera, heightPx));
+      const { mid, top } = this.pickSharp(camera, heightPx);
+      this.high.want(mid);
+      this.top.want(top);
     }
     const lowChanged = this.low.frame();
-    const changed = this.high.frame() || lowChanged;
+    const topChanged = this.top.frame();
+    const changed = this.high.frame() || lowChanged || topChanged;
     if (changed) this.fillTable();
     return changed;
   }
@@ -208,6 +224,7 @@ export class MosaicLayer {
     this.worker.terminate();
     this.low.dispose();
     this.high.dispose();
+    this.top.dispose();
     this.table.dispose();
     this.mesh.geometry.dispose();
     this.lines.geometry.dispose();
@@ -255,7 +272,7 @@ export class MosaicLayer {
     l.setAttribute('position', new THREE.BufferAttribute(m.lines, 3));
     this.lines.geometry.dispose();
     this.lines.geometry = l;
-    const rows = Math.max(1, Math.ceil((2 * m.cells.length) / TABLE_W));
+    const rows = Math.max(1, Math.ceil((STRIDE * m.cells.length) / TABLE_W));
     if (this.table.image.height !== rows) {
       this.table.dispose();
       this.table = this.makeTable(rows);
@@ -291,16 +308,20 @@ export class MosaicLayer {
     data.fill(-1);
     this.cells.forEach((c, i) => {
       if (!c.cover) return;
+      const base = 4 * STRIDE * i;
       const lo = this.low.uv(c.cover);
-      if (lo) data.set(lo, 8 * i);
-      const hi = this.high.uv(c.cover);
-      if (hi) data.set(hi, 8 * i + 4);
+      if (lo) data.set(lo, base);
+      const mid = this.high.uv(c.cover);
+      if (mid) data.set(mid, base + 4);
+      const top = this.top.uv(c.cover);
+      if (top) data.set(top, base + 8);
     });
     this.table.needsUpdate = true;
   }
 
-  private pickHigh(camera: THREE.PerspectiveCamera, heightPx: number): string[] {
-    const focal = heightPx / (2 * Math.tan((camera.fov * Math.PI) / 360));
+  // Pixels the cover spans on screen, from its laid-out height, the distance and how much the cell faces the camera.
+  private pickSharp(camera: THREE.PerspectiveCamera, heightPx: number): { mid: string[]; top: string[] } {
+    const focal = (heightPx * this.pixelRatio) / (2 * Math.tan((camera.fov * Math.PI) / 360));
     const cam = camera.position;
     const camLen = cam.length();
     const scored: [number, string][] = [];
@@ -311,12 +332,15 @@ export class MosaicLayer {
       const theta = ((90 - c.lng) * Math.PI) / 180;
       p.set(Math.sin(phi) * Math.cos(theta), Math.cos(phi), Math.sin(phi) * Math.sin(theta)).multiplyScalar(GLOBE_RADIUS);
       const facing = p.dot(cam) / (GLOBE_RADIUS * camLen);
-      if (facing < 0.15) continue;
-      const size = Math.sqrt(c.area) * (Math.PI / 180) * GLOBE_RADIUS;
-      const px = (size / p.distanceTo(cam)) * focal * Math.sqrt(facing);
-      if (px >= HIGH_MIN_PX) scored.push([px, c.cover]);
+      if (facing < 0.1) continue;
+      const size = c.imageH * (Math.PI / 180) * GLOBE_RADIUS;
+      const px = (size / Math.max(1, p.distanceTo(cam))) * focal * Math.sqrt(facing);
+      if (px > LOW.imageH) scored.push([px, c.cover]);
     }
     scored.sort((a, b) => b[0] - a[0]);
-    return scored.slice(0, HIGH_CAPACITY).map(([, k]) => k);
+    return {
+      mid: scored.slice(0, MID_CAPACITY).map(([, k]) => k),
+      top: scored.filter(([px]) => px > MID.imageH).slice(0, TOP_CAPACITY).map(([, k]) => k),
+    };
   }
 }

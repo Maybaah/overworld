@@ -97,16 +97,12 @@ describe('GameCard', () => {
     expect(art).toHaveTextContent('location unknown');
   });
 
-  it('links each role to its source in a new tab', () => {
+  it('shows no source label on role rows', () => {
     const { container } = render(<GameCard />);
     const port = container.querySelector('[data-role="port"]') as HTMLElement;
-    const link = within(port).getByRole('link', { name: 'MobyGames' });
-    expect(link).toHaveAttribute('href', 'https://www.mobygames.com/9');
-    expect(link).toHaveAttribute('target', '_blank');
-    expect(link).toHaveAttribute('rel', 'noopener noreferrer');
+    expect(within(port).queryByRole('link', { name: 'MobyGames' })).toBeNull();
     const qa = container.querySelector('[data-role="qa"]') as HTMLElement;
-    expect(within(qa).queryByRole('link')).toBeNull();
-    expect(within(qa).getByText('Curated')).toBeInTheDocument();
+    expect(within(qa).queryByText('Curated')).toBeNull();
   });
 
   it('lists the game sources at the bottom', () => {

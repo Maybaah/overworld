@@ -145,7 +145,6 @@ export function GameCard() {
                             ) : (
                               <span>Unknown company</span>
                             )}
-                            <SourceLink source={r.source} />
                           </div>
                           <div className="ow-muted ow-small">
                             {c ? placeLabel(c) : 'location unknown'}

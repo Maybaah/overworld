@@ -12,7 +12,8 @@ const CITY_PX = 12;
 const LINE_PX = 16;
 const MIN_FACING = 0.18;
 const FONT_FAMILY = 'var(--font-text, system-ui), system-ui, sans-serif';
-const HALO = '0 0 2px rgba(5,7,10,0.95),0 0 4px rgba(5,7,10,0.85),0 1px 3px rgba(5,7,10,0.9)';
+const HALO = '0 0 2px rgba(5,7,10,0.9)';
+const PAD_X = 6;
 
 export interface CityName {
   name: string;
@@ -118,10 +119,13 @@ export class MapLabels {
       'left:0',
       'top:0',
       `font-family:${FONT_FAMILY}`,
-      'font-weight:400',
+      'font-weight:500',
       `line-height:${LINE_PX}px`,
       'color:#f2f5f9',
       `text-shadow:${HALO}`,
+      `padding:0 ${PAD_X}px`,
+      'border-radius:4px',
+      'background:rgba(8,10,14,0.74)',
       'white-space:nowrap',
       'pointer-events:none',
       'opacity:0',
@@ -158,9 +162,9 @@ export class MapLabels {
     let w = this.widths.get(key);
     if (w === undefined) {
       if (this.ctx) {
-        this.ctx.font = `400 ${px}px ${this.family}`;
-        w = Math.ceil(this.ctx.measureText(text).width) + 2;
-      } else w = Math.ceil(text.length * px * 0.55);
+        this.ctx.font = `500 ${px}px ${this.family}`;
+        w = Math.ceil(this.ctx.measureText(text).width) + 2 + 2 * PAD_X;
+      } else w = Math.ceil(text.length * px * 0.55) + 2 * PAD_X;
       this.widths.set(key, w);
     }
     return w;

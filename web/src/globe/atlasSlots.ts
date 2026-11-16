@@ -1,5 +1,6 @@
 export interface AtlasLayout {
-  size: number;
+  size: number; // width
+  height?: number; // defaults to size
   slotW: number;
   slotH: number;
   imageW: number;
@@ -8,8 +9,12 @@ export interface AtlasLayout {
 
 export const ATLAS: AtlasLayout = { size: 2048, slotW: 128, slotH: 160, imageW: 90, imageH: 128 };
 
+export function atlasHeight(a: AtlasLayout): number {
+  return a.height ?? a.size;
+}
+
 export function slotCount(a: AtlasLayout = ATLAS): number {
-  return Math.floor(a.size / a.slotW) * Math.floor(a.size / a.slotH);
+  return Math.floor(a.size / a.slotW) * Math.floor(atlasHeight(a) / a.slotH);
 }
 
 export function slotOrigin(slot: number, a: AtlasLayout = ATLAS): { x: number; y: number } {
@@ -21,8 +26,9 @@ export function slotOrigin(slot: number, a: AtlasLayout = ATLAS): { x: number; y
 
 export function slotUv(slot: number, a: AtlasLayout = ATLAS): [number, number, number, number] {
   const o = slotOrigin(slot, a);
-  const s = a.size;
-  return [(o.x + 0.5) / s, (o.y + 0.5) / s, (o.x + a.imageW - 0.5) / s, (o.y + a.imageH - 0.5) / s];
+  const w = a.size;
+  const h = atlasHeight(a);
+  return [(o.x + 0.5) / w, (o.y + 0.5) / h, (o.x + a.imageW - 0.5) / w, (o.y + a.imageH - 0.5) / h];
 }
 
 export class SlotCache<K> {

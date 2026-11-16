@@ -47,7 +47,7 @@ describe('Overlay', () => {
     expect(searchBox()).toBeInTheDocument();
     expect(legend()).toBeInTheDocument();
     expect(slider()).toBeInTheDocument();
-    expect(screen.getByText(/Cover art via/)).toBeInTheDocument();
+    expect(screen.queryByText(/Cover art via/)).toBeNull();
     expect(card()).toBeNull();
     expect(screen.queryByTestId('guess-panel')).toBeNull();
   });
@@ -88,7 +88,7 @@ describe('Overlay', () => {
       expect(screen.getByRole('button', { name: 'Explore' })).toHaveAttribute('aria-pressed', 'false');
     });
 
-    it('guess: only the guess panel and attribution', () => {
+    it('guess: only the guess panel', () => {
       seedStore({ mode: 'guess', selectedGameId: 100, selectedGameDetail: detailFor(100) });
       render(<Overlay />);
       expect(screen.getByTestId('guess-panel')).toBeInTheDocument();
@@ -97,7 +97,7 @@ describe('Overlay', () => {
       expect(card()).toBeNull();
       expect(legend()).toBeNull();
       expect(slider()).toBeNull();
-      expect(screen.getByText(/Cover art via/)).toBeInTheDocument();
+      expect(screen.queryByText(/Cover art via/)).toBeNull();
     });
 
     it('myglobe: panel, legend, card and slider but no search', () => {
@@ -119,7 +119,7 @@ describe('Overlay', () => {
       expect(card()).toBeInTheDocument();
       expect(slider()).toBeNull();
       expect(searchBox()).toBeNull();
-      expect(screen.getByText(/Cover art via/)).toBeInTheDocument();
+      expect(screen.queryByText(/Cover art via/)).toBeNull();
     });
 
     it('insights and myglobe hide the legend while no game is open', () => {

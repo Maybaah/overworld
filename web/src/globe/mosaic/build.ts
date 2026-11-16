@@ -49,6 +49,7 @@ export interface MosaicCell {
   lat: number;
   lng: number;
   area: number;
+  imageH: number; // height of the cover as laid over the cell, degrees of arc
 }
 
 export interface MosaicMesh {
@@ -320,7 +321,7 @@ export function buildCountryMosaic(games: readonly MosaicGame[], country: Countr
     const W = w / h > COVER_ASPECT ? w : h * COVER_ASPECT;
     const H = W / COVER_ASPECT;
     const centre = proj.inverse(cx, cy);
-    out.cells.push({ gameId: g.id, cover: g.cover, lat: centre.lat, lng: centre.lng, area: c.area });
+    out.cells.push({ gameId: g.id, cover: g.cover, lat: centre.lat, lng: centre.lng, area: c.area, imageH: H });
     for (const piece of c.pieces) {
       out.pieces.push({ gameId: g.id, outer: piece.outer, holes: piece.holes, box: bbox(piece.outer) });
       const contour = piece.outer.map((p) => new THREE.Vector2(p[0], p[1]));
