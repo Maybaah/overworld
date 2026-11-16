@@ -10,7 +10,18 @@ export const STAGE_FILES = {
   wikidataCompanies: 'wikidata-companies.json',
   mobygames: 'mobygames.json',
   population: 'population.json',
+  steamspy: 'steamspy.json',
 } as const;
+
+// One Steam app from SteamSpy's owner-sorted catalogue; reviews are positive plus negative.
+export interface RawSteamApp {
+  appid: number;
+  name: string;
+  reviews: number;
+  positive: number;
+  ownersLow: number;
+  ownersHigh: number;
+}
 
 export interface RawPopulation {
   retrieved: string; // ISO date
