@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useStore } from './data/store';
 import { GlobeView } from './globe/GlobeView';
+import { Overlay } from './ui/Overlay';
 
 const shell = {
   minHeight: '100vh',
@@ -11,21 +12,6 @@ const shell = {
   alignItems: 'center',
   justifyContent: 'center',
   gap: 12,
-} as const;
-
-const badge = {
-  position: 'fixed',
-  right: 12,
-  bottom: 12,
-  zIndex: 5,
-  border: '1px solid #e6e9ef',
-  borderRadius: 4,
-  padding: '2px 8px',
-  fontSize: 12,
-  color: '#e6e9ef',
-  background: 'rgba(7, 9, 13, 0.8)',
-  fontFamily: 'system-ui, sans-serif',
-  pointerEvents: 'none',
 } as const;
 
 export function App() {
@@ -50,8 +36,7 @@ export function App() {
   return (
     <>
       <GlobeView />
-      {/* overlay: mount the UI overlay component here */}
-      {meta.fixture && <span style={badge}>Sample data</span>}
+      <Overlay />
     </>
   );
 }
