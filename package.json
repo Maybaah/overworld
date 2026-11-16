@@ -1,5 +1,7 @@
 {
   "name": "overworld",
+  "description": "A 3D globe that shows where video games were made",
+  "license": "MIT",
   "private": true,
   "type": "module",
   "engines": {
