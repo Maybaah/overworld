@@ -509,6 +509,9 @@ export function GlobeView() {
       globe.pointOfView(target, FLY_MS);
     };
     let lastCameraSeq = initial.cameraRequest?.seq ?? 0;
+    const opened = useStore.getState();
+    if (opened.selectedGameId !== null) fly(gameTarget(indexes, layout, companyIndex, opened.selectedGameId));
+    else if (opened.selectedPlace) fly(placeTarget(indexes, layout, companyIndex, opened.selectedPlace));
     const unsubscribe = useStore.subscribe((s, prev) => {
       if (s.timeline !== prev.timeline || s.gameFilter !== prev.gameFilter) {
         if (s.timeline) {
