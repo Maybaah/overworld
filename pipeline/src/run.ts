@@ -1,8 +1,9 @@
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { loadConfig, type PipelineConfig } from './config';
+import { createCityResolver } from './cities';
 import { emit } from './emit';
-import { merge, type Specialty } from './merge';
+import { merge, type LocationCorrection, type Specialty } from './merge';
 import { STAGE_FILES } from './raw';
 import type {
   RawPopulation,
@@ -44,8 +45,12 @@ export async function runMergeStage(config: PipelineConfig): Promise<Record<stri
   const population = await readJsonIfExists<RawPopulation>(file(STAGE_FILES.population));
   const specialties = (await readJsonIfExists<Specialty[]>(path.join(config.curatedDir, 'company-specialties.json'))) ?? [];
 
+  const locationCorrections =
+    (await readJsonIfExists<LocationCorrection[]>(path.join(config.curatedDir, 'company-locations.json'))) ?? [];
+
   const result = merge({
-    games, companies, genres, wikidataGames, wikidataCompanies, moby, specialties,
+    games, companies, genres, wikidataGames, wikidataCompanies, moby, specialties, locationCorrections,
+    resolveCity: createCityResolver(),
     gameLimit: config.gameLimit,
     now: new Date(),
   });
@@ -55,6 +60,7 @@ export async function runMergeStage(config: PipelineConfig): Promise<Record<stri
     companies: result.companies.length,
     roles: result.meta.counts.roles,
     dropped: result.report.droppedGames.length,
+    countryFromGames: result.report.countryFromGames,
   };
 }
 

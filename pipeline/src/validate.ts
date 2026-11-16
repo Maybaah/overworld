@@ -44,6 +44,7 @@ export interface ValidationResult {
   countryOnlyLeadShare: { count: number; total: number; percent: number };
   leadBasisCounts: Record<string, number>;
   insights: Insights;
+  leadStudiosWithoutCity: { id: number; name: string; precision: LocationPrecision; country: string | null; ledGames: number }[];
 }
 
 export interface Insights {
@@ -84,6 +85,7 @@ function emptyResult(check: Check): ValidationResult {
     countryOnlyLeadShare: { count: 0, total: 0, percent: 0 },
     leadBasisCounts: {},
     insights: { topCountriesByGamesLed: [], topCountriesPerMillion: [], topLocalizationFlows: [], topQaFlows: [] },
+    leadStudiosWithoutCity: [],
   };
 }
 
@@ -408,6 +410,11 @@ export function validateOutput(outDir: string): ValidationResult {
     flaggedCompanies,
     countryOnlyLeadShare: { count: countryLeads, total: games.length, percent: pct(countryLeads, games.length) },
     leadBasisCounts,
+    leadStudiosWithoutCity: companies
+      .filter((c) => c.leadCount > 0 && c.precision !== 'city')
+      .sort((a, b) => b.leadCount - a.leadCount || a.id - b.id)
+      .slice(0, 100)
+      .map((c) => ({ id: c.id, name: c.name, precision: c.precision, country: c.country, ledGames: c.leadCount })),
     insights: buildInsights(statsCheck.count === 0 ? stats : null, flowsCheck.count === 0 ? flowsFile : null),
   };
 }
@@ -465,6 +472,14 @@ export function formatSummary(result: ValidationResult, topFlagged = 50): string
   };
   flowTable('Top 10 localization flows (lead studio country to localizer country)', ins.topLocalizationFlows);
   flowTable('Top 10 QA flows (lead studio country to QA country)', ins.topQaFlows);
+  lines.push('', '## Lead studios without a city', '');
+  if (result.leadStudiosWithoutCity.length === 0) lines.push('None.');
+  else {
+    lines.push('Top 30 by games led', '', '| Id | Name | Precision | Country | Games led |', '| ---: | --- | --- | --- | ---: |');
+    for (const c of result.leadStudiosWithoutCity.slice(0, 30)) {
+      lines.push(`| ${c.id} | ${c.name.replace(/\|/g, '\\|')} | ${c.precision} | ${c.country ?? ''} | ${c.ledGames} |`);
+    }
+  }
   return lines.join('\n') + '\n';
 }
 

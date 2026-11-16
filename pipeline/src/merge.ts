@@ -35,6 +35,16 @@ export interface Specialty {
   evidenceUrl: string;
 }
 
+export interface LocationCorrection {
+  igdbCompanyId?: number;
+  name: string;
+  city: string;
+  country: string;
+  lat: number;
+  lng: number;
+  evidenceUrl: string;
+}
+
 export interface MergeInput {
   games: RawIgdbGame[];
   companies: RawIgdbCompany[];
@@ -43,6 +53,8 @@ export interface MergeInput {
   wikidataCompanies: RawWikidataCompany[];
   moby: RawMobyGame[] | null;
   specialties: Specialty[];
+  locationCorrections: LocationCorrection[];
+  resolveCity: (label: string, lat: number, lng: number) => string;
   gameLimit: number;
   now: Date;
 }
@@ -63,6 +75,15 @@ export interface MergeReport {
   rejectedWikidataMatches: CountryConflict[];
   countryMismatches: CountryConflict[];
   unmatchedSupportCompanies: { companyId: number; name: string; gameCount: number }[];
+  unusedLocationCorrections: { name: string; igdbCompanyId: number | null }[];
+  countryFromGames: number;
+  leadStudiosWithoutCity: {
+    companyId: number;
+    name: string;
+    precision: LocationPrecision;
+    country: string | null;
+    ledGames: number;
+  }[];
 }
 
 export interface MergeResult {
@@ -99,6 +120,7 @@ export function mapMobyRole(roleName: string): RoleType {
 }
 
 const INDIE_GENRE_ID = 32;
+const LEAD_WORKLIST_SIZE = 100;
 
 function utcYear(unixSeconds: number | null): number | null {
   return unixSeconds === null ? null : new Date(unixSeconds * 1000).getUTCFullYear();
@@ -171,6 +193,22 @@ export function merge(input: MergeInput): MergeResult {
 
   const wdCompanyById = new Map(input.wikidataCompanies.map((w) => [w.igdbCompanyId, w]));
   const wdGameById = new Map(input.wikidataGames.map((w) => [w.igdbGameId, w]));
+  const companyIdByQid = new Map<string, number>();
+  for (const w of input.wikidataCompanies) {
+    if (companyById.has(w.igdbCompanyId) && !companyIdByQid.has(w.qid)) companyIdByQid.set(w.qid, w.igdbCompanyId);
+  }
+
+  const correctionById = new Map<number, LocationCorrection>();
+  const correctionByName = new Map<string, LocationCorrection>();
+  for (const c of input.locationCorrections) {
+    if (c.igdbCompanyId !== undefined) correctionById.set(c.igdbCompanyId, c);
+    else correctionByName.set(normalizeCompanyName(c.name), c);
+  }
+  const usedCorrections = new Set<LocationCorrection>();
+  const correctionFor = (id: number, name: string): LocationCorrection | null => {
+    const c = correctionById.get(id) ?? correctionByName.get(normalizeCompanyName(name));
+    return c && validCoords(c.lat, c.lng) ? c : null;
+  };
   const mobyByGame = new Map((input.moby ?? []).map((m) => [m.igdbGameId, m]));
 
   const specById = new Map<number, Specialty>();
@@ -196,7 +234,6 @@ export function merge(input: MergeInput): MergeResult {
     const rows = game.involvedCompanies
       .filter((r) => companyById.has(r.company))
       .sort((a, b) => a.id - b.id);
-    if (rows.length === 0) return 'no involved companies';
 
     const gameRef = igdbGameRef(game);
     const year = utcYear(game.firstReleaseDate);
@@ -253,6 +290,17 @@ export function merge(input: MergeInput): MergeResult {
         basis = 'wikidata_developer';
         leadRef = wikidataRef(wdGame.qid);
       }
+      if (leadId === null && wdGame) {
+        for (const dev of wdGame.developers) {
+          const linked = companyIdByQid.get(dev.qid);
+          if (linked !== undefined) {
+            leadId = linked;
+            basis = 'wikidata_developer';
+            leadRef = wikidataRef(wdGame.qid);
+            break;
+          }
+        }
+      }
       if (leadId === null && moby) {
         for (const mr of moby.roles) {
           if (mapMobyRole(mr.roleName) !== 'co_developer' || !/develop/i.test(mr.roleName)) continue;
@@ -267,7 +315,9 @@ export function merge(input: MergeInput): MergeResult {
         }
       }
       if (leadId === null || basis === null) {
-        return 'no developer in IGDB and no Wikidata or MobyGames developer matches an involved company';
+        return rows.length === 0
+          ? 'no involved companies'
+          : 'no developer in IGDB and no Wikidata or MobyGames developer matches a known company';
       }
     }
     if (leadId === null || basis === null) return 'no lead';
@@ -379,29 +429,46 @@ export function merge(input: MergeInput): MergeResult {
   const companyIds = [...agg.keys()].sort((a, b) => a - b);
   const outputIds = new Set(companyIds);
   const companies: Company[] = [];
+  let countryFromGames = 0;
+
+  const ledWithCountry = new Map<number, { country: string; qid: string }[]>();
+  for (const w of kept) {
+    const wdGame = wdGameById.get(w.raw.id);
+    if (!wdGame?.countryOfOrigin) continue;
+    const list = ledWithCountry.get(w.leadId);
+    const entry = { country: wdGame.countryOfOrigin, qid: wdGame.qid };
+    if (list) list.push(entry);
+    else ledWithCountry.set(w.leadId, [entry]);
+  }
 
   for (const id of companyIds) {
     const a = agg.get(id)!;
     const raw = companyById.get(id);
     if (!raw) {
+      const name = mobyOnlyNames.get(id) ?? String(id);
+      const fix = correctionFor(id, name);
+      if (fix) usedCorrections.add(fix);
+      const fixRef: SourceRef | null = fix
+        ? { source: 'curated', id: normalizeCompanyName(fix.name), url: fix.evidenceUrl }
+        : null;
       companies.push({
         id,
-        name: mobyOnlyNames.get(id) ?? String(id),
-        country: null,
-        city: null,
-        lat: null,
-        lng: null,
-        precision: 'none',
-        locationSource: null,
+        name,
+        country: fix?.country ?? null,
+        city: fix?.city ?? null,
+        lat: fix?.lat ?? null,
+        lng: fix?.lng ?? null,
+        precision: fix ? 'city' : 'none',
+        locationSource: fixRef,
         founded: null,
         parentId: null,
         firstYear: a.firstYear,
         lastYear: a.lastYear,
         gameCount: a.gameCount,
         leadCount: a.leadCount,
-        sources: dedupeRefs([{ source: 'mobygames', id: String(id - MOBY_ONLY_COMPANY_OFFSET) }, ...a.refs]),
+        sources: dedupeRefs([{ source: 'mobygames', id: String(id - MOBY_ONLY_COMPANY_OFFSET) }, ...(fixRef ? [fixRef] : []), ...a.refs]),
       });
-      companiesByPrecision.none++;
+      companiesByPrecision[fix ? 'city' : 'none']++;
       continue;
     }
 
@@ -427,9 +494,20 @@ export function merge(input: MergeInput): MergeResult {
     let precision: LocationPrecision = 'none';
     let locationSource: SourceRef | null = null;
 
-    if (wd?.hq && validCoords(wd.hq.lat, wd.hq.lng)) {
+    const fix = correctionFor(id, raw.name);
+    let fixRef: SourceRef | null = null;
+    if (fix) {
+      usedCorrections.add(fix);
+      fixRef = { source: 'curated', id: normalizeCompanyName(fix.name), url: fix.evidenceUrl };
+      country = fix.country;
+      city = fix.city;
+      lat = fix.lat;
+      lng = fix.lng;
+      precision = 'city';
+      locationSource = fixRef;
+    } else if (wd?.hq && validCoords(wd.hq.lat, wd.hq.lng)) {
       country = wd.country ?? igdbCountry;
-      city = wd.hq.label;
+      city = input.resolveCity(wd.hq.label, wd.hq.lat, wd.hq.lng);
       lat = wd.hq.lat;
       lng = wd.hq.lng;
       precision = 'city';
@@ -443,6 +521,23 @@ export function merge(input: MergeInput): MergeResult {
         lng = centre.lng;
         precision = 'country';
         locationSource = fromIgdb ? igdbRef : wikidataRef(wd!.qid);
+      }
+    }
+
+    if (country === null) {
+      const led = ledWithCountry.get(id);
+      if (led && led.length > 0 && led.every((l) => l.country === led[0]!.country)) {
+        country = led[0]!.country;
+        countryFromGames++;
+        if (precision === 'none') {
+          const centre = countryCentre(country);
+          if (centre) {
+            lat = centre.lat;
+            lng = centre.lng;
+            precision = 'country';
+            locationSource = wikidataRef(led[0]!.qid);
+          }
+        }
       }
     }
     companiesByPrecision[precision]++;
@@ -463,7 +558,7 @@ export function merge(input: MergeInput): MergeResult {
       lastYear: a.lastYear,
       gameCount: a.gameCount,
       leadCount: a.leadCount,
-      sources: dedupeRefs([igdbRef, ...(wd ? [wikidataRef(wd.qid)] : []), ...a.refs]),
+      sources: dedupeRefs([igdbRef, ...(wd ? [wikidataRef(wd.qid)] : []), ...(fixRef ? [fixRef] : []), ...a.refs]),
     });
   }
 
@@ -545,6 +640,15 @@ export function merge(input: MergeInput): MergeResult {
       rejectedWikidataMatches: rejected,
       countryMismatches: mismatches,
       unmatchedSupportCompanies,
+      unusedLocationCorrections: input.locationCorrections
+        .filter((c) => !usedCorrections.has(c))
+        .map((c) => ({ name: c.name, igdbCompanyId: c.igdbCompanyId ?? null })),
+      countryFromGames,
+      leadStudiosWithoutCity: companies
+        .filter((c) => c.leadCount > 0 && c.precision !== 'city')
+        .sort((a, b) => b.leadCount - a.leadCount || a.id - b.id)
+        .slice(0, LEAD_WORKLIST_SIZE)
+        .map((c) => ({ companyId: c.id, name: c.name, precision: c.precision, country: c.country, ledGames: c.leadCount })),
     },
   };
 }

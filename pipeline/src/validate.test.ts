@@ -228,6 +228,8 @@ describe('validation reports', () => {
     expect(md).toContain('Top 10 countries by games led');
     expect(md).toContain('Top 10 localization flows');
     expect(md).toContain('Top 10 QA flows');
+    expect(md).toContain('## Lead studios without a city');
+    expect(md).toContain('Nowhere Games');
     expect(JSON.parse(readFileSync(join(reportDir, 'validation.json'), 'utf8')).ok).toBe(true);
   });
 
