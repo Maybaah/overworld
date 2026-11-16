@@ -41,7 +41,7 @@
 
 .ins-tab:hover {
   color: var(--text);
-  background: #19212d;
+  background: var(--bg-elevated);
 }
 
 .ins-tab[aria-selected='true'] {
@@ -94,7 +94,7 @@
 }
 
 .ins-seg-btn[aria-pressed='true'] {
-  background: #19212d;
+  background: var(--bg-elevated);
   color: var(--text);
   font-weight: 500;
 }
@@ -136,7 +136,7 @@
 }
 
 button.ins-row:hover {
-  background: #19212d;
+  background: var(--bg-elevated);
 }
 
 .ins-row-static {
@@ -222,11 +222,11 @@ button.ins-row:hover {
 }
 
 .ins-chip:hover:not(:disabled) {
-  background: #19212d;
+  background: var(--bg-elevated);
 }
 
 .ins-chip[aria-pressed='true'] {
-  background: #19212d;
+  background: var(--bg-elevated);
   border-color: var(--muted);
   font-weight: 500;
 }

@@ -59,7 +59,7 @@ export function GameCard() {
   const openCompany = (id: number) => selectPlace({ level: 'company', key: id });
 
   return (
-    <aside className="ow-panel ow-card" aria-label={`Game: ${game.name}`}>
+    <aside key={game.id} className="ow-panel ow-card" aria-label={`Game: ${game.name}`}>
       <div className="ow-panel-head">
         <div className="ow-card-top">
           <Cover key={game.id} cover={game.cover} name={game.name} />

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type KeyboardEvent } from 'react';
+import { useEffect, useMemo, useState, type KeyboardEvent, type CSSProperties } from 'react';
 import { useStore } from '../data/store';
 import { formatCount } from './format';
 
@@ -122,6 +122,7 @@ export function YearSlider() {
                 y={100 - h}
                 height={h}
                 className={min + i <= year ? 'ow-bar' : 'ow-bar ow-bar-future'}
+                style={{ '--i': i } as CSSProperties}
               />
             );
           })}

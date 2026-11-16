@@ -139,7 +139,7 @@
 }
 
 .gs-btn:hover:not(:disabled) {
-  background: #19212d;
+  background: var(--bg-elevated);
 }
 
 .gs-btn:disabled {

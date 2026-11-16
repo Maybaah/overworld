@@ -35,9 +35,9 @@ export const CARD_COLORS = { bg: BG, text: TEXT, muted: MUTED, backdropAlpha: BA
 export type FontFamily = 'display' | 'text' | 'mono';
 
 export const FONT_STACKS: Record<FontFamily, string> = {
-  display: "'Space Grotesk', system-ui, sans-serif",
-  text: "'IBM Plex Sans', system-ui, sans-serif",
-  mono: "'IBM Plex Mono', ui-monospace, monospace",
+  display: "'Geist Sans', system-ui, sans-serif",
+  text: "'Geist Sans', system-ui, sans-serif",
+  mono: "'Geist Mono', ui-monospace, monospace",
 };
 
 export type DrawOp =

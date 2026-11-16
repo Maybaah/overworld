@@ -1,4 +1,4 @@
-import { useRef, type KeyboardEvent } from 'react';
+import { useLayoutEffect, useRef, useState, type KeyboardEvent } from 'react';
 import { useStore, type AppMode } from '../data/store';
 
 const ALL_MODES: { id: AppMode; label: string }[] = [
@@ -16,6 +16,14 @@ export function ModeNav() {
   const setMode = useStore((s) => s.setMode);
   const refs = useRef<(HTMLButtonElement | null)[]>([]);
   const MODES = ALL_MODES.filter((m) => !UNLISTED.includes(m.id) || m.id === mode);
+  const active = MODES.findIndex((m) => m.id === mode);
+  const [pill, setPill] = useState<{ x: number; w: number } | null>(null);
+
+  // The highlight slides from the old mode to the new one instead of jumping.
+  useLayoutEffect(() => {
+    const el = refs.current[active];
+    setPill(el ? { x: el.offsetLeft, w: el.offsetWidth } : null);
+  }, [active, MODES.length]);
 
   function onKeyDown(e: KeyboardEvent<HTMLButtonElement>, index: number) {
     let next = index;
@@ -30,6 +38,7 @@ export function ModeNav() {
 
   return (
     <div className="ow-modenav" role="group" aria-label="Mode">
+      {pill && <span className="ow-mode-pill" aria-hidden="true" style={{ transform: `translateX(${pill.x}px)`, width: pill.w }} />}
       {MODES.map((m, i) => (
         <button
           key={m.id}

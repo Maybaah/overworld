@@ -20,7 +20,7 @@ const TIERS: Tier[] = [
 ];
 const TABLE_W = 2048;
 const STRIDE = TIERS.length;
-const BASE_COLOR = new THREE.Color('#4a5466');
+const BASE_COLOR = new THREE.Color('#52525b');
 
 const VERTEX = `
 attribute float aCell;

@@ -111,7 +111,7 @@ export function PlacePanel() {
   }
 
   return (
-    <aside className="ow-panel ow-place" aria-label={`Place: ${title}`}>
+    <aside key={title} className="ow-panel ow-place" aria-label={`Place: ${title}`}>
       <div className="ow-panel-head">
         <div className="ow-card-title">
           <h2 className="ow-title">{title}</h2>

@@ -70,11 +70,9 @@
 
 .ow-panel {
   pointer-events: auto;
-  background: var(--surface);
-  backdrop-filter: blur(var(--blur));
-  -webkit-backdrop-filter: blur(var(--blur));
+  background: var(--bg-surface);
   border: 1px solid var(--border);
-  border-radius: var(--radius);
+  border-radius: var(--radius-lg);
 }
 
 .ow-header {
@@ -82,7 +80,6 @@
   top: 16px;
   left: 16px;
   right: 16px;
-  flex-nowrap: wrap;
   display: flex;
   align-items: center;
   gap: 16px;
@@ -93,7 +90,7 @@
   pointer-events: auto;
   font-family: var(--font-display);
   font-weight: 600;
-  font-size: 20px;
+  font-size: 19px;
   letter-spacing: 0;
 }
 
@@ -105,36 +102,44 @@
 }
 
 .ow-modenav {
+  position: relative;
   pointer-events: auto;
   display: flex;
   gap: 2px;
-  padding: 2px;
+  padding: 3px;
   height: 40px;
-  background: var(--surface);
-  backdrop-filter: blur(var(--blur));
-  -webkit-backdrop-filter: blur(var(--blur));
+  background: var(--bg-surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
 }
 
+.ow-mode-pill {
+  position: absolute;
+  top: 3px;
+  bottom: 3px;
+  left: 0;
+  border-radius: 7px;
+  background: var(--bg-elevated);
+  transition: transform 320ms var(--ease-out), width 320ms var(--ease-out);
+}
+
 .ow-mode-btn {
+  position: relative;
   padding: 0 12px;
   background: transparent;
   border: 0;
-  border-radius: 8px;
-  color: var(--muted);
+  border-radius: 7px;
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 500;
   white-space: nowrap;
   cursor: pointer;
+  transition: color var(--dur-fast) var(--ease);
 }
 
-.ow-mode-btn:hover {
-  color: var(--text);
-}
-
+.ow-mode-btn:hover,
 .ow-mode-btn[aria-pressed='true'] {
-  background: #19212d;
   color: var(--text);
-  font-weight: 500;
 }
 
 .ow-tab {
@@ -144,8 +149,12 @@
   cursor: pointer;
 }
 
+.ow-tab {
+  transition: background-color var(--dur-fast) var(--ease);
+}
+
 .ow-tab:hover {
-  background: #19212d;
+  background: var(--bg-elevated);
 }
 
 .ow-root[data-mode='insights'] .ow-left {
@@ -155,12 +164,17 @@
 .ow-search-input {
   width: 100%;
   height: 40px;
-  padding: 0 16px;
-  background: var(--surface);
-  backdrop-filter: blur(var(--blur));
-  -webkit-backdrop-filter: blur(var(--blur));
+  padding: 0 14px;
+  background: var(--bg-surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
+  font-size: 13px;
+  transition: border-color var(--dur-fast) var(--ease);
+}
+
+.ow-search-input:hover,
+.ow-search-input:focus {
+  border-color: var(--border-focus);
 }
 
 .ow-search-input::placeholder {
@@ -177,10 +191,11 @@
   top: 48px;
   left: 0;
   right: 0;
-  background: var(--surface-solid);
+  background: var(--bg-surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   overflow: hidden;
+  animation: ow-drop 180ms var(--ease) both;
 }
 
 .ow-search-list[hidden] {
@@ -199,7 +214,7 @@
 }
 
 .ow-search-option[data-active='true'] {
-  background: #19212d;
+  background: var(--bg-elevated);
 }
 
 .ow-search-main {
@@ -289,6 +304,7 @@
   font-family: var(--font-display);
   font-weight: 600;
   font-size: 18px;
+  text-wrap: balance;
   line-height: 1.25;
   overflow-wrap: anywhere;
 }
@@ -317,9 +333,9 @@
   flex: none;
   width: 88px;
   aspect-ratio: 3 / 4;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   border: 1px solid var(--border);
-  background: #121823;
+  background: var(--bg-elevated);
   overflow: hidden;
   display: flex;
   align-items: center;
@@ -345,16 +361,19 @@
 }
 
 .ow-tag {
+  white-space: nowrap;
+  font-family: var(--font-mono);
   font-size: 12px;
-  padding: 0 8px;
+  line-height: 20px;
+  padding: 0 6px;
   border: 1px solid var(--border);
-  border-radius: 999px;
-  color: var(--text);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
 }
 
 .ow-tag-indie {
-  border-color: var(--accent);
-  color: var(--accent);
+  border-color: var(--border-focus);
+  color: var(--text);
 }
 
 .ow-icon-btn {
@@ -366,12 +385,18 @@
   justify-content: center;
   background: transparent;
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   cursor: pointer;
+  transition: background-color var(--dur-fast) var(--ease), transform 120ms var(--ease);
+}
+
+.ow-icon-btn:active,
+.ow-more-btn:active {
+  transform: scale(0.97);
 }
 
 .ow-icon-btn:hover {
-  background: #19212d;
+  background: var(--bg-elevated);
 }
 
 .ow-link-btn {
@@ -384,6 +409,7 @@
   text-decoration: underline;
   text-decoration-color: var(--border);
   text-underline-offset: 3px;
+  transition: text-decoration-color var(--dur-fast) var(--ease);
 }
 
 .ow-link-btn:hover {
@@ -396,17 +422,18 @@
   min-height: 32px;
   background: transparent;
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   cursor: pointer;
+  transition: background-color var(--dur-fast) var(--ease), transform 120ms var(--ease);
 }
 
 .ow-more-btn:hover {
-  background: #19212d;
+  background: var(--bg-elevated);
 }
 
 .ow-error {
-  border: 1px solid #5a2a2a;
-  border-radius: 8px;
+  border: 1px solid rgba(251, 106, 105, 0.4);
+  border-radius: var(--radius-md);
   padding: 8px 16px;
 }
 
@@ -503,13 +530,14 @@
   padding: 4px 8px;
   background: transparent;
   border: 0;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   text-align: left;
   cursor: pointer;
+  transition: background-color var(--dur-fast) var(--ease);
 }
 
 .ow-legend-row:hover {
-  background: #19212d;
+  background: var(--bg-elevated);
 }
 
 .ow-legend-row[aria-disabled='true'] {
@@ -545,7 +573,8 @@
 }
 
 .ow-year {
-  font-size: 28px;
+  font-size: 26px;
+  font-weight: 500;
   line-height: 1.2;
   min-width: 4ch;
 }
@@ -574,11 +603,14 @@
 }
 
 .ow-bar {
-  fill: #3a4658;
+  fill: var(--bg-overlay);
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  transition: fill var(--dur-fast) var(--ease);
 }
 
 .ow-bar-future {
-  fill: #1c2431;
+  fill: var(--bg-elevated);
 }
 
 .ow-range {
@@ -614,6 +646,11 @@
   border-radius: 4px;
   background: var(--accent);
   border: 0;
+  transition: transform 120ms var(--ease);
+}
+
+.ow-range:active::-webkit-slider-thumb {
+  transform: scale(0.94);
 }
 
 .ow-range::-moz-range-thumb {
@@ -643,6 +680,84 @@
   color: var(--accent);
   font-weight: 500;
   margin-bottom: 4px;
+}
+
+/* Motion: one entrance for the chrome, cards slide in with a short blur, the tooltip grows from the pointer. */
+@keyframes ow-up {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+@keyframes ow-up-centred {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 8px);
+  }
+}
+
+@keyframes ow-card-in {
+  from {
+    opacity: 0;
+    transform: translateX(16px) scale(0.97);
+    filter: blur(6px);
+  }
+}
+
+@keyframes ow-drop {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+
+@keyframes ow-grow {
+  from {
+    transform: scaleY(0);
+  }
+}
+
+@keyframes ow-tip-in {
+  from {
+    opacity: 0;
+    scale: 0.94;
+  }
+}
+
+.ow-header {
+  animation: ow-up var(--dur-enter) var(--ease) both;
+}
+
+.ow-left > * {
+  animation: ow-up var(--dur-enter) var(--ease) both 60ms;
+}
+
+.ow-slider {
+  animation: ow-up-centred var(--dur-enter) var(--ease) both 60ms;
+}
+
+.ow-bar {
+  animation: ow-grow 600ms var(--ease-out) both;
+  animation-delay: calc(120ms + var(--i, 0) * 8ms);
+}
+
+.ow-card,
+.ow-place {
+  animation: ow-card-in 520ms var(--ease-out) both;
+}
+
+.ow-tip {
+  transform-origin: 0 0;
+  animation: ow-tip-in 200ms var(--ease-out) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ow-root *,
+  .ow-tip {
+    animation: none !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 @media (max-width: 1100px) {
@@ -708,6 +823,7 @@
     bottom: 56px;
     width: auto;
     transform: none;
+    animation-name: ow-up;
   }
 
   .ow-attribution {

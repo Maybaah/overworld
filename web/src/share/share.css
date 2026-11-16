@@ -31,7 +31,7 @@
 }
 
 .ow-share-item:hover:not(:disabled) {
-  background: #19212d;
+  background: var(--bg-elevated);
 }
 
 .ow-share-item:disabled {
@@ -69,4 +69,9 @@
   display: flex;
   justify-content: space-between;
   gap: 16px;
+}
+
+.ow-share-btn {
+  margin-top: 0;
+  white-space: nowrap;
 }

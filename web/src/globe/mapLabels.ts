@@ -125,7 +125,7 @@ export class MapLabels {
       `text-shadow:${HALO}`,
       `padding:0 ${PAD_X}px`,
       'border-radius:4px',
-      'background:rgba(8,10,14,0.74)',
+      'background:rgba(9,9,11,0.74)',
       'white-space:nowrap',
       'pointer-events:none',
       'opacity:0',

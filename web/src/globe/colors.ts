@@ -4,11 +4,11 @@ export function hexToRgb(hex: string): [number, number, number] {
 }
 
 export const COLORS = {
-  background: '#07090d',
-  globe: '#0b1018',
-  countryFill: '#3a4352',
-  countryStroke: '#5d6a7c',
-  atmosphere: '#3a6ea5',
+  background: '#09090b',
+  globe: '#111114',
+  countryFill: '#3f3f46',
+  countryStroke: '#5b5b63',
+  atmosphere: '#71717a',
   lead: '#F0E442',
   idle: '#9aa3b2',
   dot: '#eef1f5',

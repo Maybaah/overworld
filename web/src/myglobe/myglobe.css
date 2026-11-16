@@ -129,7 +129,7 @@
 }
 
 .omg-toggle button[aria-pressed='true'] {
-  background: #19212d;
+  background: var(--bg-elevated);
   color: var(--text);
 }
 

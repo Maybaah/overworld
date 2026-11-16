@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
-import '@fontsource/space-grotesk/600.css';
-import '@fontsource/ibm-plex-sans/400.css';
-import '@fontsource/ibm-plex-sans/500.css';
-import '@fontsource/ibm-plex-mono/400.css';
+import '@fontsource/geist-sans/400.css';
+import '@fontsource/geist-sans/500.css';
+import '@fontsource/geist-sans/600.css';
+import '@fontsource/geist-mono/400.css';
+import '@fontsource/geist-mono/500.css';
 import './tokens.css';
 import './overlay.css';
 import { useStore } from '../data/store';

@@ -101,12 +101,12 @@ const tooltipStyle = {
   top: 0,
   display: 'none',
   pointerEvents: 'none',
-  padding: '4px 8px',
-  background: 'rgba(7, 9, 13, 0.92)',
-  border: '1px solid #2b3a4f',
-  borderRadius: 4,
-  color: '#e6e9ef',
-  font: '12px system-ui, sans-serif',
+  padding: '6px 10px',
+  background: '#18181b',
+  border: '1px solid rgba(255, 255, 255, 0.1)',
+  borderRadius: 10,
+  color: '#fafafa',
+  font: "500 13px/1.4 'Geist Sans', system-ui, sans-serif",
   whiteSpace: 'pre',
   zIndex: 10,
 } as const;
@@ -844,7 +844,7 @@ ${where}`;
       />
       <div ref={mapRootRef} style={{ position: 'absolute', inset: 0, pointerEvents: 'none', overflow: 'hidden' }} />
       <div ref={labelRootRef} style={{ position: 'absolute', inset: 0, pointerEvents: 'none', overflow: 'hidden' }} />
-      <div ref={tooltipRef} style={tooltipStyle} />
+      <div ref={tooltipRef} className="ow-tip" style={tooltipStyle} />
       {debug && <DebugHud read={readout} />}
     </div>
   );
