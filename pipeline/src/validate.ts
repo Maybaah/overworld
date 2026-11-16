@@ -274,7 +274,7 @@ export function validateOutput(outDir: string): ValidationResult {
     for (const r of d.roles ?? []) if (badSource(r.source)) sourcesCheck.fail(`game ${d.id} role ${r.role} of company ${r.companyId}`);
   }
 
-  const coords = new Check('company-coordinates', "precision is 'none' exactly when lat/lng are null; city and country need valid coordinates");
+  const coords = new Check('company-coordinates', "precision is 'none' exactly when lat/lng are null; city and country need valid coordinates and a known country code");
   for (const c of companies) {
     const label = `company ${c.id} "${c.name}"`;
     const nullCoords = c.lat === null && c.lng === null;
@@ -285,6 +285,8 @@ export function validateOutput(outDir: string): ValidationResult {
       coords.fail(`${label}: precision ${c.precision} with invalid coordinates (${c.lat}, ${c.lng})`);
     }
     if (c.precision !== 'none' && nullCoords) coords.fail(`${label}: no coordinates but precision ${c.precision}`);
+    if (c.country !== null && countryName(c.country) === null) coords.fail(`${label}: unknown country code ${String(c.country)}`);
+    if (c.precision !== 'none' && c.country === null) coords.fail(`${label}: located at precision ${c.precision} but has no country`);
   }
 
   const refs = new Check('references', 'role.companyId, parentId and steam.json point at existing records');

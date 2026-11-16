@@ -112,6 +112,15 @@ describe('validateOutput', () => {
     expect(validateOutput(out).checks.find((c) => c.name === 'company-coordinates')!.count).toBe(2);
   });
 
+  it('catches an unknown country code and a located company without a country', () => {
+    edit<Company[]>('companies.json', (c) => {
+      const x = c.filter((k) => k.precision !== 'none');
+      x[0]!.country = 'ZZ';
+      x[1]!.country = null;
+    });
+    expect(validateOutput(out).checks.find((c) => c.name === 'company-coordinates')!.count).toBe(2);
+  });
+
   it('catches a role pointing to an unknown company', () => {
     edit<GameDetail[]>('details/0.json', (d) => { d[0]!.roles.push({ companyId: 888, role: 'publisher', platform: null, year: null, source: { source: 'igdb', id: '1' } }); });
     expect(failed()).toContain('references');
