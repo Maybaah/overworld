@@ -208,6 +208,9 @@ export async function loadData(dataDir) {
   return { games, companyById, details };
 }
 
+// Keep in sync with SHARE_PAGE_LIMIT in src/share/urlState.ts.
+const SHARE_PAGE_LIMIT = 10_000;
+
 export async function buildSharePages({ distDir, env = process.env, log = console.log }) {
   log(`Share pages: ${HEADER_NOTE}`);
   const dataDir = path.join(distDir, 'data');
@@ -229,12 +232,13 @@ export async function buildSharePages({ distDir, env = process.env, log = consol
     written += 1;
     bytes += Buffer.byteLength(html);
   };
-  for (const game of games) {
+  // games.json is in popularity order; pages beyond the limit would only add hundreds of megabytes.
+  for (const game of games.slice(0, SHARE_PAGE_LIMIT)) {
     const html = renderGamePage({ game, lead: companyById.get(game.leadCompanyId), detail: details.get(game.id) ?? null, companyById }, site);
     await put(`g/${game.id}/index.html`, html);
   }
   for (const kind of Object.keys(GENERIC)) await put(`share/${kind}/index.html`, renderGenericPage(kind, site));
-  log(`Share pages: wrote ${written} pages (${games.length} games + ${Object.keys(GENERIC).length} generic), ${(bytes / 1024).toFixed(0)} KiB of content`);
+  log(`Share pages: wrote ${written} pages (${Math.min(games.length, SHARE_PAGE_LIMIT)} of ${games.length} games + ${Object.keys(GENERIC).length} generic), ${(bytes / 1024).toFixed(0)} KiB of content`);
   return { written, bytes };
 }
 

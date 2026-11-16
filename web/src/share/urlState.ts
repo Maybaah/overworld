@@ -97,6 +97,9 @@ export function baseUrl(loc: Pick<Location, 'origin' | 'pathname'>, base: string
   return `${loc.origin}${dir}`;
 }
 
+// Static preview pages exist only for the most played games (scripts/build-share-pages.mjs); the rest share a plain link.
+export const SHARE_PAGE_LIMIT = 10_000;
+
 export function gameLink(id: number, loc: Pick<Location, 'origin' | 'pathname'> = window.location, pages = !import.meta.env.DEV, base?: string): string {
   const root = baseUrl(loc, base);
   return pages ? `${root}g/${id}/` : `${root}?game=${id}`;

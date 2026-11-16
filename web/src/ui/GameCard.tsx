@@ -7,7 +7,7 @@ import { CloseButton, LinkButton, SourceLink, Swatch } from './parts';
 import { LEAD_BASIS_TEXT, placeLabel, precisionText } from './format';
 import { ShareButton } from '../share/ShareButton';
 import { gameCardSpec } from '../share/card';
-import { gameLink } from '../share/urlState';
+import { gameLink, SHARE_PAGE_LIMIT } from '../share/urlState';
 
 const COVER_URL = 'https://images.igdb.com/igdb/image/upload/t_cover_big/';
 
@@ -79,7 +79,7 @@ export function GameCard() {
           </div>
         </div>
         <ShareButton
-          url={gameLink(game.id)}
+          url={gameLink(game.id, window.location, !import.meta.env.DEV && (indexes.gamePosition.get(game.id) ?? Infinity) < SHARE_PAGE_LIMIT)}
           title={game.name}
           card={gameCardSpec(game, lead, detail, indexes.companyById)}
           fileName={`overworld-${game.slug}`}
