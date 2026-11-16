@@ -8,3 +8,4 @@ pipeline/.cache/
 coverage/
 .vite/
 web/public/data-fixture/
+web/public/data/
