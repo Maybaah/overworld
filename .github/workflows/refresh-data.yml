@@ -1,0 +1,75 @@
+name: Refresh data and deploy
+
+on:
+  schedule:
+    - cron: '17 4 * * 1'
+  workflow_dispatch:
+    inputs:
+      limit:
+        description: Number of games
+        default: '10000'
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: refresh-data
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            web/package-lock.json
+
+      - run: npm ci
+      - run: npm ci --prefix web
+
+      - name: Run pipeline (fetch, merge, validate)
+        env:
+          TWITCH_CLIENT_ID: ${{ secrets.TWITCH_CLIENT_ID }}
+          TWITCH_CLIENT_SECRET: ${{ secrets.TWITCH_CLIENT_SECRET }}
+          MOBYGAMES_API_KEY: ${{ secrets.MOBYGAMES_API_KEY }}
+          WIKIDATA_USER_AGENT_CONTACT: ${{ vars.WIKIDATA_USER_AGENT_CONTACT || format('https://github.com/{0}', github.repository) }}
+        run: npm run pipeline -- --refresh --limit=${{ inputs.limit || '10000' }}
+
+      - name: Upload reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: reports
+          path: reports/
+
+      - run: npm test
+      - run: npm test --prefix web
+
+      - name: Build site
+        env:
+          VITE_BASE: /${{ github.event.repository.name }}/
+          VITE_DATA_BASE: /${{ github.event.repository.name }}/data
+        run: npm run build --prefix web
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: web/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
