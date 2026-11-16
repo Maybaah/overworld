@@ -61,7 +61,7 @@ export function Overlay() {
 
   const explore = mode === 'explore';
   const shown = gameId === null ? 'place' : place === null ? 'game' : front;
-  const sheet = gameId !== null || place !== null;
+  const sheet = gameId !== null || place !== null || mode === 'myglobe' || mode === 'insights';
 
   const leftName = explore ? 'place' : mode === 'myglobe' ? 'my globe' : 'insights';
   const hasLeft = explore ? place !== null : mode === 'myglobe' || mode === 'insights';
@@ -92,7 +92,7 @@ export function Overlay() {
         {!collapseLeft && explore && <PlacePanel />}
         {!collapseLeft && mode === 'myglobe' && <MyGlobePanel />}
         {!collapseLeft && mode === 'insights' && <InsightsPanel />}
-        {mode !== 'guess' && <Legend />}
+        {(explore || gameId !== null) && mode !== 'guess' && <Legend />}
       </div>
       <div className="ow-right">
         {collapseRight && (

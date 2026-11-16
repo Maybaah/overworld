@@ -690,6 +690,8 @@
   }
 
   .ow-root[data-front='game'] .ow-place,
+  .ow-root[data-front='game'] .omg,
+  .ow-root[data-front='game'] .ins,
   .ow-root[data-front='place'] .ow-card {
     display: none;
   }

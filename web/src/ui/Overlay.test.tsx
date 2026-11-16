@@ -122,6 +122,16 @@ describe('Overlay', () => {
       expect(screen.getByText(/Cover art via/)).toBeInTheDocument();
     });
 
+    it('insights and myglobe hide the legend while no game is open', () => {
+      seedStore({ mode: 'insights' });
+      const { unmount } = render(<Overlay />);
+      expect(legend()).toBeNull();
+      unmount();
+      seedStore({ mode: 'myglobe' });
+      render(<Overlay />);
+      expect(legend()).toBeNull();
+    });
+
     it('explore panels return when switching back', async () => {
       seedStore({ mode: 'insights' });
       const user = userEvent.setup();
