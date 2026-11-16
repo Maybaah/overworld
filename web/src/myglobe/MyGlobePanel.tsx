@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react';
+import type { Indexes } from '../data/indexes';
 import { useStore } from '../data/store';
 import { loadSteamMap } from '../data/loader';
 import { countryName, formatCount } from '../ui/format';
@@ -97,6 +98,17 @@ async function fetchOwned(profile: string): Promise<{ games: OwnedGame[] } | { f
   const code = KNOWN_CODES.find((c) => c === record.error);
   if (code) return { failure: { code, reason: typeof record.reason === 'string' ? record.reason : undefined } };
   return { failure: { code: res.status >= 500 || res.status === 404 ? 'network' : 'steam_unavailable' } };
+}
+
+function topCovers(origins: Origins, indexes: Indexes | null): string[] {
+  const out: string[] = [];
+  if (!indexes) return out;
+  for (const id of origins.gameIds) {
+    const cover = indexes.gameById.get(id)?.cover;
+    if (cover) out.push(cover);
+    if (out.length >= 6) break;
+  }
+  return out;
 }
 
 function shareText(origins: Origins, total: number): string {
@@ -379,7 +391,7 @@ export function MyGlobePanel() {
                 <ShareButton
                   url={pageLink('myglobe', new URLSearchParams({ s: summaryToShareParams(summarizeOrigins(origins)).toString() }))}
                   title="Where my games come from"
-                  card={myGlobeCardSpec(summarizeOrigins(origins))}
+                  card={myGlobeCardSpec(summarizeOrigins(origins), topCovers(origins, indexes))}
                   fileName="overworld-my-globe"
                 />
                 <span className="ow-muted ow-small" role="status">

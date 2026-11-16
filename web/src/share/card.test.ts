@@ -1,13 +1,16 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
   CARD_HEIGHT,
+  CARD_COLORS,
   CARD_WIDTH,
+  drawCard,
   estimateMeasure,
   fitText,
   gameCardSpec,
   groupLine,
   guessCardSpec,
   layoutCard,
+  loadImages,
   myGlobeCardSpec,
   type DrawOp,
   type GameCardSpec,
@@ -175,5 +178,168 @@ describe('gameCardSpec', () => {
       'Publisher · 3 companies in 1 country',
       'Art / audio · 2 companies in 1 country',
     ]);
+  });
+});
+
+const lum = (rgb: number[]) => {
+  const [r, g, b] = rgb.map((v) => {
+    const c = v / 255;
+    return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+  }) as [number, number, number];
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+};
+const hex = (h: string) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
+const ratio = (a: number[], b: number[]) => {
+  const [hi, lo] = [lum(a), lum(b)].sort((x, y) => y - x) as [number, number];
+  return (hi + 0.05) / (lo + 0.05);
+};
+
+describe('cover art', () => {
+  const withCover = { ...game, cover: 'co1wyy' };
+
+  it('puts the cover left and the text to its right', () => {
+    const ops = layoutCard(withCover);
+    const covers = ops.filter((o) => o.op === 'image');
+    const tile = covers.find((o) => o.op === 'image' && o.blur === undefined);
+    expect(covers).toHaveLength(2);
+    expect(tile).toMatchObject({ op: 'image', key: 'co1wyy', radius: 12, y: 48, h: 534 });
+    if (tile?.op !== 'image') throw new Error('no tile');
+    expect(tile.w / tile.h).toBeCloseTo(264 / 374, 2);
+    for (const o of ops) if (o.op === 'text' && o.align === 'left') expect(o.x).toBeGreaterThanOrEqual(tile.x + tile.w);
+    expect(ops.some((o) => o.op === 'outline')).toBe(true);
+  });
+
+  it('draws a faint blurred backdrop behind everything', () => {
+    const ops = layoutCard(withCover);
+    expect(ops[0]).toMatchObject({ op: 'rect', fill: '#07090d' });
+    expect(ops[1]).toMatchObject({ op: 'image', w: CARD_WIDTH, h: CARD_HEIGHT, radius: 0 });
+    const b = ops[1] as Extract<DrawOp, { op: 'image' }>;
+    expect(b.blur).toBeGreaterThan(0);
+    expect(b.alpha).toBeLessThanOrEqual(0.18);
+  });
+
+  it('keeps text contrast above 4.5 on the worst-case backdrop', () => {
+    const a = CARD_COLORS.backdropAlpha;
+    const bg = hex(CARD_COLORS.bg);
+    const mix = (c: number) => bg.map((v) => v * (1 - a) + c * a);
+    for (const c of [0, 255]) {
+      expect(ratio(hex(CARD_COLORS.text), mix(c))).toBeGreaterThanOrEqual(4.5);
+      expect(ratio(hex(CARD_COLORS.muted), mix(c))).toBeGreaterThanOrEqual(4.5);
+    }
+  });
+
+  it('has no cover ops without a cover', () => {
+    expect(layoutCard({ ...game, cover: null }).some((o) => o.op === 'image')).toBe(false);
+  });
+
+  it('fits a long title inside the narrower width', () => {
+    const ops = layoutCard({ ...withCover, title: 'Word '.repeat(60) });
+    const right = CARD_WIDTH - 72;
+    for (const o of ops) {
+      if (o.op === 'text' && o.align === 'left') expect(o.x + estimateMeasure(o.text, o.size, o.font, o.weight)).toBeLessThanOrEqual(right);
+    }
+    expect(ops.some((o) => o.op === 'text' && o.text.endsWith('…'))).toBe(true);
+  });
+
+  it('lays out my globe with 0, 3 and 6 covers', () => {
+    const summary = { owned: 10, matched: 8, countries: [{ code: 'JP', percent: 50 }] };
+    const count = (n: number) =>
+      layoutCard(myGlobeCardSpec(summary, Array.from({ length: n }, (_, i) => `c${i}`))).filter((o) => o.op === 'image');
+    expect(count(0)).toHaveLength(0);
+    expect(count(3)).toHaveLength(3);
+    expect(count(6)).toHaveLength(6);
+    expect(count(9)).toHaveLength(6);
+    for (const o of count(6)) if (o.op === 'image') expect(o.x + o.w).toBeLessThanOrEqual(CARD_WIDTH - 72);
+  });
+});
+
+function fakeCtx(filter: boolean) {
+  const calls: string[] = [];
+  const target: Record<string | symbol, unknown> = {
+    measureText: () => ({ width: 10 }),
+    drawImage: () => calls.push('drawImage'),
+    fillRect: (...a: number[]) => calls.push(`fillRect:${a.join(',')}`),
+  };
+  if (filter) target.filter = 'none';
+  const ctx = new Proxy(target, {
+    get: (t, k) => (k in t ? t[k] : () => undefined),
+    set: (t, k, v) => {
+      t[k] = v;
+      if (k === 'filter') calls.push(`filter:${String(v)}`);
+      return true;
+    },
+  });
+  return { ctx: ctx as unknown as CanvasRenderingContext2D, calls };
+}
+
+describe('drawCard images', () => {
+  const img = { width: 264, height: 374 } as never;
+
+  it('draws loaded images and blurs the backdrop with ctx.filter', () => {
+    const { ctx, calls } = fakeCtx(true);
+    drawCard(ctx, { ...game, cover: 'a' }, new Map([['a', img]]));
+    expect(calls.filter((c) => c === 'drawImage')).toHaveLength(2);
+    expect(calls.some((c) => c.startsWith('filter:blur('))).toBe(true);
+  });
+
+  it('falls back to a downscaled draw when filter is unavailable', () => {
+    const small = { getContext: () => ({ drawImage: vi.fn() }), width: 0, height: 0 };
+    const real = document.createElement.bind(document);
+    vi.spyOn(document, 'createElement').mockImplementation(((t: string) => (t === 'canvas' ? small : real(t))) as never);
+    const { ctx, calls } = fakeCtx(false);
+    drawCard(ctx, { ...game, cover: 'a' }, new Map([['a', img]]));
+    expect(calls.some((c) => c.startsWith('filter:'))).toBe(false);
+    expect(small.width).toBeLessThan(100);
+    vi.restoreAllMocks();
+  });
+
+  it('draws a placeholder when an image is missing', () => {
+    const { ctx, calls } = fakeCtx(true);
+    drawCard(ctx, { ...game, cover: 'a' }, new Map([['a', null]]));
+    expect(calls).not.toContain('drawImage');
+    expect(calls.filter((c) => c.startsWith('fillRect:48,48,'))).toHaveLength(1);
+  });
+});
+
+describe('loadImages', () => {
+  afterEach(() => vi.useRealTimers());
+
+  const fake = (behavior: 'load' | 'error' | 'hang') => () => {
+    const el: Record<string, unknown> = { naturalWidth: 264, naturalHeight: 374 };
+    Object.defineProperty(el, 'src', {
+      set() {
+        queueMicrotask(() => {
+          if (behavior === 'load') (el.onload as () => void)();
+          if (behavior === 'error') (el.onerror as () => void)();
+        });
+      },
+    });
+    return el as unknown as HTMLImageElement;
+  };
+
+  it('resolves loaded images and uses anonymous CORS', async () => {
+    let made: HTMLImageElement | undefined;
+    const create = () => (made = fake('load')());
+    const map = await loadImages(['a'], 4000, create);
+    expect(map.get('a')).toBe(made);
+    expect(made!.crossOrigin).toBe('anonymous');
+  });
+
+  it('maps failures to null', async () => {
+    const map = await loadImages(['a'], 4000, fake('error'));
+    expect(map.get('a')).toBeNull();
+  });
+
+  it('gives up on a hanging image after 4 seconds', async () => {
+    vi.useFakeTimers();
+    const p = loadImages(['a', 'b'], 4000, fake('hang'));
+    await vi.advanceTimersByTimeAsync(3999);
+    let settled = false;
+    void p.then(() => (settled = true));
+    await vi.advanceTimersByTimeAsync(0);
+    expect(settled).toBe(false);
+    await vi.advanceTimersByTimeAsync(1);
+    const map = await p;
+    expect([...map.values()]).toEqual([null, null]);
   });
 });
