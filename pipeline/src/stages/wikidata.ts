@@ -222,6 +222,18 @@ function normalizedOrNull(name: string): string | null {
   return n === '' ? null : n;
 }
 
+export function nameVariants(name: string): string[] {
+  const target = normalizeCompanyName(name);
+  const tokens = name.trim().split(/\s+/);
+  const out = [name];
+  for (let k = tokens.length - 1; k >= 1; k--) {
+    const candidate = tokens.slice(0, k).join(' ').replace(/[\s,.;]+$/, '');
+    if (candidate === '' || normalizeCompanyName(candidate) !== target) break;
+    if (!out.includes(candidate)) out.push(candidate);
+  }
+  return out;
+}
+
 function addTo<K, V>(map: Map<K, Set<V>>, key: K, value: V): void {
   let set = map.get(key);
   if (!set) map.set(key, (set = new Set()));
@@ -242,6 +254,14 @@ interface PlaceDetails {
   country: string | null;
   levelRegion: boolean;
   cityTier: 0 | 1 | 2;
+}
+
+export interface AmbiguousHq {
+  igdbCompanyId: number;
+  name: string;
+  qid: string;
+  chosen: { qid: string; label: string; country: string | null };
+  candidates: { qid: string; label: string; country: string | null; basis: HqBasis }[];
 }
 
 interface PlaceStatement {
@@ -432,7 +452,8 @@ export async function runWikidataStage(config: PipelineConfig, deps: WikidataDep
   let ambiguous = 0;
   const unlinked = igdbCompanies.filter((c) => !linked.has(c.id) && normalizedOrNull(c.name));
   if (unlinked.length > 0) {
-    const nameRows = await batched('names', [...new Set(unlinked.map((c) => c.name))].sort(), buildNameLookupQuery);
+    const queryNames = [...new Set(unlinked.flatMap((c) => nameVariants(c.name)))].sort();
+    const nameRows = await batched('names', queryNames, buildNameLookupQuery);
     const hitsByName = new Map<string, Map<string, { game: boolean; countries: Set<string> }>>();
     for (const b of nameRows) {
       const qid = qidOf(b.co);
@@ -445,7 +466,16 @@ export async function runWikidataStage(config: PipelineConfig, deps: WikidataDep
       if (b.cc) hit.countries.add(b.cc.value);
     }
     for (const c of unlinked) {
-      const items = [...(hitsByName.get(c.name) ?? [])].sort((x, y) => compareQid(x[0], y[0]));
+      const merged = new Map<string, { game: boolean; countries: Set<string> }>();
+      for (const variant of nameVariants(c.name)) {
+        for (const [qid, hit] of hitsByName.get(variant) ?? []) {
+          const m = merged.get(qid) ?? { game: false, countries: new Set<string>() };
+          m.game ||= hit.game;
+          for (const cc of hit.countries) m.countries.add(cc);
+          merged.set(qid, m);
+        }
+      }
+      const items = [...merged].sort((x, y) => compareQid(x[0], y[0]));
       const gameHits = items.filter(([, h]) => h.game);
       if (gameHits.length === 1) {
         linked.set(c.id, { qid: gameHits[0]![0], basis: 'name' });
@@ -524,6 +554,7 @@ export async function runWikidataStage(config: PipelineConfig, deps: WikidataDep
 
   const PROP_ORDER: Record<HqBasis, number> = { headquarters: 0, located_in: 1, formation: 2 };
   let ambiguousHq = 0;
+  const ambiguousReport: AmbiguousHq[] = [];
   const wdCompanies: RawWikidataCompany[] = [];
   const byBasis = emptyBasis();
   for (const c of igdbCompanies) {
@@ -550,9 +581,18 @@ export async function runWikidataStage(config: PipelineConfig, deps: WikidataDep
     );
     const stmt = options[0];
     if (stmt) {
-      const tied = [...new Set(options.filter((o) => cmpKey(o, stmt) === 0).map((o) => o.place))];
+      const tiedStatements = options.filter((o) => cmpKey(o, stmt) === 0);
+      const tied = [...new Set(tiedStatements.map((o) => o.place))];
       if (tied.length > 1) {
         ambiguousHq++;
+        const describe = (q: string) => ({ qid: q, label: places.get(q)?.label ?? q, country: places.get(q)?.country ?? null });
+        ambiguousReport.push({
+          igdbCompanyId: c.id,
+          name: c.name,
+          qid: link.qid,
+          chosen: describe(stmt.place),
+          candidates: tied.map((q) => ({ ...describe(q), basis: tiedStatements.find((o) => o.place === q)!.prop })),
+        });
         log(`wikidata: ambiguous hq for "${c.name}" (IGDB ${c.id}, ${link.qid}): ${tied.map((q) => `${q} ${places.get(q)?.label ?? ''}`.trim()).join(', ')}; chose ${stmt.place}`);
       }
     }
@@ -581,6 +621,7 @@ export async function runWikidataStage(config: PipelineConfig, deps: WikidataDep
 
   await writeJson(gamesFile, wdGames);
   await writeJson(companiesFile, wdCompanies);
+  await writeJson(path.join(config.stageDir, 'wikidata-ambiguous-hq.json'), ambiguousReport.sort((a, b) => a.igdbCompanyId - b.igdbCompanyId), true);
 
   const withHq = wdCompanies.filter((c) => c.hq).length;
   log(

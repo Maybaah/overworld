@@ -10,6 +10,7 @@ import {
   buildNameLookupQuery,
   buildPlaceStatementsQuery,
   escapeSparqlString,
+  nameVariants,
   parseWktPoint,
   runBatched,
   runWikidataStage,
@@ -604,6 +605,58 @@ describe('runWikidataStage', () => {
     expect(res.byBasis.name).toBe(2);
     const q = fake.calls.find((c) => c.kind === 'names')!.query;
     for (const id of ['Q4830453', 'Q783794', 'Q6881511', 'Q891723']) expect(q).toContain(`wd:${id}`);
+  });
+
+  it('builds name variants with legal suffixes removed but keeps words like Games and Studios', () => {
+    expect(nameVariants('Sega Enterprises, Ltd.')).toEqual(['Sega Enterprises, Ltd.', 'Sega Enterprises']);
+    expect(nameVariants('Nihon Falcom Corporation')).toEqual(['Nihon Falcom Corporation', 'Nihon Falcom']);
+    expect(nameVariants('MicroProse Software, Inc.')).toEqual(['MicroProse Software, Inc.', 'MicroProse Software']);
+    expect(nameVariants('Foo Co., Ltd.')).toEqual(['Foo Co., Ltd.', 'Foo Co', 'Foo']);
+    expect(nameVariants('Big Games')).toEqual(['Big Games']);
+    expect(nameVariants('Some Studios Interactive Entertainment')).toEqual(['Some Studios Interactive Entertainment']);
+  });
+
+  it('queries and links by suffix-stripped variants, merging hits across variants', async () => {
+    await seed([], [igdbCompany(1, 'Nihon Falcom Corporation', 'f'), igdbCompany(2, 'Twin Co., Ltd.', 't')]);
+    const fake = fakeWikidata({
+      names: () => [
+        { name: lit('Nihon Falcom'), co: uri('Q1'), tier: lit('game') },
+        { name: lit('Twin'), co: uri('Q2'), tier: lit('game') },
+        { name: lit('Twin Co., Ltd.'), co: uri('Q3'), tier: lit('game') },
+      ],
+    });
+    const res = await runWikidataStage(config(), { fetchImpl: fake.fetchImpl, sleep, log });
+    const q = fake.calls.find((c) => c.kind === 'names')!.query;
+    expect(q).toContain('"Nihon Falcom"@en');
+    expect(q).toContain('"Nihon Falcom Corporation"@en');
+    const { companies } = await readOut();
+    expect(companies.map((c) => [c.igdbCompanyId, c.qid])).toEqual([[1, 'Q1']]);
+    expect(res.byBasis.name).toBe(1);
+    expect(logs.some((l) => l.includes('ambiguous name') && l.includes('Twin'))).toBe(true);
+  });
+
+  it('writes ambiguous headquarters cases to a report file', async () => {
+    await seed([], [igdbCompany(2, 'B', 'b'), igdbCompany(1, 'A', 'a')]);
+    const hq = (co: string, pl: string): Binding => ({ co: uri(co), prop: lit('headquarters'), rank: RANK('Normal'), pl: uri(pl) });
+    const fake = fakeWikidata({
+      external: () => [{ v: lit('a'), co: uri('Q1') }, { v: lit('b'), co: uri('Q2') }],
+      statements: () => [hq('Q1', 'Q11'), hq('Q1', 'Q12'), hq('Q2', 'Q21')],
+      places: () => [place('Q11', 'Town B', 'Point(2 2)'), place('Q12', 'Town A', 'Point(1 1)', { cc: lit('FR') }), place('Q21', 'Solo', 'Point(3 3)')],
+    });
+    await runWikidataStage(config(), { fetchImpl: fake.fetchImpl, sleep, log });
+    const report = JSON.parse(await readFile(path.join(stageDir, 'wikidata-ambiguous-hq.json'), 'utf8'));
+    expect(report).toEqual([
+      {
+        igdbCompanyId: 1,
+        name: 'A',
+        qid: 'Q1',
+        chosen: { qid: 'Q11', label: 'Town B', country: 'JP' },
+        candidates: [
+          { qid: 'Q11', label: 'Town B', country: 'JP', basis: 'headquarters' },
+          { qid: 'Q12', label: 'Town A', country: 'FR', basis: 'headquarters' },
+        ],
+      },
+    ]);
   });
 
   it('picks the preferred or earliest inception year', async () => {
