@@ -8,7 +8,7 @@ import { GLOBE_RADIUS } from './outline';
 const LOW: AtlasLayout = { size: 3072, slotW: 64, slotH: 88, imageW: 60, imageH: 85 };
 const HIGH: AtlasLayout = { size: 2048, slotW: 136, slotH: 192, imageW: 132, imageH: 187 };
 const HIGH_CAPACITY = 150;
-const HIGH_MIN_PX = 70;
+const HIGH_MIN_PX = 45;
 const TABLE_W = 2048;
 const BASE_COLOR = new THREE.Color('#4a5466');
 
