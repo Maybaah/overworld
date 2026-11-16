@@ -2,299 +2,290 @@
 
 20 games, seed 1, spread across the popularity range (most popular first).
 
-## Mass Effect: Andromeda (2017)
+## Kingdom Hearts III (2019)
 
-- Game id: 7349, popularity rank 313 of 9966, popularity 561
-- IGDB: https://www.igdb.com/games/mass-effect-andromeda--1
-- Lead studio: BioWare Montréal (company 3903)
-  - Location: Canada; 60, -95; precision country
-  - Location source: https://www.igdb.com/companies/bioware-montreal
+- Game id: 2933, popularity rank 1105 of 35255, popularity 1940930
+- IGDB: https://www.igdb.com/games/kingdom-hearts-iii
+- Lead studio: Square Enix Business Division 3 (company 19281)
+  - Location: Tokyo, Japan; 35.690919444, 139.706063888; precision city
+  - Location source: https://www.wikidata.org/wiki/Q207784
 - Lead chosen by: igdb_single_developer
 
 | Company | Role | Platform | Source |
 | --- | --- | --- | --- |
-| BioWare Montréal | lead_developer |  | https://www.igdb.com/games/mass-effect-andromeda--1 |
-| Electronic Arts | publisher |  | https://www.igdb.com/games/mass-effect-andromeda--1 |
-| BioWare | support |  | https://www.igdb.com/games/mass-effect-andromeda--1 |
+| Square Enix Business Division 3 | lead_developer |  | https://www.igdb.com/games/kingdom-hearts-iii |
+| Square Enix Creative Business Unit I | port |  | https://www.igdb.com/games/kingdom-hearts-iii |
+| Square Enix Creative Studio 1 | port |  | https://www.igdb.com/games/kingdom-hearts-iii |
+| Square Enix | publisher |  | https://www.igdb.com/games/kingdom-hearts-iii |
 
-## The Walking Dead: A New Frontier (2016)
+## Ni no Kuni II: Revenant Kingdom (2018)
 
-- Game id: 19000, popularity rank 500 of 9966, popularity 361
-- IGDB: https://www.igdb.com/games/the-walking-dead-a-new-frontier
-- Lead studio: Telltale Games (company 294)
-  - Location: San Rafael, United States; 37.973333333, -122.530833333; precision city
-  - Location source: https://www.wikidata.org/wiki/Q1383563
+- Game id: 14748, popularity rank 1767 of 35255, popularity 1052923
+- IGDB: https://www.igdb.com/games/ni-no-kuni-ii-revenant-kingdom--1
+- Lead studio: LEVEL-5 (company 837)
+  - Location: Fukuoka, Japan; 33.590138888, 130.401722222; precision city
+  - Location source: https://www.wikidata.org/wiki/Q674686
 - Lead chosen by: igdb_single_developer
 
 | Company | Role | Platform | Source |
 | --- | --- | --- | --- |
-| Telltale Games | lead_developer |  | https://www.igdb.com/games/the-walking-dead-a-new-frontier |
-| Skybound Games | publisher |  | https://www.igdb.com/games/the-walking-dead-a-new-frontier |
+| LEVEL-5 | lead_developer |  | https://www.igdb.com/games/ni-no-kuni-ii-revenant-kingdom--1 |
+| Bandai Namco Entertainment | publisher |  | https://www.igdb.com/games/ni-no-kuni-ii-revenant-kingdom--1 |
 
-## Lisa: The Painful (2014)
+## Carpe Diem (2015)
 
-- Game id: 8492, popularity rank 1259 of 9966, popularity 145
-- IGDB: https://www.igdb.com/games/lisa-the-painful
-- Lead studio: Dingaling (company 4474)
+- Game id: 33949, popularity rank 4455 of 35255, popularity 342520
+- IGDB: https://www.igdb.com/games/carpe-diem
+- Lead studio: Moonlit Works (company 59165)
   - Location: unknown; no coordinates; precision none
   - Location source: none
 - Lead chosen by: igdb_single_developer
 
 | Company | Role | Platform | Source |
 | --- | --- | --- | --- |
-| Dingaling | lead_developer |  | https://www.igdb.com/games/lisa-the-painful |
-| Dingaling | publisher |  | https://www.igdb.com/games/lisa-the-painful |
+| Moonlit Works | lead_developer |  | https://www.igdb.com/games/carpe-diem |
+| Moonlit Works | publisher |  | https://www.igdb.com/games/carpe-diem |
 
-## Crash Tag Team Racing (2005)
+## King's Bounty: Dark Side (2014)
 
-- Game id: 1194, popularity rank 1984 of 9966, popularity 88
-- IGDB: https://www.igdb.com/games/crash-tag-team-racing
-- Lead studio: Radical Entertainment (company 444)
-  - Location: Vancouver, Canada; 49.260833333, -123.113888888; precision city
-  - Location source: https://www.wikidata.org/wiki/Q1515682
-- Lead chosen by: igdb_developer_confirmed_by_wikidata
-
-| Company | Role | Platform | Source |
-| --- | --- | --- | --- |
-| Radical Entertainment | lead_developer |  | https://www.igdb.com/games/crash-tag-team-racing |
-| Vivendi Universal Games | co_developer |  | https://www.igdb.com/games/crash-tag-team-racing |
-| Sierra Entertainment | publisher |  | https://www.igdb.com/games/crash-tag-team-racing |
-| Vivendi Universal Games | publisher |  | https://www.igdb.com/games/crash-tag-team-racing |
-
-## Neva (2024)
-
-- Game id: 250621, popularity rank 2476 of 9966, popularity 67
-- IGDB: https://www.igdb.com/games/neva
-- Lead studio: Nomada Studio (company 16175)
-  - Location: Barcelona, Spain; 41.3825, 2.176944444; precision city
-  - Location source: https://www.wikidata.org/wiki/Q59780340
+- Game id: 8073, popularity rank 7018 of 35255, popularity 190287
+- IGDB: https://www.igdb.com/games/kings-bounty-dark-side
+- Lead studio: 1C-SoftClub (company 3121)
+  - Location: Moscow, Russia; 55.750555555, 37.6175; precision city
+  - Location source: https://www.wikidata.org/wiki/Q4434012
 - Lead chosen by: igdb_single_developer
 
 | Company | Role | Platform | Source |
 | --- | --- | --- | --- |
-| Nomada Studio | lead_developer |  | https://www.igdb.com/games/neva |
-| Devolver Digital | publisher |  | https://www.igdb.com/games/neva |
+| 1C-SoftClub | lead_developer |  | https://www.igdb.com/games/kings-bounty-dark-side |
+| Excalibur Publishing | publisher |  | https://www.igdb.com/games/kings-bounty-dark-side |
 
-## Total War: Warhammer III (2022)
+## Naruto: The Broken Bond (2008)
 
-- Game id: 143114, popularity rank 2631 of 9966, popularity 61
-- IGDB: https://www.igdb.com/games/total-war-warhammer-iii
-- Lead studio: The Creative Assembly (company 111)
-  - Location: Horsham, United Kingdom; 51.06314, -0.32757; precision city
-  - Location source: https://en.wikipedia.org/wiki/The_Creative_Assembly
+- Game id: 7102, popularity rank 8758 of 35255, popularity 139544
+- IGDB: https://www.igdb.com/games/naruto-the-broken-bond
+- Lead studio: Ubisoft Montreal (company 38)
+  - Location: Montréal, Canada; 45.526111111, -73.598333333; precision city
+  - Location source: https://www.wikidata.org/wiki/Q903621
 - Lead chosen by: igdb_single_developer
 
 | Company | Role | Platform | Source |
 | --- | --- | --- | --- |
-| The Creative Assembly | lead_developer |  | https://www.igdb.com/games/total-war-warhammer-iii |
-| Feral Interactive | port |  | https://www.igdb.com/games/total-war-warhammer-iii |
-| Feral Interactive | publisher |  | https://www.igdb.com/games/total-war-warhammer-iii |
-| Sega | publisher |  | https://www.igdb.com/games/total-war-warhammer-iii |
+| Ubisoft Montreal | lead_developer |  | https://www.igdb.com/games/naruto-the-broken-bond |
 
-## Dawn of Man (2019)
+## Titanic: Adventure out of Time (1996)
 
-- Game id: 102163, popularity rank 3295 of 9966, popularity 46
-- IGDB: https://www.igdb.com/games/dawn-of-man
-- Lead studio: Madruga Works (company 7013)
-  - Location: United Kingdom; 54, -2; precision country
-  - Location source: https://www.wikidata.org/wiki/Q64952317
+- Game id: 7516, popularity rank 9309 of 35255, popularity 126858
+- IGDB: https://www.igdb.com/games/titanic-adventure-out-of-time
+- Lead studio: Cyberflix (company 5822)
+  - Location: Knoxville, United States; 35.961666666, -83.923333333; precision city
+  - Location source: https://www.wikidata.org/wiki/Q3008156
 - Lead chosen by: igdb_single_developer
 
 | Company | Role | Platform | Source |
 | --- | --- | --- | --- |
-| Madruga Works | lead_developer |  | https://www.igdb.com/games/dawn-of-man |
-| Madruga Works | publisher |  | https://www.igdb.com/games/dawn-of-man |
+| Cyberflix | lead_developer |  | https://www.igdb.com/games/titanic-adventure-out-of-time |
+| Infogrames | publisher |  | https://www.igdb.com/games/titanic-adventure-out-of-time |
+| Hammerhead | publisher |  | https://www.igdb.com/games/titanic-adventure-out-of-time |
+| Bomico Entertainment Software | publisher |  | https://www.igdb.com/games/titanic-adventure-out-of-time |
+| Night Dive Studios | publisher |  | https://www.igdb.com/games/titanic-adventure-out-of-time |
+| GTE Entertainment | publisher |  | https://www.igdb.com/games/titanic-adventure-out-of-time |
+| Europress | publisher |  | https://www.igdb.com/games/titanic-adventure-out-of-time |
+| MediaKite | publisher |  | https://www.igdb.com/games/titanic-adventure-out-of-time |
+| Bandai Digital Entertainment | publisher |  | https://www.igdb.com/games/titanic-adventure-out-of-time |
 
-## Homeworld: Deserts of Kharak (2016)
+## Badlanders (2022)
 
-- Game id: 15444, popularity rank 3847 of 9966, popularity 38
-- IGDB: https://www.igdb.com/games/homeworld-deserts-of-kharak
-- Lead studio: Blackbird Interactive (company 3869)
-  - Location: Vancouver, Canada; 49.260833333, -123.113888888; precision city
-  - Location source: https://www.wikidata.org/wiki/Q22906795
-- Lead chosen by: igdb_single_developer
-
-| Company | Role | Platform | Source |
-| --- | --- | --- | --- |
-| Blackbird Interactive | lead_developer |  | https://www.igdb.com/games/homeworld-deserts-of-kharak |
-| Gearbox Software | publisher |  | https://www.igdb.com/games/homeworld-deserts-of-kharak |
-
-## That Dragon, Cancer (2016)
-
-- Game id: 15925, popularity rank 4199 of 9966, popularity 34
-- IGDB: https://www.igdb.com/games/that-dragon-cancer
-- Lead studio: Numinous Games (company 7913)
-  - Location: United States; 38, -97; precision country
-  - Location source: https://www.igdb.com/companies/numinous-games
-- Lead chosen by: igdb_single_developer
-
-| Company | Role | Platform | Source |
-| --- | --- | --- | --- |
-| Numinous Games | lead_developer |  | https://www.igdb.com/games/that-dragon-cancer |
-| Numinous Games | publisher |  | https://www.igdb.com/games/that-dragon-cancer |
-
-## Bejeweled (2001)
-
-- Game id: 8318, popularity rank 4981 of 9966, popularity 27
-- IGDB: https://www.igdb.com/games/bejeweled
-- Lead studio: PopCap Games (company 1893)
-  - Location: Seattle, United States; 47.605, -122.33; precision city
-  - Location source: https://www.wikidata.org/wiki/Q1064703
-- Lead chosen by: igdb_single_developer
-
-| Company | Role | Platform | Source |
-| --- | --- | --- | --- |
-| PopCap Games | lead_developer |  | https://www.igdb.com/games/bejeweled |
-| Electronic Arts | publisher |  | https://www.igdb.com/games/bejeweled |
-| PopCap Games | publisher |  | https://www.igdb.com/games/bejeweled |
-
-## Beast of Reincarnation (2026)
-
-- Game id: 348180, popularity rank 5210 of 9966, popularity 26
-- IGDB: https://www.igdb.com/games/beast-of-reincarnation
-- Lead studio: Game Freak (company 1617)
-  - Location: Tokyo, Japan; 35.646555555, 139.653222222; precision city
-  - Location source: https://www.wikidata.org/wiki/Q782028
-- Lead chosen by: igdb_single_developer
-
-| Company | Role | Platform | Source |
-| --- | --- | --- | --- |
-| Game Freak | lead_developer |  | https://www.igdb.com/games/beast-of-reincarnation |
-| Fictions | publisher |  | https://www.igdb.com/games/beast-of-reincarnation |
-
-## Resident Evil: The Mercenaries 3D (2011)
-
-- Game id: 976, popularity rank 5725 of 9966, popularity 22
-- IGDB: https://www.igdb.com/games/resident-evil-the-mercenaries-3d
-- Lead studio: Capcom (company 37)
-  - Location: Osaka, Japan; 34.681111111, 135.509722222; precision city
-  - Location source: https://www.wikidata.org/wiki/Q14428
-- Lead chosen by: igdb_developer_confirmed_by_wikidata
-
-| Company | Role | Platform | Source |
-| --- | --- | --- | --- |
-| Capcom | lead_developer |  | https://www.igdb.com/games/resident-evil-the-mercenaries-3d |
-| Tose | co_developer |  | https://www.igdb.com/games/resident-evil-the-mercenaries-3d |
-| Capcom | publisher |  | https://www.igdb.com/games/resident-evil-the-mercenaries-3d |
-
-## Total War Saga: Thrones of Britannia (2018)
-
-- Game id: 44102, popularity rank 6049 of 9966, popularity 21
-- IGDB: https://www.igdb.com/games/total-war-saga-thrones-of-britannia
-- Lead studio: The Creative Assembly (company 111)
-  - Location: Horsham, United Kingdom; 51.06314, -0.32757; precision city
-  - Location source: https://en.wikipedia.org/wiki/The_Creative_Assembly
-- Lead chosen by: igdb_single_developer
-
-| Company | Role | Platform | Source |
-| --- | --- | --- | --- |
-| The Creative Assembly | lead_developer |  | https://www.igdb.com/games/total-war-saga-thrones-of-britannia |
-| Sega | publisher |  | https://www.igdb.com/games/total-war-saga-thrones-of-britannia |
-| Sega Games | publisher |  | https://www.igdb.com/games/total-war-saga-thrones-of-britannia |
-
-## Klax (1990)
-
-- Game id: 4484, popularity rank 6679 of 9966, popularity 18
-- IGDB: https://www.igdb.com/games/klax
-- Lead studio: Atari Games (company 1746)
-  - Location: Milpitas, United States; 37.434722222, -121.895; precision city
-  - Location source: https://www.wikidata.org/wiki/Q1061580
-- Lead chosen by: igdb_developer_confirmed_by_wikidata
-
-| Company | Role | Platform | Source |
-| --- | --- | --- | --- |
-| Atari Games | lead_developer |  | https://www.igdb.com/games/klax |
-| Tengen | co_developer |  | https://www.igdb.com/games/klax |
-| Teque Software Development | co_developer |  | https://www.igdb.com/games/klax |
-| Domark Software | publisher |  | https://www.igdb.com/games/klax |
-| Atari Games | publisher |  | https://www.igdb.com/games/klax |
-| Tengen | publisher |  | https://www.igdb.com/games/klax |
-
-## Love Live! School Idol Festival (2013)
-
-- Game id: 36660, popularity rank 7100 of 9966, popularity 17
-- IGDB: https://www.igdb.com/games/love-live-school-idol-festival
-- Lead studio: KLab (company 12845)
-  - Location: Tokyo, Japan; 35.660555555, 139.729166666; precision city
-  - Location source: https://www.wikidata.org/wiki/Q11228017
-- Lead chosen by: igdb_single_developer
-
-| Company | Role | Platform | Source |
-| --- | --- | --- | --- |
-| KLab | lead_developer |  | https://www.igdb.com/games/love-live-school-idol-festival |
-| Bushiroad | publisher |  | https://www.igdb.com/games/love-live-school-idol-festival |
-| NHN Entertainment Corp. | publisher |  | https://www.igdb.com/games/love-live-school-idol-festival |
-| Shengqu Games | publisher |  | https://www.igdb.com/games/love-live-school-idol-festival |
-| Mobimon | publisher |  | https://www.igdb.com/games/love-live-school-idol-festival |
-| MariyGames | publisher |  | https://www.igdb.com/games/love-live-school-idol-festival |
-
-## Z: Steel Soldiers (2001)
-
-- Game id: 3276, popularity rank 7551 of 9966, popularity 15
-- IGDB: https://www.igdb.com/games/z-steel-soldiers
-- Lead studio: The Bitmap Brothers (company 1714)
-  - Location: London, United Kingdom; 51.5073, -0.061; precision city
-  - Location source: https://www.wikidata.org/wiki/Q2164685
-- Lead chosen by: igdb_single_developer
-
-| Company | Role | Platform | Source |
-| --- | --- | --- | --- |
-| The Bitmap Brothers | lead_developer |  | https://www.igdb.com/games/z-steel-soldiers |
-| SCi Games | publisher |  | https://www.igdb.com/games/z-steel-soldiers |
-| EON Digital Entertainment | publisher |  | https://www.igdb.com/games/z-steel-soldiers |
-
-## Starship Troopers: Extermination (2024)
-
-- Game id: 228175, popularity rank 8217 of 9966, popularity 14
-- IGDB: https://www.igdb.com/games/starship-troopers-extermination
-- Lead studio: Offworld Industries (company 5087)
-  - Location: Canada; 60, -95; precision country
-  - Location source: https://www.igdb.com/companies/offworld-industries
-- Lead chosen by: igdb_single_developer
-
-| Company | Role | Platform | Source |
-| --- | --- | --- | --- |
-| Offworld Industries | lead_developer |  | https://www.igdb.com/games/starship-troopers-extermination |
-| Offworld Industries | publisher |  | https://www.igdb.com/games/starship-troopers-extermination |
-
-## Forts (2017)
-
-- Game id: 34269, popularity rank 8505 of 9966, popularity 13
-- IGDB: https://www.igdb.com/games/forts
-- Lead studio: EarthWork Games (company 40227)
-  - Location: Australia; -27, 133; precision country
-  - Location source: https://www.igdb.com/companies/earthwork-games
-- Lead chosen by: igdb_single_developer
-
-| Company | Role | Platform | Source |
-| --- | --- | --- | --- |
-| EarthWork Games | lead_developer |  | https://www.igdb.com/games/forts |
-| EarthWork Games | publisher |  | https://www.igdb.com/games/forts |
-
-## Football Manager 26 (2025)
-
-- Game id: 365487, popularity rank 9166 of 9966, popularity 12
-- IGDB: https://www.igdb.com/games/football-manager-26
-- Lead studio: Sports Interactive (company 486)
-  - Location: London, United Kingdom; 51.507222222, -0.1275; precision city
-  - Location source: https://www.wikidata.org/wiki/Q2567775
-- Lead chosen by: igdb_single_developer
-
-| Company | Role | Platform | Source |
-| --- | --- | --- | --- |
-| Sports Interactive | lead_developer |  | https://www.igdb.com/games/football-manager-26 |
-| Sega | publisher |  | https://www.igdb.com/games/football-manager-26 |
-
-## Aerial_Knight's Never Yield (2021)
-
-- Game id: 138206, popularity rank 9850 of 9966, popularity 10
-- IGDB: https://www.igdb.com/games/aerial-knights-never-yield
-- Lead studio: Aerial_Knight (company 27886)
+- Game id: 192286, popularity rank 11657 of 35255, popularity 88960
+- IGDB: https://www.igdb.com/games/badlanders--1
+- Lead studio: 101 Studio (company 47564)
   - Location: unknown; no coordinates; precision none
   - Location source: none
 - Lead chosen by: igdb_single_developer
 
 | Company | Role | Platform | Source |
 | --- | --- | --- | --- |
-| Aerial_Knight | lead_developer |  | https://www.igdb.com/games/aerial-knights-never-yield |
-| Headup Games | publisher |  | https://www.igdb.com/games/aerial-knights-never-yield |
+| 101 Studio | lead_developer |  | https://www.igdb.com/games/badlanders--1 |
+| 101 Studio | publisher |  | https://www.igdb.com/games/badlanders--1 |
+
+## In Cold Blood (2000)
+
+- Game id: 9680, popularity rank 13610 of 35255, popularity 69772
+- IGDB: https://www.igdb.com/games/in-cold-blood
+- Lead studio: Revolution Software (company 482)
+  - Location: York, United Kingdom; 53.95, -1.083333333; precision city
+  - Location source: https://www.wikidata.org/wiki/Q2060066
+- Lead chosen by: wikidata_developer
+
+| Company | Role | Platform | Source |
+| --- | --- | --- | --- |
+| Revolution Software | lead_developer |  | https://www.wikidata.org/wiki/Q3602983 |
+| Ubi Soft Entertainment | publisher |  | https://www.igdb.com/games/in-cold-blood |
+
+## Universe for Sale (2023)
+
+- Game id: 151593, popularity rank 14853 of 35255, popularity 63429
+- IGDB: https://www.igdb.com/games/universe-for-sale
+- Lead studio: Tmesis Studio (company 49372)
+  - Location: Italy; 42.83333333, 12.83333333; precision country
+  - Location source: https://www.igdb.com/companies/tmesis-studio
+- Lead chosen by: igdb_single_developer
+
+| Company | Role | Platform | Source |
+| --- | --- | --- | --- |
+| Tmesis Studio | lead_developer |  | https://www.igdb.com/games/universe-for-sale |
+| Akupara Games | publisher |  | https://www.igdb.com/games/universe-for-sale |
+
+## Muffin Knight (2011)
+
+- Game id: 9268, popularity rank 17618 of 35255, popularity 44400
+- IGDB: https://www.igdb.com/games/muffin-knight
+- Lead studio: Angry Mob Games (company 5068)
+  - Location: Romania; 46, 25; precision country
+  - Location source: https://www.igdb.com/companies/angry-mob-games
+- Lead chosen by: igdb_single_developer
+
+| Company | Role | Platform | Source |
+| --- | --- | --- | --- |
+| Angry Mob Games | lead_developer |  | https://www.igdb.com/games/muffin-knight |
+| Angry Mob Games | publisher |  | https://www.igdb.com/games/muffin-knight |
+
+## Bat Boy (2023)
+
+- Game id: 172891, popularity rank 18430 of 35255, popularity 44400
+- IGDB: https://www.igdb.com/games/bat-boy
+- Lead studio: X Plus (company 20412)
+  - Location: Japan; 36, 138; precision country
+  - Location source: https://www.wikidata.org/wiki/Q110499667
+- Lead chosen by: igdb_single_developer
+
+| Company | Role | Platform | Source |
+| --- | --- | --- | --- |
+| X Plus | lead_developer |  | https://www.igdb.com/games/bat-boy |
+| X Plus | publisher |  | https://www.igdb.com/games/bat-boy |
+
+## Dungeon Village 2 (2021)
+
+- Game id: 200226, popularity rank 20252 of 35255, popularity 38057
+- IGDB: https://www.igdb.com/games/dungeon-village-2
+- Lead studio: Kairosoft (company 10218)
+  - Location: Tokyo, Japan; 35.689486111, 139.691838888; precision city
+  - Location source: https://www.wikidata.org/wiki/Q2597910
+- Lead chosen by: igdb_single_developer
+
+| Company | Role | Platform | Source |
+| --- | --- | --- | --- |
+| Kairosoft | lead_developer |  | https://www.igdb.com/games/dungeon-village-2 |
+| Kairosoft | publisher |  | https://www.igdb.com/games/dungeon-village-2 |
+
+## MotoGP4 (2005)
+
+- Game id: 20536, popularity rank 21398 of 35255, popularity 31715
+- IGDB: https://www.igdb.com/games/motogp4
+- Lead studio: Namco (company 263)
+  - Location: Tokyo, Japan; 35.561277777, 139.716027777; precision city
+  - Location source: https://www.wikidata.org/wiki/Q309996
+- Lead chosen by: igdb_single_developer
+
+| Company | Role | Platform | Source |
+| --- | --- | --- | --- |
+| Namco | lead_developer |  | https://www.igdb.com/games/motogp4 |
+| Namco | publisher |  | https://www.igdb.com/games/motogp4 |
+
+## Stack-up (1985)
+
+- Game id: 8579, popularity rank 23627 of 35255, popularity 25372
+- IGDB: https://www.igdb.com/games/stack-up
+- Lead studio: Nintendo R&D1 (company 1809)
+  - Location: Kyoto, Japan; 35.02107, 135.75385; precision city
+  - Location source: https://en.wikipedia.org/wiki/Nintendo_R%26D1
+- Lead chosen by: igdb_developer_confirmed_by_wikidata
+
+| Company | Role | Platform | Source |
+| --- | --- | --- | --- |
+| Nintendo R&D1 | lead_developer |  | https://www.igdb.com/games/stack-up |
+| Iwasaki Giken Kogyo | co_developer |  | https://www.igdb.com/games/stack-up |
+| Nintendo | publisher |  | https://www.igdb.com/games/stack-up |
+
+## Tom Clancy's Splinter Cell: Blacklist - Ultimate Edition (2013)
+
+- Game id: 99926, popularity rank 25115 of 35255, popularity 25372
+- IGDB: https://www.igdb.com/games/tom-clancys-splinter-cell-blacklist-ultimate-edition
+- Lead studio: Ubisoft Montreal (company 38)
+  - Location: Montréal, Canada; 45.526111111, -73.598333333; precision city
+  - Location source: https://www.wikidata.org/wiki/Q903621
+- Lead chosen by: igdb_single_developer
+
+| Company | Role | Platform | Source |
+| --- | --- | --- | --- |
+| Ubisoft Montreal | lead_developer |  | https://www.igdb.com/games/tom-clancys-splinter-cell-blacklist-ultimate-edition |
+
+## Surrounded (2026)
+
+- Game id: 187157, popularity rank 26714 of 35255, popularity 20000
+- IGDB: https://www.igdb.com/games/surrounded
+- Lead studio: NIGHTMARE STUDIOS (company 40281)
+  - Location: unknown; no coordinates; precision none
+  - Location source: none
+- Lead chosen by: igdb_single_developer
+
+| Company | Role | Platform | Source |
+| --- | --- | --- | --- |
+| NIGHTMARE STUDIOS | lead_developer |  | https://www.igdb.com/games/surrounded |
+| NIGHTMARE STUDIOS | publisher |  | https://www.igdb.com/games/surrounded |
+
+## Devious Dungeon 2 (2019)
+
+- Game id: 68988, popularity rank 29066 of 35255, popularity 19029
+- IGDB: https://www.igdb.com/games/devious-dungeon-2
+- Lead studio: Woblyware (company 13017)
+  - Location: Finland; 64, 26; precision country
+  - Location source: https://www.igdb.com/companies/woblyware
+- Lead chosen by: igdb_single_developer
+
+| Company | Role | Platform | Source |
+| --- | --- | --- | --- |
+| Woblyware | lead_developer |  | https://www.igdb.com/games/devious-dungeon-2 |
+| Ratalaika Games | port |  | https://www.igdb.com/games/devious-dungeon-2 |
+| Ratalaika Games | publisher |  | https://www.igdb.com/games/devious-dungeon-2 |
+
+## Sherwood Classic (2004)
+
+- Game id: 153682, popularity rank 30085 of 35255, popularity 19029
+- IGDB: https://www.igdb.com/games/sherwood-classic
+- Lead studio: Maid Marian Entertainment (company 35449)
+  - Location: Canada; 60, -95; precision country
+  - Location source: https://www.igdb.com/companies/maid-marian-entertainment
+- Lead chosen by: igdb_single_developer
+
+| Company | Role | Platform | Source |
+| --- | --- | --- | --- |
+| Maid Marian Entertainment | lead_developer |  | https://www.igdb.com/games/sherwood-classic |
+| Maid Marian Entertainment | publisher |  | https://www.igdb.com/games/sherwood-classic |
+
+## There Is No Light 616 (2021)
+
+- Game id: 180203, popularity rank 32425 of 35255, popularity 10480
+- IGDB: https://www.igdb.com/games/there-is-no-light-616
+- Lead studio: Zelart (company 36971)
+  - Location: Russia; 60, 100; precision country
+  - Location source: https://www.wikidata.org/wiki/Q114075908
+- Lead chosen by: igdb_single_developer
+
+| Company | Role | Platform | Source |
+| --- | --- | --- | --- |
+| Zelart | lead_developer |  | https://www.igdb.com/games/there-is-no-light-616 |
+| HypeTrain Digital | publisher |  | https://www.igdb.com/games/there-is-no-light-616 |
+
+## Monophobia (2023)
+
+- Game id: 253044, popularity rank 34845 of 35255, popularity 5480
+- IGDB: https://www.igdb.com/games/monophobia--1
+- Lead studio: Z-xian (company 45957)
+  - Location: unknown; no coordinates; precision none
+  - Location source: none
+- Lead chosen by: igdb_single_developer
+
+| Company | Role | Platform | Source |
+| --- | --- | --- | --- |
+| Z-xian | lead_developer |  | https://www.igdb.com/games/monophobia--1 |
