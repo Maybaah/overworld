@@ -2,14 +2,24 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Globe, { type GlobeMethods } from 'react-globe.gl';
 import * as THREE from 'three';
 import { useStore } from '../data/store';
-import { buildRoleArcs, type LabelSpec, type RoleArcs } from './arcs';
+import { baseAltitude, buildRoleArcs, distanceKm, type ArcSpec, type RoleArcs } from './arcs';
 import { COLORS } from './colors';
-import { loadCountryShapes } from './countries';
+import {
+  loadCountryShapes,
+  loadDetailedCountryShapes,
+  type CountryShape,
+} from './countries';
+import { nearShapes, prepareDetail, upgradeShapes, type DetailShape } from './detail';
 import { DebugHud, type Readout } from './DebugHud';
-import { gameTarget, placeTarget, type Target } from './flight';
+import { frameTarget, gameTarget, placeTarget, type Target } from './flight';
 import { FrameStats } from './frameStats';
+import { LabelManager, type LabelItem } from './labels';
 import { layoutCompanies } from './layout';
-import { MarkersLayer } from './markersLayer';
+import { CITY_FROM } from './levels';
+import { CountriesLayer } from './countriesLayer';
+import { MarkersLayer, type MarkerItem } from './markersLayer';
+import { PICK_RADIUS_PX } from './picking';
+import { isClick, pointerToCanvas } from './pointer';
 import { PointsLayer, type PickedPoint } from './pointsLayer';
 
 declare global {
@@ -25,9 +35,11 @@ declare global {
   }
 }
 
-const EMPTY_ARCS: RoleArcs = { arcs: [], markers: [], labels: [] };
+const NO_ARCS: RoleArcs = { arcs: [], markers: [], labels: [] };
 const FLY_MS = 1200;
-const CLICK_SLOP_PX = 5;
+const SHADE_TOP = '#2f8f9d';
+const EXTRA_STROKE = 0.45;
+
 
 function useWindowSize() {
   const [size, setSize] = useState(() => ({ w: window.innerWidth, h: window.innerHeight }));
@@ -55,21 +67,6 @@ function makeCountryNamer(): (code: string) => string {
   };
 }
 
-function labelElement(d: object): HTMLElement {
-  const l = d as LabelSpec;
-  const el = document.createElement('div');
-  el.textContent = l.name;
-  el.style.cssText = [
-    `color:${l.color}`,
-    'font:600 11px system-ui,sans-serif',
-    'white-space:nowrap',
-    'pointer-events:none',
-    'transform:translate(10px,-50%)',
-    'text-shadow:0 0 3px #07090d,0 0 6px #07090d',
-  ].join(';');
-  return el;
-}
-
 const tooltipStyle = {
   position: 'absolute',
   left: 0,
@@ -82,46 +79,53 @@ const tooltipStyle = {
   borderRadius: 4,
   color: '#e6e9ef',
   font: '12px system-ui, sans-serif',
-  whiteSpace: 'nowrap',
+  whiteSpace: 'pre',
   zIndex: 10,
 } as const;
 
 export function GlobeView() {
   const indexes = useStore((s) => s.indexes);
-  const timeline = useStore((s) => s.timeline);
+  const hasTimeline = useStore((s) => s.timeline !== null);
   const detail = useStore((s) => s.selectedGameDetail);
   const enabledRoles = useStore((s) => s.enabledRoles);
+  const extraArcs = useStore((s) => s.extraArcs);
+  const extraMarkers = useStore((s) => s.extraMarkers);
+  const countryShade = useStore((s) => s.countryShade);
   const { w, h } = useWindowSize();
 
   const globeRef = useRef<GlobeMethods | undefined>(undefined);
   const tooltipRef = useRef<HTMLDivElement>(null);
+  const labelRootRef = useRef<HTMLDivElement>(null);
   const layerRef = useRef<PointsLayer | null>(null);
   const markersRef = useRef<MarkersLayer | null>(null);
+  const countriesRef = useRef<CountriesLayer | null>(null);
+  const labelsRef = useRef<LabelManager | null>(null);
   const statsRef = useRef(new FrameStats());
   const dirtyRef = useRef(false);
+  const detailRequested = useRef(false);
+  const detailRef = useRef<DetailShape[] | null>(null);
+  const upgradedRef = useRef(new Set<string>());
+  const needUpgrade = useRef(false);
+  const mountedRef = useRef(true);
   const [ready, setReady] = useState(false);
+  const [shapes, setShapes] = useState<CountryShape[]>(() => loadCountryShapes());
+  const shapesRef = useRef(shapes);
+  shapesRef.current = shapes;
 
   const debug = useMemo(() => new URLSearchParams(window.location.search).get('debug') === '1', []);
   const reducedMotion = useMemo(
     () => window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false,
     [],
   );
-  const shapes = useMemo(() => loadCountryShapes(), []);
   const countryName = useMemo(makeCountryNamer, []);
-  const materials = useMemo(
-    () => ({
-      globe: new THREE.MeshBasicMaterial({ color: COLORS.globe }),
-      cap: new THREE.MeshBasicMaterial({ color: COLORS.countryFill }),
-    }),
-    [],
-  );
-  useEffect(
-    () => () => {
-      materials.globe.dispose();
-      materials.cap.dispose();
-    },
-    [materials],
-  );
+  const globeMaterial = useMemo(() => new THREE.MeshBasicMaterial({ color: COLORS.globe }), []);
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => {
+      mountedRef.current = false;
+      globeMaterial.dispose();
+    };
+  }, [globeMaterial]);
 
   const layout = useMemo(() => (indexes ? layoutCompanies(indexes.companies) : null), [indexes]);
   const companyIndex = useMemo(() => {
@@ -131,9 +135,9 @@ export function GlobeView() {
   }, [indexes]);
 
   const arcs = useMemo<RoleArcs>(() => {
-    if (!indexes || !layout || !detail) return EMPTY_ARCS;
+    if (!indexes || !layout || !detail) return NO_ARCS;
     const game = indexes.gameById.get(detail.id);
-    if (!game) return EMPTY_ARCS;
+    if (!game) return NO_ARCS;
     return buildRoleArcs({
       leadCompanyId: game.leadCompanyId,
       roles: detail.roles,
@@ -145,12 +149,84 @@ export function GlobeView() {
       },
     });
   }, [indexes, layout, detail, enabledRoles, companyIndex]);
-  const arcsRef = useRef(arcs);
-  arcsRef.current = arcs;
+
+  const extraArcData = useMemo(
+    () =>
+      extraArcs.map<ArcSpec & { id: string }>((a) => ({
+        id: a.id,
+        companyId: -1,
+        role: 'support',
+        startLat: a.startLat,
+        startLng: a.startLng,
+        endLat: a.endLat,
+        endLng: a.endLng,
+        color: a.color,
+        altitude: baseAltitude(distanceKm(a.startLat, a.startLng, a.endLat, a.endLng)),
+        stroke: a.width ?? EXTRA_STROKE,
+        approx: false,
+      })),
+    [extraArcs],
+  );
+  const arcsData = useMemo(() => (extraArcData.length ? [...arcs.arcs, ...extraArcData] : arcs.arcs), [arcs.arcs, extraArcData]);
+
+  const markerItems = useMemo<MarkerItem[]>(
+    () => [
+      ...arcs.markers.map<MarkerItem>((m) => ({ lat: m.lat, lng: m.lng, color: m.color, kind: m.lead ? 'lead' : 'ring' })),
+      ...extraMarkers.map<MarkerItem>((m) => ({ lat: m.lat, lng: m.lng, color: m.color, kind: m.kind })),
+    ],
+    [arcs.markers, extraMarkers],
+  );
+
+  const labelItems = useMemo<LabelItem[]>(() => {
+    const items: LabelItem[] = [];
+    const labelled = new Set(arcs.labels.map((l) => l.companyId));
+    arcs.labels.forEach((l, i) => {
+      const lead = arcs.markers.find((m) => m.companyId === l.companyId)?.lead ?? false;
+      items.push({
+        id: `c:${l.companyId}`,
+        name: l.name,
+        lat: l.lat,
+        lng: l.lng,
+        color: l.color,
+        mode: lead ? 'always' : 'auto',
+        priority: i,
+        radius: lead ? 15 : 8,
+      });
+    });
+    for (const m of arcs.markers) {
+      if (labelled.has(m.companyId)) continue;
+      items.push({ id: `c:${m.companyId}`, name: m.name, lat: m.lat, lng: m.lng, color: m.color, mode: 'hover', priority: 1000, radius: 8 });
+    }
+    for (const m of extraMarkers) {
+      if (!m.label) continue;
+      items.push({ id: `xm:${m.id}`, name: m.label, lat: m.lat, lng: m.lng, color: m.color, mode: 'auto', priority: 0.5, radius: m.kind === 'pin' ? 7 : 8 });
+    }
+    for (const a of extraArcs) {
+      if (!a.label) continue;
+      items.push({ id: `xa:${a.id}`, name: a.label, lat: a.endLat, lng: a.endLng, color: a.color, mode: 'auto', priority: 0.6, radius: 3 });
+    }
+    return items;
+  }, [arcs, extraMarkers, extraArcs]);
+
+  const markerItemsRef = useRef(markerItems);
+  markerItemsRef.current = markerItems;
+  const labelItemsRef = useRef(labelItems);
+  labelItemsRef.current = labelItems;
 
   const onZoom = useCallback((pov: { altitude: number }) => {
     layerRef.current?.setAltitude(pov.altitude);
     dirtyRef.current = true;
+    if (pov.altitude < CITY_FROM && !detailRequested.current) {
+      detailRequested.current = true;
+      loadDetailedCountryShapes()
+        .then((s) => {
+          detailRef.current = prepareDetail(s);
+          needUpgrade.current = true;
+        })
+        .catch(() => {
+          detailRequested.current = false;
+        });
+    }
   }, []);
   const onGlobeReady = useCallback(() => setReady(true), []);
 
@@ -170,6 +246,7 @@ export function GlobeView() {
 
   useEffect(() => {
     const globe = globeRef.current;
+    const timeline = useStore.getState().timeline;
     if (!ready || !globe || !indexes || !timeline || !layout) return;
     const scene = globe.scene();
     const renderer = globe.renderer();
@@ -186,15 +263,30 @@ export function GlobeView() {
       pixelRatio: renderer.getPixelRatio(),
       countryName,
     });
-    layer.setYear(useStore.getState().year);
+    const initial = useStore.getState();
+    layer.setTimeline(timeline, initial.gameFilter === null);
+    layer.setYear(initial.year);
+    layer.setVisible(initial.pointsVisible);
     layer.setAltitude(globe.pointOfView().altitude);
     layerRef.current = layer;
     const markers = new MarkersLayer(globe, scene, renderer.getPixelRatio());
-    markers.set(arcsRef.current.markers);
+    markers.set(markerItemsRef.current);
     markersRef.current = markers;
+    const outline = new CountriesLayer(scene, COLORS.countryFill, COLORS.countryStroke, SHADE_TOP);
+    outline.set(shapesRef.current);
+    outline.setShade(useStore.getState().countryShade);
+    countriesRef.current = outline;
+    const labels = labelRootRef.current ? new LabelManager(labelRootRef.current, globe) : null;
+    labels?.setItems(labelItemsRef.current);
+    labelsRef.current = labels;
 
-    const pointer = { x: 0, y: 0, inside: false, down: false, downX: 0, downY: 0 };
+    const pointer = { x: 0, y: 0, lx: 0, ly: 0, inside: false, down: false, downX: 0, downY: 0 };
     let hovered: PickedPoint | null = null;
+    let hoveredLabel: string | null = null;
+
+    const placeTooltip = () => {
+      if (tooltip) tooltip.style.transform = `translate(${pointer.lx + 14}px, ${pointer.ly + 14}px)`;
+    };
 
     const setHover = (p: PickedPoint | null) => {
       hovered = p;
@@ -207,21 +299,25 @@ export function GlobeView() {
       const year = useStore.getState().year;
       tooltip.textContent = `${p.name}\n${p.count} ${p.count === 1 ? 'game' : 'games'} led by ${year}`;
       tooltip.style.display = 'block';
-      tooltip.style.transform = `translate(${pointer.x + 14}px, ${pointer.y + 14}px)`;
+      placeTooltip();
     };
 
-    const pickAt = (x: number, y: number) =>
-      layer.pick(x, y, camera, canvas.clientWidth, canvas.clientHeight);
+    const pointsPickable = () => {
+      const s = useStore.getState();
+      return s.mode !== 'guess' && s.pointsVisible;
+    };
 
-    const localXY = (ev: PointerEvent) => {
-      const rect = canvas.getBoundingClientRect();
-      return { x: ev.clientX - rect.left, y: ev.clientY - rect.top };
+    const track = (ev: PointerEvent) => {
+      const p = pointerToCanvas(ev.clientX, ev.clientY, canvas.getBoundingClientRect());
+      pointer.x = p.x;
+      pointer.y = p.y;
+      pointer.lx = p.nx * canvas.clientWidth;
+      pointer.ly = p.ny * canvas.clientHeight;
+      return p;
     };
 
     const onMove = (ev: PointerEvent) => {
-      const p = localXY(ev);
-      pointer.x = p.x;
-      pointer.y = p.y;
+      track(ev);
       pointer.inside = true;
       dirtyRef.current = true;
     };
@@ -229,10 +325,12 @@ export function GlobeView() {
       pointer.inside = false;
       pointer.down = false;
       setHover(null);
+      labels?.setHover(null);
+      hoveredLabel = null;
     };
     const onDown = (ev: PointerEvent) => {
-      const p = localXY(ev);
-      pointer.down = true;
+      const p = track(ev);
+      pointer.down = ev.button === 0;
       pointer.downX = p.x;
       pointer.downY = p.y;
       setHover(null);
@@ -240,11 +338,15 @@ export function GlobeView() {
     const onUp = (ev: PointerEvent) => {
       if (!pointer.down) return;
       pointer.down = false;
-      const p = localXY(ev);
-      if (Math.hypot(p.x - pointer.downX, p.y - pointer.downY) > CLICK_SLOP_PX) return;
-      const hit = pickAt(p.x, p.y);
-      if (!hit) return;
-      useStore.getState().selectPlace({ level: hit.level, key: layer.keyAt(hit.level, hit.index) });
+      const p = track(ev);
+      if (!isClick(pointer.downX, pointer.downY, p.x, p.y)) return;
+      const hit = pointsPickable() ? layer.pick(p.x, p.y, camera, p.w, p.h) : null;
+      if (hit) {
+        useStore.getState().selectPlace({ level: hit.level, key: layer.keyAt(hit.level, hit.index) });
+        return;
+      }
+      const geo = globe.toGlobeCoords(p.nx * canvas.clientWidth, p.ny * canvas.clientHeight);
+      if (geo) useStore.getState().reportGlobeClick(geo.lat, geo.lng);
     };
     canvas.addEventListener('pointermove', onMove);
     canvas.addEventListener('pointerleave', onLeave);
@@ -256,10 +358,19 @@ export function GlobeView() {
       globe.controls().autoRotate = false;
       globe.pointOfView(target, FLY_MS);
     };
+    let lastCameraSeq = initial.cameraRequest?.seq ?? 0;
     const unsubscribe = useStore.subscribe((s, prev) => {
       if (s.year !== prev.year) {
         layer.setYear(s.year);
         dirtyRef.current = true;
+      }
+      if (s.timeline !== prev.timeline || s.gameFilter !== prev.gameFilter) {
+        if (s.timeline) layer.setTimeline(s.timeline, s.gameFilter === null);
+        dirtyRef.current = true;
+      }
+      if (s.pointsVisible !== prev.pointsVisible) {
+        layer.setVisible(s.pointsVisible);
+        if (!s.pointsVisible) setHover(null);
       }
       if (s.selectedPlace !== prev.selectedPlace && s.selectedPlace) {
         fly(placeTarget(indexes, layout, companyIndex, s.selectedPlace));
@@ -267,22 +378,69 @@ export function GlobeView() {
       if (s.selectedGameId !== prev.selectedGameId && s.selectedGameId !== null) {
         fly(gameTarget(indexes, layout, companyIndex, s.selectedGameId));
       }
+      if (s.cameraRequest && s.cameraRequest.seq !== lastCameraSeq) {
+        lastCameraSeq = s.cameraRequest.seq;
+        fly({ lat: s.cameraRequest.lat, lng: s.cameraRequest.lng, altitude: s.cameraRequest.altitude });
+      }
     });
 
     const stats = statsRef.current;
+    const vp = new THREE.Matrix4();
+    const lastWorld = new Float64Array(16);
     let last = performance.now();
+    let lastUpgrade = 0;
     let raf = requestAnimationFrame(function loop(now) {
       raf = requestAnimationFrame(loop);
       const dt = now - last;
       last = now;
       stats.push(now, dt);
       layer.frame(dt);
+
+      const world = camera.matrixWorld.elements;
+      let moved = false;
+      for (let i = 0; i < 16; i++) {
+        if (world[i] !== lastWorld[i]) {
+          moved = true;
+          lastWorld[i] = world[i]!;
+        }
+      }
+      if (moved) needUpgrade.current = true;
+      if (needUpgrade.current && detailRef.current && now - lastUpgrade > 350) {
+        const pov = globe.pointOfView();
+        if (pov.altitude < CITY_FROM) {
+          const next = nearShapes(detailRef.current, pov.lat, pov.lng, pov.altitude).find((d) => !upgradedRef.current.has(d.key));
+          if (next) {
+            upgradedRef.current.add(next.key);
+            lastUpgrade = now;
+            setShapes((prev) => upgradeShapes(prev, next));
+          } else needUpgrade.current = false;
+        } else needUpgrade.current = false;
+      }
+      if (labels) {
+        vp.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse);
+        labels.tick(
+          { viewProjection: vp.elements, camera: camera.position, width: canvas.clientWidth, height: canvas.clientHeight },
+          moved,
+          now,
+        );
+      }
+
       if (dirtyRef.current) {
         dirtyRef.current = false;
         if (pointer.inside && !pointer.down) {
-          const p = pickAt(pointer.x, pointer.y);
+          const rect = canvas.getBoundingClientRect();
+          const w2 = rect.width;
+          const h2 = rect.height;
+          const p = pointsPickable() ? layer.pick(pointer.x, pointer.y, camera, w2, h2) : null;
           if (p?.level !== hovered?.level || p?.index !== hovered?.index || p?.count !== hovered?.count) setHover(p);
-          else if (p && tooltip) tooltip.style.transform = `translate(${pointer.x + 14}px, ${pointer.y + 14}px)`;
+          else if (p) placeTooltip();
+          if (labels) {
+            const id = labels.nearest(pointer.x, pointer.y, PICK_RADIUS_PX);
+            if (id !== hoveredLabel) {
+              hoveredLabel = id;
+              labels.setHover(id);
+            }
+          }
         }
       }
     });
@@ -296,7 +454,8 @@ export function GlobeView() {
         setYear: (y) => useStore.getState().setYear(y),
         playYears: (msPerYear) =>
           new Promise<void>((resolve) => {
-            const { minYear, maxYear } = timeline;
+            const tl = useStore.getState().timeline!;
+            const { minYear, maxYear } = tl;
             const start = performance.now();
             let lastYear = -1;
             const step = (t: number) => {
@@ -325,14 +484,40 @@ export function GlobeView() {
       if (debug) delete window.__overworld;
       layer.dispose();
       markers.dispose();
+      outline.dispose();
+      labels?.dispose();
+      countriesRef.current = null;
       layerRef.current = null;
       markersRef.current = null;
+      labelsRef.current = null;
     };
-  }, [ready, indexes, timeline, layout, companyIndex, countryName, debug]);
+  }, [ready, indexes, layout, companyIndex, countryName, debug]);
 
   useEffect(() => {
-    markersRef.current?.set(arcs.markers);
-  }, [arcs]);
+    countriesRef.current?.set(shapes);
+  }, [shapes]);
+
+  useEffect(() => {
+    countriesRef.current?.setShade(countryShade);
+  }, [countryShade]);
+
+  useEffect(() => {
+    markersRef.current?.set(markerItems);
+  }, [markerItems]);
+
+  useEffect(() => {
+    labelsRef.current?.setItems(labelItems);
+  }, [labelItems]);
+
+  useEffect(() => {
+    const globe = globeRef.current;
+    if (!ready || !globe || !detail) return;
+    const lead = arcs.markers.find((m) => m.lead);
+    if (!lead) return;
+    globe.controls().autoRotate = false;
+    globe.pointOfView(frameTarget(lead, arcs.markers.filter((m) => !m.lead)), FLY_MS);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [detail, ready]);
 
   const readout = useCallback(
     (): Readout => ({
@@ -343,9 +528,9 @@ export function GlobeView() {
     [],
   );
 
-  if (!indexes || !timeline) return null;
+  if (!indexes || !hasTimeline) return null;
 
-  const dashed = !reducedMotion;
+  const animated = !reducedMotion;
   return (
     <div style={{ position: 'fixed', inset: 0, background: COLORS.background, overflow: 'hidden' }}>
       <Globe
@@ -353,20 +538,13 @@ export function GlobeView() {
         width={w}
         height={h}
         backgroundColor={COLORS.background}
-        globeMaterial={materials.globe}
+        globeMaterial={globeMaterial}
         atmosphereColor={COLORS.atmosphere}
         atmosphereAltitude={0.18}
         enablePointerInteraction={false}
         onGlobeReady={onGlobeReady}
         onZoom={onZoom}
-        polygonsData={shapes}
-        polygonGeoJsonGeometry="geometry"
-        polygonCapMaterial={materials.cap}
-        polygonSideColor={() => 'rgba(0,0,0,0)'}
-        polygonStrokeColor={() => COLORS.countryStroke}
-        polygonAltitude={0.004}
-        polygonsTransitionDuration={0}
-        arcsData={arcs.arcs}
+        arcsData={arcsData}
         arcStartLat="startLat"
         arcStartLng="startLng"
         arcEndLat="endLat"
@@ -374,18 +552,13 @@ export function GlobeView() {
         arcColor="color"
         arcAltitude="altitude"
         arcStroke="stroke"
-        arcDashLength={dashed ? 0.35 : 1}
-        arcDashGap={dashed ? 0.25 : 0}
-        arcDashAnimateTime={dashed ? 2400 : 0}
+        arcDashLength={animated ? 0.35 : 1}
+        arcDashGap={animated ? 0.25 : 0}
+        arcDashAnimateTime={animated ? 2400 : 0}
         arcsTransitionDuration={0}
-        htmlElementsData={arcs.labels}
-        htmlLat="lat"
-        htmlLng="lng"
-        htmlAltitude={0.02}
-        htmlElement={labelElement}
-        htmlTransitionDuration={0}
       />
-      <div ref={tooltipRef} style={{ ...tooltipStyle, whiteSpace: 'pre' }} />
+      <div ref={labelRootRef} style={{ position: 'absolute', inset: 0, pointerEvents: 'none', overflow: 'hidden' }} />
+      <div ref={tooltipRef} style={tooltipStyle} />
       {debug && <DebugHud read={readout} />}
     </div>
   );

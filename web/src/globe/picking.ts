@@ -45,19 +45,28 @@ export function nearestPoint(
   sizes: Float32Array,
   maxDist = PICK_RADIUS_PX,
 ): number {
-  let best = -1;
-  let bestD2 = Infinity;
+  let bestInside = -1;
+  let bestInsideScore = Infinity;
+  let bestNear = -1;
+  let bestNearD2 = Infinity;
   const n = sizes.length;
   for (let i = 0; i < n; i++) {
-    if (!projected.visible[i] || sizes[i]! <= 0) continue;
+    const size = sizes[i]!;
+    if (!projected.visible[i] || size <= 0) continue;
     const dx = projected.x[i]! - px;
     const dy = projected.y[i]! - py;
     const d2 = dx * dx + dy * dy;
-    const reach = Math.max(maxDist, sizes[i]! / 2);
-    if (d2 <= reach * reach && d2 < bestD2) {
-      bestD2 = d2;
-      best = i;
+    const radius = size / 2;
+    if (d2 <= radius * radius) {
+      const score = d2 / (radius * radius);
+      if (score < bestInsideScore) {
+        bestInsideScore = score;
+        bestInside = i;
+      }
+    } else if (d2 <= maxDist * maxDist && d2 < bestNearD2) {
+      bestNearD2 = d2;
+      bestNear = i;
     }
   }
-  return best;
+  return bestInside >= 0 ? bestInside : bestNear;
 }

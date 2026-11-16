@@ -1,11 +1,18 @@
 import * as THREE from 'three';
-import type { MarkerSpec } from './arcs';
 import { hexToRgb } from './colors';
 import type { CoordsSource } from './pointsLayer';
+
+export interface MarkerItem {
+  lat: number;
+  lng: number;
+  color: string;
+  kind: 'ring' | 'lead' | 'pin';
+}
 
 const MARKER_ALTITUDE = 0.012;
 const RING_PX = 16;
 const LEAD_PX = 30;
+const PIN_PX = 14;
 
 const VERTEX = `
 attribute float aSize;
@@ -29,6 +36,12 @@ void main() {
   float d = length(gl_PointCoord * 2.0 - 1.0);
   if (d > 1.0) discard;
   float a;
+  if (vKind > 1.5) {
+    float edge = smoothstep(0.55, 0.7, d);
+    a = 1.0 - smoothstep(0.9, 1.0, d);
+    gl_FragColor = vec4(mix(vColor, vec3(0.03, 0.04, 0.06), edge), a);
+    return;
+  }
   if (vKind > 0.5) {
     float outer = smoothstep(0.62, 0.74, d) * (1.0 - smoothstep(0.9, 1.0, d));
     float inner = 1.0 - smoothstep(0.2, 0.3, d);
@@ -65,7 +78,7 @@ export class MarkersLayer {
     scene.add(this.points);
   }
 
-  set(markers: readonly MarkerSpec[]): void {
+  set(markers: readonly MarkerItem[]): void {
     this.geometry.dispose();
     const n = markers.length;
     const position = new Float32Array(n * 3);
@@ -76,8 +89,8 @@ export class MarkersLayer {
       const p = this.globe.getCoords(m.lat, m.lng, MARKER_ALTITUDE);
       position.set([p.x, p.y, p.z], i * 3);
       color.set(hexToRgb(m.color), i * 3);
-      size[i] = m.lead ? LEAD_PX : RING_PX;
-      kind[i] = m.lead ? 1 : 0;
+      size[i] = m.kind === 'lead' ? LEAD_PX : m.kind === 'pin' ? PIN_PX : RING_PX;
+      kind[i] = m.kind === 'lead' ? 1 : m.kind === 'pin' ? 2 : 0;
     });
     this.geometry = new THREE.BufferGeometry();
     this.geometry.setAttribute('position', new THREE.BufferAttribute(position, 3));

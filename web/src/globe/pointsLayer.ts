@@ -91,10 +91,13 @@ export class PointsLayer {
   private readonly levels: Record<Level, LevelState>;
   private active: Level = 'country';
   private year: number;
+  private timeline: Timeline;
+  private shown = true;
   private readonly opts: PointsLayerOptions;
 
   constructor(opts: PointsLayerOptions) {
     this.opts = opts;
+    this.timeline = opts.timeline;
     this.year = opts.timeline.maxYear;
     const { indexes, layout, globe } = opts;
     const lats: Record<Level, ArrayLike<number>> = {
@@ -169,10 +172,24 @@ export class PointsLayer {
     this.year = year;
     for (const level of LEVELS) {
       const st = this.levels[level];
-      st.visibleCount = applyYear(st.buffers, this.opts.timeline.levelAt(level, year), year);
+      st.visibleCount = applyYear(st.buffers, this.timeline.levelAt(level, year), year);
       (st.geometry.getAttribute('aSize') as THREE.BufferAttribute).needsUpdate = true;
       (st.geometry.getAttribute('aLead') as THREE.BufferAttribute).needsUpdate = true;
     }
+  }
+
+  setTimeline(timeline: Timeline, showIdle: boolean): void {
+    this.timeline = timeline;
+    this.levels.company.buffers.showIdle = showIdle;
+    this.setYear(this.year);
+  }
+
+  setVisible(visible: boolean): void {
+    this.shown = visible;
+  }
+
+  isVisible(): boolean {
+    return this.shown;
   }
 
   setAltitude(altitude: number): void {
@@ -191,7 +208,7 @@ export class PointsLayer {
     const step = Math.min(1, dtMs / FADE_MS);
     for (const level of LEVELS) {
       const st = this.levels[level];
-      const target = level === this.active ? 1 : 0;
+      const target = level === this.active && this.shown ? 1 : 0;
       if (st.opacity < target) st.opacity = Math.min(target, st.opacity + step);
       else if (st.opacity > target) st.opacity = Math.max(target, st.opacity - step);
       st.material.uniforms.uOpacity!.value = st.opacity;
@@ -200,12 +217,14 @@ export class PointsLayer {
   }
 
   pick(x: number, y: number, camera: THREE.Camera, width: number, height: number): PickedPoint | null {
+    if (!this.shown) return null;
     const st = this.levels[this.active];
     const vp = new THREE.Matrix4().multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse);
     projectPoints(st.positions, vp.elements, camera.position, width, height, st.projected);
     const i = nearestPoint(x, y, st.projected, st.buffers.size);
     if (i < 0) return null;
-    const { indexes, timeline } = this.opts;
+    const { indexes } = this.opts;
+    const timeline = this.timeline;
     const count = timeline.levelAt(st.level, this.year)[i] ?? 0;
     let name = '';
     if (st.level === 'country') name = this.opts.countryName(indexes.countries[i]!.code);

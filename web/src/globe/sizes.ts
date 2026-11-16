@@ -22,10 +22,12 @@ export interface LevelBuffers {
   lead: Float32Array;
   firstYear?: Int16Array;
   hidden?: Uint8Array;
+  showIdle?: boolean;
 }
 
 export function applyYear(buf: LevelBuffers, counts: ArrayLike<number>, year: number): number {
   const { level, size, lead, firstYear, hidden } = buf;
+  const showIdle = buf.showIdle !== false;
   const n = size.length;
   let visible = 0;
   if (level !== 'company' || !firstYear || !hidden) {
@@ -47,7 +49,7 @@ export function applyYear(buf: LevelBuffers, counts: ArrayLike<number>, year: nu
       size[i] = sizeFor('company', c);
       lead[i] = 1;
       visible++;
-    } else if (firstYear[i]! <= year) {
+    } else if (showIdle && firstYear[i]! <= year) {
       size[i] = ZERO_DOT_PX;
       lead[i] = 0;
       visible++;

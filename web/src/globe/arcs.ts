@@ -28,6 +28,7 @@ export interface ArcSpec {
 
 export interface MarkerSpec {
   companyId: number;
+  name: string;
   lat: number;
   lng: number;
   color: string;
@@ -74,7 +75,7 @@ function located(c: Company | undefined): c is Company {
   return !!c && c.precision !== 'none' && c.lat !== null && c.lng !== null;
 }
 
-function baseAltitude(km: number): number {
+export function baseAltitude(km: number): number {
   const frac = Math.min(1, km / (Math.PI * EARTH_RADIUS_KM));
   return 0.04 + 0.45 * frac;
 }
@@ -87,7 +88,7 @@ export function buildRoleArcs(input: ArcInput): RoleArcs {
   const place = (c: Company): LatLng => input.displayPosition?.(c) ?? { lat: c.lat!, lng: c.lng! };
   const leadPos = place(lead);
 
-  out.markers.push({ companyId: lead.id, lat: leadPos.lat, lng: leadPos.lng, color: LEAD_COLOR, lead: true });
+  out.markers.push({ companyId: lead.id, name: lead.name, lat: leadPos.lat, lng: leadPos.lng, color: LEAD_COLOR, lead: true });
 
   const rolesByCompany = new Map<number, Set<RoleType>>();
   for (const r of roles) {
@@ -111,6 +112,7 @@ export function buildRoleArcs(input: ArcInput): RoleArcs {
     const approx = company.precision === 'country';
     out.markers.push({
       companyId: company.id,
+      name: company.name,
       lat: pos.lat,
       lng: pos.lng,
       color: ROLE_META[companyRoles[0]!].color,
@@ -126,9 +128,9 @@ export function buildRoleArcs(input: ArcInput): RoleArcs {
         startLng: leadPos.lng,
         endLat: pos.lat,
         endLng: pos.lng,
-        color: withAlpha(ROLE_META[role].color, approx ? 0.4 : 0.85),
+        color: withAlpha(ROLE_META[role].color, approx ? 0.55 : 0.95),
         altitude: base + k * HEIGHT_STEP,
-        stroke: approx ? 0.12 : 0.3,
+        stroke: approx ? 0.2 : 0.45,
         approx,
       });
     });

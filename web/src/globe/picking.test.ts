@@ -72,3 +72,14 @@ describe('nearestPoint', () => {
     expect(nearestPoint(20, 0, p, new Float32Array([40]))).toBe(0);
   });
 });
+
+describe('nearestPoint disc priority', () => {
+  it('prefers the point whose drawn disc contains the pointer over a nearer small one', () => {
+    const p = makeProjected(2);
+    p.x.set([100, 118]);
+    p.y.set([100, 100]);
+    p.visible.set([1, 1]);
+    const sizes = new Float32Array([40, 8]);
+    expect(nearestPoint(112, 100, p, sizes)).toBe(0);
+  });
+});

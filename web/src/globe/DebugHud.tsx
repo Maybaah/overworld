@@ -8,7 +8,8 @@ export interface Readout {
 
 const style = {
   position: 'fixed',
-  left: 8,
+  left: '50%',
+  transform: 'translateX(-50%)',
   top: 8,
   zIndex: 50,
   padding: '4px 8px',
