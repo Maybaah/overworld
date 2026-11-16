@@ -12,7 +12,18 @@ export const STAGE_FILES = {
   population: 'population.json',
   steamspy: 'steamspy.json',
   steamReviews: 'steam-reviews.json',
+  rawg: 'rawg.json',
 } as const;
+
+// One RAWG game; "added" counts the RAWG users who put it on one of their lists.
+export interface RawRawgGame {
+  id: number;
+  slug: string;
+  name: string;
+  year: number | null;
+  added: number;
+  ratingsCount: number;
+}
 
 // One Steam app from SteamSpy's owner-sorted catalogue; reviews are positive plus negative.
 export interface RawSteamApp {

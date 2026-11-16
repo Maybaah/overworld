@@ -30,6 +30,7 @@ function makeConfig(overrides: Partial<PipelineConfig> = {}): PipelineConfig {
     twitchClientId: 'test-client-id',
     twitchClientSecret: SECRET,
     mobygamesApiKey: null,
+    rawgApiKey: null,
     wikidataUserAgent: 'test',
     gameLimit: 10000,
     mobyLimit: 10000,

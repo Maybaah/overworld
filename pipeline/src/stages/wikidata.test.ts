@@ -117,6 +117,7 @@ function config(over: Partial<PipelineConfig> = {}): PipelineConfig {
     twitchClientId: null,
     twitchClientSecret: null,
     mobygamesApiKey: null,
+    rawgApiKey: null,
     wikidataUserAgent: 'test-agent/1.0 (test)',
     gameLimit: 10,
     mobyLimit: 10000,

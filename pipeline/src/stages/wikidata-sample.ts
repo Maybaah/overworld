@@ -140,6 +140,7 @@ async function main(): Promise<void> {
       twitchClientId: null,
       twitchClientSecret: null,
       mobygamesApiKey: null,
+      rawgApiKey: null,
       wikidataUserAgent: 'overworld-pipeline/0.1 (sample check; no contact set)',
       gameLimit: 10_000,
       mobyLimit: 10000,
