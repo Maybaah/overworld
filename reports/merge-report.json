@@ -172,11 +172,11 @@
     }
   ],
   "leadBasisCounts": {
-    "curated": 11,
+    "curated": 12,
     "igdb_developer_heuristic": 98,
     "igdb_single_developer": 8642,
     "igdb_developer_confirmed_by_wikidata": 929,
-    "igdb_first_developer": 249,
+    "igdb_first_developer": 248,
     "wikidata_developer": 37,
     "mobygames_developer": 0
   },
@@ -2529,18 +2529,6 @@
       ]
     },
     {
-      "gameId": 2977,
-      "name": "Mortal Kombat: Komplete Edition",
-      "companyId": 392,
-      "company": "High Voltage Software",
-      "others": [
-        {
-          "companyId": 48,
-          "name": "NetherRealm Studios"
-        }
-      ]
-    },
-    {
       "gameId": 150045,
       "name": "Resident Evil: Revelations",
       "companyId": 37,
@@ -4189,6 +4177,18 @@
         {
           "companyId": 321,
           "name": "Tose"
+        }
+      ]
+    },
+    {
+      "gameId": 4612,
+      "name": "Devil World",
+      "companyId": 1809,
+      "company": "Nintendo R&D1",
+      "others": [
+        {
+          "companyId": 73961,
+          "name": "Iwasaki Giken Kogyo"
         }
       ]
     }

@@ -45,7 +45,7 @@
     },
     {
       "name": "company-coordinates",
-      "description": "precision is 'none' exactly when lat/lng are null; city and country need valid coordinates",
+      "description": "precision is 'none' exactly when lat/lng are null; city and country need valid coordinates and a known country code",
       "passed": true,
       "count": 0,
       "examples": []
@@ -6954,8 +6954,8 @@
   "leadBasisCounts": {
     "igdb_single_developer": 8642,
     "igdb_developer_confirmed_by_wikidata": 929,
-    "igdb_first_developer": 249,
-    "curated": 11,
+    "igdb_first_developer": 248,
+    "curated": 12,
     "igdb_developer_heuristic": 98,
     "wikidata_developer": 37
   },
@@ -7143,14 +7143,6 @@
       ]
     },
     {
-      "gameId": 2977,
-      "name": "Mortal Kombat: Komplete Edition",
-      "lead": "High Voltage Software",
-      "others": [
-        "NetherRealm Studios"
-      ]
-    },
-    {
       "gameId": 150045,
       "name": "Resident Evil: Revelations",
       "lead": "Capcom",
@@ -7214,6 +7206,16 @@
       "lead": "Noio",
       "others": [
         "Licorice"
+      ]
+    },
+    {
+      "gameId": 1912,
+      "name": "Warface",
+      "lead": "Crytek Kiev",
+      "others": [
+        "Allods Team",
+        "MY.GAMES",
+        "Astrum Entertainment"
       ]
     }
   ],

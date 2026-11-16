@@ -12,7 +12,7 @@ Verdict: PASS
 - PASS unique-game-ids (0 problems): game ids are unique
 - PASS game-leads (0 problems): every game has a lead company present in companies.json and exactly one matching lead_developer role
 - PASS source-ids (0 problems): every company, game detail and role has a source with a non-empty source and id
-- PASS company-coordinates (0 problems): precision is 'none' exactly when lat/lng are null; city and country need valid coordinates
+- PASS company-coordinates (0 problems): precision is 'none' exactly when lat/lng are null; city and country need valid coordinates and a known country code
 - PASS references (0 problems): role.companyId, parentId and steam.json point at existing records
 - PASS games-sorted (0 problems): games.json is sorted by popularity, highest first
 - PASS role-types (0 problems): every role has a known role type
@@ -53,8 +53,8 @@ Games whose lead studio has only a country-level location: 2469 of 9966 (24.8%)
 | --- | ---: |
 | igdb_single_developer | 8642 |
 | igdb_developer_confirmed_by_wikidata | 929 |
-| igdb_first_developer | 249 |
-| curated | 11 |
+| igdb_first_developer | 248 |
+| curated | 12 |
 | igdb_developer_heuristic | 98 |
 | wikidata_developer | 37 |
 
@@ -192,7 +192,6 @@ Games with several IGDB developers where nothing told them apart (first 30 by po
 | Captain Toad: Treasure Tracker | Nintendo EAD Software Development Group No.2 | Nintendo |
 | Ōkami HD | Clover Studio | Capcom |
 | Brotato | Blobfish | Erabit Studios |
-| Mortal Kombat: Komplete Edition | High Voltage Software | NetherRealm Studios |
 | Resident Evil: Revelations | Capcom | Tose |
 | House Flipper | Empyrean | Frozen District, Ultimate Games |
 | Darksiders II: Deathinitive Edition | Vigil Games | THQ Nordic, Gunfire Games |
@@ -201,6 +200,7 @@ Games with several IGDB developers where nothing told them apart (first 30 by po
 | Metin2 | Ymir Entertainment Co., Ltd | Webzen |
 | Nintendo Land | Nintendo EAD Software Development Group No.2 | Nintendo |
 | Kingdom: Classic | Noio | Licorice |
+| Warface | Crytek Kiev | Allods Team, MY.GAMES, Astrum Entertainment |
 
 ## Lead studios without a city
 
