@@ -1,1 +1,425 @@
-[]
+[
+  {
+    "igdbCompanyId": 1,
+    "name": "Electronic Arts",
+    "city": "Redwood City",
+    "country": "US",
+    "lat": 37.48522,
+    "lng": -122.23635,
+    "evidenceUrl": "https://en.wikipedia.org/wiki/Electronic_Arts"
+  },
+  {
+    "igdbCompanyId": 44,
+    "name": "Team Ico",
+    "city": "Tokyo",
+    "country": "JP",
+    "lat": 35.6895,
+    "lng": 139.69171,
+    "evidenceUrl": "https://en.wikipedia.org/wiki/Team_Ico"
+  },
+  {
+    "igdbCompanyId": 60,
+    "name": "Climax Group",
+    "city": "Portsmouth",
+    "country": "GB",
+    "lat": 50.79899,
+    "lng": -1.09125,
+    "evidenceUrl": "https://en.wikipedia.org/wiki/Climax_Group"
+  },
+  {
+    "igdbCompanyId": 68,
+    "name": "Ensemble Studios",
+    "city": "Dallas",
+    "country": "US",
+    "lat": 32.78306,
+    "lng": -96.80667,
+    "evidenceUrl": "https://en.wikipedia.org/wiki/Ensemble_Studios"
+  },
+  {
+    "igdbCompanyId": 115,
+    "name": "Codemasters",
+    "city": "Southam",
+    "country": "GB",
+    "lat": 52.25266,
+    "lng": -1.3884,
+    "evidenceUrl": "https://en.wikipedia.org/wiki/Codemasters"
+  },
+  {
+    "igdbCompanyId": 163,
+    "name": "Climax Studios",
+    "city": "Portsmouth",
+    "country": "GB",
+    "lat": 50.79899,
+    "lng": -1.09125,
+    "evidenceUrl": "https://en.wikipedia.org/wiki/Climax_Group"
+  },
+  {
+    "igdbCompanyId": 169,
+    "name": "MercurySteam",
+    "city": "San Sebastián de los Reyes",
+    "country": "ES",
+    "lat": 40.55555,
+    "lng": -3.62733,
+    "evidenceUrl": "https://en.wikipedia.org/wiki/MercurySteam"
+  },
+  {
+    "igdbCompanyId": 170,
+    "name": "Kojima Productions",
+    "city": "Tokyo",
+    "country": "JP",
+    "lat": 35.6895,
+    "lng": 139.69171,
+    "evidenceUrl": "https://en.wikipedia.org/wiki/Kojima_Productions"
+  },
+  {
+    "igdbCompanyId": 184,
+    "name": "id Software",
+    "city": "Richardson",
+    "country": "US",
+    "lat": 32.94818,
+    "lng": -96.72972,
+    "evidenceUrl": "https://en.wikipedia.org/wiki/Id_Software"
+  },
+  {
+    "igdbCompanyId": 290,
+    "name": "IO Interactive",
+    "city": "Copenhagen",
+    "country": "DK",
+    "lat": 55.67594,
+    "lng": 12.56553,
+    "evidenceUrl": "https://en.wikipedia.org/wiki/IO_Interactive"
+  },
+  {
+    "igdbCompanyId": 323,
+    "name": "Nextech",
+    "city": "Tokyo",
+    "country": "JP",
+    "lat": 35.6895,
+    "lng": 139.69171,
+    "evidenceUrl": "https://en.wikipedia.org/wiki/Nextech"
+  },
+  {
+    "igdbCompanyId": 404,
+    "name": "Cyanide Studio",
+    "city": "Nanterre",
+    "country": "FR",
+    "lat": 48.89198,
+    "lng": 2.20675,
+    "evidenceUrl": "https://en.wikipedia.org/wiki/Cyanide_(company)"
+  },
+  {
+    "igdbCompanyId": 412,
+    "name": "Codemasters Southam",
+    "city": "Southam",
+    "country": "GB",
+    "lat": 52.25266,
+    "lng": -1.3884,
+    "evidenceUrl": "https://en.wikipedia.org/wiki/Codemasters"
+  },
+  {
+    "igdbCompanyId": 427,
+    "name": "Bugbear Entertainment",
+    "city": "Helsinki",
+    "country": "FI",
+    "lat": 60.16952,
+    "lng": 24.93545,
+    "evidenceUrl": "https://en.wikipedia.org/wiki/Bugbear_Entertainment"
+  },
+  {
+    "igdbCompanyId": 501,
+    "name": "Delphine Software",
+    "city": "Paris",
+    "country": "FR",
+    "lat": 48.85341,
+    "lng": 2.3488,
+    "evidenceUrl": "https://en.wikipedia.org/wiki/Delphine_Software"
+  },
+  {
+    "igdbCompanyId": 537,
+    "name": "Massive Entertainment",
+    "city": "Malmö",
+    "country": "SE",
+    "lat": 55.60587,
+    "lng": 13.00073,
+    "evidenceUrl": "https://en.wikipedia.org/wiki/Massive_Entertainment"
+  },
+  {
+    "igdbCompanyId": 646,
+    "name": "Blue Byte Software",
+    "city": "Düsseldorf",
+    "country": "DE",
+    "lat": 51.22172,
+    "lng": 6.77616,
+    "evidenceUrl": "https://en.wikipedia.org/wiki/Blue_Byte"
+  },
+  {
+    "igdbCompanyId": 709,
+    "name": "Teyon",
+    "city": "Kraków",
+    "country": "PL",
+    "lat": 50.06143,
+    "lng": 19.93658,
+    "evidenceUrl": "https://en.wikipedia.org/wiki/Teyon"
+  },
+  {
+    "igdbCompanyId": 769,
+    "name": "Team NINJA",
+    "city": "Tokyo",
+    "country": "JP",
+    "lat": 35.6895,
+    "lng": 139.69171,
+    "evidenceUrl": "https://en.wikipedia.org/wiki/Team_Ninja"
+  },
+  {
+    "igdbCompanyId": 852,
+    "name": "PlatinumGames",
+    "city": "Osaka",
+    "country": "JP",
+    "lat": 34.69374,
+    "lng": 135.50218,
+    "evidenceUrl": "https://en.wikipedia.org/wiki/PlatinumGames"
+  },
+  {
+    "igdbCompanyId": 857,
+    "name": "ThatGameCompany",
+    "city": "Santa Monica",
+    "country": "US",
+    "lat": 34.01945,
+    "lng": -118.49119,
+    "evidenceUrl": "https://en.wikipedia.org/wiki/ThatGameCompany"
+  },
+  {
+    "igdbCompanyId": 888,
+    "name": "Digital Eclipse",
+    "city": "Emeryville",
+    "country": "US",
+    "lat": 37.83132,
+    "lng": -122.28525,
+    "evidenceUrl": "https://en.wikipedia.org/wiki/Digital_Eclipse"
+  },
+  {
+    "igdbCompanyId": 946,
+    "name": "Saber Interactive",
+    "city": "Fort Lauderdale",
+    "country": "US",
+    "lat": 26.12231,
+    "lng": -80.14338,
+    "evidenceUrl": "https://en.wikipedia.org/wiki/Saber_Interactive"
+  },
+  {
+    "igdbCompanyId": 1008,
+    "name": "Free Radical Design",
+    "city": "Nottingham",
+    "country": "GB",
+    "lat": 52.9536,
+    "lng": -1.15047,
+    "evidenceUrl": "https://en.wikipedia.org/wiki/Free_Radical_Design"
+  },
+  {
+    "igdbCompanyId": 1100,
+    "name": "NDCube",
+    "city": "Tokyo",
+    "country": "JP",
+    "lat": 35.6895,
+    "lng": 139.69171,
+    "evidenceUrl": "https://en.wikipedia.org/wiki/NDcube"
+  },
+  {
+    "igdbCompanyId": 1242,
+    "name": "MachineGames",
+    "city": "Uppsala",
+    "country": "SE",
+    "lat": 59.85882,
+    "lng": 17.63889,
+    "evidenceUrl": "https://en.wikipedia.org/wiki/MachineGames"
+  },
+  {
+    "igdbCompanyId": 1394,
+    "name": "Omega Force",
+    "city": "Ashikaga",
+    "country": "JP",
+    "lat": 36.33333,
+    "lng": 139.45,
+    "evidenceUrl": "https://en.wikipedia.org/wiki/Omega_Force"
+  },
+  {
+    "igdbCompanyId": 1402,
+    "name": "BlueSky Software",
+    "city": "San Diego",
+    "country": "US",
+    "lat": 32.71571,
+    "lng": -117.16472,
+    "evidenceUrl": "https://en.wikipedia.org/wiki/BlueSky_Software"
+  },
+  {
+    "igdbCompanyId": 1809,
+    "name": "Nintendo R&D1",
+    "city": "Kyoto",
+    "country": "JP",
+    "lat": 35.02107,
+    "lng": 135.75385,
+    "evidenceUrl": "https://en.wikipedia.org/wiki/Nintendo_R%26D1"
+  },
+  {
+    "igdbCompanyId": 1935,
+    "name": "Pivotal Games",
+    "city": "Corston",
+    "country": "GB",
+    "lat": 51.385,
+    "lng": -2.44028,
+    "evidenceUrl": "https://en.wikipedia.org/wiki/Pivotal_Games"
+  },
+  {
+    "igdbCompanyId": 1973,
+    "name": "Twisted Pixel",
+    "city": "Austin",
+    "country": "US",
+    "lat": 30.26715,
+    "lng": -97.74306,
+    "evidenceUrl": "https://en.wikipedia.org/wiki/Twisted_Pixel_Games"
+  },
+  {
+    "igdbCompanyId": 1997,
+    "name": "Ganbarion",
+    "city": "Fukuoka",
+    "country": "JP",
+    "lat": 33.6,
+    "lng": 130.41667,
+    "evidenceUrl": "https://en.wikipedia.org/wiki/Ganbarion"
+  },
+  {
+    "igdbCompanyId": 2055,
+    "name": "Clover Studio",
+    "city": "Osaka",
+    "country": "JP",
+    "lat": 34.69374,
+    "lng": 135.50218,
+    "evidenceUrl": "https://en.wikipedia.org/wiki/Clover_Studio"
+  },
+  {
+    "igdbCompanyId": 2397,
+    "name": "KING Art",
+    "city": "Bremen",
+    "country": "DE",
+    "lat": 53.07582,
+    "lng": 8.80717,
+    "evidenceUrl": "https://en.wikipedia.org/wiki/KING_Art_Games"
+  },
+  {
+    "igdbCompanyId": 2603,
+    "name": "Free Lives Games",
+    "city": "Cape Town",
+    "country": "ZA",
+    "lat": -33.92584,
+    "lng": 18.42322,
+    "evidenceUrl": "https://en.wikipedia.org/wiki/Free_Lives"
+  },
+  {
+    "igdbCompanyId": 2751,
+    "name": "Nihon Falcom",
+    "city": "Tachikawa",
+    "country": "JP",
+    "lat": 35.7091,
+    "lng": 139.41891,
+    "evidenceUrl": "https://en.wikipedia.org/wiki/Nihon_Falcom"
+  },
+  {
+    "igdbCompanyId": 4712,
+    "name": "Ustwo Games",
+    "city": "London",
+    "country": "GB",
+    "lat": 51.50853,
+    "lng": -0.12574,
+    "evidenceUrl": "https://en.wikipedia.org/wiki/Ustwo"
+  },
+  {
+    "igdbCompanyId": 4981,
+    "name": "Sega Enterprises, Ltd.",
+    "city": "Tokyo",
+    "country": "JP",
+    "lat": 35.6895,
+    "lng": 139.69171,
+    "evidenceUrl": "https://en.wikipedia.org/wiki/Sega"
+  },
+  {
+    "igdbCompanyId": 5501,
+    "name": "NetEase Games",
+    "city": "Hangzhou",
+    "country": "CN",
+    "lat": 30.29365,
+    "lng": 120.16142,
+    "evidenceUrl": "https://en.wikipedia.org/wiki/NetEase_Games"
+  },
+  {
+    "igdbCompanyId": 6218,
+    "name": "Wales Interactive",
+    "city": "Penarth",
+    "country": "GB",
+    "lat": 51.4386,
+    "lng": -3.17342,
+    "evidenceUrl": "https://en.wikipedia.org/wiki/Wales_Interactive"
+  },
+  {
+    "igdbCompanyId": 6542,
+    "name": "Airship Syndicate",
+    "city": "Austin",
+    "country": "US",
+    "lat": 30.26715,
+    "lng": -97.74306,
+    "evidenceUrl": "https://en.wikipedia.org/wiki/Airship_Syndicate"
+  },
+  {
+    "igdbCompanyId": 7462,
+    "name": "Volition",
+    "city": "Champaign",
+    "country": "US",
+    "lat": 40.11642,
+    "lng": -88.24338,
+    "evidenceUrl": "https://en.wikipedia.org/wiki/Volition,_Inc."
+  },
+  {
+    "igdbCompanyId": 7466,
+    "name": "Paradox Development Studio",
+    "city": "Stockholm",
+    "country": "SE",
+    "lat": 59.32938,
+    "lng": 18.06871,
+    "evidenceUrl": "https://en.wikipedia.org/wiki/Paradox_Interactive"
+  },
+  {
+    "igdbCompanyId": 7923,
+    "name": "Blue Byte",
+    "city": "Düsseldorf",
+    "country": "DE",
+    "lat": 51.22172,
+    "lng": 6.77616,
+    "evidenceUrl": "https://en.wikipedia.org/wiki/Blue_Byte"
+  },
+  {
+    "igdbCompanyId": 9364,
+    "name": "Nerial",
+    "city": "London",
+    "country": "GB",
+    "lat": 51.50853,
+    "lng": -0.12574,
+    "evidenceUrl": "https://en.wikipedia.org/wiki/Reigns"
+  },
+  {
+    "igdbCompanyId": 10446,
+    "name": "Team Silent",
+    "city": "Tokyo",
+    "country": "JP",
+    "lat": 35.6895,
+    "lng": 139.69171,
+    "evidenceUrl": "https://en.wikipedia.org/wiki/Team_Silent"
+  },
+  {
+    "igdbCompanyId": 15878,
+    "name": "Sega Games",
+    "city": "Tokyo",
+    "country": "JP",
+    "lat": 35.6895,
+    "lng": 139.69171,
+    "evidenceUrl": "https://en.wikipedia.org/wiki/Sega"
+  }
+]
