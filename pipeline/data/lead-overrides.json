@@ -1,1 +1,79 @@
-[]
+[
+  {
+    "igdbGameId": 421,
+    "game": "Final Fantasy IX",
+    "igdbCompanyId": 250,
+    "company": "Square",
+    "evidenceUrl": "https://en.wikipedia.org/wiki/Final_Fantasy_IX"
+  },
+  {
+    "igdbGameId": 1442,
+    "game": "Fire Emblem: Radiant Dawn",
+    "igdbCompanyId": 25077,
+    "company": "Intelligent Systems",
+    "evidenceUrl": "https://en.wikipedia.org/wiki/Fire_Emblem:_Radiant_Dawn"
+  },
+  {
+    "igdbGameId": 1981,
+    "game": "Saints Row IV",
+    "igdbCompanyId": 7462,
+    "company": "Volition",
+    "evidenceUrl": "https://en.wikipedia.org/wiki/Saints_Row_IV"
+  },
+  {
+    "igdbGameId": 2136,
+    "game": "Bayonetta",
+    "igdbCompanyId": 852,
+    "company": "PlatinumGames",
+    "evidenceUrl": "https://en.wikipedia.org/wiki/Bayonetta"
+  },
+  {
+    "igdbGameId": 2413,
+    "game": "Oni",
+    "igdbCompanyId": 25727,
+    "company": "Bungie West",
+    "evidenceUrl": "https://en.wikipedia.org/wiki/Oni_(video_game)"
+  },
+  {
+    "igdbGameId": 4083,
+    "game": "Red Faction II",
+    "igdbCompanyId": 7462,
+    "company": "Volition",
+    "evidenceUrl": "https://en.wikipedia.org/wiki/Red_Faction_II"
+  },
+  {
+    "igdbGameId": 8188,
+    "game": "Realm of the Mad God",
+    "igdbCompanyId": 4108,
+    "company": "Wild Shadow Studios",
+    "evidenceUrl": "https://en.wikipedia.org/wiki/Realm_of_the_Mad_God"
+  },
+  {
+    "igdbGameId": 19959,
+    "game": "God of War III: Remastered",
+    "igdbCompanyId": 4357,
+    "company": "Santa Monica Studio",
+    "evidenceUrl": "https://en.wikipedia.org/wiki/God_of_War_III"
+  },
+  {
+    "igdbGameId": 21863,
+    "game": "Fire Emblem Fates: Conquest",
+    "igdbCompanyId": 25077,
+    "company": "Intelligent Systems",
+    "evidenceUrl": "https://en.wikipedia.org/wiki/Fire_Emblem_Fates"
+  },
+  {
+    "igdbGameId": 24220,
+    "game": "Fire Emblem Fates: Birthright",
+    "igdbCompanyId": 25077,
+    "company": "Intelligent Systems",
+    "evidenceUrl": "https://en.wikipedia.org/wiki/Fire_Emblem_Fates"
+  },
+  {
+    "igdbGameId": 138569,
+    "game": "Tormented Souls",
+    "igdbCompanyId": 41262,
+    "company": "Dual Effect",
+    "evidenceUrl": "https://en.wikipedia.org/wiki/Tormented_Souls"
+  }
+]
