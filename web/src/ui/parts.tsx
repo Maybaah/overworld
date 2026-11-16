@@ -1,4 +1,6 @@
 import { useState, type ReactNode } from 'react';
+import type { SourceRef } from '@shared';
+import { SOURCE_LABEL } from './format';
 
 export function CloseButton({ label, onClick }: { label: string; onClick: () => void }) {
   return (
@@ -53,5 +55,15 @@ export function LimitedList<T>({
         </button>
       )}
     </>
+  );
+}
+
+export function SourceLink({ source, label }: { source: SourceRef; label?: string }) {
+  const text = label ?? SOURCE_LABEL[source.source];
+  if (!source.url) return <span className="ow-muted ow-source">{text}</span>;
+  return (
+    <a className="ow-source" href={source.url} target="_blank" rel="noopener noreferrer">
+      {text}
+    </a>
   );
 }

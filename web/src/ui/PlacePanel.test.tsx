@@ -148,4 +148,21 @@ describe('PlacePanel', () => {
     await user.click(screen.getByRole('button', { name: 'Close place' }));
     expect(selectPlace).toHaveBeenCalledWith(null);
   });
+
+  it('links the location source for a company', async () => {
+    showPlace('company', 1);
+    render(<PlacePanel />);
+    const link = screen.getByRole('link', { name: 'Wikidata' });
+    expect(link).toHaveAttribute('href', 'https://www.wikidata.org/wiki/Q9');
+    expect(link).toHaveAttribute('target', '_blank');
+    expect(link).toHaveAttribute('rel', 'noopener noreferrer');
+    await screen.findByRole('list', { name: 'Other work' });
+  });
+
+  it('omits the location line when there is no source', async () => {
+    showPlace('company', 2);
+    render(<PlacePanel />);
+    expect(screen.queryByText(/Location from/)).toBeNull();
+    await screen.findByText('No other roles recorded.');
+  });
 });

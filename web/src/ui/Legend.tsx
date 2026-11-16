@@ -48,7 +48,13 @@ export function Legend() {
               >
                 <Swatch color={g.color} off={!on} />
                 <span className="ow-legend-label">{g.label}</span>
-                {locked && <span className="ow-muted ow-legend-note">always on</span>}
+                {locked && (
+                  <svg className="ow-lock" width="12" height="12" viewBox="0 0 12 12" role="img" aria-label="Lead developer is always shown">
+                    <title>Lead developer is always shown</title>
+                    <rect x="2" y="5.5" width="8" height="5.5" rx="1.2" fill="currentColor" />
+                    <path d="M4 5.5V4a2 2 0 014 0v1.5" fill="none" stroke="currentColor" strokeWidth="1.2" />
+                  </svg>
+                )}
                 {counts && <span className="ow-mono ow-muted ow-legend-count">{counts[i]}</span>}
               </button>
             </li>

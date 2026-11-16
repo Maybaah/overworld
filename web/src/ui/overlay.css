@@ -81,6 +81,8 @@
   position: absolute;
   top: 16px;
   left: 16px;
+  right: 16px;
+  flex-nowrap: wrap;
   display: flex;
   align-items: center;
   gap: 16px;
@@ -98,7 +100,56 @@
 .ow-search {
   position: relative;
   pointer-events: auto;
-  width: 280px;
+  flex: 0 1 280px;
+  min-width: 160px;
+}
+
+.ow-modenav {
+  pointer-events: auto;
+  display: flex;
+  gap: 2px;
+  padding: 2px;
+  height: 40px;
+  background: var(--surface);
+  backdrop-filter: blur(var(--blur));
+  -webkit-backdrop-filter: blur(var(--blur));
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.ow-mode-btn {
+  padding: 0 12px;
+  background: transparent;
+  border: 0;
+  border-radius: 8px;
+  color: var(--muted);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.ow-mode-btn:hover {
+  color: var(--text);
+}
+
+.ow-mode-btn[aria-pressed='true'] {
+  background: #19212d;
+  color: var(--text);
+  font-weight: 500;
+}
+
+.ow-tab {
+  align-self: flex-start;
+  padding: 8px 16px;
+  min-height: 40px;
+  cursor: pointer;
+}
+
+.ow-tab:hover {
+  background: #19212d;
+}
+
+.ow-root[data-mode='insights'] .ow-left {
+  width: 440px;
 }
 
 .ow-search-input {
@@ -433,6 +484,11 @@
   display: none;
 }
 
+.ow-lock {
+  flex: none;
+  color: var(--muted);
+}
+
 .ow-legend-list {
   display: flex;
   flex-direction: column;
@@ -469,7 +525,6 @@
   color: var(--muted);
 }
 
-.ow-legend-note,
 .ow-legend-count {
   font-size: 12px;
 }
@@ -598,8 +653,19 @@
 
 @media (max-width: 759px) {
   .ow-header {
-    right: 16px;
     gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .ow-modenav {
+    order: 3;
+    width: 100%;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+  }
+
+  .ow-mode-btn {
+    flex: none;
   }
 
   .ow-search {

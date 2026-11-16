@@ -159,4 +159,14 @@ describe('GameCard', () => {
     await user.click(screen.getByRole('button', { name: 'Try again' }));
     expect(retry).toHaveBeenCalledWith(100);
   });
+
+  it('says country only on rows whose company has a country-level location', () => {
+    const { container } = render(<GameCard />);
+    const qa = container.querySelector('[data-role="qa"]') as HTMLElement;
+    expect(qa).toHaveTextContent('country only');
+    const port = container.querySelector('[data-role="port"]') as HTMLElement;
+    expect(port).not.toHaveTextContent('country only');
+    const art = container.querySelector('[data-role="art"]') as HTMLElement;
+    expect(art).not.toHaveTextContent('country only');
+  });
 });

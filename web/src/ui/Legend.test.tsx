@@ -70,4 +70,12 @@ describe('Legend', () => {
     await user.click(toggle);
     expect(toggle).toHaveAttribute('aria-expanded', 'true');
   });
+
+  it('marks the lead row with a lock instead of text', () => {
+    render(<Legend />);
+    expect(screen.queryByText('always on')).toBeNull();
+    const lead = screen.getByRole('button', { name: /Lead developer/ });
+    expect(lead.querySelector('[aria-label="Lead developer is always shown"]')).not.toBeNull();
+    expect(screen.getAllByLabelText('Lead developer is always shown')).toHaveLength(1);
+  });
 });

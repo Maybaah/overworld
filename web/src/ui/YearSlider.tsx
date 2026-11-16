@@ -26,7 +26,7 @@ function useReducedMotion(): boolean {
 export function YearSlider() {
   const timeline = useStore((s) => s.timeline);
   const indexes = useStore((s) => s.indexes);
-  const year = useStore((s) => s.year);
+  const rawYear = useStore((s) => s.year);
   const playing = useStore((s) => s.playing);
   const setYear = useStore((s) => s.setYear);
   const setPlaying = useStore((s) => s.setPlaying);
@@ -34,6 +34,7 @@ export function YearSlider() {
 
   const min = timeline?.minYear ?? 1970;
   const max = timeline?.maxYear ?? 1970;
+  const year = Math.min(max, Math.max(min, Math.round(rawYear)));
 
   useEffect(() => {
     if (!playing) return;
@@ -73,7 +74,8 @@ export function YearSlider() {
     const delta = { ArrowLeft: -1, ArrowDown: -1, ArrowRight: 1, ArrowUp: 1, PageUp: 10, PageDown: -10 }[e.key];
     if (delta === undefined) return;
     e.preventDefault();
-    setYear(clamp(year + delta));
+    setPlaying(false);
+    setYear(clamp(Math.round(useStore.getState().year) + delta));
   }
 
   function togglePlay() {
@@ -132,7 +134,7 @@ export function YearSlider() {
           max={max}
           step={1}
           value={year}
-          onChange={(e) => setYear(Number(e.target.value))}
+          onChange={(e) => setYear(clamp(Number(e.target.value)))}
           onKeyDown={onKeyDown}
         />
       </div>

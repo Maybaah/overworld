@@ -1,10 +1,10 @@
 import { useMemo, useState } from 'react';
 import { ROLE_TYPES } from '@shared';
-import type { GameCompanyRole, RoleType, SourceRef } from '@shared';
+import type { GameCompanyRole, RoleType } from '@shared';
 import { useStore } from '../data/store';
 import { ROLE_META } from '../data/roles';
-import { CloseButton, LinkButton, Swatch } from './parts';
-import { LEAD_BASIS_TEXT, SOURCE_LABEL, placeLabel, precisionText } from './format';
+import { CloseButton, LinkButton, SourceLink, Swatch } from './parts';
+import { LEAD_BASIS_TEXT, placeLabel, precisionText } from './format';
 
 const COVER_URL = 'https://images.igdb.com/igdb/image/upload/t_cover_big/';
 
@@ -23,16 +23,6 @@ function Cover({ cover, name }: { cover: string | null; name: string }) {
         <span className="ow-cover-empty ow-muted">No cover</span>
       )}
     </div>
-  );
-}
-
-function SourceLink({ source, label }: { source: SourceRef; label?: string }) {
-  const text = label ?? SOURCE_LABEL[source.source];
-  if (!source.url) return <span className="ow-muted ow-source">{text}</span>;
-  return (
-    <a className="ow-source" href={source.url} target="_blank" rel="noopener noreferrer">
-      {text}
-    </a>
   );
 }
 
@@ -149,6 +139,7 @@ export function GameCard() {
                           </div>
                           <div className="ow-muted ow-small">
                             {c ? placeLabel(c) : 'location unknown'}
+                            {c?.precision === 'country' && <span> · country only</span>}
                             {extra && <span className="ow-mono"> · {extra}</span>}
                           </div>
                         </li>

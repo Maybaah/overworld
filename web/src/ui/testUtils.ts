@@ -13,7 +13,7 @@ afterEach(() => {
 });
 
 export const companies = [
-  company(1, { name: 'Alpha Studio', founded: 1990, parentId: 2, leadCount: 2, gameCount: 3 }),
+  company(1, { name: 'Alpha Studio', locationSource: { source: 'wikidata', id: 'Q9', url: 'https://www.wikidata.org/wiki/Q9' }, founded: 1990, parentId: 2, leadCount: 2, gameCount: 3 }),
   company(2, { name: 'Beta Holdings', country: 'US', city: 'Austin', lat: 30.27, lng: -97.74, leadCount: 1, gameCount: 2 }),
   company(3, { name: 'Gamma QA', country: 'DE', city: null, precision: 'country', lat: 51, lng: 9 }),
   company(4, { name: 'Delta Nowhere', country: null, city: null, lat: null, lng: null, precision: 'none' }),
@@ -78,6 +78,8 @@ export function seedStore(over: Partial<ReturnType<typeof useStore.getState>> = 
     meta,
     indexes,
     timeline,
+    fullTimeline: timeline,
+    mode: 'explore',
     year: timeline.maxYear,
     playing: false,
     enabledRoles: new Set(ROLE_TYPES),

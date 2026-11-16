@@ -3,7 +3,7 @@ import type { Company } from '@shared';
 import { useStore } from '../data/store';
 import { loadCompanyGames, type CompanyGameEntry } from '../data/loader';
 import { ROLE_META } from '../data/roles';
-import { CloseButton, LimitedList, LinkButton } from './parts';
+import { CloseButton, LimitedList, LinkButton, SourceLink } from './parts';
 import { countryName, formatCount, placeLabel } from './format';
 
 function Stat({ label, value }: { label: string; value: string | number }) {
@@ -173,7 +173,14 @@ function CompanyBody({ company }: { company: Company }) {
 
   return (
     <>
-      <p className="ow-muted">{placeLabel(company)}</p>
+      <div>
+        <p className="ow-muted">{placeLabel(company)}</p>
+        {company.locationSource && (
+          <p className="ow-muted ow-small">
+            Location from <SourceLink source={company.locationSource} />
+          </p>
+        )}
+      </div>
       <dl className="ow-stats">
         {company.founded !== null && <Stat label="Founded" value={String(company.founded)} />}
         <Stat label="Games led" value={company.leadCount} />

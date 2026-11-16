@@ -106,4 +106,53 @@ describe('YearSlider', () => {
     const { container } = render(<YearSlider />);
     expect(container.querySelectorAll('rect')).toHaveLength(41);
   });
+
+  it('lands exactly on 1985 from 1970 using keys', async () => {
+    useStore.setState({ year: 1970 });
+    const user = userEvent.setup();
+    render(<YearSlider />);
+    screen.getByRole('slider').focus();
+    await user.keyboard('{PageUp}{ArrowRight}{ArrowRight}{ArrowRight}{ArrowRight}{ArrowRight}');
+    expect(year()).toBe(1985);
+    expect(screen.getByText('1985', { selector: 'output' })).toBeInTheDocument();
+    expect(screen.getByRole('slider')).toHaveValue('1985');
+  });
+
+  it('does not lose rapid key presses', () => {
+    useStore.setState({ year: 1980 });
+    render(<YearSlider />);
+    const range = screen.getByRole('slider');
+    for (let i = 0; i < 5; i++) fireEvent.keyDown(range, { key: 'ArrowRight' });
+    expect(year()).toBe(1985);
+  });
+
+  it('a keyboard step pauses playback so the timer cannot add a year', () => {
+    vi.useFakeTimers();
+    useStore.setState({ year: 1980 });
+    render(<YearSlider />);
+    fireEvent.click(screen.getByRole('button', { name: 'Play timeline' }));
+    fireEvent.keyDown(screen.getByRole('slider'), { key: 'ArrowRight' });
+    expect(useStore.getState().playing).toBe(false);
+    act(() => void vi.advanceTimersByTime(2000));
+    expect(year()).toBe(1981);
+  });
+
+  it('never shows a year outside the range', () => {
+    useStore.setState({ year: 2999 });
+    const { rerender } = render(<YearSlider />);
+    expect(screen.getByText('2010', { selector: 'output' })).toBeInTheDocument();
+    act(() => useStore.setState({ year: 1900 }));
+    rerender(<YearSlider />);
+    expect(screen.getByText('1970', { selector: 'output' })).toBeInTheDocument();
+    expect(screen.getByRole('slider')).toHaveValue('1970');
+  });
+
+  it('clamps a keyboard step from an out-of-range store year', async () => {
+    useStore.setState({ year: 2999 });
+    const user = userEvent.setup();
+    render(<YearSlider />);
+    screen.getByRole('slider').focus();
+    await user.keyboard('{ArrowLeft}');
+    expect(year()).toBe(2010);
+  });
 });
