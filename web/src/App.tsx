@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useStore } from './data/store';
 import { GlobeView } from './globe/GlobeView';
 import { Overlay } from './ui/Overlay';
+import { useUrlState } from './share/urlState';
 
 const shell = {
   minHeight: '100vh',
@@ -23,6 +24,8 @@ export function App() {
   useEffect(() => {
     void init();
   }, [init]);
+
+  useUrlState();
 
   if (status !== 'ready' || !meta) {
     return (
