@@ -16,6 +16,16 @@ describe('Attribution', () => {
     expect(screen.queryByText(/Sample data/)).toBeNull();
   });
 
+  it('credits the satellite imagery exactly as EOX asks', () => {
+    seedStore();
+    render(<Attribution />);
+    const eox = screen.getByRole('link', {
+      name: 'Sentinel-2 cloudless – https://s2maps.eu by EOX IT Services GmbH (Contains modified Copernicus Sentinel data 2016 & 2017)',
+    });
+    expect(eox).toHaveAttribute('href', 'https://s2maps.eu');
+    expect(eox).toHaveAttribute('rel', 'noopener noreferrer');
+  });
+
   it('flags sample data', () => {
     seedStore({ meta: { ...meta, fixture: true, attribution: [{ source: 'curated', name: 'Fixture', url: 'https://x.test', licence: 'n/a' }] } });
     render(<Attribution />);

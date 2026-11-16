@@ -3,9 +3,19 @@ import { alpha2OfNumeric, shadeBucket, shadeColor, SHADE_BUCKETS, type CountrySh
 import { triangulateShape } from './fill';
 import { buildOutline } from './outline';
 
+const TINT_BASE = '#3b6f8a';
+const IMAGERY_STROKE = '#e3e9f0';
+const IMAGERY_STROKE_OPACITY = 0.42;
+
+export function tintAlpha(bucket: number): number {
+  if (bucket <= 0) return 0;
+  return 0.22 + 0.43 * Math.min(1, bucket / (SHADE_BUCKETS - 1));
+}
+
 export class CountriesLayer {
   private readonly fillMaterial = new THREE.MeshBasicMaterial({ vertexColors: true, side: THREE.DoubleSide });
   private readonly lineMaterial: THREE.LineBasicMaterial;
+  private readonly stroke: THREE.Color;
   private readonly mesh: THREE.Mesh;
   private readonly lines: THREE.LineSegments;
   private fillGeometry = new THREE.BufferGeometry();
@@ -14,7 +24,9 @@ export class CountriesLayer {
   private readonly lineCache = new WeakMap<CountryShape, Float32Array>();
   private readonly bucketColors: THREE.Color[];
   private ranges: { start: number; end: number; code: string }[] = [];
+  private readonly tintColors: THREE.Color[];
   private shade: Record<string, number> | null = null;
+  private imagery = false;
 
   constructor(
     private readonly scene: THREE.Object3D,
@@ -22,6 +34,7 @@ export class CountriesLayer {
     stroke: string,
     shadeTop: string,
   ) {
+    this.stroke = new THREE.Color(stroke);
     this.lineMaterial = new THREE.LineBasicMaterial({ color: stroke });
     this.mesh = new THREE.Mesh(this.fillGeometry, this.fillMaterial);
     this.lines = new THREE.LineSegments(this.lineGeometry, this.lineMaterial);
@@ -30,6 +43,7 @@ export class CountriesLayer {
     this.mesh.renderOrder = 0;
     this.lines.renderOrder = 1;
     this.bucketColors = Array.from({ length: SHADE_BUCKETS }, (_, b) => new THREE.Color(shadeColor(b, fill, shadeTop)));
+    this.tintColors = Array.from({ length: SHADE_BUCKETS }, (_, b) => new THREE.Color(shadeColor(b, TINT_BASE, shadeTop)));
     scene.add(this.mesh, this.lines);
   }
 
@@ -65,7 +79,7 @@ export class CountriesLayer {
     this.fillGeometry.dispose();
     this.fillGeometry = new THREE.BufferGeometry();
     this.fillGeometry.setAttribute('position', new THREE.BufferAttribute(position, 3));
-    this.fillGeometry.setAttribute('color', new THREE.BufferAttribute(new Float32Array(fillLen), 3));
+    this.fillGeometry.setAttribute('color', new THREE.BufferAttribute(new Float32Array((fillLen / 3) * 4), 4));
     this.mesh.geometry = this.fillGeometry;
     this.lineGeometry.dispose();
     this.lineGeometry = new THREE.BufferGeometry();
@@ -79,16 +93,35 @@ export class CountriesLayer {
     this.applyShade();
   }
 
+  setImagery(on: boolean): void {
+    if (on === this.imagery) return;
+    this.imagery = on;
+    this.applyShade();
+  }
+
   private applyShade(): void {
+    const tinted = this.imagery;
+    this.fillMaterial.transparent = tinted;
+    this.fillMaterial.depthWrite = !tinted;
+    this.fillMaterial.needsUpdate = true;
+    this.mesh.visible = !tinted || this.shade !== null;
+    if (tinted) this.lineMaterial.color.set(IMAGERY_STROKE);
+    else this.lineMaterial.color.copy(this.stroke);
+    this.lineMaterial.transparent = tinted;
+    this.lineMaterial.opacity = tinted ? IMAGERY_STROKE_OPACITY : 1;
+    this.lineMaterial.needsUpdate = true;
     const attr = this.fillGeometry.getAttribute('color') as THREE.BufferAttribute | undefined;
     if (!attr) return;
     const arr = attr.array as Float32Array;
     for (const r of this.ranges) {
-      const c = this.bucketColors[shadeBucket(this.shade?.[r.code])]!;
+      const b = shadeBucket(this.shade?.[r.code]);
+      const c = (tinted ? this.tintColors : this.bucketColors)[b]!;
+      const a = tinted ? tintAlpha(b) : 1;
       for (let i = r.start; i < r.end; i++) {
-        arr[i * 3] = c.r;
-        arr[i * 3 + 1] = c.g;
-        arr[i * 3 + 2] = c.b;
+        arr[i * 4] = c.r;
+        arr[i * 4 + 1] = c.g;
+        arr[i * 4 + 2] = c.b;
+        arr[i * 4 + 3] = a;
       }
     }
     attr.needsUpdate = true;

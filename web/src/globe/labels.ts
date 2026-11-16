@@ -158,6 +158,20 @@ export class LabelManager {
     });
   }
 
+  obstacles(): { x: number; y: number; w: number; h: number }[] {
+    const out: { x: number; y: number; w: number; h: number }[] = [];
+    this.entries.forEach((e, i) => {
+      if (!this.projected.visible[i]) return;
+      const x = this.projected.x[i]!;
+      const y = this.projected.y[i]!;
+      const r = e.item.radius;
+      out.push({ x: x - r, y: y - r, w: 2 * r, h: 2 * r });
+      const off = this.offsets.get(e.item.id);
+      if (off) out.push({ x: x + off.dx, y: y + off.dy, w: e.w, h: e.h });
+    });
+    return out;
+  }
+
   dispose(): void {
     for (const e of this.entries) e.el.remove();
     this.entries = [];

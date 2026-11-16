@@ -10,5 +10,7 @@ export const COLORS = {
   countryStroke: '#2b3a4f',
   atmosphere: '#3a6ea5',
   lead: '#F0E442',
-  idle: '#A0A7B4',
+  idle: '#9aa3b2',
+  dot: '#eef1f5',
+  dotRim: '#0a0e14',
 } as const;

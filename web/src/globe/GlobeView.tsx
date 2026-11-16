@@ -13,14 +13,30 @@ import { nearShapes, prepareDetail, upgradeShapes, type DetailShape } from './de
 import { DebugHud, type Readout } from './DebugHud';
 import { frameTarget, gameTarget, placeTarget, type Target } from './flight';
 import { FrameStats } from './frameStats';
-import { LabelManager, type LabelItem } from './labels';
+import { LabelManager, type LabelFrame, type LabelItem } from './labels';
+import { MapLabels } from './mapLabels';
+import { countryAnchors } from './placeNames';
+import type { Rect } from './rectGrid';
 import { layoutCompanies } from './layout';
-import { CITY_FROM } from './levels';
+import { CITY_FROM, LEVELS } from './levels';
 import { CountriesLayer } from './countriesLayer';
+import { CoversLayer, type CoverEntry } from './coversLayer';
 import { MarkersLayer, type MarkerItem } from './markersLayer';
 import { PICK_RADIUS_PX } from './picking';
 import { isClick, pointerToCanvas } from './pointer';
-import { PointsLayer, type PickedPoint } from './pointsLayer';
+import { POINT_ALTITUDE, PointsLayer, type PickedPoint } from './pointsLayer';
+import {
+  findTileEngine,
+  IMAGERY_LIGHT,
+  IMAGERY_TINT,
+  imageryVerdict,
+  loadedTileCount,
+  TILE_MAX_LEVEL,
+  TileRepair,
+  browserTileChecks,
+  tileUrl,
+  type ImageryState,
+} from './tiles';
 
 declare global {
   interface Window {
@@ -29,6 +45,13 @@ declare global {
       frameTimes(): number[];
       level(): string;
       pointCount(): number;
+      coverCount(): number;
+      coversLoaded(): number;
+      imagesLoaded(): number;
+      visibleCovers(): string[];
+      imagery(): string;
+      namesPlaced(): number;
+      lastLayoutMs(): number;
       setYear(y: number): void;
       playYears(msPerYear: number): Promise<void>;
     };
@@ -39,7 +62,10 @@ const NO_ARCS: RoleArcs = { arcs: [], markers: [], labels: [] };
 const FLY_MS = 1200;
 const SHADE_TOP = '#2f8f9d';
 const EXTRA_STROKE = 0.45;
-
+const BASE_RADIUS = 99.6;
+const SETTLE_MS = 160;
+const MOVING_LAYOUT_MS = 650;
+const TILE_PROPS = { globeTileEngineMaxLevel: TILE_MAX_LEVEL } as Record<string, unknown>;
 
 function useWindowSize() {
   const [size, setSize] = useState(() => ({ w: window.innerWidth, h: window.innerHeight }));
@@ -96,7 +122,10 @@ export function GlobeView() {
   const globeRef = useRef<GlobeMethods | undefined>(undefined);
   const tooltipRef = useRef<HTMLDivElement>(null);
   const labelRootRef = useRef<HTMLDivElement>(null);
+  const mapRootRef = useRef<HTMLDivElement>(null);
   const layerRef = useRef<PointsLayer | null>(null);
+  const coversRef = useRef<CoversLayer | null>(null);
+  const relayoutRef = useRef<'none' | 'sticky' | 'fresh'>('fresh');
   const markersRef = useRef<MarkersLayer | null>(null);
   const countriesRef = useRef<CountriesLayer | null>(null);
   const labelsRef = useRef<LabelManager | null>(null);
@@ -108,6 +137,9 @@ export function GlobeView() {
   const needUpgrade = useRef(false);
   const mountedRef = useRef(true);
   const [ready, setReady] = useState(false);
+  const [imagery, setImagery] = useState<ImageryState>('pending');
+  const imageryRef = useRef(imagery);
+  imageryRef.current = imagery;
   const [shapes, setShapes] = useState<CountryShape[]>(() => loadCountryShapes());
   const shapesRef = useRef(shapes);
   shapesRef.current = shapes;
@@ -118,6 +150,7 @@ export function GlobeView() {
     [],
   );
   const countryName = useMemo(makeCountryNamer, []);
+  const anchors = useMemo(() => countryAnchors(loadCountryShapes()), []);
   const globeMaterial = useMemo(() => new THREE.MeshBasicMaterial({ color: COLORS.globe }), []);
   useEffect(() => {
     mountedRef.current = true;
@@ -246,6 +279,53 @@ export function GlobeView() {
 
   useEffect(() => {
     const globe = globeRef.current;
+    if (!ready || !globe) return;
+    const scene = globe.scene();
+    const base = new THREE.Mesh(
+      new THREE.SphereGeometry(BASE_RADIUS, 64, 32),
+      new THREE.MeshBasicMaterial({ color: COLORS.globe }),
+    );
+    base.renderOrder = -1;
+    scene.add(base);
+    globe.lights([new THREE.AmbientLight(IMAGERY_TINT, IMAGERY_LIGHT * Math.PI)]);
+    return () => {
+      scene.remove(base);
+      base.geometry.dispose();
+      base.material.dispose();
+    };
+  }, [ready]);
+
+  useEffect(() => {
+    const globe = globeRef.current;
+    if (!ready || !globe || imagery !== 'pending') return;
+    const start = performance.now();
+    const id = window.setInterval(() => {
+      const engine = findTileEngine(globe.scene());
+      const verdict = imageryVerdict(engine ? loadedTileCount(engine) : 0, performance.now() - start);
+      if (verdict !== 'pending') setImagery(verdict);
+    }, 400);
+    return () => window.clearInterval(id);
+  }, [ready, imagery]);
+
+  useEffect(() => {
+    countriesRef.current?.setImagery(imagery === 'on');
+    if (imagery === 'off') globeRef.current?.globeTileEngineClearCache();
+  }, [imagery]);
+
+  useEffect(() => {
+    const globe = globeRef.current;
+    if (!ready || !globe || imagery !== 'on') return;
+    const repair = new TileRepair(browserTileChecks);
+    let engine: ReturnType<typeof findTileEngine> = null;
+    const id = window.setInterval(() => {
+      engine ??= findTileEngine(globe.scene());
+      if (engine) repair.tick(engine);
+    }, 200);
+    return () => window.clearInterval(id);
+  }, [ready, imagery]);
+
+  useEffect(() => {
+    const globe = globeRef.current;
     const timeline = useStore.getState().timeline;
     if (!ready || !globe || !indexes || !timeline || !layout) return;
     const scene = globe.scene();
@@ -275,8 +355,58 @@ export function GlobeView() {
     const outline = new CountriesLayer(scene, COLORS.countryFill, COLORS.countryStroke, SHADE_TOP);
     outline.set(shapesRef.current);
     outline.setShade(useStore.getState().countryShade);
+    outline.setImagery(imageryRef.current === 'on');
     countriesRef.current = outline;
     const labels = labelRootRef.current ? new LabelManager(labelRootRef.current, globe) : null;
+    const names = mapRootRef.current ? new MapLabels(mapRootRef.current, globe, anchors, indexes.cities, !reducedMotion) : null;
+    const covers = new CoversLayer({
+      scene,
+      renderer,
+      indexes,
+      positions: { country: layer.positions('country'), city: layer.positions('city'), company: layer.positions('company') },
+      hidden: { country: null, city: null, company: layout.hidden },
+      animate: !reducedMotion,
+    });
+    covers.setTimeline(timeline, initial.gameFilter);
+    covers.setYear(initial.year);
+    covers.setVisible(initial.pointsVisible);
+    coversRef.current = covers;
+    names?.setPillsVisible(initial.pointsVisible);
+    relayoutRef.current = 'fresh';
+    let lastMove = -Infinity;
+    let lastLayout = -Infinity;
+    let layoutMs = 0;
+    let pendingSettle = false;
+    let lastLevel = layer.level();
+    const layoutPlaces = (frame: LabelFrame, sticky: boolean) => {
+      const t0 = performance.now();
+      const level = layer.level();
+      const arcRects = labels?.obstacles() ?? [];
+      const chosen = covers.select({ frame, level, counts: layer.counts(level), sticky, obstacles: arcRects });
+      for (const l of LEVELS) covers.coveredMask(l, layer.coveredMask(l));
+      layer.applyCovered();
+      if (names) {
+        const st = useStore.getState();
+        const cityCounts = st.timeline ? st.timeline.levelAt('city', st.year) : new Uint32Array(0);
+        const cityRects = new Map<number, Rect>();
+        if (level === 'city') for (const e of chosen) cityRects.set(e.index, e.rect);
+        names.layout({
+          frame,
+          altitude: globe.pointOfView().altitude,
+          showCities: level !== 'country',
+          cityCounts,
+          obstacles: [...covers.rects(), ...arcRects],
+          cityAround: (i, x, y) => cityRects.get(i) ?? { x: x - 5, y: y - 5, w: 10, h: 10 },
+          sticky,
+        });
+        names.setPills(covers.pills(level), frame);
+      }
+      layoutMs = performance.now() - t0;
+    };
+    const currentFrame = (): LabelFrame => {
+      const m = new THREE.Matrix4().multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse);
+      return { viewProjection: m.elements, camera: camera.position, width: canvas.clientWidth, height: canvas.clientHeight };
+    };
     labels?.setItems(labelItemsRef.current);
     labelsRef.current = labels;
 
@@ -297,7 +427,8 @@ export function GlobeView() {
         return;
       }
       const year = useStore.getState().year;
-      tooltip.textContent = `${p.name}\n${p.count} ${p.count === 1 ? 'game' : 'games'} led by ${year}`;
+      const games = `${p.count} ${p.count === 1 ? 'game' : 'games'} led by ${year}`;
+      tooltip.textContent = p.game ? `${p.game}\n${p.name}\n${games}` : `${p.name}\n${games}`;
       tooltip.style.display = 'block';
       placeTooltip();
     };
@@ -316,6 +447,23 @@ export function GlobeView() {
       return p;
     };
 
+    const pickAt = (x: number, y: number, frame: LabelFrame): (PickedPoint & { entry: CoverEntry | null }) | null => {
+      const c = covers.pick(x, y, frame);
+      if (c) {
+        const e = c.entry;
+        return {
+          level: e.level,
+          index: e.index,
+          name: layer.nameAt(e.level, e.index),
+          count: layer.counts(e.level)[e.index] ?? 0,
+          game: c.game?.name,
+          entry: e,
+        };
+      }
+      const d = layer.pick(x, y, camera, frame.width, frame.height);
+      return d ? { ...d, entry: null } : null;
+    };
+
     const onMove = (ev: PointerEvent) => {
       track(ev);
       pointer.inside = true;
@@ -325,6 +473,7 @@ export function GlobeView() {
       pointer.inside = false;
       pointer.down = false;
       setHover(null);
+      covers.setHover(null);
       labels?.setHover(null);
       hoveredLabel = null;
     };
@@ -334,13 +483,14 @@ export function GlobeView() {
       pointer.downX = p.x;
       pointer.downY = p.y;
       setHover(null);
+      covers.setHover(null);
     };
     const onUp = (ev: PointerEvent) => {
       if (!pointer.down) return;
       pointer.down = false;
       const p = track(ev);
       if (!isClick(pointer.downX, pointer.downY, p.x, p.y)) return;
-      const hit = pointsPickable() ? layer.pick(p.x, p.y, camera, p.w, p.h) : null;
+      const hit = pointsPickable() ? pickAt(p.x, p.y, currentFrame()) : null;
       if (hit) {
         useStore.getState().selectPlace({ level: hit.level, key: layer.keyAt(hit.level, hit.index) });
         return;
@@ -360,17 +510,29 @@ export function GlobeView() {
     };
     let lastCameraSeq = initial.cameraRequest?.seq ?? 0;
     const unsubscribe = useStore.subscribe((s, prev) => {
+      if (s.timeline !== prev.timeline || s.gameFilter !== prev.gameFilter) {
+        if (s.timeline) {
+          layer.setTimeline(s.timeline, s.gameFilter === null);
+          covers.setTimeline(s.timeline, s.gameFilter);
+        }
+        dirtyRef.current = true;
+        if (relayoutRef.current === 'none') relayoutRef.current = 'sticky';
+      }
       if (s.year !== prev.year) {
         layer.setYear(s.year);
+        covers.setYear(s.year);
         dirtyRef.current = true;
-      }
-      if (s.timeline !== prev.timeline || s.gameFilter !== prev.gameFilter) {
-        if (s.timeline) layer.setTimeline(s.timeline, s.gameFilter === null);
-        dirtyRef.current = true;
+        if (relayoutRef.current === 'none') relayoutRef.current = 'sticky';
       }
       if (s.pointsVisible !== prev.pointsVisible) {
         layer.setVisible(s.pointsVisible);
-        if (!s.pointsVisible) setHover(null);
+        covers.setVisible(s.pointsVisible);
+        names?.setPillsVisible(s.pointsVisible);
+        relayoutRef.current = 'fresh';
+        if (!s.pointsVisible) {
+          setHover(null);
+          covers.setHover(null);
+        }
       }
       if (s.selectedPlace !== prev.selectedPlace && s.selectedPlace) {
         fly(placeTarget(indexes, layout, companyIndex, s.selectedPlace));
@@ -416,14 +578,27 @@ export function GlobeView() {
           } else needUpgrade.current = false;
         } else needUpgrade.current = false;
       }
-      if (labels) {
-        vp.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse);
-        labels.tick(
-          { viewProjection: vp.elements, camera: camera.position, width: canvas.clientWidth, height: canvas.clientHeight },
-          moved,
-          now,
-        );
+      vp.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse);
+      const frame: LabelFrame = { viewProjection: vp.elements, camera: camera.position, width: canvas.clientWidth, height: canvas.clientHeight };
+      labels?.tick(frame, moved, now);
+      if (moved) {
+        lastMove = now;
+        pendingSettle = true;
       }
+      const level = layer.level();
+      if (level !== lastLevel) {
+        lastLevel = level;
+        relayoutRef.current = 'fresh';
+      }
+      const settled = now - lastMove >= SETTLE_MS;
+      const relayout = relayoutRef.current;
+      if (relayout !== 'none' || (settled && pendingSettle) || (!settled && now - lastLayout >= MOVING_LAYOUT_MS)) {
+        layoutPlaces(frame, relayout === 'sticky' || (!settled && relayout !== 'fresh'));
+        relayoutRef.current = 'none';
+        lastLayout = now;
+        if (settled) pendingSettle = false;
+      } else if (moved) names?.follow(frame);
+      covers.frame(frame.width, frame.height);
 
       if (dirtyRef.current) {
         dirtyRef.current = false;
@@ -431,8 +606,9 @@ export function GlobeView() {
           const rect = canvas.getBoundingClientRect();
           const w2 = rect.width;
           const h2 = rect.height;
-          const p = pointsPickable() ? layer.pick(pointer.x, pointer.y, camera, w2, h2) : null;
-          if (p?.level !== hovered?.level || p?.index !== hovered?.index || p?.count !== hovered?.count) setHover(p);
+          const p = pointsPickable() ? pickAt(pointer.x, pointer.y, { ...frame, width: w2, height: h2 }) : null;
+          covers.setHover(p?.entry ?? null);
+          if (p?.level !== hovered?.level || p?.index !== hovered?.index || p?.count !== hovered?.count || p?.game !== hovered?.game) setHover(p);
           else if (p) placeTooltip();
           if (labels) {
             const id = labels.nearest(pointer.x, pointer.y, PICK_RADIUS_PX);
@@ -451,6 +627,13 @@ export function GlobeView() {
         frameTimes: () => stats.frameTimes(),
         level: () => layer.level(),
         pointCount: () => layer.pointCount(),
+        coverCount: () => covers.coverCount(),
+        coversLoaded: () => covers.loadedCovers(),
+        imagesLoaded: () => covers.imagesLoaded(),
+        visibleCovers: () => covers.visibleGames(),
+        imagery: () => imageryRef.current,
+        namesPlaced: () => names?.placedCount() ?? 0,
+        lastLayoutMs: () => layoutMs,
         setYear: (y) => useStore.getState().setYear(y),
         playYears: (msPerYear) =>
           new Promise<void>((resolve) => {
@@ -483,15 +666,18 @@ export function GlobeView() {
       if (tooltip) tooltip.style.display = 'none';
       if (debug) delete window.__overworld;
       layer.dispose();
+      covers.dispose();
+      coversRef.current = null;
       markers.dispose();
       outline.dispose();
       labels?.dispose();
+      names?.dispose();
       countriesRef.current = null;
       layerRef.current = null;
       markersRef.current = null;
       labelsRef.current = null;
     };
-  }, [ready, indexes, layout, companyIndex, countryName, debug]);
+  }, [ready, indexes, layout, companyIndex, countryName, debug, anchors, reducedMotion]);
 
   useEffect(() => {
     countriesRef.current?.set(shapes);
@@ -504,6 +690,16 @@ export function GlobeView() {
   useEffect(() => {
     markersRef.current?.set(markerItems);
   }, [markerItems]);
+
+  useEffect(() => {
+    const globe = globeRef.current;
+    const covers = coversRef.current;
+    if (!ready || !globe || !covers || !indexes) return;
+    const lead = arcs.markers.find((m) => m.lead);
+    const game = detail ? indexes.gameById.get(detail.id) ?? null : null;
+    covers.setSelectedGame(game && lead ? game : null, lead ? globe.getCoords(lead.lat, lead.lng, POINT_ALTITUDE) : null);
+    relayoutRef.current = 'sticky';
+  }, [arcs.markers, detail, indexes, ready, layout]);
 
   useEffect(() => {
     labelsRef.current?.setItems(labelItems);
@@ -524,6 +720,7 @@ export function GlobeView() {
       fps: statsRef.current.fps(performance.now()),
       level: layerRef.current?.level() ?? '-',
       points: layerRef.current?.pointCount() ?? 0,
+      covers: coversRef.current?.coverCount() ?? 0,
     }),
     [],
   );
@@ -539,6 +736,8 @@ export function GlobeView() {
         height={h}
         backgroundColor={COLORS.background}
         globeMaterial={globeMaterial}
+        globeTileEngineUrl={imagery === 'off' ? null : tileUrl}
+        {...TILE_PROPS}
         atmosphereColor={COLORS.atmosphere}
         atmosphereAltitude={0.18}
         enablePointerInteraction={false}
@@ -557,6 +756,7 @@ export function GlobeView() {
         arcDashAnimateTime={animated ? 2400 : 0}
         arcsTransitionDuration={0}
       />
+      <div ref={mapRootRef} style={{ position: 'absolute', inset: 0, pointerEvents: 'none', overflow: 'hidden' }} />
       <div ref={labelRootRef} style={{ position: 'absolute', inset: 0, pointerEvents: 'none', overflow: 'hidden' }} />
       <div ref={tooltipRef} style={tooltipStyle} />
       {debug && <DebugHud read={readout} />}

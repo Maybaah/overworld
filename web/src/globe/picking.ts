@@ -17,6 +17,7 @@ export function projectPoints(
   width: number,
   height: number,
   out: ProjectedPoints,
+  minFacing = 0,
 ): void {
   const m = viewProjection;
   const n = positions.length / 3;
@@ -25,7 +26,14 @@ export function projectPoints(
     const py = positions[i * 3 + 1]!;
     const pz = positions[i * 3 + 2]!;
     const w = m[3]! * px + m[7]! * py + m[11]! * pz + m[15]!;
-    const facing = px * camera.x + py * camera.y + pz * camera.z > px * px + py * py + pz * pz;
+    const lift = px * camera.x + py * camera.y + pz * camera.z - (px * px + py * py + pz * pz);
+    let facing = lift > 0;
+    if (facing && minFacing > 0) {
+      const dx = camera.x - px;
+      const dy = camera.y - py;
+      const dz = camera.z - pz;
+      facing = lift > minFacing * Math.sqrt((px * px + py * py + pz * pz) * (dx * dx + dy * dy + dz * dz));
+    }
     if (w <= 0 || !facing) {
       out.visible[i] = 0;
       continue;

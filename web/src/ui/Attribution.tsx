@@ -26,6 +26,10 @@ export function Attribution() {
         <a href="https://www.igdb.com" target="_blank" rel="noopener noreferrer">
           IGDB
         </a>
+        {' · '}
+        <a href="https://s2maps.eu" target="_blank" rel="noopener noreferrer" title="CC BY 4.0">
+          Sentinel-2 cloudless – https://s2maps.eu by EOX IT Services GmbH (Contains modified Copernicus Sentinel data 2016 &amp; 2017)
+        </a>
       </p>
     </footer>
   );

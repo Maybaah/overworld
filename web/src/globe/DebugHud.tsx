@@ -4,6 +4,7 @@ export interface Readout {
   fps: number;
   level: string;
   points: number;
+  covers: number;
 }
 
 const style = {
@@ -30,7 +31,7 @@ export function DebugHud({ read }: { read: () => Readout }) {
   }, [read]);
   return (
     <div style={style} data-testid="debug-hud">
-      {`fps ${r.fps}  level ${r.level}  points ${r.points}`}
+      {`fps ${r.fps}  level ${r.level}  points ${r.points}  covers ${r.covers}`}
     </div>
   );
 }

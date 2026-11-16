@@ -201,7 +201,7 @@ const PAGE_SETUP = async () => {
 
     meta() {
       const s = useStore.getState();
-      return { minYear: s.timeline.minYear, maxYear: s.timeline.maxYear, games: s.indexes.games.length, companies: s.indexes.companies.length };
+      return { generatedAt: s.meta.generatedAt, minYear: s.timeline.minYear, maxYear: s.timeline.maxYear, games: s.indexes.games.length, companies: s.indexes.companies.length };
     },
 
     async findGame() {
@@ -364,7 +364,9 @@ async function launch(attempt, userDataDir) {
 }
 
 function classifyUrl(url) {
-  return /images\.igdb\.com/.test(url || '') ? 'igdb-cover' : 'other';
+  if (/images\.igdb\.com/.test(url || '')) return 'igdb-cover';
+  if (/tiles\.maps\.eox\.at/.test(url || '')) return 'map-tile';
+  return 'other';
 }
 
 async function main() {
@@ -464,6 +466,13 @@ async function main() {
     log(`ready: ${dataMeta.games} games, ${dataMeta.companies} companies, years ${dataMeta.minYear}-${dataMeta.maxYear}`);
     const dpr = await page.evaluate(() => window.devicePixelRatio);
 
+    await page.evaluate(() => {
+      window.__measureSession = true;
+    });
+    const guardReload = async () => {
+      const same = await page.evaluate(() => window.__measureSession === true).catch(() => false);
+      if (!same) throw new Error('page reloaded during the run (dev server HMR full reload: app sources changed while measuring); results invalid');
+    };
     const cdp = await page.createCDPSession();
     await cdp.send('Emulation.setFocusEmulationEnabled', { enabled: true }).catch(() => {});
     const ensureAlive = async () => {
@@ -505,11 +514,13 @@ async function main() {
 
     async function runScenario(id, title, expectLevel, setup, opts = {}) {
       log(`scenario ${id}: ${title}`);
+      await guardReload();
       await ensureAlive();
       await setup();
       await sleep(opts.settleMs ?? SETTLE_MS);
       const level = await page.evaluate(() => window.__overworld.level());
       const points = await page.evaluate(() => window.__overworld.pointCount());
+      const covers = await page.evaluate(() => window.__overworld.coverCount());
       let during = null;
       let times;
       if (opts.during) during = opts.during();
@@ -520,11 +531,11 @@ async function main() {
       }
       const extra = during ? await during : null;
       const appFps = await page.evaluate(() => window.__overworld.fps());
-      const s = stats(times);
+      const s = stats(times) ?? { frames: 0, durationMs: 0, avgFps: 0, low1Fps: 0, medianMs: 0, p95Ms: 0, p99Ms: 0, maxMs: 0, over20Pct: 100 };
       const levelOk = level === expectLevel;
       const pass = !!s && levelOk && !software && s.avgFps >= PASS_AVG_FPS && s.p95Ms <= PASS_P95_MS;
       const screenshot = await shot(id);
-      const rec = { id, title, expectedLevel: expectLevel, level, levelOk, points, appFps, ...s, pass, extra, screenshot };
+      const rec = { id, title, expectedLevel: expectLevel, level, levelOk, points, covers, appFps, ...s, pass, extra, screenshot };
       scenarios.push(rec);
       log(`  avg ${s.avgFps} fps, 1% low ${s.low1Fps}, median ${s.medianMs} ms, p95 ${s.p95Ms} ms, frames ${s.frames}, >20ms ${s.over20Pct}%, level ${level}${levelOk ? '' : ` (expected ${expectLevel})`} -> ${pass ? 'PASS' : 'FAIL'}`);
       return rec;
@@ -532,6 +543,11 @@ async function main() {
 
     const city = await page.evaluate(() => window.__m.denseCity());
     log(`dense city: ${city.name} (${city.country}) with ${city.companies} companies`);
+
+    await page.waitForFunction(() => window.__overworld.imagery() !== 'pending', { timeout: 15000 }).catch(() => {});
+    await page.waitForFunction(() => window.__overworld.coversLoaded() >= 20, { timeout: 15000 }).catch(() => {});
+    const imageryState = await page.evaluate(() => window.__overworld.imagery());
+    log(`imagery: ${imageryState}`);
 
     await runScenario('a-idle-country', 'Idle at country level (default view, default slow auto-rotate)', 'country', async () => {});
 
@@ -647,6 +663,7 @@ async function main() {
     }), toggleLabels);
 
     log('functional checks');
+    await guardReload();
     await ensureAlive();
     await page.evaluate(() => window.__m.reset());
     await page.evaluate(() => window.__m.pov(20, 10, 2.5, 0));
@@ -677,7 +694,23 @@ async function main() {
     await page.evaluate(() => window.__m.reset());
     await page.evaluate(() => window.__m.pov(20, 10, 2.5, 0));
     await sleep(800);
+    const coverWaitStart = Date.now();
+    await page.waitForFunction(() => window.__overworld.coversLoaded() >= 20, { timeout: 20000 }).catch(() => {});
+    const coverState = await page.evaluate(() => ({
+      level: window.__overworld.level(),
+      covers: window.__overworld.coverCount(),
+      loaded: window.__overworld.coversLoaded(),
+      images: window.__overworld.imagesLoaded(),
+    }));
+    await shot('covers-country');
+    addFunc(
+      'cover images (country level)',
+      coverState.level === 'country' && coverState.loaded >= 20,
+      `level ${coverState.level}; ${coverState.covers} covers placed, ${coverState.loaded} of them showing their loaded image after ${Math.round((Date.now() - coverWaitStart) / 100) / 10} s (need >= 20); ${coverState.images} images uploaded to the atlas so far`,
+    );
+
     const finalYear = dataMeta.maxYear;
+    const coversFinal = await page.evaluate(() => window.__overworld.visibleCovers());
     const ptsFinal = await page.evaluate(() => window.__overworld.pointCount());
     await page.focus('input.ow-range');
     const steps = finalYear - 1985;
@@ -688,11 +721,22 @@ async function main() {
     const rangeVal = await page.evaluate(() => document.querySelector('input.ow-range')?.value ?? null);
     const pts1985 = await page.evaluate(() => window.__overworld.pointCount());
     const total1985 = await page.evaluate(() => document.querySelector('.ow-slider-total')?.textContent ?? null);
+    const covers1985 = await page.evaluate(() => window.__overworld.visibleCovers());
     await shot('year-1985');
     addFunc(
       'year slider',
       yearText === '1985' && pts1985 < ptsFinal,
-      `keyboard on slider; readout "${yearText}" (range ${rangeVal}); points drawn ${pts1985} at 1985 vs ${ptsFinal} at ${finalYear}; "${total1985?.trim()}"`,
+      `keyboard on slider; readout "${yearText}" (range ${rangeVal}); places drawn (covers + dots) ${pts1985} at 1985 vs ${ptsFinal} at ${finalYear}; "${total1985?.trim()}"`,
+    );
+    const gameOf = (list) => new Map(list.map((k) => [k.split(':').slice(0, 2).join(':'), k.split(':')[2]]));
+    const before = gameOf(coversFinal);
+    const after = gameOf(covers1985);
+    const shared = [...after.keys()].filter((k) => before.has(k));
+    const changed = shared.filter((k) => before.get(k) !== after.get(k));
+    addFunc(
+      'year changes covers',
+      changed.length >= 1,
+      `same view, ${finalYear} -> 1985: ${coversFinal.length} -> ${covers1985.length} covers; ${shared.length} places have a cover in both years, ${changed.length} of them now show a different game (need >= 1)`,
     );
 
     await ensureAlive();
@@ -727,10 +771,12 @@ async function main() {
     );
 
     await sleep(500);
+    await guardReload();
     collect.on = false;
 
     const errs = collect.console.filter((c) => c.kind === 'other');
     const igdbConsole = collect.console.filter((c) => c.kind === 'igdb-cover');
+    const tileFailed = collect.failed.filter((f) => f.kind === 'map-tile');
     const failedOther = collect.failed.filter((f) => f.kind === 'other');
     const igdbFailed = collect.failed.filter((f) => f.kind === 'igdb-cover');
     const igdbExpected = DATA === 'fixture';
@@ -741,12 +787,14 @@ async function main() {
       pageErrors: collect.pageErrors,
       failedRequests: uniq(failedOther, (f) => `${f.reason} ${f.url}`),
       igdbCoverFailures: { expected: igdbExpected, requests: uniq(igdbFailed, (f) => f.url).length, consoleMessages: igdbConsole.length },
+      mapTileFailures: uniq(tileFailed, (f) => `${f.reason} ${f.url}`),
+      imagery: imageryState,
     };
     const nErr = errs.length + collect.pageErrors.length + failedOther.length + countedIgdb;
     addFunc(
       'no console errors / failed requests',
       nErr === 0,
-      `${errs.length} console errors, ${collect.pageErrors.length} page errors, ${failedOther.length} failed/4xx-5xx requests${igdbExpected ? '' : `, ${countedIgdb} IGDB cover failures`}; ${igdbExpected ? `excluded as expected on sample data: ${uniq(igdbFailed, (f) => f.url).length} IGDB cover requests / ${igdbConsole.length} console messages` : 'IGDB cover failures counted on real data'}`,
+      `${errs.length} console errors, ${collect.pageErrors.length} page errors, ${failedOther.length} failed/4xx-5xx requests${igdbExpected ? '' : `, ${countedIgdb} IGDB cover failures`}; ${consoleSummary.mapTileFailures.length} map tile failures (listed, not counted: third-party tile server, the globe falls back to the vector look); ${igdbExpected ? `excluded as expected on sample data: ${uniq(igdbFailed, (f) => f.url).length} IGDB cover requests / ${igdbConsole.length} console messages` : 'IGDB cover failures counted on real data'}`,
     );
     if (errs.length + failedOther.length + collect.pageErrors.length > 0) {
       for (const e of consoleSummary.consoleErrors.slice(0, 10)) log(`    console: ${e}`);
@@ -794,16 +842,18 @@ function markdown(r) {
   L.push(`- Date: ${r.date}`);
   L.push(`- GPU renderer: \`${r.gpu.renderer}\` (vendor \`${r.gpu.vendor}\`)${r.softwareRenderer ? ' **SOFTWARE RENDERER: numbers below are meaningless**' : ''}`);
   L.push(`- Browser: ${r.chrome}, ${r.mode}${r.gpuFlags ? ' with GPU flags' : ''}, viewport ${r.viewport} at devicePixelRatio ${r.devicePixelRatio}`);
-  L.push(`- Server: ${r.server}, data set \`${r.data}\`: ${r.dataset.games} games, ${r.dataset.companies} companies, years ${r.dataset.minYear} to ${r.dataset.maxYear}`);
+  L.push(`- Server: ${r.server}, data set \`${r.data}\`: ${r.dataset.games} games, ${r.dataset.companies} companies, years ${r.dataset.minYear} to ${r.dataset.maxYear}, generatedAt ${r.dataset.generatedAt}`);
   L.push(`- Pass criterion per scenario: ${r.criteria}, and the camera reached the intended zoom level`);
   L.push(`- Overall: **${r.overallPass ? 'PASS' : 'FAIL'}**`);
   L.push('');
   L.push('Frame times come from a requestAnimationFrame loop inside the page. 1% low is 1000 divided by the mean of the slowest 1% of frames. Year-play scenarios cover the whole sweep, not 5 seconds.');
   L.push('');
-  L.push('| Scenario | Level | Points | Avg fps | 1% low fps | Median ms | p95 ms | Max ms | Frames | >20 ms | App fps | Result |');
-  L.push('|---|---|---|---|---|---|---|---|---|---|---|---|');
+  L.push(`- Satellite imagery: ${r.console.imagery} (Sentinel-2 cloudless 2016 tiles; Points counts places drawn as a cover or a dot, Covers counts covers placed)`);
+  L.push('');
+  L.push('| Scenario | Level | Points | Covers | Avg fps | 1% low fps | Median ms | p95 ms | Max ms | Frames | >20 ms | App fps | Result |');
+  L.push('|---|---|---|---|---|---|---|---|---|---|---|---|---|');
   for (const s of r.scenarios) {
-    L.push(`| ${s.id} | ${s.level}${s.levelOk ? '' : ` (wanted ${s.expectedLevel})`} | ${s.points} | ${s.avgFps} | ${s.low1Fps} | ${s.medianMs} | ${s.p95Ms} | ${s.maxMs} | ${s.frames} | ${s.over20Pct}% | ${s.appFps} | ${s.pass ? 'PASS' : 'FAIL'} |`);
+    L.push(`| ${s.id} | ${s.level}${s.levelOk ? '' : ` (wanted ${s.expectedLevel})`} | ${s.points} | ${s.covers} | ${s.avgFps} | ${s.low1Fps} | ${s.medianMs} | ${s.p95Ms} | ${s.maxMs} | ${s.frames} | ${s.over20Pct}% | ${s.appFps} | ${s.pass ? 'PASS' : 'FAIL'} |`);
   }
   L.push('');
   for (const s of r.scenarios) {
@@ -824,6 +874,7 @@ function markdown(r) {
   L.push(`- Page errors: ${c.pageErrors.length}${c.pageErrors.length ? '\n' + c.pageErrors.map((e) => `  - ${e}`).join('\n') : ''}`);
   L.push(`- Failed requests: ${c.failedRequests.length}${c.failedRequests.length ? '\n' + c.failedRequests.map((e) => `  - ${e}`).join('\n') : ''}`);
   L.push(`- IGDB cover failures (${c.igdbCoverFailures.expected ? 'expected on sample data, not counted' : 'counted'}): ${c.igdbCoverFailures.requests} requests, ${c.igdbCoverFailures.consoleMessages} console messages`);
+  L.push(`- Map tile failures (listed, not counted): ${c.mapTileFailures.length}${c.mapTileFailures.length ? '\n' + c.mapTileFailures.map((e) => `  - ${e}`).join('\n') : ''}`);
   L.push('');
   L.push('## Launch attempts');
   L.push('');

@@ -4,9 +4,9 @@ export const NO_YEAR = 32767;
 export const ZERO_DOT_PX = 3.5;
 
 const SIZE_PX: Record<Level, { min: number; max: number; ref: number }> = {
-  country: { min: 6, max: 34, ref: 2000 },
-  city: { min: 4, max: 24, ref: 500 },
-  company: { min: 4, max: 16, ref: 60 },
+  country: { min: 6, max: 10, ref: 2000 },
+  city: { min: 5, max: 9, ref: 400 },
+  company: { min: 4.5, max: 8, ref: 60 },
 };
 
 export function sizeFor(level: Level, count: number): number {

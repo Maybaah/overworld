@@ -19,6 +19,7 @@ export interface PickedPoint {
   index: number;
   name: string;
   count: number;
+  game?: string;
 }
 
 interface LevelState {
@@ -31,6 +32,7 @@ interface LevelState {
   geometry: THREE.BufferGeometry;
   material: THREE.ShaderMaterial;
   projected: ProjectedPoints;
+  covered: Uint8Array;
   opacity: number;
   visibleCount: number;
 }
@@ -58,21 +60,24 @@ void main() {
 const FRAGMENT = `
 uniform vec3 uLead;
 uniform vec3 uIdle;
+uniform vec3 uRim;
 uniform float uOpacity;
 varying float vLead;
 varying float vRing;
 void main() {
   float d = length(gl_PointCoord * 2.0 - 1.0);
   if (d > 1.0) discard;
-  vec3 col = mix(uIdle, uLead, vLead);
-  float a;
+  vec3 fill = mix(uIdle, uLead, vLead);
+  float a = 1.0 - smoothstep(0.8, 1.0, d);
+  vec3 col;
   if (vRing > 0.5) {
-    a = smoothstep(0.55, 0.7, d) * (1.0 - smoothstep(0.88, 1.0, d)) * 0.7;
-    col *= 0.75;
+    float ring = smoothstep(0.38, 0.5, d) * (1.0 - smoothstep(0.62, 0.74, d));
+    col = mix(uRim, fill, ring);
+    a *= mix(0.55, 1.0, ring);
   } else {
-    a = 1.0 - smoothstep(0.62, 1.0, d);
+    col = mix(fill, uRim, smoothstep(0.5, 0.66, d));
   }
-  gl_FragColor = vec4(col, a * uOpacity);
+  gl_FragColor = vec4(col, a * uOpacity * mix(0.8, 1.0, vLead));
 }
 `;
 
@@ -140,8 +145,9 @@ export class PointsLayer {
         depthWrite: false,
         uniforms: {
           uPixelRatio: { value: opts.pixelRatio },
-          uLead: { value: new THREE.Vector3(...hexToRgb(COLORS.lead)) },
+          uLead: { value: new THREE.Vector3(...hexToRgb(COLORS.dot)) },
           uIdle: { value: new THREE.Vector3(...hexToRgb(COLORS.idle)) },
+          uRim: { value: new THREE.Vector3(...hexToRgb(COLORS.dotRim)) },
           uOpacity: { value: 0 },
         },
       });
@@ -160,6 +166,7 @@ export class PointsLayer {
         geometry,
         material,
         projected: makeProjected(n),
+        covered: new Uint8Array(n),
         opacity: 0,
         visibleCount: 0,
       };
@@ -173,9 +180,37 @@ export class PointsLayer {
     for (const level of LEVELS) {
       const st = this.levels[level];
       st.visibleCount = applyYear(st.buffers, this.timeline.levelAt(level, year), year);
+      this.mask(st);
       (st.geometry.getAttribute('aSize') as THREE.BufferAttribute).needsUpdate = true;
       (st.geometry.getAttribute('aLead') as THREE.BufferAttribute).needsUpdate = true;
     }
+  }
+
+  private mask(st: LevelState): void {
+    const { size } = st.buffers;
+    const c = st.covered;
+    for (let i = 0; i < c.length; i++) if (c[i]) size[i] = 0;
+  }
+
+  coveredMask(level: Level): Uint8Array {
+    return this.levels[level].covered;
+  }
+
+  applyCovered(): void {
+    for (const level of LEVELS) {
+      const st = this.levels[level];
+      applyYear(st.buffers, this.timeline.levelAt(level, this.year), this.year);
+      this.mask(st);
+      (st.geometry.getAttribute('aSize') as THREE.BufferAttribute).needsUpdate = true;
+    }
+  }
+
+  positions(level: Level): Float32Array {
+    return this.levels[level].positions;
+  }
+
+  counts(level: Level): Uint32Array {
+    return this.timeline.levelAt(level, this.year);
   }
 
   setTimeline(timeline: Timeline, showIdle: boolean): void {
@@ -223,14 +258,15 @@ export class PointsLayer {
     projectPoints(st.positions, vp.elements, camera.position, width, height, st.projected);
     const i = nearestPoint(x, y, st.projected, st.buffers.size);
     if (i < 0) return null;
+    const count = this.timeline.levelAt(st.level, this.year)[i] ?? 0;
+    return { level: st.level, index: i, name: this.nameAt(st.level, i), count };
+  }
+
+  nameAt(level: Level, i: number): string {
     const { indexes } = this.opts;
-    const timeline = this.timeline;
-    const count = timeline.levelAt(st.level, this.year)[i] ?? 0;
-    let name = '';
-    if (st.level === 'country') name = this.opts.countryName(indexes.countries[i]!.code);
-    else if (st.level === 'city') name = indexes.cities[i]!.name;
-    else name = indexes.companies[i]!.name;
-    return { level: st.level, index: i, name, count };
+    if (level === 'country') return this.opts.countryName(indexes.countries[i]!.code);
+    if (level === 'city') return indexes.cities[i]!.name;
+    return indexes.companies[i]!.name;
   }
 
   keyAt(level: Level, index: number): string | number {
