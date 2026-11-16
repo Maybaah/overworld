@@ -7,7 +7,7 @@ export interface CoreData {
   games: GameSummary[];
 }
 
-function dataBase(): string {
+export function dataBase(): string {
   return (import.meta.env.VITE_DATA_BASE ?? '/data').replace(/\/+$/, '');
 }
 

@@ -47,6 +47,9 @@ jobs:
           WIKIDATA_USER_AGENT_CONTACT: ${{ vars.WIKIDATA_USER_AGENT_CONTACT || format('https://github.com/{0}', github.repository) }}
         run: npm run pipeline -- --refresh --limit=${{ inputs.limit || '10000' }}
 
+      - name: Pack cover sprite sheets
+        run: npm run sprites
+
       - name: Upload reports
         if: always()
         uses: actions/upload-artifact@v4

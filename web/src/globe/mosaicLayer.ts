@@ -4,6 +4,8 @@ import { CoverAtlas, coverUrl } from './coverAtlas';
 import type { MosaicCell, MosaicMesh } from './mosaic/build';
 import type { MosaicRequest, MosaicResponse, WorkerGame } from './mosaic/protocol';
 import { GLOBE_RADIUS } from './outline';
+import { SpriteSheets, SPRITE_LAYOUT } from './mosaic/sprites';
+import { dataBase } from '../data/loader';
 
 // Sharpness tiers: a cell moves to the next tier once its cover spans more screen pixels than the current tier has.
 interface Tier {
@@ -20,7 +22,9 @@ const TIERS: Tier[] = [
 ];
 const TABLE_W = 2048;
 const STICKY = 1.5;
-const STRIDE = TIERS.length;
+// One texel per tier, plus one for the prebuilt sprite sheets.
+const STRIDE = TIERS.length + 1;
+const SPRITE = TIERS.length;
 const BASE_COLOR = new THREE.Color('#52525b');
 
 const VERTEX = `
@@ -31,6 +35,7 @@ flat varying vec4 vT0;
 flat varying vec4 vT1;
 flat varying vec4 vT2;
 flat varying vec4 vT3;
+flat varying vec4 vS;
 flat varying float vCell;
 ivec2 at(int k) { return ivec2(k % ${TABLE_W}, k / ${TABLE_W}); }
 void main() {
@@ -39,6 +44,7 @@ void main() {
   vT1 = texelFetch(uTable, at(c + 1), 0);
   vT2 = texelFetch(uTable, at(c + 2), 0);
   vT3 = texelFetch(uTable, at(c + 3), 0);
+  vS = texelFetch(uTable, at(c + ${SPRITE}), 0);
   vCell = aCell;
   vUv = uv;
   gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
@@ -50,6 +56,8 @@ uniform sampler2D uT0;
 uniform sampler2D uT1;
 uniform sampler2D uT2;
 uniform sampler2D uT3;
+uniform highp sampler2DArray uSprite;
+uniform float uSpriteSize;
 uniform vec3 uBase;
 uniform float uHover;
 uniform float uSelected;
@@ -60,6 +68,7 @@ flat varying vec4 vT0;
 flat varying vec4 vT1;
 flat varying vec4 vT2;
 flat varying vec4 vT3;
+flat varying vec4 vS;
 flat varying float vCell;
 float hash(float n) { return fract(sin(n * 12.9898) * 43758.5453); }
 vec2 inRect(vec4 r, vec2 uv) { return vec2(mix(r.x, r.z, uv.x), mix(r.y, r.w, 1.0 - uv.y)); }
@@ -69,6 +78,13 @@ void main() {
   if (vT3.x >= 0.0) col = textureLod(uT3, inRect(vT3, uv), 0.0).rgb;
   else if (vT2.x >= 0.0) col = textureLod(uT2, inRect(vT2, uv), 0.0).rgb;
   else if (vT1.x >= 0.0) col = textureLod(uT1, inRect(vT1, uv), 0.0).rgb;
+  else if (vS.x >= 0.0) {
+    float layer = floor(vS.x);
+    vec2 st = inRect(vec4(vS.x - layer, vS.y, vS.z - layer, vS.w), uv);
+    vec2 px = st * uSpriteSize;
+    float lod = clamp(log2(max(length(dFdx(px)), length(dFdy(px)))), 0.0, 3.0);
+    col = textureLod(uSprite, vec3(st, layer), lod).rgb;
+  }
   else if (vT0.x >= 0.0) {
     // Small covers are minified when zoomed out, so they sample their mip chain to stay calm instead of sparkling.
     vec2 st = inRect(vT0, uv);
@@ -93,11 +109,14 @@ export interface MosaicStats {
   frameMs: number;
   lowLoaded: number;
   highLoaded: number;
+  showing: number; // cells that show a cover, from any source
 }
 
 export class MosaicLayer {
   private readonly worker: Worker;
   private readonly atlases: CoverAtlas[];
+  private readonly sprites: SpriteSheets;
+  private lowOrder: string[] = [];
   private pixelRatio = 1;
   private readonly material: THREE.ShaderMaterial;
   private readonly lineMaterial = new THREE.LineBasicMaterial({ color: '#05070b', transparent: true, opacity: 0.85 });
@@ -111,6 +130,7 @@ export class MosaicLayer {
   private pending: Extract<MosaicRequest, { type: 'build' }> | null = null;
   private readonly picks = new Map<number, (id: number | null) => void>();
   private buildMs = 0;
+  private showing = 0;
   private applyMs = 0;
   private frameMs = 0;
   private needHigh = true;
@@ -123,6 +143,11 @@ export class MosaicLayer {
   ) {
     this.atlases = TIERS.map((t, k) => new CoverAtlas(renderer, clock, t.layout, (id) => coverUrl(id, t.size), t.inFlight, k === 0));
     this.pixelRatio = renderer.getPixelRatio();
+    this.sprites = new SpriteSheets(renderer, `${dataBase()}/`, () => {
+      this.material.uniforms.uSprite!.value = this.sprites.texture;
+      this.wantLow();
+      this.fillTable();
+    });
     this.table = this.makeTable(1);
     this.material = new THREE.ShaderMaterial({
       vertexShader: VERTEX,
@@ -137,6 +162,8 @@ export class MosaicLayer {
         uHover: { value: -1 },
         uSelected: { value: -1 },
         uDim: { value: 0.55 },
+        uSprite: { value: null },
+        uSpriteSize: { value: SPRITE_LAYOUT.size },
         uT0Size: { value: new THREE.Vector2(TIERS[0]!.layout.size, TIERS[0]!.layout.height ?? TIERS[0]!.layout.size) },
       },
       polygonOffset: true,
@@ -211,6 +238,7 @@ export class MosaicLayer {
       frameMs: this.frameMs,
       lowLoaded: this.atlases[0]!.loadedCount(),
       highLoaded: this.atlases.slice(1).reduce((a, t) => a + t.loadedCount(), 0),
+      showing: this.showing,
     };
   }
 
@@ -241,6 +269,7 @@ export class MosaicLayer {
   dispose(): void {
     this.worker.terminate();
     for (const a of this.atlases) a.dispose();
+    this.sprites.dispose();
     this.table.dispose();
     this.mesh.geometry.dispose();
     this.lines.geometry.dispose();
@@ -301,10 +330,16 @@ export class MosaicLayer {
       .sort((a, b) => b[0] - a[0])
       .map(([, i]) => m.cells[i]!.cover)
       .filter((c): c is string => !!c);
-    this.atlases[0]!.want(order.slice(0, TIERS[0]!.capacity));
+    this.lowOrder = order;
+    this.wantLow();
     this.needHigh = true;
     this.fillTable();
     this.onChange();
+  }
+
+  // Covers in the prebuilt sprite sheets never need the small on-demand atlas.
+  private wantLow(): void {
+    this.atlases[0]!.want(this.lowOrder.filter((c) => !this.sprites.has(c)).slice(0, TIERS[0]!.capacity));
   }
 
   private gameAt(cell: number): number | null {
@@ -322,13 +357,19 @@ export class MosaicLayer {
   private fillTable(): void {
     const data = this.table.image.data as Float32Array;
     data.fill(-1);
+    let showing = 0;
     this.cells.forEach((c, i) => {
       if (!c.cover) return;
+      const before = showing;
       this.atlases.forEach((a, k) => {
         const r = a.uv(c.cover!);
         if (r) data.set(r, 4 * (STRIDE * i + k));
       });
+      const sp = this.sprites.uv(c.cover);
+      if (sp) data.set(sp, 4 * (STRIDE * i + SPRITE));
+      for (let k = 0; k < STRIDE && showing === before; k++) if (data[4 * (STRIDE * i + k)]! >= 0) showing++;
     });
+    this.showing = showing;
     this.table.needsUpdate = true;
   }
 

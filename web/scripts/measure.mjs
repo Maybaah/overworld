@@ -697,13 +697,13 @@ async function main() {
     await page.evaluate(() => window.__m.pov(20, 10, 2.5, 0));
     await sleep(800);
     const coverWaitStart = Date.now();
-    await page.waitForFunction(() => window.__overworld.mosaic().lowLoaded >= 200, { timeout: 30000 }).catch(() => {});
+    await page.waitForFunction(() => window.__overworld.mosaic().showing >= 200, { timeout: 30000 }).catch(() => {});
     const coverState = await page.evaluate(() => ({ level: window.__overworld.level(), ...window.__overworld.mosaic() }));
     await shot('covers-country');
     addFunc(
       'mosaic covers (country level)',
-      coverState.level === 'country' && coverState.cells > 0 && coverState.lowLoaded >= 200,
-      `level ${coverState.level}; ${coverState.cells} mosaic cells, ${coverState.triangles} triangles, built in ${Math.round(coverState.buildMs)} ms; ${coverState.lowLoaded} covers loaded after ${Math.round((Date.now() - coverWaitStart) / 100) / 10} s (need >= 200), ${coverState.highLoaded} large`,
+      coverState.level === 'country' && coverState.cells > 0 && coverState.showing >= 200,
+      `level ${coverState.level}; ${coverState.cells} mosaic cells, ${coverState.triangles} triangles, built in ${Math.round(coverState.buildMs)} ms; ${coverState.showing} cells showing a cover after ${Math.round((Date.now() - coverWaitStart) / 100) / 10} s (need >= 200), ${coverState.highLoaded} large`,
     );
 
     const finalYear = dataMeta.maxYear;
