@@ -35,6 +35,13 @@
     "evidenceUrl": "https://en.wikipedia.org/wiki/Oni_(video_game)"
   },
   {
+    "igdbGameId": 2977,
+    "game": "Mortal Kombat: Komplete Edition",
+    "igdbCompanyId": 48,
+    "company": "NetherRealm Studios",
+    "evidenceUrl": "https://en.wikipedia.org/wiki/Mortal_Kombat_(2011_video_game)"
+  },
+  {
     "igdbGameId": 4083,
     "game": "Red Faction II",
     "igdbCompanyId": 7462,
