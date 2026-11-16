@@ -50,8 +50,20 @@ const SAMPLE: [slug: string, name: string, year: number, companies: [string, Rol
   ['among-us', 'Among Us', 2018, [['Innersloth', 'd'], ['Innersloth', 'p']]],
   ['disco-elysium', 'Disco Elysium', 2019, [['ZA/UM', 'd'], ['ZA/UM', 'p']]],
   ['no-mans-sky', "No Man's Sky", 2016, [['Hello Games', 'd'], ['Hello Games', 'p']]],
-  ['cuphead', 'Cuphead', 2017, [['Studio MDHR', 'd'], ['Studio MDHR', 'p'], ['Lionbridge Games', 's']]],
+  ['cuphead', 'Cuphead', 2017, [['Studio MDHR', 'd'], ['Studio MDHR', 'p'], ['Lionbridge', 's']]],
 ];
+
+const COUNTRIES: Record<string, number> = {
+  'Sonic Team': 392,
+  'Saber Interactive': 840,
+  'Keywords Studios': 372,
+  Lionbridge: 840,
+  'Electronic Arts': 840,
+  'Ubisoft Montreal': 124,
+  'Sony Interactive Entertainment': 840,
+  QLOC: 616,
+  Virtuos: 702,
+};
 
 const slugify = (name: string) =>
   name
@@ -72,7 +84,7 @@ function buildSample(): { games: RawIgdbGame[]; companies: RawIgdbCompany[] } {
         name,
         slug: slugify(name),
         url: `https://www.igdb.com/companies/${slugify(name)}`,
-        country: null,
+        country: COUNTRIES[name] ?? null,
         startDate: null,
         parent: null,
         changedCompanyId: null,

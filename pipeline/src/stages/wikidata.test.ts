@@ -23,8 +23,8 @@ const RANK = (r: 'Preferred' | 'Normal') => lit(`http://wikiba.se/ontology#${r}R
 const TRUE = { type: 'literal', value: 'true' };
 const FALSE = { type: 'literal', value: 'false' };
 
-function igdbCompany(id: number, name: string, slug = `c-${id}`): RawIgdbCompany {
-  return { id, name, slug, url: '', country: null, startDate: null, parent: null, changedCompanyId: null };
+function igdbCompany(id: number, name: string, slug = `c-${id}`, country: number | null = null): RawIgdbCompany {
+  return { id, name, slug, url: '', country, startDate: null, parent: null, changedCompanyId: null };
 }
 
 function igdbGame(id: number, companyIds: number[], slug = `game-${id}`): RawIgdbGame {
@@ -511,6 +511,99 @@ describe('runWikidataStage', () => {
     });
     await runWikidataStage(config(), { fetchImpl: fake.fetchImpl, sleep, log });
     expect((await readOut()).companies[0]!.hq!.qid).toBe('Q90');
+  });
+
+  it('prefers places in the IGDB country, then city level, and counts equal candidates in different cities as ambiguous', async () => {
+    await seed([], [igdbCompany(1, 'Sonic', 'sonic', 392), igdbCompany(2, 'Saber', 'saber', 840), igdbCompany(3, 'Nowhere', 'nowhere')]);
+    const hq = (co: string, pl: string): Binding => ({ co: uri(co), prop: lit('headquarters'), rank: RANK('Normal'), pl: uri(pl) });
+    const fake = fakeWikidata({
+      external: () => [{ v: lit('sonic'), co: uri('Q1') }, { v: lit('saber'), co: uri('Q2') }, { v: lit('nowhere'), co: uri('Q3') }],
+      statements: () => [
+        hq('Q1', 'Q883'),
+        hq('Q1', 'Q1490'),
+        hq('Q2', 'Q656'),
+        hq('Q2', 'Q812'),
+        hq('Q2', 'Q540513'),
+        hq('Q2', 'Q165972'),
+        hq('Q3', 'Q700'),
+        hq('Q3', 'Q701'),
+      ],
+      places: () => [
+        place('Q883', 'Novosibirsk', 'Point(82.9 55.0)', { cc: lit('RU') }),
+        place('Q1490', 'Tokyo', 'Point(139.69 35.68)'),
+        place('Q656', 'Saint Petersburg', 'Point(30.3 59.9)', { cc: lit('RU') }),
+        place('Q812', 'Florida', 'Point(-82 28)', { cc: lit('US'), isRegion: TRUE, isCity: FALSE }),
+        place('Q540513', 'Millburn', 'Point(-74.3 40.7)', { cc: lit('US') }),
+        place('Q165972', 'Fort Lauderdale', 'Point(-80.1 26.1)', { cc: lit('US') }),
+        place('Q700', 'Town B', 'Point(2 2)'),
+        place('Q701', 'Town A', 'Point(1 1)'),
+      ],
+    });
+    const res = await runWikidataStage(config(), { fetchImpl: fake.fetchImpl, sleep, log });
+    const { companies } = await readOut();
+    expect(companies.map((c) => c.hq!.label)).toEqual(['Tokyo', 'Fort Lauderdale', 'Town B']);
+    expect(res.ambiguousHq).toBe(2);
+    expect(logs.some((l) => l.includes('ambiguous hq') && l.includes('Saber') && l.includes('Q540513') && l.includes('Q165972'))).toBe(true);
+    expect(logs.some((l) => l.includes('ambiguous hq') && l.includes('Sonic'))).toBe(false);
+  });
+
+  it('orders ties by start time, then headquarters before located_in before formation, then QID', async () => {
+    await seed([], [igdbCompany(1, 'A', 'a'), igdbCompany(2, 'B', 'b')]);
+    const fake = fakeWikidata({
+      external: () => [{ v: lit('a'), co: uri('Q1') }, { v: lit('b'), co: uri('Q2') }],
+      statements: () => [
+        { co: uri('Q1'), prop: lit('formation'), rank: RANK('Normal'), pl: uri('Q1') },
+        { co: uri('Q1'), prop: lit('located_in'), rank: RANK('Normal'), pl: uri('Q50') },
+        { co: uri('Q1'), prop: lit('headquarters'), rank: RANK('Normal'), pl: uri('Q60') },
+        { co: uri('Q2'), prop: lit('headquarters'), rank: RANK('Normal'), pl: uri('Q70') },
+        { co: uri('Q2'), prop: lit('formation'), rank: RANK('Preferred'), pl: uri('Q80') },
+      ],
+      places: () => ['Q1', 'Q50', 'Q60', 'Q70', 'Q80'].map((q) => place(q, q, 'Point(0 0)')),
+    });
+    await runWikidataStage(config(), { fetchImpl: fake.fetchImpl, sleep, log });
+    const { companies } = await readOut();
+    expect(companies.map((c) => [c.hq!.qid, c.hqBasis])).toEqual([['Q60', 'headquarters'], ['Q80', 'formation']]);
+  });
+
+  it('keeps coordinates and label of building or ward level places', async () => {
+    await seed([], [igdbCompany(1, 'A', 'a')]);
+    const fake = fakeWikidata({
+      external: () => [{ v: lit('a'), co: uri('Q1') }],
+      statements: () => [{ co: uri('Q1'), prop: lit('headquarters'), rank: RANK('Normal'), pl: uri('Q9') }],
+      places: () => [place('Q9', 'Peck Building', 'Point(-73.5983 45.5261)', { cc: lit('CA'), isCity: FALSE, isRegion: FALSE })],
+    });
+    await runWikidataStage(config(), { fetchImpl: fake.fetchImpl, sleep, log });
+    expect((await readOut()).companies[0]).toMatchObject({ hq: { label: 'Peck Building', lat: 45.5261, lng: -73.5983 }, country: 'CA' });
+  });
+
+  it('links business-class items by name only when unique and the country matches IGDB', async () => {
+    await seed(
+      [],
+      [
+        igdbCompany(1, 'Keywords', 'k', 372),
+        igdbCompany(2, 'No Country', 'n'),
+        igdbCompany(3, 'Wrong Country', 'w', 840),
+        igdbCompany(4, 'Two Items', 't', 372),
+        igdbCompany(5, 'Game Wins', 'g', 840),
+      ],
+    );
+    const fake = fakeWikidata({
+      names: () => [
+        { name: lit('Keywords'), co: uri('Q1'), tier: lit('business'), cc: lit('IE') },
+        { name: lit('No Country'), co: uri('Q2'), tier: lit('business'), cc: lit('IE') },
+        { name: lit('Wrong Country'), co: uri('Q3'), tier: lit('business'), cc: lit('IE') },
+        { name: lit('Two Items'), co: uri('Q4'), tier: lit('business'), cc: lit('IE') },
+        { name: lit('Two Items'), co: uri('Q5'), tier: lit('business'), cc: lit('IE') },
+        { name: lit('Game Wins'), co: uri('Q6'), tier: lit('business'), cc: lit('US') },
+        { name: lit('Game Wins'), co: uri('Q7'), tier: lit('game'), cc: lit('JP') },
+      ],
+    });
+    const res = await runWikidataStage(config(), { fetchImpl: fake.fetchImpl, sleep, log });
+    const { companies } = await readOut();
+    expect(companies.map((c) => [c.igdbCompanyId, c.qid])).toEqual([[1, 'Q1'], [5, 'Q7']]);
+    expect(res.byBasis.name).toBe(2);
+    const q = fake.calls.find((c) => c.kind === 'names')!.query;
+    for (const id of ['Q4830453', 'Q783794', 'Q6881511', 'Q891723']) expect(q).toContain(`wd:${id}`);
   });
 
   it('picks the preferred or earliest inception year', async () => {

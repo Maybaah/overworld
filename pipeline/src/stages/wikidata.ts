@@ -11,6 +11,7 @@ import {
   type RawWikidataGame,
   type WikidataMatchBasis,
 } from '../raw';
+import { numericToAlpha2 } from '../countries';
 import { normalizeCompanyName } from '../names';
 import { readJson, writeJson } from '../stageio';
 
@@ -20,6 +21,7 @@ const BATCH_FLOOR = 25;
 const CLASS_DEVELOPER = 'wd:Q210167';
 const CLASS_PUBLISHER = 'wd:Q1137109';
 const CLASS_VIDEO_GAME = 'wd:Q7889';
+const BUSINESS_CLASSES = 'wd:Q4830453 wd:Q783794 wd:Q6881511 wd:Q891723';
 const REGION_CLASSES = 'wd:Q10864048 wd:Q6256 wd:Q3624078 wd:Q3336843 wd:Q5107';
 const CITY_CLASSES = 'wd:Q515 wd:Q133442 wd:Q5119';
 const PREFERRED_RANK = 'http://wikiba.se/ontology#PreferredRank';
@@ -38,6 +40,7 @@ export interface WikidataStageResult {
   companies: number;
   byBasis: Record<WikidataMatchBasis, number>;
   withHq: number;
+  ambiguousHq: number;
   skipped: boolean;
 }
 
@@ -99,13 +102,22 @@ export function buildNamesOfItemsQuery(qids: string[]): string {
 }
 
 export function buildNameLookupQuery(names: string[]): string {
-  return `SELECT DISTINCT ?name ?co WHERE {
+  return `SELECT DISTINCT ?name ?co ?tier ?cc WHERE {
   VALUES ?name { ${names.map(enStr).join(' ')} }
   { ?co rdfs:label ?name } UNION { ?co skos:altLabel ?name }
-  { ?co wdt:P31 ${CLASS_DEVELOPER} }
-  UNION { ?co wdt:P31 ${CLASS_PUBLISHER} }
-  UNION { ?g wdt:P31 ${CLASS_VIDEO_GAME} . ?g wdt:P178 ?co }
-  UNION { ?g wdt:P31 ${CLASS_VIDEO_GAME} . ?g wdt:P123 ?co }
+  {
+    {
+      { ?co wdt:P31 ${CLASS_DEVELOPER} }
+      UNION { ?co wdt:P31 ${CLASS_PUBLISHER} }
+      UNION { ?g wdt:P31 ${CLASS_VIDEO_GAME} . ?g wdt:P178 ?co }
+      UNION { ?g wdt:P31 ${CLASS_VIDEO_GAME} . ?g wdt:P123 ?co }
+    }
+    BIND("game" AS ?tier)
+  } UNION {
+    ?co wdt:P31 ?biz . VALUES ?biz { ${BUSINESS_CLASSES} }
+    BIND("business" AS ?tier)
+  }
+  OPTIONAL { ?co wdt:P17 ?c . ?c wdt:P297 ?cc }
 }`;
 }
 
@@ -229,6 +241,7 @@ interface PlaceDetails {
   lng: number | null;
   country: string | null;
   levelRegion: boolean;
+  cityTier: 0 | 1 | 2;
 }
 
 interface PlaceStatement {
@@ -250,7 +263,7 @@ export async function runWikidataStage(config: PipelineConfig, deps: WikidataDep
     const byBasis = emptyBasis();
     for (const c of companies) byBasis[c.matchedBy]++;
     log(`wikidata: stage files exist, skipping (${games.length} games, ${companies.length} companies)`);
-    return { games: games.length, companies: companies.length, byBasis, withHq: companies.filter((c) => c.hq).length, skipped: true };
+    return { games: games.length, companies: companies.length, byBasis, withHq: companies.filter((c) => c.hq).length, ambiguousHq: 0, skipped: true };
   }
 
   const igdbGamesFile = path.join(config.stageDir, STAGE_FILES.igdbGames);
@@ -420,17 +433,31 @@ export async function runWikidataStage(config: PipelineConfig, deps: WikidataDep
   const unlinked = igdbCompanies.filter((c) => !linked.has(c.id) && normalizedOrNull(c.name));
   if (unlinked.length > 0) {
     const nameRows = await batched('names', [...new Set(unlinked.map((c) => c.name))].sort(), buildNameLookupQuery);
-    const itemsByName = new Map<string, Set<string>>();
+    const hitsByName = new Map<string, Map<string, { game: boolean; countries: Set<string> }>>();
     for (const b of nameRows) {
       const qid = qidOf(b.co);
-      if (b.name && qid) addTo(itemsByName, b.name.value, qid);
+      if (!b.name || !qid) continue;
+      let items = hitsByName.get(b.name.value);
+      if (!items) hitsByName.set(b.name.value, (items = new Map()));
+      let hit = items.get(qid);
+      if (!hit) items.set(qid, (hit = { game: false, countries: new Set() }));
+      if (b.tier?.value !== 'business') hit.game = true;
+      if (b.cc) hit.countries.add(b.cc.value);
     }
     for (const c of unlinked) {
-      const hits = [...(itemsByName.get(c.name) ?? [])];
-      if (hits.length === 1) linked.set(c.id, { qid: hits[0]!, basis: 'name' });
-      else if (hits.length > 1) {
+      const items = [...(hitsByName.get(c.name) ?? [])].sort((x, y) => compareQid(x[0], y[0]));
+      const gameHits = items.filter(([, h]) => h.game);
+      if (gameHits.length === 1) {
+        linked.set(c.id, { qid: gameHits[0]![0], basis: 'name' });
+      } else if (gameHits.length > 1) {
         ambiguous++;
-        log(`wikidata: ambiguous name "${c.name}" (IGDB ${c.id}): ${hits.sort(compareQid).join(', ')}`);
+        log(`wikidata: ambiguous name "${c.name}" (IGDB ${c.id}): ${gameHits.map(([q]) => q).join(', ')}`);
+      } else if (items.length === 1) {
+        const country = numericToAlpha2(c.country);
+        if (country && items[0]![1].countries.has(country)) linked.set(c.id, { qid: items[0]![0], basis: 'name' });
+      } else if (items.length > 1) {
+        ambiguous++;
+        log(`wikidata: ambiguous name "${c.name}" (IGDB ${c.id}): ${items.map(([q]) => q).join(', ')}`);
       }
     }
   }
@@ -466,20 +493,7 @@ export async function runWikidataStage(config: PipelineConfig, deps: WikidataDep
     }
   }
 
-  const choice = new Map<string, PlaceStatement>();
-  for (const [qid, list] of statementsByItem) {
-    for (const prop of ['headquarters', 'located_in', 'formation'] as const) {
-      const options = list
-        .filter((s) => s.prop === prop)
-        .sort((a, b) => Number(b.preferred) - Number(a.preferred) || compareStart(a.start, b.start) || compareQid(a.place, b.place));
-      if (options.length > 0) {
-        choice.set(qid, options[0]!);
-        break;
-      }
-    }
-  }
-
-  const placeIds = [...new Set([...choice.values()].map((s) => s.place))].sort(compareQid);
+  const placeIds = [...new Set([...statementsByItem.values()].flat().map((s) => s.place))].sort(compareQid);
   const placeRows = placeIds.length ? await batched('place details', placeIds, buildPlaceDetailsQuery) : [];
   const placeAcc = new Map<string, { label: string | null; coords: string[]; countries: Set<string>; own: Set<string>; region: boolean; city: boolean }>();
   for (const b of placeRows) {
@@ -504,16 +518,44 @@ export async function runWikidataStage(config: PipelineConfig, deps: WikidataDep
       lng: point?.lng ?? null,
       country: [...acc.countries].sort()[0] ?? [...acc.own].sort()[0] ?? null,
       levelRegion: acc.region && !acc.city,
+      cityTier: acc.city ? 0 : acc.region ? 2 : 1,
     });
   }
 
+  const PROP_ORDER: Record<HqBasis, number> = { headquarters: 0, located_in: 1, formation: 2 };
+  let ambiguousHq = 0;
   const wdCompanies: RawWikidataCompany[] = [];
   const byBasis = emptyBasis();
   for (const c of igdbCompanies) {
     const link = linked.get(c.id);
     if (!link) continue;
     const info = itemInfo.get(link.qid);
-    const stmt = choice.get(link.qid);
+    const igdbCountry = numericToAlpha2(c.country);
+    const keyOf = (st: PlaceStatement): [number, number, number] => [
+      st.preferred ? 0 : 1,
+      igdbCountry !== null && places.get(st.place)?.country === igdbCountry ? 0 : 1,
+      places.get(st.place)?.cityTier ?? 1,
+    ];
+    const cmpKey = (x: PlaceStatement, y: PlaceStatement) => {
+      const kx = keyOf(x);
+      const ky = keyOf(y);
+      return kx[0] - ky[0] || kx[1] - ky[1] || kx[2] - ky[2];
+    };
+    const options = (statementsByItem.get(link.qid) ?? []).slice().sort(
+      (x, y) =>
+        cmpKey(x, y) ||
+        compareStart(x.start, y.start) ||
+        PROP_ORDER[x.prop] - PROP_ORDER[y.prop] ||
+        compareQid(x.place, y.place),
+    );
+    const stmt = options[0];
+    if (stmt) {
+      const tied = [...new Set(options.filter((o) => cmpKey(o, stmt) === 0).map((o) => o.place))];
+      if (tied.length > 1) {
+        ambiguousHq++;
+        log(`wikidata: ambiguous hq for "${c.name}" (IGDB ${c.id}, ${link.qid}): ${tied.map((q) => `${q} ${places.get(q)?.label ?? ''}`.trim()).join(', ')}; chose ${stmt.place}`);
+      }
+    }
     const place = stmt ? places.get(stmt.place) : undefined;
     let hq: RawWikidataCompany['hq'] = null;
     if (stmt && place && !place.levelRegion && place.lat !== null && place.lng !== null) {
@@ -544,9 +586,9 @@ export async function runWikidataStage(config: PipelineConfig, deps: WikidataDep
   log(
     `wikidata: games ${wdGames.length}/${igdbGames.length}; companies linked ${wdCompanies.length}/${igdbCompanies.length} ` +
       `(external_id ${byBasis.external_id}, via_game ${byBasis.via_game}, name ${byBasis.name}); ` +
-      `with hq ${withHq}, without ${wdCompanies.length - withHq}; ambiguous names ${ambiguous}; ` +
+      `with hq ${withHq}, without ${wdCompanies.length - withHq}; ambiguous names ${ambiguous}; ambiguous hq ${ambiguousHq}; ` +
       `failed batches ${failedBatches}; requests ${requests}`,
   );
 
-  return { games: wdGames.length, companies: wdCompanies.length, byBasis, withHq, skipped: false };
+  return { games: wdGames.length, companies: wdCompanies.length, byBasis, withHq, ambiguousHq, skipped: false };
 }
