@@ -191,8 +191,8 @@ export async function runMobygamesStage(
   const namesOf = (g: RawIgdbGame) =>
     [...new Set(g.involvedCompanies.map((r) => companyName.get(r.company)).filter((n): n is string => !!n))];
   const games = [...igdbGames]
-    .sort((a, b) => b.totalRatingCount - a.totalRatingCount || a.id - b.id)
-    .slice(0, config.gameLimit);
+    .sort((a, b) => (b.players ?? b.totalRatingCount) - (a.players ?? a.totalRatingCount) || a.id - b.id)
+    .slice(0, Math.min(config.gameLimit, config.mobyLimit));
 
   const http: Http = createHttp({
     minIntervalMs: MIN_INTERVAL_MS,

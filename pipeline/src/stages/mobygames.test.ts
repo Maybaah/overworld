@@ -43,6 +43,7 @@ function config(over: Partial<PipelineConfig> = {}): PipelineConfig {
     mobygamesApiKey: KEY,
     wikidataUserAgent: 'test',
     gameLimit: 100,
+    mobyLimit: 10000,
     refresh: false,
     only: null,
     ...over,

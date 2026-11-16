@@ -32,6 +32,7 @@ function makeConfig(overrides: Partial<PipelineConfig> = {}): PipelineConfig {
     mobygamesApiKey: null,
     wikidataUserAgent: 'test',
     gameLimit: 10000,
+    mobyLimit: 10000,
     refresh: false,
     only: null,
     ...overrides,
@@ -151,7 +152,7 @@ describe('runIgdbStage', () => {
     expect(gamesCall.headers.get('client-id')).toBe('test-client-id');
     expect(gamesCall.headers.get('authorization')).toBe(`Bearer ${TOKEN}`);
     expect(gamesCall.body).toContain('game_type = (0,8,9)');
-    expect(gamesCall.body).toContain('total_rating_count > 0');
+    expect(gamesCall.body).toContain('total_rating_count >= 1');
     expect(gamesCall.body).toContain('involved_companies != null');
     expect(gamesCall.body).toContain('sort total_rating_count desc');
     expect(gamesCall.body).toContain('limit 500');
@@ -453,7 +454,7 @@ describe('runIgdbStage', () => {
 
     await runIgdbStage(makeConfig({ gameLimit: 1000 }), { fetchImpl, sleep: noSleep, log: (m) => logs.push(m) });
 
-    expect(logs.some((m) => m.includes('IGDB games: 500/1000'))).toBe(true);
+    expect(logs.some((m) => m.includes('IGDB games by ratings: 500/1000'))).toBe(true);
     expect(logs.length).toBeGreaterThan(0);
     for (const line of logs) {
       expect(line).not.toContain(SECRET);
@@ -472,5 +473,53 @@ describe('runIgdbStage', () => {
 
     expect((error as Error).message).toContain('403');
     expect((error as Error).message).not.toContain(SECRET);
+  });
+});
+
+describe('runIgdbStage audience pass', () => {
+  it('adds Steam-linked games with enough reviews and estimates players for every game', async () => {
+    await writeFile(path.join(stageDir, STAGE_FILES.steamspy), JSON.stringify([{ appid: 100, name: 'A', reviews: 1000, positive: 900, ownersLow: 50_000, ownersHigh: 100_000 }]));
+    const steamCalls: string[] = [];
+    const handler: Handler = (call) => {
+      if (call.url.endsWith('/games') && call.body.includes('sort total_rating_count')) {
+        return json(offsetOf(call.body) === 0 ? [rawGame(1, 30)] : []);
+      }
+      if (call.url.endsWith('/games') && call.body.includes('where id = (')) {
+        const ids = /id = \(([\d,]+)\)/.exec(call.body)![1]!.split(',').map(Number);
+        return json(ids.filter((id) => id === 3).map((id) => rawGame(id, 2)));
+      }
+      if (call.url.endsWith('/popularity_primitives')) {
+        return json(call.body.includes('id > 0;') ? [{ id: 7, game_id: 2, value: 0.001 }] : []);
+      }
+      if (call.url.endsWith('/external_games')) {
+        return json(call.body.includes('id > 0;') ? [{ id: 11, game: 1, uid: '100' }, { id: 12, game: 3, uid: '300' }, { id: 13, game: 4, uid: '400' }] : []);
+      }
+      if (call.url.startsWith('https://api.steampowered.com/')) {
+        steamCalls.push(call.url);
+        return json({
+          response: {
+            store_items: [
+              { appid: 100, reviews: { summary_filtered: { review_count: 1000 } } },
+              { appid: 300, reviews: { summary_filtered: { review_count: 500 } } },
+              { appid: 400, reviews: { summary_filtered: { review_count: 20 } } },
+            ],
+          },
+        });
+      }
+      return undefined;
+    };
+    const { fetchImpl } = fakeFetch(combine(handler, companiesFor, genresHandler));
+    const result = await runIgdbStage(makeConfig(), { fetchImpl, sleep: noSleep, log: () => {} });
+    const games = await readStage<RawIgdbGame[]>(STAGE_FILES.igdbGames);
+
+    expect(result.games).toBe(2);
+    expect(games.map((g) => [g.id, g.players, g.playersBasis])).toEqual([
+      [1, 50_000, 'steam'],
+      [3, 20_000, 'steam'],
+    ]);
+    expect(steamCalls).toHaveLength(1);
+    expect(decodeURIComponent(steamCalls[0]!)).toContain('"appid":300');
+    const cache = await readStage<Record<string, number>>(STAGE_FILES.steamReviews);
+    expect(cache['400']).toBe(20);
   });
 });

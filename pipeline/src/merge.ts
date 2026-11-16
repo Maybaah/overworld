@@ -119,6 +119,11 @@ export interface MergeResult {
 
 export const MOBY_ONLY_COMPANY_OFFSET = 20_000_000;
 
+// Estimated players when the audience pass ran, else IGDB's rating count; one scale per run either way.
+export function popularityOf(g: RawIgdbGame): number {
+  return g.players ?? g.totalRatingCount;
+}
+
 const LEAD_BASES: LeadBasis[] = [
   'curated',
   'igdb_developer_heuristic',
@@ -490,7 +495,7 @@ export function merge(input: MergeInput): MergeResult {
   }
 
   const kept = works
-    .sort((a, b) => b.raw.totalRatingCount - a.raw.totalRatingCount || a.raw.id - b.raw.id)
+    .sort((a, b) => popularityOf(b.raw) - popularityOf(a.raw) || a.raw.id - b.raw.id)
     .slice(0, input.gameLimit);
 
   const agg = new Map<number, CompanyAgg>();
@@ -746,7 +751,7 @@ export function merge(input: MergeInput): MergeResult {
     slug: w.raw.slug,
     year: w.year,
     leadCompanyId: w.leadId,
-    popularity: w.raw.totalRatingCount,
+    popularity: popularityOf(w.raw),
     genres: w.raw.genres,
     cover: w.raw.cover,
     indie: w.raw.genres.includes(INDIE_GENRE_ID),

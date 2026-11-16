@@ -142,6 +142,7 @@ async function main(): Promise<void> {
       mobygamesApiKey: null,
       wikidataUserAgent: 'overworld-pipeline/0.1 (sample check; no contact set)',
       gameLimit: 10_000,
+      mobyLimit: 10000,
       refresh: false,
       only: null,
     };

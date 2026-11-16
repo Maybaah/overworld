@@ -11,6 +11,7 @@ export const STAGE_FILES = {
   mobygames: 'mobygames.json',
   population: 'population.json',
   steamspy: 'steamspy.json',
+  steamReviews: 'steam-reviews.json',
 } as const;
 
 // One Steam app from SteamSpy's owner-sorted catalogue; reviews are positive plus negative.
@@ -52,6 +53,9 @@ export interface RawIgdbGame {
   involvedCompanies: RawIgdbInvolvedCompany[];
   steamAppId: number | null; // first Steam id listed
   steamAppIds: number[]; // every Steam id listed for the game
+  // Estimated players (pipeline/src/audience.ts) once Steam data exists; null in rating-only runs.
+  players?: number | null;
+  playersBasis?: 'steam' | 'igdb_played' | 'rawg_added' | 'igdb_ratings' | null;
 }
 
 export interface RawIgdbCompany {

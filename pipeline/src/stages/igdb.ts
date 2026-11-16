@@ -9,6 +9,8 @@ import {
   type RawIgdbInvolvedCompany,
 } from '../raw';
 import { readJsonIfExists, writeJson } from '../stageio';
+import { calibrate, estimatePlayers, PLAYER_FLOOR, type AudienceSignals } from '../audience';
+import type { RawSteamApp } from '../raw';
 
 const TOKEN_URL = 'https://id.twitch.tv/oauth2/token';
 const API_BASE = 'https://api.igdb.com/v4';
@@ -17,6 +19,12 @@ const COMPANY_BATCH = 500;
 const MAX_SCREENSHOTS = 5;
 const GAME_TYPE_IDS = [0, 8, 9];
 const STEAM_SOURCE_ID = 1;
+// In the audience pass the rating pass reads every game with at least this many IGDB ratings.
+const RATING_FLOOR = 25;
+const PLAYED_TYPE = 4;
+const ID_BATCH = 500;
+const STEAM_ITEMS = 'https://api.steampowered.com/IStoreBrowseService/GetItems/v1/';
+const STEAM_BATCH = 200;
 
 interface GameFieldNames {
   gameType: string;
@@ -26,8 +34,8 @@ interface GameFieldNames {
 const CURRENT_FIELDS: GameFieldNames = { gameType: 'game_type', externalGameSource: 'external_game_source' };
 const LEGACY_FIELDS: GameFieldNames = { gameType: 'category', externalGameSource: 'category' };
 
-function gamesQuery(f: GameFieldNames, offset: number): string {
-  const fields = [
+const gameFields = (f: GameFieldNames) =>
+  [
     'name',
     'slug',
     'url',
@@ -47,10 +55,20 @@ function gamesQuery(f: GameFieldNames, offset: number): string {
     'external_games.uid',
     `external_games.${f.externalGameSource}`,
   ].join(',');
+
+function gamesQuery(f: GameFieldNames, offset: number, minRating = 1): string {
   return (
-    `fields ${fields}; ` +
-    `where ${f.gameType} = (${GAME_TYPE_IDS.join(',')}) & total_rating_count > 0 & involved_companies != null; ` +
+    `fields ${gameFields(f)}; ` +
+    `where ${f.gameType} = (${GAME_TYPE_IDS.join(',')}) & total_rating_count >= ${minRating} & involved_companies != null; ` +
     `sort total_rating_count desc; limit ${PAGE_SIZE}; offset ${offset};`
+  );
+}
+
+function gamesByIdQuery(f: GameFieldNames, ids: number[]): string {
+  return (
+    `fields ${gameFields(f)}; ` +
+    `where id = (${ids.join(',')}) & ${f.gameType} = (${GAME_TYPE_IDS.join(',')}) & involved_companies != null; ` +
+    `limit ${ids.length};`
   );
 }
 
@@ -252,13 +270,13 @@ export async function runIgdbStage(
   let fields = CURRENT_FIELDS;
   let triedLegacy = false;
 
-  async function gamesPage(offset: number): Promise<Row[]> {
-    let res = await post('games', gamesQuery(fields, offset));
+  async function gamesPage(offset: number, minRating: number): Promise<Row[]> {
+    let res = await post('games', gamesQuery(fields, offset, minRating));
     if (res.status === 400 && !triedLegacy && looksLikeUnknownField(res.text)) {
       triedLegacy = true;
       log('IGDB games: field names rejected, retrying with legacy field names');
       fields = LEGACY_FIELDS;
-      res = await post('games', gamesQuery(fields, offset));
+      res = await post('games', gamesQuery(fields, offset, minRating));
     }
     if (res.status < 200 || res.status >= 300) {
       throw new Error(`IGDB games request failed: HTTP ${res.status} ${res.text.slice(0, 300)}`);
@@ -266,20 +284,146 @@ export async function runIgdbStage(
     return parseRows('games', res.text);
   }
 
+  const steamApps = await readJsonIfExists<RawSteamApp[]>(path.join(config.stageDir, STAGE_FILES.steamspy));
+  const audience = steamApps !== null;
+
   const collected = new Map<number, RawIgdbGame>();
-  for (let offset = 0; collected.size < config.gameLimit; offset += PAGE_SIZE) {
-    const page = await gamesPage(offset);
+  const ratingCap = audience ? Infinity : config.gameLimit;
+  for (let offset = 0; collected.size < ratingCap; offset += PAGE_SIZE) {
+    const page = await gamesPage(offset, audience ? RATING_FLOOR : 1);
     if (page.length === 0) break;
     for (const row of page) {
       const game = mapGame(row, fields);
       if (game && !collected.has(game.id)) collected.set(game.id, game);
     }
-    log(`IGDB games: ${Math.min(collected.size, config.gameLimit)}/${config.gameLimit}`);
+    log(`IGDB games by ratings: ${collected.size}${audience ? '' : `/${config.gameLimit}`}`);
   }
 
-  const games = [...collected.values()]
-    .sort((a, b) => b.totalRatingCount - a.totalRatingCount || a.id - b.id)
-    .slice(0, config.gameLimit);
+  let games: RawIgdbGame[];
+  if (!audience) {
+    games = [...collected.values()]
+      .sort((a, b) => b.totalRatingCount - a.totalRatingCount || a.id - b.id)
+      .slice(0, config.gameLimit);
+  } else {
+    games = await audiencePass(steamApps);
+  }
+
+  // Review counts from Steam's store API, 200 apps per request; kept in a stage file so a rerun skips it.
+  async function steamReviews(appids: number[]): Promise<Map<number, number>> {
+    const file = path.join(config.stageDir, STAGE_FILES.steamReviews);
+    const cached = config.refresh ? null : await readJsonIfExists<Record<string, number>>(file);
+    const out = new Map<number, number>(cached ? Object.entries(cached).map(([k, v]) => [Number(k), v]) : []);
+    const todo = appids.filter((a) => !cached || !(String(a) in cached));
+    const steamHttp = createHttp({ minIntervalMs: 350, maxConcurrent: 2, fetchImpl: deps.fetchImpl, sleep: deps.sleep });
+    const seen: Record<string, number> = { ...(cached ?? {}) };
+    for (let i = 0; i < todo.length; i += STEAM_BATCH) {
+      const batch = todo.slice(i, i + STEAM_BATCH);
+      const input = { ids: batch.map((appid) => ({ appid })), context: { language: 'english', country_code: 'US' }, data_request: { include_reviews: true } };
+      const res = await steamHttp.request(`${STEAM_ITEMS}?input_json=${encodeURIComponent(JSON.stringify(input))}`);
+      if (!res.ok) throw new Error(`Steam GetItems failed: HTTP ${res.status}`);
+      const body = (await res.json()) as { response?: { store_items?: Row[] } };
+      for (const appid of batch) seen[String(appid)] = 0;
+      for (const item of body.response?.store_items ?? []) {
+        const appid = numOrNull(item.appid) ?? numOrNull(item.id);
+        const reviews = isRow(item.reviews) && isRow(item.reviews.summary_filtered) ? numOrNull(item.reviews.summary_filtered.review_count) : null;
+        if (appid === null || !reviews) continue;
+        seen[String(appid)] = reviews;
+        out.set(appid, reviews);
+      }
+      if ((i / STEAM_BATCH) % 25 === 0) log(`Steam reviews: ${Math.min(i + STEAM_BATCH, todo.length)}/${todo.length}`);
+    }
+    await writeJson(file, seen);
+    return out;
+  }
+
+  // Adds every game that Steam or IGDB "Played" says enough people played, then estimates players for all.
+  async function audiencePass(apps: RawSteamApp[]): Promise<RawIgdbGame[]> {
+    const signals = new Map<number, AudienceSignals>();
+    const sig = (id: number) => {
+      let s = signals.get(id);
+      if (!s) signals.set(id, (s = {}));
+      return s;
+    };
+
+    let lastId = 0;
+    for (let n = 0; ; n++) {
+      const rows = await postRows(
+        'popularity_primitives',
+        `fields game_id,value; where popularity_type = ${PLAYED_TYPE} & id > ${lastId}; sort id asc; limit ${PAGE_SIZE};`,
+      );
+      if (rows.length === 0) break;
+      for (const r of rows) {
+        lastId = Math.max(lastId, numOrNull(r.id) ?? lastId);
+        const gameId = refId(r.game_id);
+        const value = numOrNull(r.value);
+        if (gameId !== null && value !== null && value > 0) sig(gameId).igdbPlayed = value;
+      }
+      if (n % 20 === 0) log(`IGDB played shares: ${signals.size}`);
+    }
+
+    // Every Steam app IGDB links to a game that could be on the globe.
+    const gamesByApp = new Map<number, number[]>();
+    let lastLink = 0;
+    for (let n = 0; ; n++) {
+      const rows = await postRows(
+        'external_games',
+        `fields game,uid; where ${fields.externalGameSource} = ${STEAM_SOURCE_ID} & game.${fields.gameType} = (${GAME_TYPE_IDS.join(',')}) & game.involved_companies != null & id > ${lastLink}; sort id asc; limit ${PAGE_SIZE};`,
+      );
+      if (rows.length === 0) break;
+      for (const r of rows) {
+        lastLink = Math.max(lastLink, numOrNull(r.id) ?? lastLink);
+        const gameId = refId(r.game);
+        const uid = str(r.uid).trim();
+        if (gameId === null || !/^\d+$/.test(uid)) continue;
+        const appid = Number(uid);
+        const list = gamesByApp.get(appid) ?? [];
+        if (!list.includes(gameId)) list.push(gameId);
+        gamesByApp.set(appid, list);
+      }
+      if (n % 20 === 0) log(`IGDB Steam links: ${gamesByApp.size}`);
+    }
+
+    const reviews = await steamReviews([...gamesByApp.keys()]);
+    for (const [appid, gameIds] of gamesByApp) {
+      const count = reviews.get(appid);
+      if (!count) continue;
+      for (const id of gameIds) sig(id).steamReviews = Math.max(sig(id).steamReviews ?? 0, count);
+    }
+    for (const app of apps) {
+      for (const id of gamesByApp.get(app.appid) ?? []) sig(id).steamOwnersLow = Math.max(sig(id).steamOwnersLow ?? 0, app.ownersLow);
+    }
+    log(`Steam: ${reviews.size} apps with reviews, ${[...signals.values()].filter((x) => x.steamReviews).length} games`);
+    for (const g of collected.values()) sig(g.id).ratingCount = g.totalRatingCount;
+
+    const calibration = calibrate(signals.values());
+    log(
+      `audience calibration: played x${calibration.igdbPlayed?.toFixed(0) ?? '-'} (${calibration.pairs.igdbPlayed} pairs), ` +
+        `ratings x${calibration.ratingCount?.toFixed(0) ?? '-'} (${calibration.pairs.ratingCount} pairs)`,
+    );
+
+    const wanted = [...signals.entries()]
+      .filter(([id, s]) => !collected.has(id) && (estimatePlayers(s, calibration)?.players ?? 0) >= PLAYER_FLOOR)
+      .map(([id]) => id);
+    for (let i = 0; i < wanted.length; i += ID_BATCH) {
+      for (const row of await postRows('games', gamesByIdQuery(fields, wanted.slice(i, i + ID_BATCH)))) {
+        const game = mapGame(row, fields);
+        if (game) collected.set(game.id, game);
+      }
+      log(`IGDB games by audience: ${Math.min(i + ID_BATCH, wanted.length)}/${wanted.length}`);
+    }
+
+    const out: RawIgdbGame[] = [];
+    for (const g of collected.values()) {
+      const s = { ...sig(g.id), ratingCount: g.totalRatingCount };
+      const est = estimatePlayers(s, calibration);
+      if (!est || est.players < PLAYER_FLOOR) continue;
+      out.push({ ...g, players: est.players, playersBasis: est.basis });
+    }
+    out.sort((a, b) => (b.players ?? 0) - (a.players ?? 0) || a.id - b.id);
+    const byBasis = out.reduce<Record<string, number>>((acc, g) => ((acc[g.playersBasis!] = (acc[g.playersBasis!] ?? 0) + 1), acc), {});
+    log(`audience: ${out.length} games with ${PLAYER_FLOOR}+ estimated players (${JSON.stringify(byBasis)})`);
+    return out.slice(0, config.gameLimit);
+  }
 
   const companyIds = [...new Set(games.flatMap((g) => g.involvedCompanies.map((c) => c.company)))].sort(
     (a, b) => a - b,
