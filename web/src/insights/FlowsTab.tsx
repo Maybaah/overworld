@@ -93,6 +93,15 @@ function Body({ flows }: { flows: FlowsFile }) {
           );
         })}
       </div>
+      {WORK_GROUPS.some((g) => (totals[g.id] ?? 0) === 0) && (
+        <p className="ow-muted ins-note">
+          No links yet for{' '}
+          {WORK_GROUPS.filter((g) => (totals[g.id] ?? 0) === 0)
+            .map((g) => g.label)
+            .join(', ')}
+          . The main source does not record this kind of work, so those options are switched off until another source is added.
+        </p>
+      )}
       <label className="ins-switch">
         <input type="checkbox" role="switch" checked={includeSame} onChange={(e) => setIncludeSame(e.target.checked)} />
         <span>Include work inside the same country</span>

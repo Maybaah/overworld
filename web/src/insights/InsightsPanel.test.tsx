@@ -304,6 +304,7 @@ describe('where the work goes tab', () => {
     expect(screen.getByRole('button', { name: /^Co-development/ })).toBeDisabled();
     expect(screen.getByRole('button', { name: /^Publisher 400/ })).toBeEnabled();
     expect(screen.getByRole('button', { name: /^All outside work 438/ })).toBeEnabled();
+    expect(screen.getByText(/No links yet for Co-development, Localization, QA \/ LQA\./)).toBeInTheDocument();
   });
 
   it('shows the low-data note under 25 links and not at or above', async () => {
