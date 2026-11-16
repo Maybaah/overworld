@@ -36,6 +36,24 @@
     "evidenceUrl": "https://en.wikipedia.org/wiki/Ensemble_Studios"
   },
   {
+    "igdbCompanyId": 92,
+    "name": "NovaLogic",
+    "city": "Calabasas",
+    "country": "US",
+    "lat": 34.15778,
+    "lng": -118.63842,
+    "evidenceUrl": "https://en.wikipedia.org/wiki/NovaLogic"
+  },
+  {
+    "igdbCompanyId": 111,
+    "name": "The Creative Assembly",
+    "city": "Horsham",
+    "country": "GB",
+    "lat": 51.06314,
+    "lng": -0.32757,
+    "evidenceUrl": "https://en.wikipedia.org/wiki/The_Creative_Assembly"
+  },
+  {
     "igdbCompanyId": 115,
     "name": "Codemasters",
     "city": "Southam",
@@ -81,6 +99,15 @@
     "evidenceUrl": "https://en.wikipedia.org/wiki/Id_Software"
   },
   {
+    "igdbCompanyId": 260,
+    "name": "Argonaut Games",
+    "city": "London",
+    "country": "GB",
+    "lat": 51.50853,
+    "lng": -0.12574,
+    "evidenceUrl": "https://en.wikipedia.org/wiki/Argonaut_Games"
+  },
+  {
     "igdbCompanyId": 290,
     "name": "IO Interactive",
     "city": "Copenhagen",
@@ -88,6 +115,15 @@
     "lat": 55.67594,
     "lng": 12.56553,
     "evidenceUrl": "https://en.wikipedia.org/wiki/IO_Interactive"
+  },
+  {
+    "igdbCompanyId": 314,
+    "name": "4A Games",
+    "city": "Kyiv",
+    "country": "UA",
+    "lat": 50.45466,
+    "lng": 30.5238,
+    "evidenceUrl": "https://en.wikipedia.org/wiki/4A_Games"
   },
   {
     "igdbCompanyId": 323,
@@ -171,6 +207,15 @@
     "evidenceUrl": "https://en.wikipedia.org/wiki/Team_Ninja"
   },
   {
+    "igdbCompanyId": 811,
+    "name": "Appaloosa Interactive",
+    "city": "Mountain View",
+    "country": "US",
+    "lat": 37.38605,
+    "lng": -122.08385,
+    "evidenceUrl": "https://en.wikipedia.org/wiki/Appaloosa_Interactive"
+  },
+  {
     "igdbCompanyId": 852,
     "name": "PlatinumGames",
     "city": "Osaka",
@@ -196,6 +241,15 @@
     "lat": 37.83132,
     "lng": -122.28525,
     "evidenceUrl": "https://en.wikipedia.org/wiki/Digital_Eclipse"
+  },
+  {
+    "igdbCompanyId": 928,
+    "name": "Supergiant Games",
+    "city": "San Francisco",
+    "country": "US",
+    "lat": 37.77493,
+    "lng": -122.41942,
+    "evidenceUrl": "https://www.supergiantgames.com/"
   },
   {
     "igdbCompanyId": 946,
@@ -225,6 +279,15 @@
     "evidenceUrl": "https://en.wikipedia.org/wiki/NDcube"
   },
   {
+    "igdbCompanyId": 1241,
+    "name": "Artificial Mind & Movement",
+    "city": "Montréal",
+    "country": "CA",
+    "lat": 45.50884,
+    "lng": -73.58781,
+    "evidenceUrl": "https://en.wikipedia.org/wiki/Artificial_Mind_and_Movement"
+  },
+  {
     "igdbCompanyId": 1242,
     "name": "MachineGames",
     "city": "Uppsala",
@@ -232,6 +295,15 @@
     "lat": 59.85882,
     "lng": 17.63889,
     "evidenceUrl": "https://en.wikipedia.org/wiki/MachineGames"
+  },
+  {
+    "igdbCompanyId": 1285,
+    "name": "King",
+    "city": "Stockholm",
+    "country": "SE",
+    "lat": 59.32938,
+    "lng": 18.06871,
+    "evidenceUrl": "https://en.wikipedia.org/wiki/King_(company)"
   },
   {
     "igdbCompanyId": 1394,
@@ -306,6 +378,15 @@
     "evidenceUrl": "https://en.wikipedia.org/wiki/KING_Art_Games"
   },
   {
+    "igdbCompanyId": 2410,
+    "name": "Frogwares",
+    "city": "Kyiv",
+    "country": "UA",
+    "lat": 50.45466,
+    "lng": 30.5238,
+    "evidenceUrl": "https://en.wikipedia.org/wiki/Frogwares"
+  },
+  {
     "igdbCompanyId": 2603,
     "name": "Free Lives Games",
     "city": "Cape Town",
@@ -324,6 +405,15 @@
     "evidenceUrl": "https://en.wikipedia.org/wiki/Nihon_Falcom"
   },
   {
+    "igdbCompanyId": 3491,
+    "name": "GOG.com",
+    "city": "Warsaw",
+    "country": "PL",
+    "lat": 52.22977,
+    "lng": 21.01178,
+    "evidenceUrl": "https://en.wikipedia.org/wiki/GOG.com"
+  },
+  {
     "igdbCompanyId": 4712,
     "name": "Ustwo Games",
     "city": "London",
@@ -340,6 +430,15 @@
     "lat": 35.6895,
     "lng": 139.69171,
     "evidenceUrl": "https://en.wikipedia.org/wiki/Sega"
+  },
+  {
+    "igdbCompanyId": 5054,
+    "name": "Niantic Labs",
+    "city": "San Francisco",
+    "country": "US",
+    "lat": 37.77493,
+    "lng": -122.41942,
+    "evidenceUrl": "https://en.wikipedia.org/wiki/Niantic_(company)"
   },
   {
     "igdbCompanyId": 5501,
@@ -367,6 +466,15 @@
     "lat": 30.26715,
     "lng": -97.74306,
     "evidenceUrl": "https://en.wikipedia.org/wiki/Airship_Syndicate"
+  },
+  {
+    "igdbCompanyId": 7097,
+    "name": "Thunder Lotus",
+    "city": "Montréal",
+    "country": "CA",
+    "lat": 45.50884,
+    "lng": -73.58781,
+    "evidenceUrl": "https://en.wikipedia.org/wiki/Thunder_Lotus_Games"
   },
   {
     "igdbCompanyId": 7462,
@@ -421,5 +529,23 @@
     "lat": 35.6895,
     "lng": 139.69171,
     "evidenceUrl": "https://en.wikipedia.org/wiki/Sega"
+  },
+  {
+    "igdbCompanyId": 18532,
+    "name": "Koei Tecmo",
+    "city": "Yokohama",
+    "country": "JP",
+    "lat": 35.43333,
+    "lng": 139.65,
+    "evidenceUrl": "https://en.wikipedia.org/wiki/Koei_Tecmo"
+  },
+  {
+    "igdbCompanyId": 32841,
+    "name": "Mimimi Games",
+    "city": "Munich",
+    "country": "DE",
+    "lat": 48.13743,
+    "lng": 11.57549,
+    "evidenceUrl": "https://en.wikipedia.org/wiki/Mimimi_Games"
   }
 ]
