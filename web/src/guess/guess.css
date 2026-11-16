@@ -1,0 +1,244 @@
+.gs-panel {
+  pointer-events: auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  max-height: 100%;
+  overflow-y: auto;
+  color: var(--text, #e6e9ef);
+  background: var(--surface, rgba(13, 17, 24, 0.86));
+  backdrop-filter: blur(var(--blur, 12px));
+  -webkit-backdrop-filter: blur(var(--blur, 12px));
+  border: 1px solid var(--border, #1f2733);
+  border-radius: var(--radius, 10px);
+  font-family: var(--font-text, system-ui, sans-serif);
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.gs-panel *,
+.gs-panel *::before,
+.gs-panel *::after {
+  box-sizing: border-box;
+}
+
+.gs-panel h2,
+.gs-panel h3,
+.gs-panel p,
+.gs-panel ol,
+.gs-panel dl,
+.gs-panel dd {
+  margin: 0;
+  padding: 0;
+}
+
+.gs-panel ol {
+  list-style: none;
+}
+
+.gs-panel :focus-visible {
+  outline: 2px solid var(--focus, #56b4e9);
+  outline-offset: 2px;
+}
+
+.gs-body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px;
+}
+
+.gs-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.gs-title {
+  font-family: var(--font-display, system-ui, sans-serif);
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 1.25;
+}
+
+.gs-subtitle {
+  font-weight: 500;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.gs-mono {
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-variant-numeric: tabular-nums;
+}
+
+.gs-muted {
+  color: var(--muted, #8a93a3);
+}
+
+.gs-small {
+  font-size: 12px;
+}
+
+.gs-error {
+  border: 1px solid #5a2a2a;
+  border-radius: 8px;
+  padding: 8px 16px;
+}
+
+.gs-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.gs-picture {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 16 / 9;
+  background: var(--surface-solid, #0d1118);
+  border: 1px solid var(--border, #1f2733);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.gs-picture img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.gs-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.gs-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.gs-btn {
+  min-height: 32px;
+  padding: 4px 16px;
+  background: transparent;
+  border: 1px solid var(--border, #1f2733);
+  border-radius: 8px;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.gs-btn:hover:not(:disabled) {
+  background: #19212d;
+}
+
+.gs-btn:disabled {
+  color: var(--muted, #8a93a3);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.gs-btn-primary {
+  border-color: var(--accent, #f0e442);
+}
+
+.gs-link {
+  background: none;
+  border: 0;
+  padding: 0;
+  margin-top: 4px;
+  color: inherit;
+  font: inherit;
+  font-size: 12px;
+  text-decoration: underline;
+  text-decoration-color: var(--border, #1f2733);
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.gs-link:hover {
+  text-decoration-color: currentColor;
+}
+
+.gs-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.gs-field label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.gs-field select,
+.gs-field input,
+.gs-field textarea {
+  width: 100%;
+  min-height: 32px;
+  padding: 4px 8px;
+  background: var(--surface-solid, #0d1118);
+  color: inherit;
+  border: 1px solid var(--border, #1f2733);
+  border-radius: 8px;
+  font: inherit;
+}
+
+.gs-field textarea {
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 12px;
+  resize: none;
+}
+
+.gs-facts {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.gs-facts dt {
+  color: var(--muted, #8a93a3);
+  font-size: 12px;
+}
+
+.gs-score {
+  font-size: 18px;
+}
+
+.gs-total {
+  font-size: 28px;
+}
+
+.gs-results {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.gs-results li {
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border, #1f2733);
+}
+
+.gs-result-main {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+@media (max-width: 720px) {
+  .gs-panel {
+    max-height: 62vh;
+  }
+}
