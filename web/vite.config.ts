@@ -13,6 +13,6 @@ export default defineConfig({
   server: { fs: { allow: ['..'] } },
   test: {
     environment: 'jsdom',
-    include: ['src/**/*.test.{ts,tsx}', 'server/**/*.test.ts'],
+    include: ['src/**/*.test.{ts,tsx}', 'server/**/*.test.ts', 'scripts/**/*.test.{ts,mjs}'],
   },
 });

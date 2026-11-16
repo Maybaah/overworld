@@ -3,8 +3,13 @@ import { useStore } from '../data/store';
 import { loadSteamMap } from '../data/loader';
 import { countryName, formatCount } from '../ui/format';
 import { computeOrigins, countryRows, sampleLibrary, type OwnedGame, type Origins } from './origins';
-import { summarizeOrigins } from './share';
+import { summarizeOrigins, summaryToShareParams } from './share';
 import { parseSteamInput } from './steamInput';
+import { ShareButton } from '../share/ShareButton';
+import { SharedSummary } from '../share/SharedCards';
+import { myGlobeCardSpec } from '../share/card';
+import { readSharedSummary } from '../share/shared';
+import { pageLink } from '../share/urlState';
 import './myglobe.css';
 
 export { summaryToShareParams, shareParamsToSummary } from './share';
@@ -119,6 +124,7 @@ export function MyGlobePanel() {
 
   const [text, setText] = useState('');
   const [view, setView] = useState<View>({ status: 'idle' });
+  const [shared] = useState(() => readSharedSummary(window.location.search));
   const [by, setBy] = useState<'games' | 'playtime'>('games');
   const [copied, setCopied] = useState<'done' | 'failed' | null>(null);
   const run = useRef(0);
@@ -221,6 +227,9 @@ export function MyGlobePanel() {
         </div>
       </div>
       <div className="ow-panel-body">
+        {shared && view.status === 'idle' && (
+          <SharedSummary summary={shared} onMake={() => document.getElementById('omg-profile')?.focus()} />
+        )}
         <form className="omg-form" onSubmit={(e) => void submit(e)}>
           <label className="omg-label" htmlFor="omg-profile">
             Steam profile
@@ -367,6 +376,12 @@ export function MyGlobePanel() {
                 <button type="button" className="ow-more-btn" onClick={() => void copy()}>
                   Copy text
                 </button>
+                <ShareButton
+                  url={pageLink('myglobe', new URLSearchParams({ s: summaryToShareParams(summarizeOrigins(origins)).toString() }))}
+                  title="Where my games come from"
+                  card={myGlobeCardSpec(summarizeOrigins(origins))}
+                  fileName="overworld-my-globe"
+                />
                 <span className="ow-muted ow-small" role="status">
                   {copied === 'done' ? 'Copied.' : copied === 'failed' ? 'Could not copy. Select the text and copy it.' : ''}
                 </span>

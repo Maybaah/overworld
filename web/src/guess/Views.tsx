@@ -5,6 +5,10 @@ import type { GameState, RoundResult } from './game';
 import { totalScore } from './game';
 import { Picture } from './Picture';
 import { MAX_GAME_SCORE, MAX_ROUND_SCORE } from './scoring';
+import { resultToShareParams, shareParamsToResult, type ShareResult } from './share';
+import { ShareButton } from '../share/ShareButton';
+import { guessCardSpec } from '../share/card';
+import { pageLink } from '../share/urlState';
 
 export function StartScreen({
   ready,
@@ -209,6 +213,30 @@ function CopyRow({ label, value, multiline }: { label: string; value: string; mu
   );
 }
 
+function ShareResultButton({ state }: { state: GameState }) {
+  let params: URLSearchParams;
+  let result: ShareResult;
+  try {
+    params = new URLSearchParams(
+      resultToShareParams({
+        seed: state.seed ?? '',
+        rounds: state.results.map((r) => ({
+          gameId: r.round.gameId,
+          km: r.distanceKm,
+          score: r.score,
+          hint: r.hintUsed,
+        })),
+      }),
+    );
+    const decoded = shareParamsToResult(params);
+    if (!decoded) return null;
+    result = decoded;
+  } catch {
+    return null;
+  }
+  return <ShareButton url={pageLink('guess', params)} title="My Overworld guess result" card={guessCardSpec(result)} fileName="overworld-guess" />;
+}
+
 export function EndScreen({
   state,
   onAgain,
@@ -264,6 +292,7 @@ export function EndScreen({
         <h3 className="gs-subtitle">Share result</h3>
         <CopyRow label="Result summary" value={shareSummary(state.results, total)} multiline />
         <CopyRow label="Challenge link" value={challengeLink(seed)} />
+        <ShareResultButton state={state} />
       </section>
     </div>
   );

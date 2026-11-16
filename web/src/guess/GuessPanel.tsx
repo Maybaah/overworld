@@ -7,6 +7,9 @@ import { countryName } from './format';
 import { gameReducer, initialGameState } from './game';
 import { buildPool, isValidSeed, pickRounds, randomSeed } from './rounds';
 import { ROUNDS_PER_GAME } from './scoring';
+import { shareParamsToResult } from './share';
+import { SharedGuessResult } from '../share/SharedCards';
+import { readSharedResult } from '../share/shared';
 import { EndScreen, RevealView, RoundView, StartScreen, liveMessage } from './Views';
 
 const GUESS_COLOR = '#56B4E9';
@@ -15,6 +18,7 @@ const ANSWER_COLOR = '#F0E442';
 function seedFromUrl(): string | null {
   const params = new URLSearchParams(window.location.search);
   const seed = params.get('seed');
+  if (params.get('r') !== null && shareParamsToResult(params)) return null;
   return params.get('mode') === 'guess' && isValidSeed(seed) ? seed : null;
 }
 
@@ -28,6 +32,7 @@ export function GuessPanel() {
 
   const [state, dispatch] = useReducer(gameReducer, initialGameState);
   const [startError, setStartError] = useState<string | null>(null);
+  const [shared] = useState(() => readSharedResult(window.location.search));
 
   const pool = useMemo(() => (indexes ? buildPool(indexes) : []), [indexes]);
   const countries = useMemo(() => {
@@ -157,7 +162,12 @@ export function GuessPanel() {
       );
       break;
     default:
-      view = <StartScreen ready={indexes !== null} error={startError} onStart={() => start(randomSeed())} />;
+      view = (
+        <>
+          {shared && <SharedGuessResult result={shared} onPlay={() => start(shared.seed)} />}
+          <StartScreen ready={indexes !== null} error={startError} onStart={() => start(randomSeed())} />
+        </>
+      );
   }
 
   return (

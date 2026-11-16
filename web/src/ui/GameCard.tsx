@@ -5,6 +5,9 @@ import { useStore } from '../data/store';
 import { ROLE_META } from '../data/roles';
 import { CloseButton, LinkButton, SourceLink, Swatch } from './parts';
 import { LEAD_BASIS_TEXT, placeLabel, precisionText } from './format';
+import { ShareButton } from '../share/ShareButton';
+import { gameCardSpec } from '../share/card';
+import { gameLink } from '../share/urlState';
 
 const COVER_URL = 'https://images.igdb.com/igdb/image/upload/t_cover_big/';
 
@@ -75,6 +78,13 @@ export function GameCard() {
             )}
           </div>
         </div>
+        <ShareButton
+          url={gameLink(game.id)}
+          title={game.name}
+          card={gameCardSpec(game, lead, detail, indexes.companyById)}
+          fileName={`overworld-${game.slug}`}
+          label="Share game"
+        />
         <CloseButton label="Close game" onClick={() => void selectGame(null)} />
       </div>
 

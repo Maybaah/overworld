@@ -1,0 +1,72 @@
+.ow-share {
+  position: relative;
+  display: inline-block;
+}
+
+.ow-share-pop {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  min-width: 160px;
+  margin-top: 4px;
+  padding: 4px;
+  background: var(--surface-solid);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.ow-share-item {
+  padding: 8px 12px;
+  min-height: 32px;
+  text-align: left;
+  color: var(--text);
+  background: transparent;
+  border: 0;
+  border-radius: 6px;
+  cursor: pointer;
+  font: inherit;
+}
+
+.ow-share-item:hover:not(:disabled) {
+  background: #19212d;
+}
+
+.ow-share-item:disabled {
+  color: var(--muted);
+  cursor: default;
+}
+
+.ow-share-live {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.ow-shared {
+  display: grid;
+  gap: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.ow-shared-rows {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ow-shared-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+}
