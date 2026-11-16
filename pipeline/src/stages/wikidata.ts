@@ -23,6 +23,7 @@ const CLASS_PUBLISHER = 'wd:Q1137109';
 const CLASS_VIDEO_GAME = 'wd:Q7889';
 const BUSINESS_CLASSES = 'wd:Q4830453 wd:Q783794 wd:Q6881511 wd:Q891723';
 const REGION_CLASSES = 'wd:Q10864048 wd:Q6256 wd:Q3624078 wd:Q3336843 wd:Q5107';
+const COUNTY_CLASSES = 'wd:Q28575 wd:Q180673';
 const CITY_CLASSES = 'wd:Q515 wd:Q133442 wd:Q5119';
 const PREFERRED_RANK = 'http://wikiba.se/ontology#PreferredRank';
 
@@ -41,6 +42,7 @@ export interface WikidataStageResult {
   byBasis: Record<WikidataMatchBasis, number>;
   withHq: number;
   ambiguousHq: number;
+  regionLevelHq: number;
   skipped: boolean;
 }
 
@@ -162,12 +164,14 @@ export function buildCompanyDetailsQuery(qids: string[]): string {
 }
 
 export function buildPlaceDetailsQuery(qids: string[]): string {
-  return `SELECT DISTINCT ?pl ?plLabel ?coord ?cc ?own ?isRegion ?isCity WHERE {
+  return `SELECT DISTINCT ?pl ?plLabel ?coord ?cc ?own ?parent ?grand ?isRegion ?isCounty ?isCity WHERE {
   VALUES ?pl { ${qids.map((q) => `wd:${q}`).join(' ')} }
   OPTIONAL { ?pl wdt:P625 ?coord }
   OPTIONAL { ?pl wdt:P17 ?c . ?c wdt:P297 ?cc }
   OPTIONAL { ?pl wdt:P297 ?own }
+  OPTIONAL { ?pl wdt:P131 ?parent . OPTIONAL { ?parent wdt:P131 ?grand } }
   BIND(EXISTS { ?pl wdt:P31/wdt:P279* ?rc . VALUES ?rc { ${REGION_CLASSES} } } AS ?isRegion)
+  BIND(EXISTS { ?pl wdt:P31/wdt:P279* ?ct . VALUES ?ct { ${COUNTY_CLASSES} } } AS ?isCounty)
   BIND(EXISTS { ?pl wdt:P31/wdt:P279* ?cl . VALUES ?cl { ${CITY_CLASSES} } } AS ?isCity)
   SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
 }`;
@@ -254,9 +258,12 @@ interface PlaceDetails {
   country: string | null;
   levelRegion: boolean;
   cityTier: 0 | 1 | 2;
+  parents: Set<string>;
+  grands: Set<string>;
 }
 
 export interface AmbiguousHq {
+  reason: 'several_cities' | 'region';
   igdbCompanyId: number;
   name: string;
   qid: string;
@@ -283,7 +290,7 @@ export async function runWikidataStage(config: PipelineConfig, deps: WikidataDep
     const byBasis = emptyBasis();
     for (const c of companies) byBasis[c.matchedBy]++;
     log(`wikidata: stage files exist, skipping (${games.length} games, ${companies.length} companies)`);
-    return { games: games.length, companies: companies.length, byBasis, withHq: companies.filter((c) => c.hq).length, ambiguousHq: 0, skipped: true };
+    return { games: games.length, companies: companies.length, byBasis, withHq: companies.filter((c) => c.hq).length, ambiguousHq: 0, regionLevelHq: 0, skipped: true };
   }
 
   const igdbGamesFile = path.join(config.stageDir, STAGE_FILES.igdbGames);
@@ -525,18 +532,23 @@ export async function runWikidataStage(config: PipelineConfig, deps: WikidataDep
 
   const placeIds = [...new Set([...statementsByItem.values()].flat().map((s) => s.place))].sort(compareQid);
   const placeRows = placeIds.length ? await batched('place details', placeIds, buildPlaceDetailsQuery) : [];
-  const placeAcc = new Map<string, { label: string | null; coords: string[]; countries: Set<string>; own: Set<string>; region: boolean; city: boolean }>();
+  const placeAcc = new Map<string, { label: string | null; coords: string[]; countries: Set<string>; own: Set<string>; region: boolean; county: boolean; city: boolean; parents: Set<string>; grands: Set<string> }>();
   for (const b of placeRows) {
     const pl = qidOf(b.pl);
     if (!pl) continue;
     let acc = placeAcc.get(pl);
-    if (!acc) placeAcc.set(pl, (acc = { label: null, coords: [], countries: new Set(), own: new Set(), region: false, city: false }));
+    if (!acc) placeAcc.set(pl, (acc = { label: null, coords: [], countries: new Set(), own: new Set(), region: false, county: false, city: false, parents: new Set(), grands: new Set() }));
     const label = b.plLabel?.value;
     if (label && label !== pl) acc.label = label;
     if (b.coord) acc.coords.push(b.coord.value);
     if (b.cc) acc.countries.add(b.cc.value);
     if (b.own) acc.own.add(b.own.value);
     if (b.isRegion?.value === 'true') acc.region = true;
+    if (b.isCounty?.value === 'true') acc.county = true;
+    const parent = qidOf(b.parent);
+    if (parent) acc.parents.add(parent);
+    const grand = qidOf(b.grand);
+    if (grand) acc.grands.add(grand);
     if (b.isCity?.value === 'true') acc.city = true;
   }
   const places = new Map<string, PlaceDetails>();
@@ -548,12 +560,15 @@ export async function runWikidataStage(config: PipelineConfig, deps: WikidataDep
       lng: point?.lng ?? null,
       country: [...acc.countries].sort()[0] ?? [...acc.own].sort()[0] ?? null,
       levelRegion: acc.region && !acc.city,
-      cityTier: acc.city ? 0 : acc.region ? 2 : 1,
+      cityTier: acc.city ? 0 : acc.region || acc.county ? 2 : 1,
+      parents: acc.parents,
+      grands: acc.grands,
     });
   }
 
   const PROP_ORDER: Record<HqBasis, number> = { headquarters: 0, located_in: 1, formation: 2 };
   let ambiguousHq = 0;
+  let regionLevelHq = 0;
   const ambiguousReport: AmbiguousHq[] = [];
   const wdCompanies: RawWikidataCompany[] = [];
   const byBasis = emptyBasis();
@@ -572,7 +587,15 @@ export async function runWikidataStage(config: PipelineConfig, deps: WikidataDep
       const ky = keyOf(y);
       return kx[0] - ky[0] || kx[1] - ky[1] || kx[2] - ky[2];
     };
-    const options = (statementsByItem.get(link.qid) ?? []).slice().sort(
+    const describe = (q: string) => ({ qid: q, label: places.get(q)?.label ?? q, country: places.get(q)?.country ?? null });
+    const allOptions = statementsByItem.get(link.qid) ?? [];
+    const inside = (inner: string, outer: string): boolean => {
+      const p = places.get(inner);
+      return !!p && inner !== outer && (p.parents.has(outer) || p.grands.has(outer));
+    };
+    const options = allOptions
+      .filter((o) => !allOptions.some((p) => inside(p.place, o.place)))
+      .sort(
       (x, y) =>
         cmpKey(x, y) ||
         compareStart(x.start, y.start) ||
@@ -581,12 +604,13 @@ export async function runWikidataStage(config: PipelineConfig, deps: WikidataDep
     );
     const stmt = options[0];
     if (stmt) {
+      const describe = (q: string) => ({ qid: q, label: places.get(q)?.label ?? q, country: places.get(q)?.country ?? null });
       const tiedStatements = options.filter((o) => cmpKey(o, stmt) === 0);
       const tied = [...new Set(tiedStatements.map((o) => o.place))];
       if (tied.length > 1) {
         ambiguousHq++;
-        const describe = (q: string) => ({ qid: q, label: places.get(q)?.label ?? q, country: places.get(q)?.country ?? null });
         ambiguousReport.push({
+          reason: 'several_cities',
           igdbCompanyId: c.id,
           name: c.name,
           qid: link.qid,
@@ -597,6 +621,18 @@ export async function runWikidataStage(config: PipelineConfig, deps: WikidataDep
       }
     }
     const place = stmt ? places.get(stmt.place) : undefined;
+    if (stmt && places.get(stmt.place)?.cityTier === 2) {
+      regionLevelHq++;
+      const distinct = [...new Set(options.map((o) => o.place))];
+      ambiguousReport.push({
+        reason: 'region',
+        igdbCompanyId: c.id,
+        name: c.name,
+        qid: link.qid,
+        chosen: describe(stmt.place),
+        candidates: distinct.map((q) => ({ ...describe(q), basis: options.find((o) => o.place === q)!.prop })),
+      });
+    }
     let hq: RawWikidataCompany['hq'] = null;
     if (stmt && place && !place.levelRegion && place.lat !== null && place.lng !== null) {
       hq = { qid: stmt.place, label: place.label, lat: place.lat, lng: place.lng };
@@ -621,15 +657,15 @@ export async function runWikidataStage(config: PipelineConfig, deps: WikidataDep
 
   await writeJson(gamesFile, wdGames);
   await writeJson(companiesFile, wdCompanies);
-  await writeJson(path.join(config.stageDir, 'wikidata-ambiguous-hq.json'), ambiguousReport.sort((a, b) => a.igdbCompanyId - b.igdbCompanyId), true);
+  await writeJson(path.join(config.stageDir, 'wikidata-ambiguous-hq.json'), ambiguousReport.sort((a, b) => a.igdbCompanyId - b.igdbCompanyId || a.reason.localeCompare(b.reason)), true);
 
   const withHq = wdCompanies.filter((c) => c.hq).length;
   log(
     `wikidata: games ${wdGames.length}/${igdbGames.length}; companies linked ${wdCompanies.length}/${igdbCompanies.length} ` +
       `(external_id ${byBasis.external_id}, via_game ${byBasis.via_game}, name ${byBasis.name}); ` +
-      `with hq ${withHq}, without ${wdCompanies.length - withHq}; ambiguous names ${ambiguous}; ambiguous hq ${ambiguousHq}; ` +
+      `with hq ${withHq}, without ${wdCompanies.length - withHq}; ambiguous names ${ambiguous}; ambiguous hq ${ambiguousHq}; region-level hq ${regionLevelHq}; ` +
       `failed batches ${failedBatches}; requests ${requests}`,
   );
 
-  return { games: wdGames.length, companies: wdCompanies.length, byBasis, withHq, ambiguousHq, skipped: false };
+  return { games: wdGames.length, companies: wdCompanies.length, byBasis, withHq, ambiguousHq, regionLevelHq, skipped: false };
 }

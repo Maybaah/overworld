@@ -648,6 +648,7 @@ describe('runWikidataStage', () => {
     const report = JSON.parse(await readFile(path.join(stageDir, 'wikidata-ambiguous-hq.json'), 'utf8'));
     expect(report).toEqual([
       {
+        reason: 'several_cities',
         igdbCompanyId: 1,
         name: 'A',
         qid: 'Q1',
@@ -658,6 +659,57 @@ describe('runWikidataStage', () => {
         ],
       },
     ]);
+  });
+
+  it('drops a candidate place that contains another candidate (directly or one step up)', async () => {
+    await seed([], [igdbCompany(1, 'A', 'a'), igdbCompany(2, 'B', 'b')]);
+    const hq = (co: string, pl: string): Binding => ({ co: uri(co), prop: lit('headquarters'), rank: RANK('Normal'), pl: uri(pl) });
+    const fake = fakeWikidata({
+      external: () => [{ v: lit('a'), co: uri('Q1') }, { v: lit('b'), co: uri('Q2') }],
+      statements: () => [hq('Q1', 'Q10'), hq('Q1', 'Q11'), hq('Q2', 'Q10'), hq('Q2', 'Q12')],
+      places: () => [
+        place('Q10', 'Outer', 'Point(0 0)', { isCity: FALSE }),
+        place('Q11', 'Inner', 'Point(1 1)', { isCity: FALSE, parent: uri('Q10') }),
+        place('Q12', 'Deep', 'Point(2 2)', { isCity: FALSE, parent: uri('Q15'), grand: uri('Q10') }),
+      ],
+    });
+    const res = await runWikidataStage(config(), { fetchImpl: fake.fetchImpl, sleep, log });
+    const { companies } = await readOut();
+    expect(companies.slice(0, 2).map((c) => c.hq!.label)).toEqual(['Inner', 'Deep']);
+    expect(res.ambiguousHq).toBe(0);
+    expect(fake.calls.filter((c) => c.kind === 'places')).toHaveLength(1);
+    expect(fake.calls.find((c) => c.kind === 'places')!.query).toContain('wdt:P131');
+  });
+
+  it('counts region-level choices and reports them with a reason', async () => {
+    await seed([], [igdbCompany(1, 'A', 'a'), igdbCompany(2, 'B', 'b')]);
+    const fake = fakeWikidata({
+      external: () => [{ v: lit('a'), co: uri('Q1') }, { v: lit('b'), co: uri('Q2') }],
+      statements: () => [
+        { co: uri('Q1'), prop: lit('headquarters'), rank: RANK('Normal'), pl: uri('Q30') },
+        { co: uri('Q2'), prop: lit('headquarters'), rank: RANK('Normal'), pl: uri('Q31') },
+      ],
+      places: () => [
+        place('Q30', 'Surrey', 'Point(-0.4 51.3)', { cc: lit('GB'), isCity: FALSE, isCounty: TRUE }),
+        place('Q31', 'Guildford', 'Point(-0.57 51.23)', { cc: lit('GB') }),
+      ],
+    });
+    const res = await runWikidataStage(config(), { fetchImpl: fake.fetchImpl, sleep, log });
+    const { companies } = await readOut();
+    expect(res.regionLevelHq).toBe(1);
+    expect(companies[0]!.hq!.label).toBe('Surrey');
+    const report = JSON.parse(await readFile(path.join(stageDir, 'wikidata-ambiguous-hq.json'), 'utf8'));
+    expect(report).toEqual([
+      {
+        reason: 'region',
+        igdbCompanyId: 1,
+        name: 'A',
+        qid: 'Q1',
+        chosen: { qid: 'Q30', label: 'Surrey', country: 'GB' },
+        candidates: [{ qid: 'Q30', label: 'Surrey', country: 'GB', basis: 'headquarters' }],
+      },
+    ]);
+    expect(logs.some((l) => l.includes('region-level hq 1'))).toBe(true);
   });
 
   it('picks the preferred or earliest inception year', async () => {
