@@ -24,7 +24,7 @@ import type {
   RawWikidataGame,
   WikidataMatchBasis,
 } from './raw';
-import { countryCentre, numericToAlpha2 } from './countries';
+import { countryCentre, numericToAlpha2, currentCountry } from './countries';
 import { normalizeCompanyName, sameCompanyLoosely } from './names';
 
 export type SpecialtyRole = 'localization' | 'qa' | 'art' | 'audio';
@@ -238,7 +238,7 @@ export function merge(input: MergeInput): MergeResult {
     else idsByName.set(n, [c.id]);
   }
 
-  const wdCompanyById = new Map(input.wikidataCompanies.map((w) => [w.igdbCompanyId, w]));
+  const wdCompanyById = new Map(input.wikidataCompanies.map((w) => [w.igdbCompanyId, { ...w, country: currentCountry(w.country) }]));
   const wdGameById = new Map(input.wikidataGames.map((w) => [w.igdbGameId, w]));
   const companyIdByQid = new Map<string, number>();
   for (const w of input.wikidataCompanies) {
@@ -637,8 +637,8 @@ export function merge(input: MergeInput): MergeResult {
 
     if (loc.country === null) {
       const led = ledWithCountry.get(raw.id);
-      if (led && led.length > 0 && led.every((l) => l.country === led[0]!.country)) {
-        loc.country = led[0]!.country;
+      if (led && led.length > 0 && led.every((l) => currentCountry(l.country) === currentCountry(led[0]!.country))) {
+        loc.country = currentCountry(led[0]!.country);
         loc.fromGames = true;
         if (loc.precision === 'none') {
           const centre = countryCentre(loc.country);

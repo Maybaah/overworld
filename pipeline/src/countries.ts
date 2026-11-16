@@ -21,6 +21,16 @@ export function numericToAlpha2(n: number | null | undefined): string | null {
   return byNumeric.get(n) ?? null;
 }
 
+// Wikidata still names dissolved states for studios that closed with them; they are placed in the successor state
+// that holds their city today.
+const SUCCESSOR: Record<string, string> = { SU: 'RU', YU: 'RS', CS: 'CZ', DD: 'DE' };
+
+export function currentCountry(alpha2: string | null | undefined): string | null {
+  if (!alpha2) return null;
+  const code = alpha2.toUpperCase();
+  return SUCCESSOR[code] ?? code;
+}
+
 export function countryCentre(alpha2: string | null | undefined): { lat: number; lng: number } | null {
   if (!alpha2) return null;
   const c = byAlpha2.get(alpha2.toUpperCase());

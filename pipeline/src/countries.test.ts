@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { countryCentre, countryName, numericToAlpha2 } from './countries';
+import { countryCentre, countryName, numericToAlpha2, currentCountry } from './countries';
 
 describe('countries', () => {
   it('maps ISO numeric codes to alpha-2', () => {
@@ -22,5 +22,14 @@ describe('countries', () => {
   it('returns common names', () => {
     expect(countryName('JP')).toBe('Japan');
     expect(countryName('ZZ')).toBeNull();
+  });
+});
+
+describe('currentCountry', () => {
+  it('moves dissolved states to their successor and keeps others', () => {
+    expect(currentCountry('SU')).toBe('RU');
+    expect(currentCountry('yu')).toBe('RS');
+    expect(currentCountry('JP')).toBe('JP');
+    expect(currentCountry(null)).toBeNull();
   });
 });
