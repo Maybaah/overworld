@@ -1,0 +1,7648 @@
+{
+  "ok": true,
+  "checks": [
+    {
+      "name": "files",
+      "description": "meta.json, companies.json, games.json and steam.json exist and parse",
+      "passed": true,
+      "count": 0,
+      "examples": []
+    },
+    {
+      "name": "details-chunks",
+      "description": "details/<n>.json files match games.json order and ids, and meta.detailChunks",
+      "passed": true,
+      "count": 0,
+      "examples": []
+    },
+    {
+      "name": "unique-company-ids",
+      "description": "company ids are unique",
+      "passed": true,
+      "count": 0,
+      "examples": []
+    },
+    {
+      "name": "unique-game-ids",
+      "description": "game ids are unique",
+      "passed": true,
+      "count": 0,
+      "examples": []
+    },
+    {
+      "name": "game-leads",
+      "description": "every game has a lead company present in companies.json and exactly one matching lead_developer role",
+      "passed": true,
+      "count": 0,
+      "examples": []
+    },
+    {
+      "name": "source-ids",
+      "description": "every company, game detail and role has a source with a non-empty source and id",
+      "passed": true,
+      "count": 0,
+      "examples": []
+    },
+    {
+      "name": "company-coordinates",
+      "description": "precision is 'none' exactly when lat/lng are null; city and country need valid coordinates",
+      "passed": true,
+      "count": 0,
+      "examples": []
+    },
+    {
+      "name": "references",
+      "description": "role.companyId, parentId and steam.json point at existing records",
+      "passed": true,
+      "count": 0,
+      "examples": []
+    },
+    {
+      "name": "games-sorted",
+      "description": "games.json is sorted by popularity, highest first",
+      "passed": true,
+      "count": 0,
+      "examples": []
+    },
+    {
+      "name": "role-types",
+      "description": "every role has a known role type",
+      "passed": true,
+      "count": 0,
+      "examples": []
+    },
+    {
+      "name": "meta-counts",
+      "description": "meta.counts match the files",
+      "passed": true,
+      "count": 0,
+      "examples": []
+    },
+    {
+      "name": "company-game-count",
+      "description": "every company has gameCount above 0",
+      "passed": true,
+      "count": 0,
+      "examples": []
+    },
+    {
+      "name": "company-games",
+      "description": "company-games.json exists and matches the (company, game, role) rows in the details chunks",
+      "passed": true,
+      "count": 0,
+      "examples": []
+    },
+    {
+      "name": "stats-file",
+      "description": "stats.json is well formed and its gamesLed sum equals the games whose lead studio has a country",
+      "passed": true,
+      "count": 0,
+      "examples": []
+    },
+    {
+      "name": "flows-file",
+      "description": "flows.json is well formed, examples exist in games.json, no lead_developer flow",
+      "passed": true,
+      "count": 0,
+      "examples": []
+    }
+  ],
+  "totals": {
+    "games": 9966,
+    "companies": 6241,
+    "roles": 29265
+  },
+  "roleCounts": {
+    "lead_developer": 9966,
+    "co_developer": 1546,
+    "port": 1395,
+    "publisher": 15227,
+    "localization": 1,
+    "qa": 0,
+    "art": 1,
+    "audio": 1,
+    "support": 1128
+  },
+  "precision": {
+    "city": {
+      "count": 2261,
+      "percent": 36.2
+    },
+    "country": {
+      "count": 2645,
+      "percent": 42.4
+    },
+    "none": {
+      "count": 1335,
+      "percent": 21.4
+    }
+  },
+  "flaggedCompanies": [
+    {
+      "id": 9786,
+      "name": "22nd Century Toys",
+      "gameCount": 28
+    },
+    {
+      "id": 38591,
+      "name": "Pingle Game Studio",
+      "gameCount": 21
+    },
+    {
+      "id": 32350,
+      "name": "Hyundai",
+      "gameCount": 19
+    },
+    {
+      "id": 25230,
+      "name": "St. GIGA",
+      "gameCount": 16
+    },
+    {
+      "id": 461,
+      "name": "Fox Interactive",
+      "gameCount": 11
+    },
+    {
+      "id": 3301,
+      "name": "Atari Europe",
+      "gameCount": 11
+    },
+    {
+      "id": 833,
+      "name": "Ignition Entertainment",
+      "gameCount": 9
+    },
+    {
+      "id": 32363,
+      "name": "ak tronic",
+      "gameCount": 9
+    },
+    {
+      "id": 1453,
+      "name": "Sharp",
+      "gameCount": 8
+    },
+    {
+      "id": 11975,
+      "name": "WhisperGames",
+      "gameCount": 8
+    },
+    {
+      "id": 20661,
+      "name": "Crunchyroll Games",
+      "gameCount": 8
+    },
+    {
+      "id": 51808,
+      "name": "100 Cozy Games",
+      "gameCount": 8
+    },
+    {
+      "id": 91,
+      "name": "Playmates Interactive Entertainment",
+      "gameCount": 7
+    },
+    {
+      "id": 4132,
+      "name": "icculus.org",
+      "gameCount": 7
+    },
+    {
+      "id": 9949,
+      "name": "Daedalic Studio West",
+      "gameCount": 7
+    },
+    {
+      "id": 10535,
+      "name": "Acclaim",
+      "gameCount": 7
+    },
+    {
+      "id": 19866,
+      "name": "Maple Whispering Limited",
+      "gameCount": 6
+    },
+    {
+      "id": 1238,
+      "name": "Virgin Games USA",
+      "gameCount": 5
+    },
+    {
+      "id": 1901,
+      "name": "Reef Entertainment",
+      "gameCount": 5
+    },
+    {
+      "id": 2017,
+      "name": "MonkeyPaw Games",
+      "gameCount": 5
+    },
+    {
+      "id": 2519,
+      "name": "Sears",
+      "gameCount": 5
+    },
+    {
+      "id": 3828,
+      "name": "SmashGames",
+      "gameCount": 5
+    },
+    {
+      "id": 5769,
+      "name": "Ubisoft Europe",
+      "gameCount": 5
+    },
+    {
+      "id": 10317,
+      "name": "Micomsoft",
+      "gameCount": 5
+    },
+    {
+      "id": 13104,
+      "name": "Ving Co., Ltd.",
+      "gameCount": 5
+    },
+    {
+      "id": 13217,
+      "name": "Fujitsu Interactive",
+      "gameCount": 5
+    },
+    {
+      "id": 18998,
+      "name": "Puppet Combo",
+      "gameCount": 5
+    },
+    {
+      "id": 22239,
+      "name": "Amiga",
+      "gameCount": 5
+    },
+    {
+      "id": 27686,
+      "name": "Frontier Foundry",
+      "gameCount": 5
+    },
+    {
+      "id": 37382,
+      "name": "Epic Games Publishing",
+      "gameCount": 5
+    },
+    {
+      "id": 231,
+      "name": "Tec Toy Indústria de Brinquedos",
+      "gameCount": 4
+    },
+    {
+      "id": 651,
+      "name": "Sourcenext",
+      "gameCount": 4
+    },
+    {
+      "id": 772,
+      "name": "Palcom",
+      "gameCount": 4
+    },
+    {
+      "id": 904,
+      "name": "SoftBank",
+      "gameCount": 4
+    },
+    {
+      "id": 1204,
+      "name": "Brasoft Produtos de Informática",
+      "gameCount": 4
+    },
+    {
+      "id": 1860,
+      "name": "Virgin Entertainment",
+      "gameCount": 4
+    },
+    {
+      "id": 2138,
+      "name": "Novitas Publishing",
+      "gameCount": 4
+    },
+    {
+      "id": 4123,
+      "name": "Alexey Pajitnov",
+      "gameCount": 4
+    },
+    {
+      "id": 4288,
+      "name": "i5works",
+      "gameCount": 4
+    },
+    {
+      "id": 5884,
+      "name": "Tetraedge Games",
+      "gameCount": 4
+    },
+    {
+      "id": 10098,
+      "name": "SNK of America",
+      "gameCount": 4
+    },
+    {
+      "id": 12755,
+      "name": "NEC Avenue, Ltd.",
+      "gameCount": 4
+    },
+    {
+      "id": 22830,
+      "name": "SUPERHOT PRESENTS",
+      "gameCount": 4
+    },
+    {
+      "id": 22901,
+      "name": "Riot Forge",
+      "gameCount": 4
+    },
+    {
+      "id": 26201,
+      "name": "Yooreka Studio",
+      "gameCount": 4
+    },
+    {
+      "id": 36900,
+      "name": "DreadXP",
+      "gameCount": 4
+    },
+    {
+      "id": 45866,
+      "name": "CDE Entertainment",
+      "gameCount": 4
+    },
+    {
+      "id": 45959,
+      "name": "Devcats",
+      "gameCount": 4
+    },
+    {
+      "id": 51839,
+      "name": "100 Hidden Animals",
+      "gameCount": 4
+    },
+    {
+      "id": 218,
+      "name": "Vatical Entertainment",
+      "gameCount": 3
+    },
+    {
+      "id": 275,
+      "name": "Titan Computer",
+      "gameCount": 3
+    },
+    {
+      "id": 692,
+      "name": "High Score Productions",
+      "gameCount": 3
+    },
+    {
+      "id": 699,
+      "name": "Pipe Dream Interactive",
+      "gameCount": 3
+    },
+    {
+      "id": 756,
+      "name": "E-Frontier",
+      "gameCount": 3
+    },
+    {
+      "id": 1061,
+      "name": "Distractionware",
+      "gameCount": 3
+    },
+    {
+      "id": 1115,
+      "name": "Imotion",
+      "gameCount": 3
+    },
+    {
+      "id": 1124,
+      "name": "Floodgate Entertainment",
+      "gameCount": 3
+    },
+    {
+      "id": 1175,
+      "name": "Imagitec Design",
+      "gameCount": 3
+    },
+    {
+      "id": 1791,
+      "name": "Acclaim Japan",
+      "gameCount": 3
+    },
+    {
+      "id": 1916,
+      "name": "Flying Edge",
+      "gameCount": 3
+    },
+    {
+      "id": 1969,
+      "name": "Tate Interactive",
+      "gameCount": 3
+    },
+    {
+      "id": 2039,
+      "name": "Tommo Inc",
+      "gameCount": 3
+    },
+    {
+      "id": 2224,
+      "name": "Micro Application S.A.",
+      "gameCount": 3
+    },
+    {
+      "id": 2470,
+      "name": "RuneStorm",
+      "gameCount": 3
+    },
+    {
+      "id": 2501,
+      "name": "Overhaul Games",
+      "gameCount": 3
+    },
+    {
+      "id": 2673,
+      "name": "Mediaquest",
+      "gameCount": 3
+    },
+    {
+      "id": 2841,
+      "name": "D4 Enterprise, Inc",
+      "gameCount": 3
+    },
+    {
+      "id": 3047,
+      "name": "NIS Europe",
+      "gameCount": 3
+    },
+    {
+      "id": 3704,
+      "name": "NEC Home Electronics",
+      "gameCount": 3
+    },
+    {
+      "id": 4121,
+      "name": "Tandy",
+      "gameCount": 3
+    },
+    {
+      "id": 4182,
+      "name": "iPhSoft",
+      "gameCount": 3
+    },
+    {
+      "id": 4612,
+      "name": "The Digital Lounge",
+      "gameCount": 3
+    },
+    {
+      "id": 4678,
+      "name": "Beijing Perfect World",
+      "gameCount": 3
+    },
+    {
+      "id": 6394,
+      "name": "Screen 7",
+      "gameCount": 3
+    },
+    {
+      "id": 7093,
+      "name": "GO!",
+      "gameCount": 3
+    },
+    {
+      "id": 7432,
+      "name": "Retroism",
+      "gameCount": 3
+    },
+    {
+      "id": 8115,
+      "name": "Sold Out Software",
+      "gameCount": 3
+    },
+    {
+      "id": 9315,
+      "name": "GameTap Entertainment",
+      "gameCount": 3
+    },
+    {
+      "id": 9962,
+      "name": "Hangame",
+      "gameCount": 3
+    },
+    {
+      "id": 10076,
+      "name": "Teque Software Development",
+      "gameCount": 3
+    },
+    {
+      "id": 10084,
+      "name": "Tiertex",
+      "gameCount": 3
+    },
+    {
+      "id": 10836,
+      "name": "Green Man Gaming Publishing",
+      "gameCount": 3
+    },
+    {
+      "id": 12393,
+      "name": "Siactro",
+      "gameCount": 3
+    },
+    {
+      "id": 12681,
+      "name": "Mad Dog Games, LLC",
+      "gameCount": 3
+    },
+    {
+      "id": 13722,
+      "name": "Digital Eclipse Software",
+      "gameCount": 3
+    },
+    {
+      "id": 19140,
+      "name": "WizardWorks Group, Inc.",
+      "gameCount": 3
+    },
+    {
+      "id": 22829,
+      "name": "worm club",
+      "gameCount": 3
+    },
+    {
+      "id": 25860,
+      "name": "Tsunami Visual Technologies",
+      "gameCount": 3
+    },
+    {
+      "id": 27404,
+      "name": "TORTURE STAR VIDEO",
+      "gameCount": 3
+    },
+    {
+      "id": 38100,
+      "name": "MediaKite Distribution",
+      "gameCount": 3
+    },
+    {
+      "id": 38374,
+      "name": "Team17 Digital",
+      "gameCount": 3
+    },
+    {
+      "id": 42819,
+      "name": "Gotch Technology",
+      "gameCount": 3
+    },
+    {
+      "id": 59678,
+      "name": "Perpetuum Media",
+      "gameCount": 3
+    },
+    {
+      "id": 64808,
+      "name": "Fictions",
+      "gameCount": 3
+    },
+    {
+      "id": 77268,
+      "name": "Mastertronic Games",
+      "gameCount": 3
+    },
+    {
+      "id": 166,
+      "name": "Shadows in Darkness",
+      "gameCount": 2
+    },
+    {
+      "id": 265,
+      "name": "Contraband Entertainment",
+      "gameCount": 2
+    },
+    {
+      "id": 358,
+      "name": "Raster Productions",
+      "gameCount": 2
+    },
+    {
+      "id": 375,
+      "name": "Red Ant Enterprises",
+      "gameCount": 2
+    },
+    {
+      "id": 523,
+      "name": "Graphsim Entertainment",
+      "gameCount": 2
+    },
+    {
+      "id": 704,
+      "name": "ASC Games",
+      "gameCount": 2
+    },
+    {
+      "id": 719,
+      "name": "Infogrames North America",
+      "gameCount": 2
+    },
+    {
+      "id": 1155,
+      "name": "California Pacific Computer",
+      "gameCount": 2
+    },
+    {
+      "id": 1494,
+      "name": "GOA Games Services Ltd.",
+      "gameCount": 2
+    },
+    {
+      "id": 1764,
+      "name": "Big Bang",
+      "gameCount": 2
+    },
+    {
+      "id": 1770,
+      "name": "505 Game Street",
+      "gameCount": 2
+    },
+    {
+      "id": 1828,
+      "name": "Dual Corporation",
+      "gameCount": 2
+    },
+    {
+      "id": 1858,
+      "name": "Epic/Sony Records",
+      "gameCount": 2
+    },
+    {
+      "id": 1869,
+      "name": "GOGAME",
+      "gameCount": 2
+    },
+    {
+      "id": 2061,
+      "name": "Bomico Entertainment Software",
+      "gameCount": 2
+    },
+    {
+      "id": 2064,
+      "name": "Data East USA",
+      "gameCount": 2
+    },
+    {
+      "id": 2096,
+      "name": "Lightstorm Entertainment",
+      "gameCount": 2
+    },
+    {
+      "id": 2107,
+      "name": "Game Mill Entertainment",
+      "gameCount": 2
+    },
+    {
+      "id": 2163,
+      "name": "Agatsuma",
+      "gameCount": 2
+    },
+    {
+      "id": 2182,
+      "name": "Hip Games",
+      "gameCount": 2
+    },
+    {
+      "id": 2276,
+      "name": "Fusionsphere Systems",
+      "gameCount": 2
+    },
+    {
+      "id": 2437,
+      "name": "Zen United",
+      "gameCount": 2
+    },
+    {
+      "id": 2593,
+      "name": "BrezzaSoft",
+      "gameCount": 2
+    },
+    {
+      "id": 2679,
+      "name": "ProSoft",
+      "gameCount": 2
+    },
+    {
+      "id": 2752,
+      "name": "ScriptArts",
+      "gameCount": 2
+    },
+    {
+      "id": 2827,
+      "name": "Flying Tiger Developments",
+      "gameCount": 2
+    },
+    {
+      "id": 3052,
+      "name": "Mighty Rocket Studios",
+      "gameCount": 2
+    },
+    {
+      "id": 3072,
+      "name": "Grey Box",
+      "gameCount": 2
+    },
+    {
+      "id": 3100,
+      "name": "Megaxus",
+      "gameCount": 2
+    },
+    {
+      "id": 3393,
+      "name": "Capcom USA",
+      "gameCount": 2
+    },
+    {
+      "id": 3991,
+      "name": "Russel",
+      "gameCount": 2
+    },
+    {
+      "id": 3995,
+      "name": "Eidos Interactive Europe",
+      "gameCount": 2
+    },
+    {
+      "id": 4183,
+      "name": "Blue Moon Red Owl",
+      "gameCount": 2
+    },
+    {
+      "id": 4289,
+      "name": "Unlimited Software",
+      "gameCount": 2
+    },
+    {
+      "id": 4410,
+      "name": "Presage Software",
+      "gameCount": 2
+    },
+    {
+      "id": 4461,
+      "name": "Chilled Mouse",
+      "gameCount": 2
+    },
+    {
+      "id": 4474,
+      "name": "Dingaling",
+      "gameCount": 2
+    },
+    {
+      "id": 5276,
+      "name": "Decaying Logic",
+      "gameCount": 2
+    },
+    {
+      "id": 5579,
+      "name": "Cerny Games",
+      "gameCount": 2
+    },
+    {
+      "id": 5841,
+      "name": "Joyoland",
+      "gameCount": 2
+    },
+    {
+      "id": 5891,
+      "name": "Coderus",
+      "gameCount": 2
+    },
+    {
+      "id": 5892,
+      "name": "e.p.i.c. Interactive",
+      "gameCount": 2
+    },
+    {
+      "id": 6064,
+      "name": "Tendershoot",
+      "gameCount": 2
+    },
+    {
+      "id": 7258,
+      "name": "Electrocoin",
+      "gameCount": 2
+    },
+    {
+      "id": 8028,
+      "name": "SKH Apps",
+      "gameCount": 2
+    },
+    {
+      "id": 8500,
+      "name": "The Sidekicks",
+      "gameCount": 2
+    },
+    {
+      "id": 9356,
+      "name": "Zindagi Games",
+      "gameCount": 2
+    },
+    {
+      "id": 9357,
+      "name": "Matheus Valadares",
+      "gameCount": 2
+    },
+    {
+      "id": 9390,
+      "name": "Intergrow",
+      "gameCount": 2
+    },
+    {
+      "id": 9556,
+      "name": "Commodore Electronics Ltd.",
+      "gameCount": 2
+    },
+    {
+      "id": 10063,
+      "name": "Misawa Entertainment",
+      "gameCount": 2
+    },
+    {
+      "id": 10079,
+      "name": "NEC Technologies",
+      "gameCount": 2
+    },
+    {
+      "id": 10158,
+      "name": "Panasonic Software Company",
+      "gameCount": 2
+    },
+    {
+      "id": 10303,
+      "name": "Leonard Menchiari",
+      "gameCount": 2
+    },
+    {
+      "id": 10329,
+      "name": "Comptiq",
+      "gameCount": 2
+    },
+    {
+      "id": 10391,
+      "name": "NoClip",
+      "gameCount": 2
+    },
+    {
+      "id": 10601,
+      "name": "Kitty Calis",
+      "gameCount": 2
+    },
+    {
+      "id": 11176,
+      "name": "Nidecom Soft",
+      "gameCount": 2
+    },
+    {
+      "id": 11373,
+      "name": "NAMCO BANDAI Games America Inc.",
+      "gameCount": 2
+    },
+    {
+      "id": 11671,
+      "name": "Onyx Lute",
+      "gameCount": 2
+    },
+    {
+      "id": 11694,
+      "name": "Ballistic",
+      "gameCount": 2
+    },
+    {
+      "id": 11984,
+      "name": "Experimental Gameplay Group",
+      "gameCount": 2
+    },
+    {
+      "id": 12028,
+      "name": "E-Home Entertainment",
+      "gameCount": 2
+    },
+    {
+      "id": 12539,
+      "name": "101XP",
+      "gameCount": 2
+    },
+    {
+      "id": 12686,
+      "name": "Little Stone Software",
+      "gameCount": 2
+    },
+    {
+      "id": 12884,
+      "name": "Tyler Glaiel",
+      "gameCount": 2
+    },
+    {
+      "id": 12942,
+      "name": "Digital Uppercut Productions",
+      "gameCount": 2
+    },
+    {
+      "id": 13004,
+      "name": "Icon Design Ltd.",
+      "gameCount": 2
+    },
+    {
+      "id": 13151,
+      "name": "Borne Games",
+      "gameCount": 2
+    },
+    {
+      "id": 13327,
+      "name": "Techland Publishing",
+      "gameCount": 2
+    },
+    {
+      "id": 14283,
+      "name": "Nifflas Games",
+      "gameCount": 2
+    },
+    {
+      "id": 14416,
+      "name": "Zach Gage",
+      "gameCount": 2
+    },
+    {
+      "id": 14821,
+      "name": "Yakuto",
+      "gameCount": 2
+    },
+    {
+      "id": 15241,
+      "name": "DO Games",
+      "gameCount": 2
+    },
+    {
+      "id": 15848,
+      "name": "US Gold Ltd",
+      "gameCount": 2
+    },
+    {
+      "id": 16890,
+      "name": "Perp Games",
+      "gameCount": 2
+    },
+    {
+      "id": 17153,
+      "name": "SUNBORN Network",
+      "gameCount": 2
+    },
+    {
+      "id": 17185,
+      "name": "Handic Software",
+      "gameCount": 2
+    },
+    {
+      "id": 17806,
+      "name": "Papaya Play",
+      "gameCount": 2
+    },
+    {
+      "id": 17943,
+      "name": "Aeria Games & Entertainment",
+      "gameCount": 2
+    },
+    {
+      "id": 19106,
+      "name": "Lionsgate Games",
+      "gameCount": 2
+    },
+    {
+      "id": 20545,
+      "name": "AstralShift",
+      "gameCount": 2
+    },
+    {
+      "id": 21381,
+      "name": "Numskull Games",
+      "gameCount": 2
+    },
+    {
+      "id": 21399,
+      "name": "Arrow Micro-Techs Corp.",
+      "gameCount": 2
+    },
+    {
+      "id": 21582,
+      "name": "Dr PinkCake",
+      "gameCount": 2
+    },
+    {
+      "id": 21598,
+      "name": "Mumin Corporation",
+      "gameCount": 2
+    },
+    {
+      "id": 21719,
+      "name": "Namco Bandai Games America",
+      "gameCount": 2
+    },
+    {
+      "id": 21938,
+      "name": "Poxpower",
+      "gameCount": 2
+    },
+    {
+      "id": 22043,
+      "name": "AMT Savan Corp",
+      "gameCount": 2
+    },
+    {
+      "id": 22044,
+      "name": "Vega Mobile",
+      "gameCount": 2
+    },
+    {
+      "id": 22058,
+      "name": "Infinity Co., Ltd.",
+      "gameCount": 2
+    },
+    {
+      "id": 22304,
+      "name": "Elegant Chaos",
+      "gameCount": 2
+    },
+    {
+      "id": 22937,
+      "name": "Visual Art's Motto",
+      "gameCount": 2
+    },
+    {
+      "id": 23463,
+      "name": "Coal Supper",
+      "gameCount": 2
+    },
+    {
+      "id": 23746,
+      "name": "Jumbo",
+      "gameCount": 2
+    },
+    {
+      "id": 23818,
+      "name": "Ryan C. Gordon",
+      "gameCount": 2
+    },
+    {
+      "id": 24039,
+      "name": "Big Sugar",
+      "gameCount": 2
+    },
+    {
+      "id": 24694,
+      "name": "KIRA",
+      "gameCount": 2
+    },
+    {
+      "id": 24792,
+      "name": "CREATIVE ASSEMBLY",
+      "gameCount": 2
+    },
+    {
+      "id": 24813,
+      "name": "Adam Spragg Games",
+      "gameCount": 2
+    },
+    {
+      "id": 24882,
+      "name": "KalypsoMediaGroup",
+      "gameCount": 2
+    },
+    {
+      "id": 25544,
+      "name": "SEGA HARDlight",
+      "gameCount": 2
+    },
+    {
+      "id": 25925,
+      "name": "i-Dreamsoft",
+      "gameCount": 2
+    },
+    {
+      "id": 25955,
+      "name": "AtariAge",
+      "gameCount": 2
+    },
+    {
+      "id": 26564,
+      "name": "Echo Project",
+      "gameCount": 2
+    },
+    {
+      "id": 26600,
+      "name": "Prolific Publishing",
+      "gameCount": 2
+    },
+    {
+      "id": 26679,
+      "name": "NLT Media",
+      "gameCount": 2
+    },
+    {
+      "id": 26691,
+      "name": "PanelComp",
+      "gameCount": 2
+    },
+    {
+      "id": 26889,
+      "name": "PXL computers",
+      "gameCount": 2
+    },
+    {
+      "id": 27072,
+      "name": "Melos Han-Tani",
+      "gameCount": 2
+    },
+    {
+      "id": 27073,
+      "name": "Marina Kittaka",
+      "gameCount": 2
+    },
+    {
+      "id": 27431,
+      "name": "PuffballsUnited",
+      "gameCount": 2
+    },
+    {
+      "id": 27629,
+      "name": "Paradox Software",
+      "gameCount": 2
+    },
+    {
+      "id": 28888,
+      "name": "NAISU",
+      "gameCount": 2
+    },
+    {
+      "id": 28895,
+      "name": "Johan Scherft",
+      "gameCount": 2
+    },
+    {
+      "id": 29327,
+      "name": "ItsTheTalia",
+      "gameCount": 2
+    },
+    {
+      "id": 29366,
+      "name": "Mobimon",
+      "gameCount": 2
+    },
+    {
+      "id": 30702,
+      "name": "Audio Visual Magic",
+      "gameCount": 2
+    },
+    {
+      "id": 30721,
+      "name": "Mister Morris Games",
+      "gameCount": 2
+    },
+    {
+      "id": 31302,
+      "name": "ZIOSoft",
+      "gameCount": 2
+    },
+    {
+      "id": 31683,
+      "name": "LINUJ",
+      "gameCount": 2
+    },
+    {
+      "id": 31894,
+      "name": "Samustai",
+      "gameCount": 2
+    },
+    {
+      "id": 32459,
+      "name": "TOPICS Entertainment",
+      "gameCount": 2
+    },
+    {
+      "id": 33325,
+      "name": "N4bA",
+      "gameCount": 2
+    },
+    {
+      "id": 33512,
+      "name": "Warp Digital Entertainment",
+      "gameCount": 2
+    },
+    {
+      "id": 33689,
+      "name": "Iwplay World Interactive Entertainment",
+      "gameCount": 2
+    },
+    {
+      "id": 35637,
+      "name": "Kowloon Nights",
+      "gameCount": 2
+    },
+    {
+      "id": 36961,
+      "name": "Wave Software",
+      "gameCount": 2
+    },
+    {
+      "id": 37558,
+      "name": "Metro Trains Melbourne",
+      "gameCount": 2
+    },
+    {
+      "id": 37729,
+      "name": "Trigger Happy Interactive",
+      "gameCount": 2
+    },
+    {
+      "id": 38616,
+      "name": "Japan Home Video Co.",
+      "gameCount": 2
+    },
+    {
+      "id": 38938,
+      "name": "Nikko",
+      "gameCount": 2
+    },
+    {
+      "id": 41347,
+      "name": "Joystick Ventures",
+      "gameCount": 2
+    },
+    {
+      "id": 42083,
+      "name": "Neverland Entertainment",
+      "gameCount": 2
+    },
+    {
+      "id": 44964,
+      "name": "Lemaitre Bros",
+      "gameCount": 2
+    },
+    {
+      "id": 46555,
+      "name": "Striker Entertainment",
+      "gameCount": 2
+    },
+    {
+      "id": 49019,
+      "name": "Cost",
+      "gameCount": 2
+    },
+    {
+      "id": 51104,
+      "name": "Travellin Cats",
+      "gameCount": 2
+    },
+    {
+      "id": 52494,
+      "name": "Explosive Squat Games",
+      "gameCount": 2
+    },
+    {
+      "id": 53491,
+      "name": "Con Man Games",
+      "gameCount": 2
+    },
+    {
+      "id": 56095,
+      "name": "Images Design",
+      "gameCount": 2
+    },
+    {
+      "id": 61238,
+      "name": "Wholesome Games Presents",
+      "gameCount": 2
+    },
+    {
+      "id": 66819,
+      "name": "KMBOX",
+      "gameCount": 2
+    },
+    {
+      "id": 68290,
+      "name": "Barribob",
+      "gameCount": 2
+    },
+    {
+      "id": 71588,
+      "name": "OriginData",
+      "gameCount": 2
+    },
+    {
+      "id": 76,
+      "name": "Ronin Entertainment",
+      "gameCount": 1
+    },
+    {
+      "id": 89,
+      "name": "Shokwave",
+      "gameCount": 1
+    },
+    {
+      "id": 165,
+      "name": "DC Entertainment",
+      "gameCount": 1
+    },
+    {
+      "id": 206,
+      "name": "Epic MegaGames",
+      "gameCount": 1
+    },
+    {
+      "id": 214,
+      "name": "Sylum Entertainment",
+      "gameCount": 1
+    },
+    {
+      "id": 244,
+      "name": "Edusoft",
+      "gameCount": 1
+    },
+    {
+      "id": 257,
+      "name": "Sierra Studios",
+      "gameCount": 1
+    },
+    {
+      "id": 302,
+      "name": "Massive Bear Studios",
+      "gameCount": 1
+    },
+    {
+      "id": 399,
+      "name": "Longtail Studios",
+      "gameCount": 1
+    },
+    {
+      "id": 416,
+      "name": "Syfy Games",
+      "gameCount": 1
+    },
+    {
+      "id": 452,
+      "name": "Threewave Software",
+      "gameCount": 1
+    },
+    {
+      "id": 471,
+      "name": "Pulse Entertainment",
+      "gameCount": 1
+    },
+    {
+      "id": 519,
+      "name": "Graphic Simulations",
+      "gameCount": 1
+    },
+    {
+      "id": 550,
+      "name": "Gamestorm",
+      "gameCount": 1
+    },
+    {
+      "id": 567,
+      "name": "Mind Control",
+      "gameCount": 1
+    },
+    {
+      "id": 629,
+      "name": "Sales Curve Interactive",
+      "gameCount": 1
+    },
+    {
+      "id": 679,
+      "name": "Tri-Synergy",
+      "gameCount": 1
+    },
+    {
+      "id": 686,
+      "name": "Actualize",
+      "gameCount": 1
+    },
+    {
+      "id": 687,
+      "name": "Creative Asylum",
+      "gameCount": 1
+    },
+    {
+      "id": 713,
+      "name": "Raylight Studios",
+      "gameCount": 1
+    },
+    {
+      "id": 796,
+      "name": "Infinite Game Publishing",
+      "gameCount": 1
+    },
+    {
+      "id": 875,
+      "name": "Blit Software",
+      "gameCount": 1
+    },
+    {
+      "id": 889,
+      "name": "Virtucraft",
+      "gameCount": 1
+    },
+    {
+      "id": 911,
+      "name": "Suzhou Snail Electronic",
+      "gameCount": 1
+    },
+    {
+      "id": 913,
+      "name": "Gala Networks",
+      "gameCount": 1
+    },
+    {
+      "id": 914,
+      "name": "Mental Games",
+      "gameCount": 1
+    },
+    {
+      "id": 1016,
+      "name": "Twisted Tree",
+      "gameCount": 1
+    },
+    {
+      "id": 1057,
+      "name": "Egmont Interactive",
+      "gameCount": 1
+    },
+    {
+      "id": 1110,
+      "name": "EA Partners",
+      "gameCount": 1
+    },
+    {
+      "id": 1123,
+      "name": "Personal Software",
+      "gameCount": 1
+    },
+    {
+      "id": 1167,
+      "name": "Super Fighter Team",
+      "gameCount": 1
+    },
+    {
+      "id": 1180,
+      "name": "World Domination Industries, Inc.",
+      "gameCount": 1
+    },
+    {
+      "id": 1247,
+      "name": "Lego Group",
+      "gameCount": 1
+    },
+    {
+      "id": 1275,
+      "name": "Dempa Shunbunsha",
+      "gameCount": 1
+    },
+    {
+      "id": 1291,
+      "name": "Fox Williams",
+      "gameCount": 1
+    },
+    {
+      "id": 1311,
+      "name": "Cartoon Network Interactive",
+      "gameCount": 1
+    },
+    {
+      "id": 1354,
+      "name": "Keypunch Software",
+      "gameCount": 1
+    },
+    {
+      "id": 1373,
+      "name": "OP Productions",
+      "gameCount": 1
+    },
+    {
+      "id": 1416,
+      "name": "Francisco Téllez de Meneses",
+      "gameCount": 1
+    },
+    {
+      "id": 1417,
+      "name": "Ninagamers Corp.",
+      "gameCount": 1
+    },
+    {
+      "id": 1426,
+      "name": "Emily Carroll",
+      "gameCount": 1
+    },
+    {
+      "id": 1427,
+      "name": "Damian Sommer",
+      "gameCount": 1
+    },
+    {
+      "id": 1454,
+      "name": "WarChest",
+      "gameCount": 1
+    },
+    {
+      "id": 1457,
+      "name": "Nine Realms",
+      "gameCount": 1
+    },
+    {
+      "id": 1468,
+      "name": "Gratuitous Games",
+      "gameCount": 1
+    },
+    {
+      "id": 1476,
+      "name": "X-Ample Architectures",
+      "gameCount": 1
+    },
+    {
+      "id": 1490,
+      "name": "Phoenix",
+      "gameCount": 1
+    },
+    {
+      "id": 1584,
+      "name": "EA Worldwide Motion Capture Studio",
+      "gameCount": 1
+    },
+    {
+      "id": 1644,
+      "name": "Xloc. inc",
+      "gameCount": 1
+    },
+    {
+      "id": 1645,
+      "name": "Pearl Digital Entertainment",
+      "gameCount": 1
+    },
+    {
+      "id": 1650,
+      "name": "PCB Productions",
+      "gameCount": 1
+    },
+    {
+      "id": 1724,
+      "name": "Fox Kids",
+      "gameCount": 1
+    },
+    {
+      "id": 1749,
+      "name": "H2O Entertainment",
+      "gameCount": 1
+    },
+    {
+      "id": 1768,
+      "name": "Toy Box Studios",
+      "gameCount": 1
+    },
+    {
+      "id": 1797,
+      "name": "Actionamics",
+      "gameCount": 1
+    },
+    {
+      "id": 1801,
+      "name": "Turbo Technologies",
+      "gameCount": 1
+    },
+    {
+      "id": 1807,
+      "name": "GameBank",
+      "gameCount": 1
+    },
+    {
+      "id": 1815,
+      "name": "Ocean of America",
+      "gameCount": 1
+    },
+    {
+      "id": 1842,
+      "name": "Infinite Ventures",
+      "gameCount": 1
+    },
+    {
+      "id": 1846,
+      "name": "DokiDenki Studio",
+      "gameCount": 1
+    },
+    {
+      "id": 1889,
+      "name": "Mistic Studios",
+      "gameCount": 1
+    },
+    {
+      "id": 1912,
+      "name": "THQ Studio Oz",
+      "gameCount": 1
+    },
+    {
+      "id": 1921,
+      "name": "Shonen Jump",
+      "gameCount": 1
+    },
+    {
+      "id": 1944,
+      "name": "Acclaim Max Sports",
+      "gameCount": 1
+    },
+    {
+      "id": 1972,
+      "name": "Adrenium Games",
+      "gameCount": 1
+    },
+    {
+      "id": 1988,
+      "name": "Interscope",
+      "gameCount": 1
+    },
+    {
+      "id": 2007,
+      "name": "AM5",
+      "gameCount": 1
+    },
+    {
+      "id": 2044,
+      "name": "Check Six Games",
+      "gameCount": 1
+    },
+    {
+      "id": 2077,
+      "name": "Hwang Shinwei",
+      "gameCount": 1
+    },
+    {
+      "id": 2100,
+      "name": "UFO Interactive Software",
+      "gameCount": 1
+    },
+    {
+      "id": 2116,
+      "name": "SKONEC",
+      "gameCount": 1
+    },
+    {
+      "id": 2122,
+      "name": "One True Game Studios",
+      "gameCount": 1
+    },
+    {
+      "id": 2132,
+      "name": "Bold Games",
+      "gameCount": 1
+    },
+    {
+      "id": 2140,
+      "name": "Pepper Games",
+      "gameCount": 1
+    },
+    {
+      "id": 2155,
+      "name": "Syfy Kids",
+      "gameCount": 1
+    },
+    {
+      "id": 2201,
+      "name": "H.I.C.",
+      "gameCount": 1
+    },
+    {
+      "id": 2249,
+      "name": "The Fizz Factor",
+      "gameCount": 1
+    },
+    {
+      "id": 2261,
+      "name": "System Prisma",
+      "gameCount": 1
+    },
+    {
+      "id": 2283,
+      "name": "Virtuous",
+      "gameCount": 1
+    },
+    {
+      "id": 2298,
+      "name": "Neoplay",
+      "gameCount": 1
+    },
+    {
+      "id": 2301,
+      "name": "Anaconda",
+      "gameCount": 1
+    },
+    {
+      "id": 2347,
+      "name": "Capcom Osaka",
+      "gameCount": 1
+    },
+    {
+      "id": 2349,
+      "name": "Attention Software",
+      "gameCount": 1
+    },
+    {
+      "id": 2369,
+      "name": "Bignet",
+      "gameCount": 1
+    },
+    {
+      "id": 2371,
+      "name": "Revolutionary Concepts",
+      "gameCount": 1
+    },
+    {
+      "id": 2373,
+      "name": "Alexandria Inc",
+      "gameCount": 1
+    },
+    {
+      "id": 2398,
+      "name": "HMH Interactive",
+      "gameCount": 1
+    },
+    {
+      "id": 2399,
+      "name": "Redline Games",
+      "gameCount": 1
+    },
+    {
+      "id": 2400,
+      "name": "Falcom",
+      "gameCount": 1
+    },
+    {
+      "id": 2415,
+      "name": "CSR-Studios",
+      "gameCount": 1
+    },
+    {
+      "id": 2417,
+      "name": "Tapwave",
+      "gameCount": 1
+    },
+    {
+      "id": 2422,
+      "name": "Hertz",
+      "gameCount": 1
+    },
+    {
+      "id": 2423,
+      "name": "SoMoGa",
+      "gameCount": 1
+    },
+    {
+      "id": 2435,
+      "name": "Frontier Groove",
+      "gameCount": 1
+    },
+    {
+      "id": 2466,
+      "name": "Ignited Minds, LLC",
+      "gameCount": 1
+    },
+    {
+      "id": 2485,
+      "name": "Quadro Delta",
+      "gameCount": 1
+    },
+    {
+      "id": 2493,
+      "name": "1C/Cenega",
+      "gameCount": 1
+    },
+    {
+      "id": 2517,
+      "name": "Amusement Marketing International",
+      "gameCount": 1
+    },
+    {
+      "id": 2553,
+      "name": "EPCConnect",
+      "gameCount": 1
+    },
+    {
+      "id": 2561,
+      "name": "Digital Tribe",
+      "gameCount": 1
+    },
+    {
+      "id": 2563,
+      "name": "1C-777",
+      "gameCount": 1
+    },
+    {
+      "id": 2571,
+      "name": "Major A",
+      "gameCount": 1
+    },
+    {
+      "id": 2596,
+      "name": "Mortal Kombat Team",
+      "gameCount": 1
+    },
+    {
+      "id": 2598,
+      "name": "Mondo Media",
+      "gameCount": 1
+    },
+    {
+      "id": 2613,
+      "name": "Gizmondo Games",
+      "gameCount": 1
+    },
+    {
+      "id": 2655,
+      "name": "SIDE UK Ltd",
+      "gameCount": 1
+    },
+    {
+      "id": 2697,
+      "name": "Fuelcell Games",
+      "gameCount": 1
+    },
+    {
+      "id": 2698,
+      "name": "Gagne International",
+      "gameCount": 1
+    },
+    {
+      "id": 2716,
+      "name": "SCi Entertainment",
+      "gameCount": 1
+    },
+    {
+      "id": 2720,
+      "name": "Touchstone Games",
+      "gameCount": 1
+    },
+    {
+      "id": 2737,
+      "name": "Meteor Entertainment",
+      "gameCount": 1
+    },
+    {
+      "id": 2750,
+      "name": "Paragon 5",
+      "gameCount": 1
+    },
+    {
+      "id": 2756,
+      "name": "Sony Pictures Television",
+      "gameCount": 1
+    },
+    {
+      "id": 2757,
+      "name": "Sony Pictures Consumer Products",
+      "gameCount": 1
+    },
+    {
+      "id": 2767,
+      "name": "Leguna",
+      "gameCount": 1
+    },
+    {
+      "id": 2774,
+      "name": "G3 Interactive",
+      "gameCount": 1
+    },
+    {
+      "id": 2777,
+      "name": "Xdev",
+      "gameCount": 1
+    },
+    {
+      "id": 2816,
+      "name": "Syrox Developments",
+      "gameCount": 1
+    },
+    {
+      "id": 2838,
+      "name": "D4 Enterprise",
+      "gameCount": 1
+    },
+    {
+      "id": 2934,
+      "name": "Vitei",
+      "gameCount": 1
+    },
+    {
+      "id": 2959,
+      "name": "Def Jam",
+      "gameCount": 1
+    },
+    {
+      "id": 2969,
+      "name": "nFusion Interactive",
+      "gameCount": 1
+    },
+    {
+      "id": 2970,
+      "name": "DiP Interactive",
+      "gameCount": 1
+    },
+    {
+      "id": 2971,
+      "name": "SME Dynamic Systems",
+      "gameCount": 1
+    },
+    {
+      "id": 2987,
+      "name": "Guilti",
+      "gameCount": 1
+    },
+    {
+      "id": 2995,
+      "name": "Namco Bandai America",
+      "gameCount": 1
+    },
+    {
+      "id": 3102,
+      "name": "Axeso5",
+      "gameCount": 1
+    },
+    {
+      "id": 3130,
+      "name": "Zenimax Europe",
+      "gameCount": 1
+    },
+    {
+      "id": 3142,
+      "name": "Plastic Wax",
+      "gameCount": 1
+    },
+    {
+      "id": 3148,
+      "name": "RedDotGames",
+      "gameCount": 1
+    },
+    {
+      "id": 3156,
+      "name": "Cinemaware Marquee",
+      "gameCount": 1
+    },
+    {
+      "id": 3174,
+      "name": "AMD",
+      "gameCount": 1
+    },
+    {
+      "id": 3236,
+      "name": "Shirogumi",
+      "gameCount": 1
+    },
+    {
+      "id": 3357,
+      "name": "Ringtail Studios",
+      "gameCount": 1
+    },
+    {
+      "id": 3394,
+      "name": "Capcom Europe",
+      "gameCount": 1
+    },
+    {
+      "id": 3402,
+      "name": "Megamedia",
+      "gameCount": 1
+    },
+    {
+      "id": 3466,
+      "name": "The Ant Farm",
+      "gameCount": 1
+    },
+    {
+      "id": 3573,
+      "name": "Umbra",
+      "gameCount": 1
+    },
+    {
+      "id": 3601,
+      "name": "POP Sound",
+      "gameCount": 1
+    },
+    {
+      "id": 3617,
+      "name": "Fontoló Studió Ltd.",
+      "gameCount": 1
+    },
+    {
+      "id": 3676,
+      "name": "Albion Localisations",
+      "gameCount": 1
+    },
+    {
+      "id": 3679,
+      "name": "Mesopotamia Software",
+      "gameCount": 1
+    },
+    {
+      "id": 3681,
+      "name": "CGBot",
+      "gameCount": 1
+    },
+    {
+      "id": 3710,
+      "name": "Solid Software",
+      "gameCount": 1
+    },
+    {
+      "id": 3757,
+      "name": "Elverils LLC",
+      "gameCount": 1
+    },
+    {
+      "id": 3788,
+      "name": "Digital Media Lab Inc.",
+      "gameCount": 1
+    },
+    {
+      "id": 3810,
+      "name": "Pinewood Studios",
+      "gameCount": 1
+    },
+    {
+      "id": 3848,
+      "name": "SPOV",
+      "gameCount": 1
+    },
+    {
+      "id": 3853,
+      "name": "Hamagami/Carroll Inc.",
+      "gameCount": 1
+    },
+    {
+      "id": 3894,
+      "name": "ZeniMax Germany",
+      "gameCount": 1
+    },
+    {
+      "id": 3896,
+      "name": "La Marque Rose",
+      "gameCount": 1
+    },
+    {
+      "id": 3924,
+      "name": "Six by nine",
+      "gameCount": 1
+    },
+    {
+      "id": 3959,
+      "name": "Sos",
+      "gameCount": 1
+    },
+    {
+      "id": 3989,
+      "name": "Playcast-media",
+      "gameCount": 1
+    },
+    {
+      "id": 3994,
+      "name": "Eidos Interactive US",
+      "gameCount": 1
+    },
+    {
+      "id": 4017,
+      "name": "Earbash Inc.",
+      "gameCount": 1
+    },
+    {
+      "id": 4023,
+      "name": "Guildhall Leisure Services Ltd.",
+      "gameCount": 1
+    },
+    {
+      "id": 4025,
+      "name": "G-Amusements",
+      "gameCount": 1
+    },
+    {
+      "id": 4044,
+      "name": "PitStop Productions",
+      "gameCount": 1
+    },
+    {
+      "id": 4074,
+      "name": "TNX Music Recordings",
+      "gameCount": 1
+    },
+    {
+      "id": 4131,
+      "name": "Mobila Interactive",
+      "gameCount": 1
+    },
+    {
+      "id": 4138,
+      "name": "Main Street Publishing",
+      "gameCount": 1
+    },
+    {
+      "id": 4175,
+      "name": "BeTomorrow",
+      "gameCount": 1
+    },
+    {
+      "id": 4176,
+      "name": "Exact Entertainment",
+      "gameCount": 1
+    },
+    {
+      "id": 4191,
+      "name": "O-TWO Inc.",
+      "gameCount": 1
+    },
+    {
+      "id": 4229,
+      "name": "Union Systems",
+      "gameCount": 1
+    },
+    {
+      "id": 4230,
+      "name": "Union Logic",
+      "gameCount": 1
+    },
+    {
+      "id": 4232,
+      "name": "XDEV Studio Europe",
+      "gameCount": 1
+    },
+    {
+      "id": 4300,
+      "name": "PC-SIG",
+      "gameCount": 1
+    },
+    {
+      "id": 4325,
+      "name": "Microsmiths",
+      "gameCount": 1
+    },
+    {
+      "id": 4367,
+      "name": "SelectSoft Publishing",
+      "gameCount": 1
+    },
+    {
+      "id": 4382,
+      "name": "Nicolas Entertainment Group",
+      "gameCount": 1
+    },
+    {
+      "id": 4411,
+      "name": "Tronix",
+      "gameCount": 1
+    },
+    {
+      "id": 4454,
+      "name": "Lay-Up",
+      "gameCount": 1
+    },
+    {
+      "id": 4456,
+      "name": "Moonlite Software",
+      "gameCount": 1
+    },
+    {
+      "id": 4463,
+      "name": "Builder Box Games",
+      "gameCount": 1
+    },
+    {
+      "id": 4478,
+      "name": "Livedoor",
+      "gameCount": 1
+    },
+    {
+      "id": 4512,
+      "name": "The Dome",
+      "gameCount": 1
+    },
+    {
+      "id": 4539,
+      "name": "PlayEveryWare",
+      "gameCount": 1
+    },
+    {
+      "id": 4700,
+      "name": "SkyZone Entertainment",
+      "gameCount": 1
+    },
+    {
+      "id": 4705,
+      "name": "Yotsubane",
+      "gameCount": 1
+    },
+    {
+      "id": 4749,
+      "name": "SiCh Studio",
+      "gameCount": 1
+    },
+    {
+      "id": 4758,
+      "name": "Third Wave Games",
+      "gameCount": 1
+    },
+    {
+      "id": 4776,
+      "name": "Steam",
+      "gameCount": 1
+    },
+    {
+      "id": 4790,
+      "name": "Plan 1",
+      "gameCount": 1
+    },
+    {
+      "id": 4819,
+      "name": "Tremor Entertainment",
+      "gameCount": 1
+    },
+    {
+      "id": 4872,
+      "name": "Six Foot",
+      "gameCount": 1
+    },
+    {
+      "id": 4887,
+      "name": "Wicked Software",
+      "gameCount": 1
+    },
+    {
+      "id": 4934,
+      "name": "Deco Digital",
+      "gameCount": 1
+    },
+    {
+      "id": 4977,
+      "name": "Winds Co Ltd",
+      "gameCount": 1
+    },
+    {
+      "id": 5037,
+      "name": "Can Explode",
+      "gameCount": 1
+    },
+    {
+      "id": 5053,
+      "name": "QCF Design",
+      "gameCount": 1
+    },
+    {
+      "id": 5083,
+      "name": "Reverge Labs",
+      "gameCount": 1
+    },
+    {
+      "id": 5134,
+      "name": "Koalabeast",
+      "gameCount": 1
+    },
+    {
+      "id": 5140,
+      "name": "HappySoft",
+      "gameCount": 1
+    },
+    {
+      "id": 5179,
+      "name": "Fuero Games",
+      "gameCount": 1
+    },
+    {
+      "id": 5180,
+      "name": "Dancing Dragon Games",
+      "gameCount": 1
+    },
+    {
+      "id": 5223,
+      "name": "Kirin Entertainment",
+      "gameCount": 1
+    },
+    {
+      "id": 5281,
+      "name": ".dat",
+      "gameCount": 1
+    },
+    {
+      "id": 5534,
+      "name": "SRD",
+      "gameCount": 1
+    },
+    {
+      "id": 5538,
+      "name": "Volta",
+      "gameCount": 1
+    },
+    {
+      "id": 5620,
+      "name": "Intragames",
+      "gameCount": 1
+    },
+    {
+      "id": 5731,
+      "name": "Skywalker Sound",
+      "gameCount": 1
+    },
+    {
+      "id": 5801,
+      "name": "The Third Floor",
+      "gameCount": 1
+    },
+    {
+      "id": 5829,
+      "name": "Tantrum Entertainment",
+      "gameCount": 1
+    },
+    {
+      "id": 5833,
+      "name": "Outrigger Koubou",
+      "gameCount": 1
+    },
+    {
+      "id": 5837,
+      "name": "MiCROViSion",
+      "gameCount": 1
+    },
+    {
+      "id": 5840,
+      "name": "Seika Corporation",
+      "gameCount": 1
+    },
+    {
+      "id": 5888,
+      "name": "Glassmoon",
+      "gameCount": 1
+    },
+    {
+      "id": 6004,
+      "name": "Friendware",
+      "gameCount": 1
+    },
+    {
+      "id": 6034,
+      "name": "MiST Land",
+      "gameCount": 1
+    },
+    {
+      "id": 6103,
+      "name": "GRIP Entertainment",
+      "gameCount": 1
+    },
+    {
+      "id": 6146,
+      "name": "Commodore Gaming",
+      "gameCount": 1
+    },
+    {
+      "id": 6173,
+      "name": "Rovio Stars",
+      "gameCount": 1
+    },
+    {
+      "id": 6215,
+      "name": "Shibuya Productions",
+      "gameCount": 1
+    },
+    {
+      "id": 6223,
+      "name": "Lag Studios",
+      "gameCount": 1
+    },
+    {
+      "id": 6245,
+      "name": "Studio Ibuki",
+      "gameCount": 1
+    },
+    {
+      "id": 6319,
+      "name": "Zero Rock Entertainment",
+      "gameCount": 1
+    },
+    {
+      "id": 6329,
+      "name": "Monkey Do Productions",
+      "gameCount": 1
+    },
+    {
+      "id": 6374,
+      "name": "Aeonsoft",
+      "gameCount": 1
+    },
+    {
+      "id": 6389,
+      "name": "marbenx",
+      "gameCount": 1
+    },
+    {
+      "id": 6410,
+      "name": "Hybrid Technology",
+      "gameCount": 1
+    },
+    {
+      "id": 6431,
+      "name": "Gamer's Edge",
+      "gameCount": 1
+    },
+    {
+      "id": 6432,
+      "name": "Froggman",
+      "gameCount": 1
+    },
+    {
+      "id": 6433,
+      "name": "Wildec",
+      "gameCount": 1
+    },
+    {
+      "id": 6434,
+      "name": "Radioactive Software",
+      "gameCount": 1
+    },
+    {
+      "id": 6465,
+      "name": "87eleven",
+      "gameCount": 1
+    },
+    {
+      "id": 6513,
+      "name": "The9",
+      "gameCount": 1
+    },
+    {
+      "id": 6559,
+      "name": "Activision UK",
+      "gameCount": 1
+    },
+    {
+      "id": 6601,
+      "name": "Kojima Productions LA Studio",
+      "gameCount": 1
+    },
+    {
+      "id": 6610,
+      "name": "Phoenix Sound",
+      "gameCount": 1
+    },
+    {
+      "id": 6658,
+      "name": "iNK Stories",
+      "gameCount": 1
+    },
+    {
+      "id": 6879,
+      "name": "San-eishobo Publishing",
+      "gameCount": 1
+    },
+    {
+      "id": 6926,
+      "name": "Blueberry Soft",
+      "gameCount": 1
+    },
+    {
+      "id": 6941,
+      "name": "Hailstorm Games",
+      "gameCount": 1
+    },
+    {
+      "id": 7016,
+      "name": "Dreamsite Games",
+      "gameCount": 1
+    },
+    {
+      "id": 7029,
+      "name": "93 Games Studio",
+      "gameCount": 1
+    },
+    {
+      "id": 7063,
+      "name": "Mobage",
+      "gameCount": 1
+    },
+    {
+      "id": 7075,
+      "name": "16 Blitz Mastertronic",
+      "gameCount": 1
+    },
+    {
+      "id": 7095,
+      "name": "Futura",
+      "gameCount": 1
+    },
+    {
+      "id": 7154,
+      "name": "Mindware",
+      "gameCount": 1
+    },
+    {
+      "id": 7252,
+      "name": "Black Maple Games",
+      "gameCount": 1
+    },
+    {
+      "id": 7300,
+      "name": "Pinkapp games",
+      "gameCount": 1
+    },
+    {
+      "id": 7306,
+      "name": "Nova",
+      "gameCount": 1
+    },
+    {
+      "id": 7388,
+      "name": "stary3d",
+      "gameCount": 1
+    },
+    {
+      "id": 7481,
+      "name": "Ascaron Entertainment ltd.",
+      "gameCount": 1
+    },
+    {
+      "id": 7517,
+      "name": "Namco Networks America, Inc.",
+      "gameCount": 1
+    },
+    {
+      "id": 7519,
+      "name": "Nicklas Nygren",
+      "gameCount": 1
+    },
+    {
+      "id": 7608,
+      "name": "Attitude Studios",
+      "gameCount": 1
+    },
+    {
+      "id": 7637,
+      "name": "Pinnacle Software",
+      "gameCount": 1
+    },
+    {
+      "id": 7689,
+      "name": "Thunder Mountain",
+      "gameCount": 1
+    },
+    {
+      "id": 7705,
+      "name": "No More Room in Hell Team",
+      "gameCount": 1
+    },
+    {
+      "id": 7706,
+      "name": "Lever Games",
+      "gameCount": 1
+    },
+    {
+      "id": 7711,
+      "name": "Radial Games Corp",
+      "gameCount": 1
+    },
+    {
+      "id": 7725,
+      "name": "Unfinished Pixel",
+      "gameCount": 1
+    },
+    {
+      "id": 7753,
+      "name": "Junglevision Software",
+      "gameCount": 1
+    },
+    {
+      "id": 7838,
+      "name": "El Huervo / Niklas Åkerblad",
+      "gameCount": 1
+    },
+    {
+      "id": 7839,
+      "name": "Tobias Sjögren",
+      "gameCount": 1
+    },
+    {
+      "id": 7840,
+      "name": "Oscar \"Ratvader\" Rydelius",
+      "gameCount": 1
+    },
+    {
+      "id": 7843,
+      "name": "Johannes Gotlén",
+      "gameCount": 1
+    },
+    {
+      "id": 7844,
+      "name": "Erik Svedäng AB",
+      "gameCount": 1
+    },
+    {
+      "id": 7904,
+      "name": "Phosfiend Systems",
+      "gameCount": 1
+    },
+    {
+      "id": 7957,
+      "name": "REDBANA CORPORATION",
+      "gameCount": 1
+    },
+    {
+      "id": 7985,
+      "name": "React Games",
+      "gameCount": 1
+    },
+    {
+      "id": 8010,
+      "name": "NQ Games",
+      "gameCount": 1
+    },
+    {
+      "id": 8027,
+      "name": "All Interactive Distributuion",
+      "gameCount": 1
+    },
+    {
+      "id": 8104,
+      "name": "Northway Games",
+      "gameCount": 1
+    },
+    {
+      "id": 8112,
+      "name": "Happymagenta",
+      "gameCount": 1
+    },
+    {
+      "id": 8122,
+      "name": "Eric Chahi",
+      "gameCount": 1
+    },
+    {
+      "id": 8202,
+      "name": "Stygian Software",
+      "gameCount": 1
+    },
+    {
+      "id": 8210,
+      "name": "InterWave Studios",
+      "gameCount": 1
+    },
+    {
+      "id": 8258,
+      "name": "Team Bloodlust",
+      "gameCount": 1
+    },
+    {
+      "id": 8286,
+      "name": "Storybird",
+      "gameCount": 1
+    },
+    {
+      "id": 8310,
+      "name": "Noble Empire Corp.",
+      "gameCount": 1
+    },
+    {
+      "id": 8417,
+      "name": "Digital Media Workshop",
+      "gameCount": 1
+    },
+    {
+      "id": 8478,
+      "name": "Skyhook Games",
+      "gameCount": 1
+    },
+    {
+      "id": 8505,
+      "name": "bumblebee.",
+      "gameCount": 1
+    },
+    {
+      "id": 8546,
+      "name": "Dragonfly GF Co., LTD",
+      "gameCount": 1
+    },
+    {
+      "id": 8574,
+      "name": "Unknown Identity",
+      "gameCount": 1
+    },
+    {
+      "id": 8625,
+      "name": "Carlos Coronado",
+      "gameCount": 1
+    },
+    {
+      "id": 8630,
+      "name": "Game in a Bottle",
+      "gameCount": 1
+    },
+    {
+      "id": 8796,
+      "name": "HE SAW",
+      "gameCount": 1
+    },
+    {
+      "id": 8891,
+      "name": "Winged Cloud",
+      "gameCount": 1
+    },
+    {
+      "id": 8924,
+      "name": "Mobot Studios, Inc",
+      "gameCount": 1
+    },
+    {
+      "id": 8938,
+      "name": "Bluebutton Games",
+      "gameCount": 1
+    },
+    {
+      "id": 8939,
+      "name": "Fatpuppy Softworks",
+      "gameCount": 1
+    },
+    {
+      "id": 9130,
+      "name": "Mr. Podunkian",
+      "gameCount": 1
+    },
+    {
+      "id": 9151,
+      "name": "Cinopt Studios",
+      "gameCount": 1
+    },
+    {
+      "id": 9207,
+      "name": "Stegersaurus Software Inc.",
+      "gameCount": 1
+    },
+    {
+      "id": 9215,
+      "name": "Krams Design",
+      "gameCount": 1
+    },
+    {
+      "id": 9274,
+      "name": "Shogakukan Production",
+      "gameCount": 1
+    },
+    {
+      "id": 9297,
+      "name": "SCIMOB",
+      "gameCount": 1
+    },
+    {
+      "id": 9323,
+      "name": "Pilgrim Adventures",
+      "gameCount": 1
+    },
+    {
+      "id": 9366,
+      "name": "Ether Studio",
+      "gameCount": 1
+    },
+    {
+      "id": 9367,
+      "name": "Michael Frei",
+      "gameCount": 1
+    },
+    {
+      "id": 9383,
+      "name": "Jaywalkers Interactive",
+      "gameCount": 1
+    },
+    {
+      "id": 9416,
+      "name": "Ikaron",
+      "gameCount": 1
+    },
+    {
+      "id": 9422,
+      "name": "Alexey Bokulev",
+      "gameCount": 1
+    },
+    {
+      "id": 9423,
+      "name": "Sergei Klimov",
+      "gameCount": 1
+    },
+    {
+      "id": 9424,
+      "name": "Charlie Oscar Lima Tango Interactive Entertainment",
+      "gameCount": 1
+    },
+    {
+      "id": 9425,
+      "name": "Yukitama Creative Industries",
+      "gameCount": 1
+    },
+    {
+      "id": 9435,
+      "name": "Cape Guy",
+      "gameCount": 1
+    },
+    {
+      "id": 9448,
+      "name": "Amstar Electronics",
+      "gameCount": 1
+    },
+    {
+      "id": 9449,
+      "name": "Aardman Digital",
+      "gameCount": 1
+    },
+    {
+      "id": 9502,
+      "name": "Albino Frog Software",
+      "gameCount": 1
+    },
+    {
+      "id": 9526,
+      "name": "Tsukuda Original",
+      "gameCount": 1
+    },
+    {
+      "id": 9572,
+      "name": "Evil Indie Games",
+      "gameCount": 1
+    },
+    {
+      "id": 9614,
+      "name": "Beachhouse Films",
+      "gameCount": 1
+    },
+    {
+      "id": 9666,
+      "name": "Bandai Namco Entertainment Asia",
+      "gameCount": 1
+    },
+    {
+      "id": 9725,
+      "name": "Doobic Studios",
+      "gameCount": 1
+    },
+    {
+      "id": 9783,
+      "name": "Beep Games",
+      "gameCount": 1
+    },
+    {
+      "id": 9943,
+      "name": "Touch Foo",
+      "gameCount": 1
+    },
+    {
+      "id": 9951,
+      "name": "Megastorm Games",
+      "gameCount": 1
+    },
+    {
+      "id": 9955,
+      "name": "Irresponsible Games",
+      "gameCount": 1
+    },
+    {
+      "id": 9961,
+      "name": "Frogster Interactive Pictures",
+      "gameCount": 1
+    },
+    {
+      "id": 9965,
+      "name": "KupiKey",
+      "gameCount": 1
+    },
+    {
+      "id": 9985,
+      "name": "Guys from Andromeda",
+      "gameCount": 1
+    },
+    {
+      "id": 10072,
+      "name": "Peakstar Software",
+      "gameCount": 1
+    },
+    {
+      "id": 10088,
+      "name": "Dementia",
+      "gameCount": 1
+    },
+    {
+      "id": 10095,
+      "name": "Gaibrain",
+      "gameCount": 1
+    },
+    {
+      "id": 10096,
+      "name": "Takara U.S.A.",
+      "gameCount": 1
+    },
+    {
+      "id": 10099,
+      "name": "SNK Playmore USA",
+      "gameCount": 1
+    },
+    {
+      "id": 10130,
+      "name": "Gumi Inc.",
+      "gameCount": 1
+    },
+    {
+      "id": 10137,
+      "name": "Warthog PLC",
+      "gameCount": 1
+    },
+    {
+      "id": 10164,
+      "name": "Eden Entertainment Software",
+      "gameCount": 1
+    },
+    {
+      "id": 10166,
+      "name": "XSIV Games",
+      "gameCount": 1
+    },
+    {
+      "id": 10175,
+      "name": "Acclaim Black Team",
+      "gameCount": 1
+    },
+    {
+      "id": 10198,
+      "name": "Semi Logic Entertainments",
+      "gameCount": 1
+    },
+    {
+      "id": 10209,
+      "name": "DreamOn Studio",
+      "gameCount": 1
+    },
+    {
+      "id": 10215,
+      "name": "7seventh chord",
+      "gameCount": 1
+    },
+    {
+      "id": 10285,
+      "name": "Zafiro",
+      "gameCount": 1
+    },
+    {
+      "id": 10309,
+      "name": "Looks Like Lemonade",
+      "gameCount": 1
+    },
+    {
+      "id": 10327,
+      "name": "Studio Voltz",
+      "gameCount": 1
+    },
+    {
+      "id": 10340,
+      "name": "Virgin Interactive Entertainment (Japan)",
+      "gameCount": 1
+    },
+    {
+      "id": 10347,
+      "name": "Enlight Interactive Inc.",
+      "gameCount": 1
+    },
+    {
+      "id": 10370,
+      "name": "Fistful of Frags Team",
+      "gameCount": 1
+    },
+    {
+      "id": 10433,
+      "name": "Codeten",
+      "gameCount": 1
+    },
+    {
+      "id": 10544,
+      "name": "Jesse Barksdale",
+      "gameCount": 1
+    },
+    {
+      "id": 10561,
+      "name": "SemiSoft",
+      "gameCount": 1
+    },
+    {
+      "id": 10696,
+      "name": "WG Labs",
+      "gameCount": 1
+    },
+    {
+      "id": 10822,
+      "name": "Neon Deity Games",
+      "gameCount": 1
+    },
+    {
+      "id": 10884,
+      "name": "Americana Software Limited",
+      "gameCount": 1
+    },
+    {
+      "id": 10943,
+      "name": "All 4 Games",
+      "gameCount": 1
+    },
+    {
+      "id": 10985,
+      "name": "Similis Software",
+      "gameCount": 1
+    },
+    {
+      "id": 11013,
+      "name": "Sleepy Giant Entertainment",
+      "gameCount": 1
+    },
+    {
+      "id": 11014,
+      "name": "Plexipixel",
+      "gameCount": 1
+    },
+    {
+      "id": 11015,
+      "name": "Inversoft",
+      "gameCount": 1
+    },
+    {
+      "id": 11034,
+      "name": "Pipeworks Studio",
+      "gameCount": 1
+    },
+    {
+      "id": 11155,
+      "name": "Mr. Micro",
+      "gameCount": 1
+    },
+    {
+      "id": 11161,
+      "name": "Shadowsoft",
+      "gameCount": 1
+    },
+    {
+      "id": 11162,
+      "name": "Angel",
+      "gameCount": 1
+    },
+    {
+      "id": 11173,
+      "name": "BCI Software",
+      "gameCount": 1
+    },
+    {
+      "id": 11181,
+      "name": "Code Horizon",
+      "gameCount": 1
+    },
+    {
+      "id": 11261,
+      "name": "Nether Productions, LLC",
+      "gameCount": 1
+    },
+    {
+      "id": 11267,
+      "name": "Deceptive Games Ltd.",
+      "gameCount": 1
+    },
+    {
+      "id": 11280,
+      "name": "Uranium Team",
+      "gameCount": 1
+    },
+    {
+      "id": 11300,
+      "name": "Game Developer X",
+      "gameCount": 1
+    },
+    {
+      "id": 11359,
+      "name": "Namco Bandai Games Europe S.A.S.",
+      "gameCount": 1
+    },
+    {
+      "id": 11441,
+      "name": "Beck-Tech",
+      "gameCount": 1
+    },
+    {
+      "id": 11485,
+      "name": "Merlin Software U.K.",
+      "gameCount": 1
+    },
+    {
+      "id": 11561,
+      "name": "Vaclav Hudec",
+      "gameCount": 1
+    },
+    {
+      "id": 11564,
+      "name": "Buka Game Studio",
+      "gameCount": 1
+    },
+    {
+      "id": 11600,
+      "name": "Designer Software",
+      "gameCount": 1
+    },
+    {
+      "id": 11625,
+      "name": "Micromosaics",
+      "gameCount": 1
+    },
+    {
+      "id": 11638,
+      "name": "CrossFunction",
+      "gameCount": 1
+    },
+    {
+      "id": 11661,
+      "name": "Knuist & Perzik",
+      "gameCount": 1
+    },
+    {
+      "id": 11684,
+      "name": "Nippon Dexter Co., Ltd.",
+      "gameCount": 1
+    },
+    {
+      "id": 11692,
+      "name": "Micro Projects Engineering",
+      "gameCount": 1
+    },
+    {
+      "id": 11746,
+      "name": "Hamumu Software",
+      "gameCount": 1
+    },
+    {
+      "id": 11792,
+      "name": "SteelRaven7",
+      "gameCount": 1
+    },
+    {
+      "id": 11807,
+      "name": "BigBox VR",
+      "gameCount": 1
+    },
+    {
+      "id": 11817,
+      "name": "Elecbyte",
+      "gameCount": 1
+    },
+    {
+      "id": 11819,
+      "name": "A.Y.std",
+      "gameCount": 1
+    },
+    {
+      "id": 11852,
+      "name": "1C Wireless",
+      "gameCount": 1
+    },
+    {
+      "id": 11866,
+      "name": "Alliance Digital Media",
+      "gameCount": 1
+    },
+    {
+      "id": 11875,
+      "name": "Marcin Draszczuk",
+      "gameCount": 1
+    },
+    {
+      "id": 11879,
+      "name": "P2 Games",
+      "gameCount": 1
+    },
+    {
+      "id": 11880,
+      "name": "Kavcom Limited",
+      "gameCount": 1
+    },
+    {
+      "id": 11883,
+      "name": "EQ-Games",
+      "gameCount": 1
+    },
+    {
+      "id": 11899,
+      "name": "OP Productions LLC",
+      "gameCount": 1
+    },
+    {
+      "id": 11902,
+      "name": "CE Europe Ltd.",
+      "gameCount": 1
+    },
+    {
+      "id": 12008,
+      "name": "Epic Quest Games",
+      "gameCount": 1
+    },
+    {
+      "id": 12032,
+      "name": "HEROZ",
+      "gameCount": 1
+    },
+    {
+      "id": 12068,
+      "name": "E3 Staff",
+      "gameCount": 1
+    },
+    {
+      "id": 12083,
+      "name": "Sundae Month",
+      "gameCount": 1
+    },
+    {
+      "id": 12158,
+      "name": "Adriaan de Jongh",
+      "gameCount": 1
+    },
+    {
+      "id": 12165,
+      "name": "Rob Briscoe",
+      "gameCount": 1
+    },
+    {
+      "id": 12169,
+      "name": "Level 77 Pty Ltd",
+      "gameCount": 1
+    },
+    {
+      "id": 12174,
+      "name": "the whale husband",
+      "gameCount": 1
+    },
+    {
+      "id": 12490,
+      "name": "Do My Best",
+      "gameCount": 1
+    },
+    {
+      "id": 12522,
+      "name": "Ovid Works",
+      "gameCount": 1
+    },
+    {
+      "id": 12528,
+      "name": "PLAYDIUS Ent.",
+      "gameCount": 1
+    },
+    {
+      "id": 12569,
+      "name": "Frontwing USA",
+      "gameCount": 1
+    },
+    {
+      "id": 12579,
+      "name": "TheMeatly Games, Ltd.",
+      "gameCount": 1
+    },
+    {
+      "id": 12605,
+      "name": "LWNA",
+      "gameCount": 1
+    },
+    {
+      "id": 12664,
+      "name": "GameConnect",
+      "gameCount": 1
+    },
+    {
+      "id": 12666,
+      "name": "Zitrix Megalomedia",
+      "gameCount": 1
+    },
+    {
+      "id": 12668,
+      "name": "Torus",
+      "gameCount": 1
+    },
+    {
+      "id": 12697,
+      "name": "Paradise Software",
+      "gameCount": 1
+    },
+    {
+      "id": 12719,
+      "name": "Salio, Inc.",
+      "gameCount": 1
+    },
+    {
+      "id": 12803,
+      "name": "JCKSLAP",
+      "gameCount": 1
+    },
+    {
+      "id": 12822,
+      "name": "SEGA AM4",
+      "gameCount": 1
+    },
+    {
+      "id": 12823,
+      "name": "Digital Images",
+      "gameCount": 1
+    },
+    {
+      "id": 12937,
+      "name": "SpectreVision",
+      "gameCount": 1
+    },
+    {
+      "id": 12943,
+      "name": "2 Ton Studios",
+      "gameCount": 1
+    },
+    {
+      "id": 13000,
+      "name": "L.K. Avalon",
+      "gameCount": 1
+    },
+    {
+      "id": 13054,
+      "name": "K-Train",
+      "gameCount": 1
+    },
+    {
+      "id": 13181,
+      "name": "VIVA Games",
+      "gameCount": 1
+    },
+    {
+      "id": 13196,
+      "name": "Darkstar Games",
+      "gameCount": 1
+    },
+    {
+      "id": 13270,
+      "name": "Special FX Software Ltd.",
+      "gameCount": 1
+    },
+    {
+      "id": 13271,
+      "name": "Mandel ArtPlains",
+      "gameCount": 1
+    },
+    {
+      "id": 13335,
+      "name": "Megatoon Studios",
+      "gameCount": 1
+    },
+    {
+      "id": 13355,
+      "name": "NS Studio",
+      "gameCount": 1
+    },
+    {
+      "id": 13373,
+      "name": "Rack-It",
+      "gameCount": 1
+    },
+    {
+      "id": 13402,
+      "name": "PSI Software Designers",
+      "gameCount": 1
+    },
+    {
+      "id": 13425,
+      "name": "Skeleton Crew Studios",
+      "gameCount": 1
+    },
+    {
+      "id": 13497,
+      "name": "Creation",
+      "gameCount": 1
+    },
+    {
+      "id": 13528,
+      "name": "Abersoft Limited",
+      "gameCount": 1
+    },
+    {
+      "id": 13561,
+      "name": "Bombergames",
+      "gameCount": 1
+    },
+    {
+      "id": 13608,
+      "name": "Freelance Games",
+      "gameCount": 1
+    },
+    {
+      "id": 13627,
+      "name": "CTXM",
+      "gameCount": 1
+    },
+    {
+      "id": 13680,
+      "name": "GamesWare",
+      "gameCount": 1
+    },
+    {
+      "id": 13682,
+      "name": "Pick & Choose Ltd.",
+      "gameCount": 1
+    },
+    {
+      "id": 13706,
+      "name": "The Hitmen Software",
+      "gameCount": 1
+    },
+    {
+      "id": 13708,
+      "name": "Superior Interactive",
+      "gameCount": 1
+    },
+    {
+      "id": 13732,
+      "name": "Cheetahsoft Ltd.",
+      "gameCount": 1
+    },
+    {
+      "id": 13756,
+      "name": "Cogito Software Company",
+      "gameCount": 1
+    },
+    {
+      "id": 13779,
+      "name": "Eaglesoft",
+      "gameCount": 1
+    },
+    {
+      "id": 13780,
+      "name": "Kotobuki-Raison",
+      "gameCount": 1
+    },
+    {
+      "id": 13782,
+      "name": "Monolith",
+      "gameCount": 1
+    },
+    {
+      "id": 13808,
+      "name": "Einsoft",
+      "gameCount": 1
+    },
+    {
+      "id": 13827,
+      "name": "The Imaginarium",
+      "gameCount": 1
+    },
+    {
+      "id": 13886,
+      "name": "Ma-Ba",
+      "gameCount": 1
+    },
+    {
+      "id": 13898,
+      "name": "Netmarble Neo",
+      "gameCount": 1
+    },
+    {
+      "id": 13902,
+      "name": "Laura Shigihara",
+      "gameCount": 1
+    },
+    {
+      "id": 13912,
+      "name": "KID Corp.",
+      "gameCount": 1
+    },
+    {
+      "id": 13915,
+      "name": "Purple Hills",
+      "gameCount": 1
+    },
+    {
+      "id": 13943,
+      "name": "MLB Advanced Media",
+      "gameCount": 1
+    },
+    {
+      "id": 14082,
+      "name": "NEC Avenue",
+      "gameCount": 1
+    },
+    {
+      "id": 14165,
+      "name": "Tiny Titan Studios",
+      "gameCount": 1
+    },
+    {
+      "id": 14282,
+      "name": "E-Studio",
+      "gameCount": 1
+    },
+    {
+      "id": 14323,
+      "name": "WindySoft",
+      "gameCount": 1
+    },
+    {
+      "id": 14327,
+      "name": "WZOGI",
+      "gameCount": 1
+    },
+    {
+      "id": 14431,
+      "name": "L. Stotch",
+      "gameCount": 1
+    },
+    {
+      "id": 14438,
+      "name": "Booming Games",
+      "gameCount": 1
+    },
+    {
+      "id": 14486,
+      "name": "Zoom Out Games",
+      "gameCount": 1
+    },
+    {
+      "id": 14549,
+      "name": "Início Localization Services",
+      "gameCount": 1
+    },
+    {
+      "id": 14706,
+      "name": "Helix",
+      "gameCount": 1
+    },
+    {
+      "id": 14747,
+      "name": "Amccus",
+      "gameCount": 1
+    },
+    {
+      "id": 14752,
+      "name": "Magic Notion",
+      "gameCount": 1
+    },
+    {
+      "id": 14791,
+      "name": "Kitty Horrorshow",
+      "gameCount": 1
+    },
+    {
+      "id": 14801,
+      "name": "Grunge Games LTD",
+      "gameCount": 1
+    },
+    {
+      "id": 14835,
+      "name": "ForwardXP",
+      "gameCount": 1
+    },
+    {
+      "id": 14918,
+      "name": "NapNok Games",
+      "gameCount": 1
+    },
+    {
+      "id": 14964,
+      "name": "Nuke Nine",
+      "gameCount": 1
+    },
+    {
+      "id": 15107,
+      "name": "HomeBearStudio",
+      "gameCount": 1
+    },
+    {
+      "id": 15116,
+      "name": "Statespace",
+      "gameCount": 1
+    },
+    {
+      "id": 15184,
+      "name": "Sonic Team Junior",
+      "gameCount": 1
+    },
+    {
+      "id": 15451,
+      "name": "NSquare",
+      "gameCount": 1
+    },
+    {
+      "id": 15459,
+      "name": "Fountainhead Entertainment",
+      "gameCount": 1
+    },
+    {
+      "id": 15490,
+      "name": "Kenny Guillaume",
+      "gameCount": 1
+    },
+    {
+      "id": 15491,
+      "name": "Dagmar Blommaert",
+      "gameCount": 1
+    },
+    {
+      "id": 15688,
+      "name": "Blindside Interactive",
+      "gameCount": 1
+    },
+    {
+      "id": 15770,
+      "name": "KaMiZoTo",
+      "gameCount": 1
+    },
+    {
+      "id": 15843,
+      "name": "Y'sk",
+      "gameCount": 1
+    },
+    {
+      "id": 15909,
+      "name": "HFM Games",
+      "gameCount": 1
+    },
+    {
+      "id": 15995,
+      "name": "DOMO Studio",
+      "gameCount": 1
+    },
+    {
+      "id": 16060,
+      "name": "Xiamen Yongshi",
+      "gameCount": 1
+    },
+    {
+      "id": 16272,
+      "name": "CHG",
+      "gameCount": 1
+    },
+    {
+      "id": 16360,
+      "name": "rokaplay",
+      "gameCount": 1
+    },
+    {
+      "id": 16373,
+      "name": "PixelShard",
+      "gameCount": 1
+    },
+    {
+      "id": 16428,
+      "name": "Stargazy Studios",
+      "gameCount": 1
+    },
+    {
+      "id": 16469,
+      "name": "CDW Software",
+      "gameCount": 1
+    },
+    {
+      "id": 16474,
+      "name": "Squeaky Wheel Studio",
+      "gameCount": 1
+    },
+    {
+      "id": 16660,
+      "name": "Lionbridge Technologies",
+      "gameCount": 1
+    },
+    {
+      "id": 16753,
+      "name": "Lucas Arts",
+      "gameCount": 1
+    },
+    {
+      "id": 16769,
+      "name": "Neko Climax Studios",
+      "gameCount": 1
+    },
+    {
+      "id": 16862,
+      "name": "Hop Frog",
+      "gameCount": 1
+    },
+    {
+      "id": 16864,
+      "name": "Wonder Games",
+      "gameCount": 1
+    },
+    {
+      "id": 16916,
+      "name": "StikiPixels",
+      "gameCount": 1
+    },
+    {
+      "id": 16922,
+      "name": "Dan Vogt",
+      "gameCount": 1
+    },
+    {
+      "id": 16985,
+      "name": "Blind Sky Studios",
+      "gameCount": 1
+    },
+    {
+      "id": 16986,
+      "name": "CCP Shanghai",
+      "gameCount": 1
+    },
+    {
+      "id": 17032,
+      "name": "Tencent Aurora Studios",
+      "gameCount": 1
+    },
+    {
+      "id": 17049,
+      "name": "CD Brothers",
+      "gameCount": 1
+    },
+    {
+      "id": 17050,
+      "name": "NA Otaku Publishing Ltd.",
+      "gameCount": 1
+    },
+    {
+      "id": 17091,
+      "name": "Fancy Fish Games",
+      "gameCount": 1
+    },
+    {
+      "id": 17112,
+      "name": "Bit Loom Games",
+      "gameCount": 1
+    },
+    {
+      "id": 17152,
+      "name": "Digital Sky",
+      "gameCount": 1
+    },
+    {
+      "id": 17181,
+      "name": "Arnold Rauers",
+      "gameCount": 1
+    },
+    {
+      "id": 17186,
+      "name": "Doctorsoft",
+      "gameCount": 1
+    },
+    {
+      "id": 17187,
+      "name": "3D Stooges Software",
+      "gameCount": 1
+    },
+    {
+      "id": 17191,
+      "name": "Smilegate Megaport",
+      "gameCount": 1
+    },
+    {
+      "id": 17280,
+      "name": "Keos Masons Studio",
+      "gameCount": 1
+    },
+    {
+      "id": 17287,
+      "name": "Critical Role",
+      "gameCount": 1
+    },
+    {
+      "id": 17292,
+      "name": "Game On Creative",
+      "gameCount": 1
+    },
+    {
+      "id": 17450,
+      "name": "TNS",
+      "gameCount": 1
+    },
+    {
+      "id": 17467,
+      "name": "Igloo Studio",
+      "gameCount": 1
+    },
+    {
+      "id": 17611,
+      "name": "Ammobox Studios",
+      "gameCount": 1
+    },
+    {
+      "id": 17617,
+      "name": "Hurricane",
+      "gameCount": 1
+    },
+    {
+      "id": 17639,
+      "name": "Hugecalf Studios",
+      "gameCount": 1
+    },
+    {
+      "id": 17650,
+      "name": "Claudiu Kiss",
+      "gameCount": 1
+    },
+    {
+      "id": 17898,
+      "name": "Disney Online",
+      "gameCount": 1
+    },
+    {
+      "id": 17942,
+      "name": "T-Entertainment",
+      "gameCount": 1
+    },
+    {
+      "id": 17965,
+      "name": "Leadman Games",
+      "gameCount": 1
+    },
+    {
+      "id": 18062,
+      "name": "Digit Game Studios",
+      "gameCount": 1
+    },
+    {
+      "id": 18069,
+      "name": "Ellada Games",
+      "gameCount": 1
+    },
+    {
+      "id": 18130,
+      "name": "Surefire.Games",
+      "gameCount": 1
+    },
+    {
+      "id": 18247,
+      "name": "Indievent",
+      "gameCount": 1
+    },
+    {
+      "id": 18339,
+      "name": "gaming company",
+      "gameCount": 1
+    },
+    {
+      "id": 18417,
+      "name": "Bob the Game Development Bot",
+      "gameCount": 1
+    },
+    {
+      "id": 18418,
+      "name": "Ginormocorp Holdings",
+      "gameCount": 1
+    },
+    {
+      "id": 18441,
+      "name": "Empire Interactive Entertainment",
+      "gameCount": 1
+    },
+    {
+      "id": 18473,
+      "name": "KillPixel",
+      "gameCount": 1
+    },
+    {
+      "id": 18523,
+      "name": "teamCOIL",
+      "gameCount": 1
+    },
+    {
+      "id": 18586,
+      "name": "9you",
+      "gameCount": 1
+    },
+    {
+      "id": 18753,
+      "name": "GrabTheGames Studios",
+      "gameCount": 1
+    },
+    {
+      "id": 18826,
+      "name": "98DEMAKE",
+      "gameCount": 1
+    },
+    {
+      "id": 19047,
+      "name": "Chimeric",
+      "gameCount": 1
+    },
+    {
+      "id": 19104,
+      "name": "Norwegian Film Institute (NFI)",
+      "gameCount": 1
+    },
+    {
+      "id": 19122,
+      "name": "Medienboard Berlin-Brandenburg",
+      "gameCount": 1
+    },
+    {
+      "id": 19166,
+      "name": "CD Projekt Red Wrocław",
+      "gameCount": 1
+    },
+    {
+      "id": 19204,
+      "name": "JoshProd",
+      "gameCount": 1
+    },
+    {
+      "id": 19237,
+      "name": "Ant.Karlov",
+      "gameCount": 1
+    },
+    {
+      "id": 19283,
+      "name": "DahJee",
+      "gameCount": 1
+    },
+    {
+      "id": 19284,
+      "name": "Bergice Productions",
+      "gameCount": 1
+    },
+    {
+      "id": 19335,
+      "name": "Plastic Fern Studios",
+      "gameCount": 1
+    },
+    {
+      "id": 19349,
+      "name": "Digital Dragons",
+      "gameCount": 1
+    },
+    {
+      "id": 19354,
+      "name": "Warner Bros. Game Audio",
+      "gameCount": 1
+    },
+    {
+      "id": 19812,
+      "name": "3D Bridge Arthouse",
+      "gameCount": 1
+    },
+    {
+      "id": 19889,
+      "name": "David Moralejo Sánchez",
+      "gameCount": 1
+    },
+    {
+      "id": 19950,
+      "name": "Game Odyssey Ltd",
+      "gameCount": 1
+    },
+    {
+      "id": 20028,
+      "name": "Keywords Studios Montreal",
+      "gameCount": 1
+    },
+    {
+      "id": 20266,
+      "name": "Zephyo",
+      "gameCount": 1
+    },
+    {
+      "id": 20268,
+      "name": "Tobias Springer",
+      "gameCount": 1
+    },
+    {
+      "id": 20329,
+      "name": "iMasterArt",
+      "gameCount": 1
+    },
+    {
+      "id": 20413,
+      "name": "Unspeakable Pixels",
+      "gameCount": 1
+    },
+    {
+      "id": 20495,
+      "name": "Code To Go",
+      "gameCount": 1
+    },
+    {
+      "id": 20498,
+      "name": "SYCK",
+      "gameCount": 1
+    },
+    {
+      "id": 20537,
+      "name": "Drodo Studio",
+      "gameCount": 1
+    },
+    {
+      "id": 20540,
+      "name": "Smile Studios",
+      "gameCount": 1
+    },
+    {
+      "id": 20569,
+      "name": "Thomas Moon Kang",
+      "gameCount": 1
+    },
+    {
+      "id": 20615,
+      "name": "Angela He",
+      "gameCount": 1
+    },
+    {
+      "id": 20841,
+      "name": "Webble Games",
+      "gameCount": 1
+    },
+    {
+      "id": 20891,
+      "name": "Daniele Vicinanzo",
+      "gameCount": 1
+    },
+    {
+      "id": 20892,
+      "name": "Giulio Perrone",
+      "gameCount": 1
+    },
+    {
+      "id": 20896,
+      "name": "The Yogscast",
+      "gameCount": 1
+    },
+    {
+      "id": 21006,
+      "name": "James Bendon",
+      "gameCount": 1
+    },
+    {
+      "id": 21007,
+      "name": "Paul Helman",
+      "gameCount": 1
+    },
+    {
+      "id": 21008,
+      "name": "Sean Scaplehorn",
+      "gameCount": 1
+    },
+    {
+      "id": 21072,
+      "name": "Tiny Touch Tales",
+      "gameCount": 1
+    },
+    {
+      "id": 21128,
+      "name": "N-RACING",
+      "gameCount": 1
+    },
+    {
+      "id": 21129,
+      "name": "The Quadsphere",
+      "gameCount": 1
+    },
+    {
+      "id": 21142,
+      "name": "Conan McPhee",
+      "gameCount": 1
+    },
+    {
+      "id": 21143,
+      "name": "Catsmeat Studios",
+      "gameCount": 1
+    },
+    {
+      "id": 21164,
+      "name": "Pipliz",
+      "gameCount": 1
+    },
+    {
+      "id": 21233,
+      "name": "Anatoliy Loginovskikh",
+      "gameCount": 1
+    },
+    {
+      "id": 21280,
+      "name": "DOG HOGGLER",
+      "gameCount": 1
+    },
+    {
+      "id": 21285,
+      "name": "FrankieSmileShow",
+      "gameCount": 1
+    },
+    {
+      "id": 21297,
+      "name": "Lion Games Studios",
+      "gameCount": 1
+    },
+    {
+      "id": 21363,
+      "name": "Mismatch Studio",
+      "gameCount": 1
+    },
+    {
+      "id": 21432,
+      "name": "Russian Fishing",
+      "gameCount": 1
+    },
+    {
+      "id": 21484,
+      "name": "Paradise Project",
+      "gameCount": 1
+    },
+    {
+      "id": 21587,
+      "name": "Alliance",
+      "gameCount": 1
+    },
+    {
+      "id": 21632,
+      "name": "Fandom",
+      "gameCount": 1
+    },
+    {
+      "id": 21659,
+      "name": "Simon Boxer",
+      "gameCount": 1
+    },
+    {
+      "id": 21660,
+      "name": "Twice Different",
+      "gameCount": 1
+    },
+    {
+      "id": 21685,
+      "name": "KAGAMI WORKs",
+      "gameCount": 1
+    },
+    {
+      "id": 21695,
+      "name": "BANDIT Inc.",
+      "gameCount": 1
+    },
+    {
+      "id": 21758,
+      "name": "Singlecore Games",
+      "gameCount": 1
+    },
+    {
+      "id": 21762,
+      "name": "KFC",
+      "gameCount": 1
+    },
+    {
+      "id": 21763,
+      "name": "MY5TCrimson",
+      "gameCount": 1
+    },
+    {
+      "id": 21792,
+      "name": "Game Bank",
+      "gameCount": 1
+    },
+    {
+      "id": 21848,
+      "name": "SuperTuxKart Development Team",
+      "gameCount": 1
+    },
+    {
+      "id": 21857,
+      "name": "Doborog Games",
+      "gameCount": 1
+    },
+    {
+      "id": 21861,
+      "name": "Beawesome Games",
+      "gameCount": 1
+    },
+    {
+      "id": 21864,
+      "name": "Cozy Game Pals",
+      "gameCount": 1
+    },
+    {
+      "id": 21870,
+      "name": "Nakana.io",
+      "gameCount": 1
+    },
+    {
+      "id": 21934,
+      "name": "Solebon LLC",
+      "gameCount": 1
+    },
+    {
+      "id": 21963,
+      "name": "Play in Lab",
+      "gameCount": 1
+    },
+    {
+      "id": 22072,
+      "name": "Silicon Sorcery",
+      "gameCount": 1
+    },
+    {
+      "id": 22081,
+      "name": "Summerfall Studios",
+      "gameCount": 1
+    },
+    {
+      "id": 22084,
+      "name": "A.I Company",
+      "gameCount": 1
+    },
+    {
+      "id": 22094,
+      "name": "AnukenDev",
+      "gameCount": 1
+    },
+    {
+      "id": 22121,
+      "name": "4G",
+      "gameCount": 1
+    },
+    {
+      "id": 22138,
+      "name": "Windwalk Games",
+      "gameCount": 1
+    },
+    {
+      "id": 22214,
+      "name": "ghosthunter",
+      "gameCount": 1
+    },
+    {
+      "id": 22226,
+      "name": "Kompas Productions",
+      "gameCount": 1
+    },
+    {
+      "id": 22267,
+      "name": "Knights of Unity",
+      "gameCount": 1
+    },
+    {
+      "id": 22276,
+      "name": "Shadowplay Studio",
+      "gameCount": 1
+    },
+    {
+      "id": 22277,
+      "name": "Whoodoo EFX, Inc.",
+      "gameCount": 1
+    },
+    {
+      "id": 22278,
+      "name": "Hollywood-DI",
+      "gameCount": 1
+    },
+    {
+      "id": 22279,
+      "name": "The Cinesoup Consortium",
+      "gameCount": 1
+    },
+    {
+      "id": 22280,
+      "name": "Ideal Audio Inc.",
+      "gameCount": 1
+    },
+    {
+      "id": 22281,
+      "name": "The Skywalker Symphony Orchestra and Choir",
+      "gameCount": 1
+    },
+    {
+      "id": 22282,
+      "name": "Steve Juliani Music",
+      "gameCount": 1
+    },
+    {
+      "id": 22283,
+      "name": "Gamespy Professional Services",
+      "gameCount": 1
+    },
+    {
+      "id": 22285,
+      "name": "Presto - Prekladatelsk Centrum s.r.o",
+      "gameCount": 1
+    },
+    {
+      "id": 22286,
+      "name": "Synthesis International S.r.l",
+      "gameCount": 1
+    },
+    {
+      "id": 22287,
+      "name": "Estudios EXA S.L.",
+      "gameCount": 1
+    },
+    {
+      "id": 22316,
+      "name": "Airdorf Games",
+      "gameCount": 1
+    },
+    {
+      "id": 22349,
+      "name": "System Soft",
+      "gameCount": 1
+    },
+    {
+      "id": 22474,
+      "name": "Bandai Visual",
+      "gameCount": 1
+    },
+    {
+      "id": 22476,
+      "name": "Protocol Games",
+      "gameCount": 1
+    },
+    {
+      "id": 22556,
+      "name": "株式会社トムクリエイト",
+      "gameCount": 1
+    },
+    {
+      "id": 22611,
+      "name": "GB Patch Games",
+      "gameCount": 1
+    },
+    {
+      "id": 22629,
+      "name": "Doki Denki SA",
+      "gameCount": 1
+    },
+    {
+      "id": 22636,
+      "name": "Black Eyed Priest",
+      "gameCount": 1
+    },
+    {
+      "id": 22735,
+      "name": "Digital Leisure Inc.",
+      "gameCount": 1
+    },
+    {
+      "id": 22751,
+      "name": "NCS Masaya",
+      "gameCount": 1
+    },
+    {
+      "id": 22768,
+      "name": "Maxim Karpenko",
+      "gameCount": 1
+    },
+    {
+      "id": 22779,
+      "name": "UNDEFEATED Games",
+      "gameCount": 1
+    },
+    {
+      "id": 22780,
+      "name": "Vantan Game Academy",
+      "gameCount": 1
+    },
+    {
+      "id": 22784,
+      "name": "SSF2 Team",
+      "gameCount": 1
+    },
+    {
+      "id": 22823,
+      "name": "Innova Systems",
+      "gameCount": 1
+    },
+    {
+      "id": 22834,
+      "name": "Noah System",
+      "gameCount": 1
+    },
+    {
+      "id": 22835,
+      "name": "NTTGame",
+      "gameCount": 1
+    },
+    {
+      "id": 22920,
+      "name": "LCG Entertainment",
+      "gameCount": 1
+    },
+    {
+      "id": 22923,
+      "name": "Wiple Games",
+      "gameCount": 1
+    },
+    {
+      "id": 22946,
+      "name": "Furious Bee Limited",
+      "gameCount": 1
+    },
+    {
+      "id": 23053,
+      "name": "SmallBü",
+      "gameCount": 1
+    },
+    {
+      "id": 23054,
+      "name": "Pillow Fight",
+      "gameCount": 1
+    },
+    {
+      "id": 23083,
+      "name": "LR Studio",
+      "gameCount": 1
+    },
+    {
+      "id": 23098,
+      "name": "Sean Young",
+      "gameCount": 1
+    },
+    {
+      "id": 23154,
+      "name": "SnoutUp",
+      "gameCount": 1
+    },
+    {
+      "id": 23169,
+      "name": "Disney",
+      "gameCount": 1
+    },
+    {
+      "id": 23212,
+      "name": "Hato Moa",
+      "gameCount": 1
+    },
+    {
+      "id": 23223,
+      "name": "Al Baker & Associates",
+      "gameCount": 1
+    },
+    {
+      "id": 23394,
+      "name": "NASPAPA GAMES",
+      "gameCount": 1
+    },
+    {
+      "id": 23416,
+      "name": "Octavi Navarro",
+      "gameCount": 1
+    },
+    {
+      "id": 23448,
+      "name": "Pugscape",
+      "gameCount": 1
+    },
+    {
+      "id": 23459,
+      "name": "temmie",
+      "gameCount": 1
+    },
+    {
+      "id": 23611,
+      "name": "MNM Software",
+      "gameCount": 1
+    },
+    {
+      "id": 23648,
+      "name": "Nicky Case",
+      "gameCount": 1
+    },
+    {
+      "id": 23830,
+      "name": "Svavelstickan",
+      "gameCount": 1
+    },
+    {
+      "id": 23832,
+      "name": "Oleg Skutte",
+      "gameCount": 1
+    },
+    {
+      "id": 23843,
+      "name": "Computer Lunch",
+      "gameCount": 1
+    },
+    {
+      "id": 23845,
+      "name": "Divine Games",
+      "gameCount": 1
+    },
+    {
+      "id": 23951,
+      "name": "Shokunin",
+      "gameCount": 1
+    },
+    {
+      "id": 24018,
+      "name": "President Studio",
+      "gameCount": 1
+    },
+    {
+      "id": 24041,
+      "name": "Black Sea Games",
+      "gameCount": 1
+    },
+    {
+      "id": 24051,
+      "name": "Luna2 Studio",
+      "gameCount": 1
+    },
+    {
+      "id": 24069,
+      "name": "WZO Games",
+      "gameCount": 1
+    },
+    {
+      "id": 24073,
+      "name": "Sector D2",
+      "gameCount": 1
+    },
+    {
+      "id": 24076,
+      "name": "△○□× (Miwashiba)",
+      "gameCount": 1
+    },
+    {
+      "id": 24149,
+      "name": "Comfy Company",
+      "gameCount": 1
+    },
+    {
+      "id": 24150,
+      "name": "Jason Godbey",
+      "gameCount": 1
+    },
+    {
+      "id": 24249,
+      "name": "Fireart Games",
+      "gameCount": 1
+    },
+    {
+      "id": 24255,
+      "name": "Komi Games",
+      "gameCount": 1
+    },
+    {
+      "id": 24262,
+      "name": "Virtus Corporation",
+      "gameCount": 1
+    },
+    {
+      "id": 24266,
+      "name": "Robert Tatnell",
+      "gameCount": 1
+    },
+    {
+      "id": 24333,
+      "name": "Sam Eng",
+      "gameCount": 1
+    },
+    {
+      "id": 24337,
+      "name": "Console Labs S.A.",
+      "gameCount": 1
+    },
+    {
+      "id": 24348,
+      "name": "Badru",
+      "gameCount": 1
+    },
+    {
+      "id": 24349,
+      "name": "Michael Bell",
+      "gameCount": 1
+    },
+    {
+      "id": 24509,
+      "name": "Dead Thread Games Team",
+      "gameCount": 1
+    },
+    {
+      "id": 24536,
+      "name": "ORIGAME DIGITAL",
+      "gameCount": 1
+    },
+    {
+      "id": 24545,
+      "name": "Saikono",
+      "gameCount": 1
+    },
+    {
+      "id": 24546,
+      "name": "RUzura Interactive",
+      "gameCount": 1
+    },
+    {
+      "id": 24547,
+      "name": "Mars People Games",
+      "gameCount": 1
+    },
+    {
+      "id": 24632,
+      "name": "NomNomNami",
+      "gameCount": 1
+    },
+    {
+      "id": 24680,
+      "name": "Shengqu Games",
+      "gameCount": 1
+    },
+    {
+      "id": 24695,
+      "name": "Rebuilt Games",
+      "gameCount": 1
+    },
+    {
+      "id": 24710,
+      "name": "ROBI Studios",
+      "gameCount": 1
+    },
+    {
+      "id": 24711,
+      "name": "Tictoc Games",
+      "gameCount": 1
+    },
+    {
+      "id": 24714,
+      "name": "111dots Studio",
+      "gameCount": 1
+    },
+    {
+      "id": 24715,
+      "name": "ticedev",
+      "gameCount": 1
+    },
+    {
+      "id": 24747,
+      "name": "Senpai Studios",
+      "gameCount": 1
+    },
+    {
+      "id": 24937,
+      "name": "Foreign Gnomes",
+      "gameCount": 1
+    },
+    {
+      "id": 24939,
+      "name": "Jordi Roca",
+      "gameCount": 1
+    },
+    {
+      "id": 25058,
+      "name": "K Amusement Leasing",
+      "gameCount": 1
+    },
+    {
+      "id": 25083,
+      "name": "Runouw",
+      "gameCount": 1
+    },
+    {
+      "id": 25190,
+      "name": "blockfrogs",
+      "gameCount": 1
+    },
+    {
+      "id": 25197,
+      "name": "American Softworks Corporation",
+      "gameCount": 1
+    },
+    {
+      "id": 25386,
+      "name": "REDWORKS Inc.",
+      "gameCount": 1
+    },
+    {
+      "id": 25387,
+      "name": "BEE TRIBE CO., LTD",
+      "gameCount": 1
+    },
+    {
+      "id": 25412,
+      "name": "Roman Glebenkov",
+      "gameCount": 1
+    },
+    {
+      "id": 25436,
+      "name": "Gengosha",
+      "gameCount": 1
+    },
+    {
+      "id": 25497,
+      "name": "Everybody House Games",
+      "gameCount": 1
+    },
+    {
+      "id": 25498,
+      "name": "Milkbar Lads",
+      "gameCount": 1
+    },
+    {
+      "id": 25542,
+      "name": "Sega Mobile",
+      "gameCount": 1
+    },
+    {
+      "id": 25576,
+      "name": "Casey Donnellan Games LLC",
+      "gameCount": 1
+    },
+    {
+      "id": 25673,
+      "name": "twoscomplement",
+      "gameCount": 1
+    },
+    {
+      "id": 25727,
+      "name": "Bungie West",
+      "gameCount": 1
+    },
+    {
+      "id": 25738,
+      "name": "Noisestorm",
+      "gameCount": 1
+    },
+    {
+      "id": 25752,
+      "name": "Berkeley Softworks",
+      "gameCount": 1
+    },
+    {
+      "id": 25755,
+      "name": "Nice Ideas",
+      "gameCount": 1
+    },
+    {
+      "id": 25792,
+      "name": "Kabam Montreal, Inc.",
+      "gameCount": 1
+    },
+    {
+      "id": 25832,
+      "name": "Quantum Factory",
+      "gameCount": 1
+    },
+    {
+      "id": 25950,
+      "name": "Arsi \"Hakita\" Patala",
+      "gameCount": 1
+    },
+    {
+      "id": 26032,
+      "name": "Zakeh",
+      "gameCount": 1
+    },
+    {
+      "id": 26034,
+      "name": "J.P.Room Recordings",
+      "gameCount": 1
+    },
+    {
+      "id": 26083,
+      "name": "Alblune Games",
+      "gameCount": 1
+    },
+    {
+      "id": 26283,
+      "name": "Uri",
+      "gameCount": 1
+    },
+    {
+      "id": 26345,
+      "name": "John Szymanski",
+      "gameCount": 1
+    },
+    {
+      "id": 26377,
+      "name": "tokoronyori",
+      "gameCount": 1
+    },
+    {
+      "id": 26398,
+      "name": "I-play",
+      "gameCount": 1
+    },
+    {
+      "id": 26451,
+      "name": "Egmont Polska",
+      "gameCount": 1
+    },
+    {
+      "id": 26490,
+      "name": "NA Publishing",
+      "gameCount": 1
+    },
+    {
+      "id": 26543,
+      "name": "LUVI GAMES",
+      "gameCount": 1
+    },
+    {
+      "id": 26553,
+      "name": "Sekai Games",
+      "gameCount": 1
+    },
+    {
+      "id": 26566,
+      "name": "TRAGsoft",
+      "gameCount": 1
+    },
+    {
+      "id": 26764,
+      "name": "Glowstick Entertainment",
+      "gameCount": 1
+    },
+    {
+      "id": 26815,
+      "name": "Peachy Keen Games",
+      "gameCount": 1
+    },
+    {
+      "id": 26837,
+      "name": "Walter Machado",
+      "gameCount": 1
+    },
+    {
+      "id": 26844,
+      "name": "Room710Games",
+      "gameCount": 1
+    },
+    {
+      "id": 26875,
+      "name": "Milk Bottle Studio",
+      "gameCount": 1
+    },
+    {
+      "id": 26876,
+      "name": "Elasto Mania Team",
+      "gameCount": 1
+    },
+    {
+      "id": 26887,
+      "name": "Bear Naked Productions",
+      "gameCount": 1
+    },
+    {
+      "id": 26888,
+      "name": "Pulse Interactive",
+      "gameCount": 1
+    },
+    {
+      "id": 26890,
+      "name": "R-Comp Interactive",
+      "gameCount": 1
+    },
+    {
+      "id": 27027,
+      "name": "Oskar Stålberg",
+      "gameCount": 1
+    },
+    {
+      "id": 27074,
+      "name": "T3 Entertainment",
+      "gameCount": 1
+    },
+    {
+      "id": 27191,
+      "name": "Real Networks",
+      "gameCount": 1
+    },
+    {
+      "id": 27212,
+      "name": "Greg Wohlwend",
+      "gameCount": 1
+    },
+    {
+      "id": 27257,
+      "name": "Eerie Guest Studios",
+      "gameCount": 1
+    },
+    {
+      "id": 27311,
+      "name": "Let It Roll",
+      "gameCount": 1
+    },
+    {
+      "id": 27312,
+      "name": "FoamPunch",
+      "gameCount": 1
+    },
+    {
+      "id": 27324,
+      "name": "Tendogames",
+      "gameCount": 1
+    },
+    {
+      "id": 27326,
+      "name": "Classics Digital",
+      "gameCount": 1
+    },
+    {
+      "id": 27328,
+      "name": "Righteous Hammer Games",
+      "gameCount": 1
+    },
+    {
+      "id": 27334,
+      "name": "Dizzy Enterprises",
+      "gameCount": 1
+    },
+    {
+      "id": 27350,
+      "name": "Team Undertale Yellow",
+      "gameCount": 1
+    },
+    {
+      "id": 27362,
+      "name": "Imagica DigitalScape",
+      "gameCount": 1
+    },
+    {
+      "id": 27495,
+      "name": "Creative Materials",
+      "gameCount": 1
+    },
+    {
+      "id": 27498,
+      "name": "Extreme",
+      "gameCount": 1
+    },
+    {
+      "id": 27534,
+      "name": "CTA Developments",
+      "gameCount": 1
+    },
+    {
+      "id": 27542,
+      "name": "DDNet Team",
+      "gameCount": 1
+    },
+    {
+      "id": 27558,
+      "name": "Codefire",
+      "gameCount": 1
+    },
+    {
+      "id": 27628,
+      "name": "Arc Co., Ltd.",
+      "gameCount": 1
+    },
+    {
+      "id": 27647,
+      "name": "Banana Development",
+      "gameCount": 1
+    },
+    {
+      "id": 27763,
+      "name": "Happy Ray Games",
+      "gameCount": 1
+    },
+    {
+      "id": 27823,
+      "name": "Lightning Games",
+      "gameCount": 1
+    },
+    {
+      "id": 27841,
+      "name": "Sonotrigger",
+      "gameCount": 1
+    },
+    {
+      "id": 27854,
+      "name": "The Capellen Orchestra and Choir",
+      "gameCount": 1
+    },
+    {
+      "id": 27855,
+      "name": "Dagger Crown Studio",
+      "gameCount": 1
+    },
+    {
+      "id": 27856,
+      "name": "Omnon! Workshop",
+      "gameCount": 1
+    },
+    {
+      "id": 27857,
+      "name": "FXVILLE, Inc",
+      "gameCount": 1
+    },
+    {
+      "id": 27858,
+      "name": "Krem Productions",
+      "gameCount": 1
+    },
+    {
+      "id": 27860,
+      "name": "Full Sail University User Experience Lab",
+      "gameCount": 1
+    },
+    {
+      "id": 27886,
+      "name": "Aerial_Knight",
+      "gameCount": 1
+    },
+    {
+      "id": 28034,
+      "name": "Index Corporation",
+      "gameCount": 1
+    },
+    {
+      "id": 28112,
+      "name": "Zeoworks",
+      "gameCount": 1
+    },
+    {
+      "id": 28203,
+      "name": "Studio Coattails",
+      "gameCount": 1
+    },
+    {
+      "id": 28373,
+      "name": "GS2 Games",
+      "gameCount": 1
+    },
+    {
+      "id": 28377,
+      "name": "Nikita Kaf Publishing",
+      "gameCount": 1
+    },
+    {
+      "id": 28383,
+      "name": "JoyBits Ltd.",
+      "gameCount": 1
+    },
+    {
+      "id": 28400,
+      "name": "Elder Game, LLC",
+      "gameCount": 1
+    },
+    {
+      "id": 28412,
+      "name": "Wholesale Algorithms",
+      "gameCount": 1
+    },
+    {
+      "id": 28459,
+      "name": "KOMOE Game",
+      "gameCount": 1
+    },
+    {
+      "id": 28472,
+      "name": "SlifkerGames",
+      "gameCount": 1
+    },
+    {
+      "id": 28516,
+      "name": "Catchweight Studio",
+      "gameCount": 1
+    },
+    {
+      "id": 28568,
+      "name": "Yakov Butuzoff",
+      "gameCount": 1
+    },
+    {
+      "id": 28588,
+      "name": "Valko Game Studios",
+      "gameCount": 1
+    },
+    {
+      "id": 28650,
+      "name": "Gremory Games Inc.",
+      "gameCount": 1
+    },
+    {
+      "id": 28799,
+      "name": "Bryce Bucher",
+      "gameCount": 1
+    },
+    {
+      "id": 28847,
+      "name": "Ziggurat",
+      "gameCount": 1
+    },
+    {
+      "id": 28897,
+      "name": "Sander Ambroos",
+      "gameCount": 1
+    },
+    {
+      "id": 28954,
+      "name": "Gradient Studios",
+      "gameCount": 1
+    },
+    {
+      "id": 28955,
+      "name": "Bocoup",
+      "gameCount": 1
+    },
+    {
+      "id": 29106,
+      "name": "Koalabs Games",
+      "gameCount": 1
+    },
+    {
+      "id": 29146,
+      "name": "Oddshot Games",
+      "gameCount": 1
+    },
+    {
+      "id": 29247,
+      "name": "Alex Grade",
+      "gameCount": 1
+    },
+    {
+      "id": 29260,
+      "name": "Straight Back Games",
+      "gameCount": 1
+    },
+    {
+      "id": 29262,
+      "name": "Joe Fender",
+      "gameCount": 1
+    },
+    {
+      "id": 29706,
+      "name": "BANDAI NAMCO Games Inc",
+      "gameCount": 1
+    },
+    {
+      "id": 29744,
+      "name": "Virtuos Games",
+      "gameCount": 1
+    },
+    {
+      "id": 29776,
+      "name": "IMBA Interactive",
+      "gameCount": 1
+    },
+    {
+      "id": 30097,
+      "name": "Micah Boursier",
+      "gameCount": 1
+    },
+    {
+      "id": 30158,
+      "name": "Oslo Albet",
+      "gameCount": 1
+    },
+    {
+      "id": 30191,
+      "name": "Monolith Corp.",
+      "gameCount": 1
+    },
+    {
+      "id": 30192,
+      "name": "SNK Home Entertainment, Inc.",
+      "gameCount": 1
+    },
+    {
+      "id": 30206,
+      "name": "Buzz Puppet Productions",
+      "gameCount": 1
+    },
+    {
+      "id": 30208,
+      "name": "Oksana Bula",
+      "gameCount": 1
+    },
+    {
+      "id": 30466,
+      "name": "LTGames Global",
+      "gameCount": 1
+    },
+    {
+      "id": 30561,
+      "name": "Snail Games USA",
+      "gameCount": 1
+    },
+    {
+      "id": 30728,
+      "name": "Hearty Robin",
+      "gameCount": 1
+    },
+    {
+      "id": 30735,
+      "name": "mestiez",
+      "gameCount": 1
+    },
+    {
+      "id": 30770,
+      "name": "noby",
+      "gameCount": 1
+    },
+    {
+      "id": 30774,
+      "name": "TrampolineTales",
+      "gameCount": 1
+    },
+    {
+      "id": 30938,
+      "name": "Realms Distribution",
+      "gameCount": 1
+    },
+    {
+      "id": 31009,
+      "name": "Whippoorwill",
+      "gameCount": 1
+    },
+    {
+      "id": 31043,
+      "name": "Smilegate RPG",
+      "gameCount": 1
+    },
+    {
+      "id": 31113,
+      "name": "Ares Dragonis",
+      "gameCount": 1
+    },
+    {
+      "id": 31206,
+      "name": "Interprog",
+      "gameCount": 1
+    },
+    {
+      "id": 31343,
+      "name": "Lone Wolf Technology",
+      "gameCount": 1
+    },
+    {
+      "id": 31369,
+      "name": "Dynamic Media Triad",
+      "gameCount": 1
+    },
+    {
+      "id": 31391,
+      "name": "Seen Games",
+      "gameCount": 1
+    },
+    {
+      "id": 31517,
+      "name": "Nacho Rodríguez",
+      "gameCount": 1
+    },
+    {
+      "id": 31685,
+      "name": "kan.kikuchi",
+      "gameCount": 1
+    },
+    {
+      "id": 31689,
+      "name": "Another Axiom",
+      "gameCount": 1
+    },
+    {
+      "id": 31734,
+      "name": "MediaCity Games",
+      "gameCount": 1
+    },
+    {
+      "id": 31761,
+      "name": "Tomary",
+      "gameCount": 1
+    },
+    {
+      "id": 31809,
+      "name": "LABS Works",
+      "gameCount": 1
+    },
+    {
+      "id": 31820,
+      "name": "LavaFlame2",
+      "gameCount": 1
+    },
+    {
+      "id": 31935,
+      "name": "Eugene Zubko",
+      "gameCount": 1
+    },
+    {
+      "id": 31992,
+      "name": "Kiary Games",
+      "gameCount": 1
+    },
+    {
+      "id": 32039,
+      "name": "Skrollcat Studio",
+      "gameCount": 1
+    },
+    {
+      "id": 32052,
+      "name": "FlukeDude",
+      "gameCount": 1
+    },
+    {
+      "id": 32093,
+      "name": "Linked Squad",
+      "gameCount": 1
+    },
+    {
+      "id": 32167,
+      "name": "Lowtech Studios",
+      "gameCount": 1
+    },
+    {
+      "id": 32185,
+      "name": "Jukio Kallio",
+      "gameCount": 1
+    },
+    {
+      "id": 32186,
+      "name": "Dominik Johann",
+      "gameCount": 1
+    },
+    {
+      "id": 32197,
+      "name": "insertdisc5",
+      "gameCount": 1
+    },
+    {
+      "id": 32205,
+      "name": "Pixel Sprout Studios",
+      "gameCount": 1
+    },
+    {
+      "id": 32220,
+      "name": "CORDYLUS",
+      "gameCount": 1
+    },
+    {
+      "id": 32238,
+      "name": "MixMorris",
+      "gameCount": 1
+    },
+    {
+      "id": 32260,
+      "name": "ThatWhichIs Media",
+      "gameCount": 1
+    },
+    {
+      "id": 32331,
+      "name": "Gal Mamalya",
+      "gameCount": 1
+    },
+    {
+      "id": 32368,
+      "name": "RTL Playtainment",
+      "gameCount": 1
+    },
+    {
+      "id": 32476,
+      "name": "CJ Internet Corporation",
+      "gameCount": 1
+    },
+    {
+      "id": 32477,
+      "name": "Cayenne Tech",
+      "gameCount": 1
+    },
+    {
+      "id": 32497,
+      "name": "Jon Perry",
+      "gameCount": 1
+    },
+    {
+      "id": 32500,
+      "name": "Eirik Suhrke",
+      "gameCount": 1
+    },
+    {
+      "id": 32542,
+      "name": "Dead Idle Games",
+      "gameCount": 1
+    },
+    {
+      "id": 32554,
+      "name": "Eduard But",
+      "gameCount": 1
+    },
+    {
+      "id": 32778,
+      "name": "Optillusion",
+      "gameCount": 1
+    },
+    {
+      "id": 32874,
+      "name": "Zeekerss",
+      "gameCount": 1
+    },
+    {
+      "id": 32889,
+      "name": "Galaxy Shark Studios",
+      "gameCount": 1
+    },
+    {
+      "id": 32916,
+      "name": "David Evans",
+      "gameCount": 1
+    },
+    {
+      "id": 32921,
+      "name": "LimboLane",
+      "gameCount": 1
+    },
+    {
+      "id": 33043,
+      "name": "Francis Coulombe",
+      "gameCount": 1
+    },
+    {
+      "id": 33200,
+      "name": "Renovation Game",
+      "gameCount": 1
+    },
+    {
+      "id": 33271,
+      "name": "Game Brains",
+      "gameCount": 1
+    },
+    {
+      "id": 33296,
+      "name": "ThingOnItsOwn",
+      "gameCount": 1
+    },
+    {
+      "id": 33333,
+      "name": "Visionary Design Technologies",
+      "gameCount": 1
+    },
+    {
+      "id": 33444,
+      "name": "Level 91 Entertainment",
+      "gameCount": 1
+    },
+    {
+      "id": 33550,
+      "name": "GearSprout",
+      "gameCount": 1
+    },
+    {
+      "id": 33562,
+      "name": "WarpFrog",
+      "gameCount": 1
+    },
+    {
+      "id": 33614,
+      "name": "Skirmish Mode Games",
+      "gameCount": 1
+    },
+    {
+      "id": 33642,
+      "name": "Cosmic Adventure Squad",
+      "gameCount": 1
+    },
+    {
+      "id": 33700,
+      "name": "Fabien Weibel",
+      "gameCount": 1
+    },
+    {
+      "id": 33714,
+      "name": "Team Wood Games",
+      "gameCount": 1
+    },
+    {
+      "id": 33837,
+      "name": "Rocket Rat Games",
+      "gameCount": 1
+    },
+    {
+      "id": 34011,
+      "name": "Nation 12",
+      "gameCount": 1
+    },
+    {
+      "id": 34012,
+      "name": "Spacehopper Studios",
+      "gameCount": 1
+    },
+    {
+      "id": 34018,
+      "name": "Tower Studios",
+      "gameCount": 1
+    },
+    {
+      "id": 34147,
+      "name": "Bolt in Bolt",
+      "gameCount": 1
+    },
+    {
+      "id": 34267,
+      "name": "Thomas Mackinnon",
+      "gameCount": 1
+    },
+    {
+      "id": 34277,
+      "name": "Akatsuki Taiwan",
+      "gameCount": 1
+    },
+    {
+      "id": 34438,
+      "name": "Activision Deutchland",
+      "gameCount": 1
+    },
+    {
+      "id": 34439,
+      "name": "Activision Asia-Pacific",
+      "gameCount": 1
+    },
+    {
+      "id": 34440,
+      "name": "Activision Italia",
+      "gameCount": 1
+    },
+    {
+      "id": 34441,
+      "name": "FLARB",
+      "gameCount": 1
+    },
+    {
+      "id": 34616,
+      "name": "Video Games GmbH",
+      "gameCount": 1
+    },
+    {
+      "id": 34651,
+      "name": "Trilobyte Games",
+      "gameCount": 1
+    },
+    {
+      "id": 34671,
+      "name": "Singularity 6",
+      "gameCount": 1
+    },
+    {
+      "id": 34821,
+      "name": "uvula",
+      "gameCount": 1
+    },
+    {
+      "id": 34960,
+      "name": "Heaviside Creations",
+      "gameCount": 1
+    },
+    {
+      "id": 35010,
+      "name": "idoz & phops",
+      "gameCount": 1
+    },
+    {
+      "id": 35015,
+      "name": "Greylock Studio",
+      "gameCount": 1
+    },
+    {
+      "id": 35081,
+      "name": "Rabbit and Bear",
+      "gameCount": 1
+    },
+    {
+      "id": 35173,
+      "name": "Kyx Studio",
+      "gameCount": 1
+    },
+    {
+      "id": 35451,
+      "name": "DragonSnow",
+      "gameCount": 1
+    },
+    {
+      "id": 35634,
+      "name": "Popagenda",
+      "gameCount": 1
+    },
+    {
+      "id": 35636,
+      "name": "Marvelous Entertainment Inc.",
+      "gameCount": 1
+    },
+    {
+      "id": 35755,
+      "name": "Stephen Ruddy",
+      "gameCount": 1
+    },
+    {
+      "id": 35756,
+      "name": "Andrew Threlfall",
+      "gameCount": 1
+    },
+    {
+      "id": 35757,
+      "name": "Tim Follin",
+      "gameCount": 1
+    },
+    {
+      "id": 35781,
+      "name": "Special FX",
+      "gameCount": 1
+    },
+    {
+      "id": 35812,
+      "name": "Marc Blank",
+      "gameCount": 1
+    },
+    {
+      "id": 35826,
+      "name": "Untitled Studio",
+      "gameCount": 1
+    },
+    {
+      "id": 35964,
+      "name": "Pixel Games UK",
+      "gameCount": 1
+    },
+    {
+      "id": 36060,
+      "name": "Blue Sky",
+      "gameCount": 1
+    },
+    {
+      "id": 36070,
+      "name": "TFL Studios",
+      "gameCount": 1
+    },
+    {
+      "id": 36073,
+      "name": "René Pierre",
+      "gameCount": 1
+    },
+    {
+      "id": 36206,
+      "name": "PUNKCAKE Délicieux",
+      "gameCount": 1
+    },
+    {
+      "id": 36271,
+      "name": "Almathera Systems",
+      "gameCount": 1
+    },
+    {
+      "id": 36291,
+      "name": "Jumpin' Jack Software",
+      "gameCount": 1
+    },
+    {
+      "id": 36376,
+      "name": "Vidas Games/ Vidas Salavejus",
+      "gameCount": 1
+    },
+    {
+      "id": 36533,
+      "name": "Dark Point Games",
+      "gameCount": 1
+    },
+    {
+      "id": 36607,
+      "name": "Shipwright Studios",
+      "gameCount": 1
+    },
+    {
+      "id": 36781,
+      "name": "Jasozz Games",
+      "gameCount": 1
+    },
+    {
+      "id": 36932,
+      "name": "Third Subdivision Studios",
+      "gameCount": 1
+    },
+    {
+      "id": 36942,
+      "name": "Arch Rivals",
+      "gameCount": 1
+    },
+    {
+      "id": 36943,
+      "name": "Silicon Sketches",
+      "gameCount": 1
+    },
+    {
+      "id": 36944,
+      "name": "The Dome Software Developments",
+      "gameCount": 1
+    },
+    {
+      "id": 36945,
+      "name": "Kuju Wireless Publishing",
+      "gameCount": 1
+    },
+    {
+      "id": 36946,
+      "name": "Magic Productions",
+      "gameCount": 1
+    },
+    {
+      "id": 37009,
+      "name": "Beep Japan",
+      "gameCount": 1
+    },
+    {
+      "id": 37031,
+      "name": "Rong Rong",
+      "gameCount": 1
+    },
+    {
+      "id": 37082,
+      "name": "Visions Of The Impossible",
+      "gameCount": 1
+    },
+    {
+      "id": 37083,
+      "name": "Amiga, Inc.",
+      "gameCount": 1
+    },
+    {
+      "id": 37254,
+      "name": "Tsuji Jimusho",
+      "gameCount": 1
+    },
+    {
+      "id": 37297,
+      "name": "Digital Frontier",
+      "gameCount": 1
+    },
+    {
+      "id": 37379,
+      "name": "James Software",
+      "gameCount": 1
+    },
+    {
+      "id": 37399,
+      "name": "Perfect Software",
+      "gameCount": 1
+    },
+    {
+      "id": 37400,
+      "name": "Onan Games",
+      "gameCount": 1
+    },
+    {
+      "id": 37454,
+      "name": "ADJ Technologies",
+      "gameCount": 1
+    },
+    {
+      "id": 37620,
+      "name": "Henry Hoare",
+      "gameCount": 1
+    },
+    {
+      "id": 37641,
+      "name": "Commodore Japan",
+      "gameCount": 1
+    },
+    {
+      "id": 37728,
+      "name": "Evan Szymanski",
+      "gameCount": 1
+    },
+    {
+      "id": 37811,
+      "name": "Technology Associates",
+      "gameCount": 1
+    },
+    {
+      "id": 37957,
+      "name": "Warner Bros. Consumer Products",
+      "gameCount": 1
+    },
+    {
+      "id": 37987,
+      "name": "Happinet Indie Collection",
+      "gameCount": 1
+    },
+    {
+      "id": 38001,
+      "name": "Mads & Friends",
+      "gameCount": 1
+    },
+    {
+      "id": 38087,
+      "name": "American Technos",
+      "gameCount": 1
+    },
+    {
+      "id": 38287,
+      "name": "Pipedream Interactive",
+      "gameCount": 1
+    },
+    {
+      "id": 38423,
+      "name": "katanalevy",
+      "gameCount": 1
+    },
+    {
+      "id": 38455,
+      "name": "tann",
+      "gameCount": 1
+    },
+    {
+      "id": 38539,
+      "name": "Arbitrarily Good Productions",
+      "gameCount": 1
+    },
+    {
+      "id": 38563,
+      "name": "Liveware",
+      "gameCount": 1
+    },
+    {
+      "id": 38593,
+      "name": "Liujiajun",
+      "gameCount": 1
+    },
+    {
+      "id": 38640,
+      "name": "Littlefield Studio",
+      "gameCount": 1
+    },
+    {
+      "id": 38661,
+      "name": "Twinsanity's Channel",
+      "gameCount": 1
+    },
+    {
+      "id": 38678,
+      "name": "Tec Toy Indústria de Brinquedos S.A.",
+      "gameCount": 1
+    },
+    {
+      "id": 38815,
+      "name": "Alfa bravo Inc",
+      "gameCount": 1
+    },
+    {
+      "id": 38869,
+      "name": "Foresight New Media",
+      "gameCount": 1
+    },
+    {
+      "id": 38875,
+      "name": "Mosaiqo",
+      "gameCount": 1
+    },
+    {
+      "id": 38901,
+      "name": "Half Asleep",
+      "gameCount": 1
+    },
+    {
+      "id": 38942,
+      "name": "Pingle Studio Limited",
+      "gameCount": 1
+    },
+    {
+      "id": 38963,
+      "name": "Yodo1 Games",
+      "gameCount": 1
+    },
+    {
+      "id": 39150,
+      "name": "SomeHumbleOnion",
+      "gameCount": 1
+    },
+    {
+      "id": 39499,
+      "name": "Toffee Games",
+      "gameCount": 1
+    },
+    {
+      "id": 39701,
+      "name": "Tonka",
+      "gameCount": 1
+    },
+    {
+      "id": 40025,
+      "name": "Florian Himsl",
+      "gameCount": 1
+    },
+    {
+      "id": 40508,
+      "name": "Black Mermaid",
+      "gameCount": 1
+    },
+    {
+      "id": 40509,
+      "name": "Die of Death Games",
+      "gameCount": 1
+    },
+    {
+      "id": 40666,
+      "name": "Big Time Studios",
+      "gameCount": 1
+    },
+    {
+      "id": 40966,
+      "name": "Tandy Corporation",
+      "gameCount": 1
+    },
+    {
+      "id": 41215,
+      "name": "Fractal Projects",
+      "gameCount": 1
+    },
+    {
+      "id": 41356,
+      "name": "Studio Supersoft",
+      "gameCount": 1
+    },
+    {
+      "id": 41412,
+      "name": "Trioskaz",
+      "gameCount": 1
+    },
+    {
+      "id": 41540,
+      "name": "flanne",
+      "gameCount": 1
+    },
+    {
+      "id": 41647,
+      "name": "All Possible Futures",
+      "gameCount": 1
+    },
+    {
+      "id": 41660,
+      "name": "Madison Karrh",
+      "gameCount": 1
+    },
+    {
+      "id": 41661,
+      "name": "Wings",
+      "gameCount": 1
+    },
+    {
+      "id": 41719,
+      "name": "Good Boys",
+      "gameCount": 1
+    },
+    {
+      "id": 41879,
+      "name": "Subcreation Studio",
+      "gameCount": 1
+    },
+    {
+      "id": 42485,
+      "name": "Checkmaty",
+      "gameCount": 1
+    },
+    {
+      "id": 42614,
+      "name": "Electrocosmos",
+      "gameCount": 1
+    },
+    {
+      "id": 42710,
+      "name": "Daniel DeEntremont",
+      "gameCount": 1
+    },
+    {
+      "id": 42714,
+      "name": "Fancy Games",
+      "gameCount": 1
+    },
+    {
+      "id": 42949,
+      "name": "MegaWobble",
+      "gameCount": 1
+    },
+    {
+      "id": 42953,
+      "name": "Ariel Network",
+      "gameCount": 1
+    },
+    {
+      "id": 42980,
+      "name": "Europress Software",
+      "gameCount": 1
+    },
+    {
+      "id": 43496,
+      "name": "Upstart Games",
+      "gameCount": 1
+    },
+    {
+      "id": 43536,
+      "name": "MariyGames",
+      "gameCount": 1
+    },
+    {
+      "id": 43716,
+      "name": "My Arcade",
+      "gameCount": 1
+    },
+    {
+      "id": 43910,
+      "name": "Starry Studio",
+      "gameCount": 1
+    },
+    {
+      "id": 43929,
+      "name": "RachelDrawsThis",
+      "gameCount": 1
+    },
+    {
+      "id": 43972,
+      "name": "Stepford",
+      "gameCount": 1
+    },
+    {
+      "id": 43974,
+      "name": "Take IT Studio!",
+      "gameCount": 1
+    },
+    {
+      "id": 44037,
+      "name": "DOKA Studios",
+      "gameCount": 1
+    },
+    {
+      "id": 44172,
+      "name": "Mike Klubnika",
+      "gameCount": 1
+    },
+    {
+      "id": 44817,
+      "name": "Ivy Sly",
+      "gameCount": 1
+    },
+    {
+      "id": 45090,
+      "name": "MrOkiDoki",
+      "gameCount": 1
+    },
+    {
+      "id": 45091,
+      "name": "BATTLEKOT",
+      "gameCount": 1
+    },
+    {
+      "id": 45092,
+      "name": "TheLiquidHorse",
+      "gameCount": 1
+    },
+    {
+      "id": 45216,
+      "name": "Innovative Concepts In Entertainment",
+      "gameCount": 1
+    },
+    {
+      "id": 45279,
+      "name": "Lizardry",
+      "gameCount": 1
+    },
+    {
+      "id": 45529,
+      "name": "Tour De Pizza",
+      "gameCount": 1
+    },
+    {
+      "id": 45602,
+      "name": "Studio 3",
+      "gameCount": 1
+    },
+    {
+      "id": 45685,
+      "name": "Doyoyo Games",
+      "gameCount": 1
+    },
+    {
+      "id": 45801,
+      "name": "Maeth",
+      "gameCount": 1
+    },
+    {
+      "id": 45857,
+      "name": "Agafonoff",
+      "gameCount": 1
+    },
+    {
+      "id": 45896,
+      "name": "Roboatino",
+      "gameCount": 1
+    },
+    {
+      "id": 45949,
+      "name": "Newnight",
+      "gameCount": 1
+    },
+    {
+      "id": 46058,
+      "name": "SGRA Studio",
+      "gameCount": 1
+    },
+    {
+      "id": 46105,
+      "name": "Caribdis",
+      "gameCount": 1
+    },
+    {
+      "id": 46270,
+      "name": "Exptional Global",
+      "gameCount": 1
+    },
+    {
+      "id": 46281,
+      "name": "Pun Intended",
+      "gameCount": 1
+    },
+    {
+      "id": 46297,
+      "name": "Lateralis Heavy Industries",
+      "gameCount": 1
+    },
+    {
+      "id": 46382,
+      "name": "The Water Museum",
+      "gameCount": 1
+    },
+    {
+      "id": 46552,
+      "name": "Nintendo European Research and Development",
+      "gameCount": 1
+    },
+    {
+      "id": 46563,
+      "name": "Atomhawk",
+      "gameCount": 1
+    },
+    {
+      "id": 46603,
+      "name": "Gizmo",
+      "gameCount": 1
+    },
+    {
+      "id": 46856,
+      "name": "Blobfish",
+      "gameCount": 1
+    },
+    {
+      "id": 46930,
+      "name": "Squid Shock Studios",
+      "gameCount": 1
+    },
+    {
+      "id": 47147,
+      "name": "The Quinnspiracy",
+      "gameCount": 1
+    },
+    {
+      "id": 47148,
+      "name": "Isaac Schankler",
+      "gameCount": 1
+    },
+    {
+      "id": 47149,
+      "name": "Patrick Lindsey",
+      "gameCount": 1
+    },
+    {
+      "id": 47318,
+      "name": "Dankie",
+      "gameCount": 1
+    },
+    {
+      "id": 47459,
+      "name": "Johan Grönvall",
+      "gameCount": 1
+    },
+    {
+      "id": 47460,
+      "name": "Zapray Games",
+      "gameCount": 1
+    },
+    {
+      "id": 47661,
+      "name": "Nemlei",
+      "gameCount": 1
+    },
+    {
+      "id": 47896,
+      "name": "Little Sewing Machine",
+      "gameCount": 1
+    },
+    {
+      "id": 47912,
+      "name": "Maxi Boch",
+      "gameCount": 1
+    },
+    {
+      "id": 48001,
+      "name": "TowerHaus",
+      "gameCount": 1
+    },
+    {
+      "id": 48004,
+      "name": "Different Sense Games",
+      "gameCount": 1
+    },
+    {
+      "id": 48042,
+      "name": "snekflat",
+      "gameCount": 1
+    },
+    {
+      "id": 48172,
+      "name": "Realm Archive",
+      "gameCount": 1
+    },
+    {
+      "id": 48176,
+      "name": "SC-KR Games",
+      "gameCount": 1
+    },
+    {
+      "id": 48181,
+      "name": "Cyclone",
+      "gameCount": 1
+    },
+    {
+      "id": 48283,
+      "name": "Neal Agarwal",
+      "gameCount": 1
+    },
+    {
+      "id": 48429,
+      "name": "MAHOUMAIDEN",
+      "gameCount": 1
+    },
+    {
+      "id": 48662,
+      "name": "pgWave.",
+      "gameCount": 1
+    },
+    {
+      "id": 48706,
+      "name": "D4",
+      "gameCount": 1
+    },
+    {
+      "id": 49283,
+      "name": "Julián Cordero",
+      "gameCount": 1
+    },
+    {
+      "id": 49284,
+      "name": "Sebastian Valbuena",
+      "gameCount": 1
+    },
+    {
+      "id": 49363,
+      "name": "Teknocrest",
+      "gameCount": 1
+    },
+    {
+      "id": 49800,
+      "name": "Double Aught",
+      "gameCount": 1
+    },
+    {
+      "id": 50207,
+      "name": "Ergo Software",
+      "gameCount": 1
+    },
+    {
+      "id": 50847,
+      "name": "Gixer Entertainment",
+      "gameCount": 1
+    },
+    {
+      "id": 50989,
+      "name": "The Rat Zone",
+      "gameCount": 1
+    },
+    {
+      "id": 51120,
+      "name": "World of Neopia, Inc.",
+      "gameCount": 1
+    },
+    {
+      "id": 51237,
+      "name": "Perfuse Entertainment",
+      "gameCount": 1
+    },
+    {
+      "id": 51425,
+      "name": "Surgent Studios",
+      "gameCount": 1
+    },
+    {
+      "id": 51467,
+      "name": "AlgoRat",
+      "gameCount": 1
+    },
+    {
+      "id": 51630,
+      "name": "Myco",
+      "gameCount": 1
+    },
+    {
+      "id": 51632,
+      "name": "Duhndal",
+      "gameCount": 1
+    },
+    {
+      "id": 51767,
+      "name": "Cubic Games Studio",
+      "gameCount": 1
+    },
+    {
+      "id": 51895,
+      "name": "SAT.1 New Business Development",
+      "gameCount": 1
+    },
+    {
+      "id": 51913,
+      "name": "Veratrum",
+      "gameCount": 1
+    },
+    {
+      "id": 51940,
+      "name": "Tesseron",
+      "gameCount": 1
+    },
+    {
+      "id": 52349,
+      "name": "KisSoft",
+      "gameCount": 1
+    },
+    {
+      "id": 52712,
+      "name": "Voids Within",
+      "gameCount": 1
+    },
+    {
+      "id": 53302,
+      "name": "Nacho Sama",
+      "gameCount": 1
+    },
+    {
+      "id": 54120,
+      "name": "Pepita Digital",
+      "gameCount": 1
+    },
+    {
+      "id": 54477,
+      "name": "Funkin' Crew",
+      "gameCount": 1
+    },
+    {
+      "id": 54718,
+      "name": "Mirror Image Games",
+      "gameCount": 1
+    },
+    {
+      "id": 54814,
+      "name": "UniqueGeese",
+      "gameCount": 1
+    },
+    {
+      "id": 54943,
+      "name": "Anthony Septim",
+      "gameCount": 1
+    },
+    {
+      "id": 55091,
+      "name": "Inline Assembly",
+      "gameCount": 1
+    },
+    {
+      "id": 55119,
+      "name": "Ivy Road",
+      "gameCount": 1
+    },
+    {
+      "id": 55133,
+      "name": "Basti Games",
+      "gameCount": 1
+    },
+    {
+      "id": 55351,
+      "name": "David Schmidthoffer",
+      "gameCount": 1
+    },
+    {
+      "id": 55372,
+      "name": "LongE Corporation",
+      "gameCount": 1
+    },
+    {
+      "id": 55383,
+      "name": "Video Ware",
+      "gameCount": 1
+    },
+    {
+      "id": 55494,
+      "name": "Mobile-Games",
+      "gameCount": 1
+    },
+    {
+      "id": 55495,
+      "name": "Urban Plant",
+      "gameCount": 1
+    },
+    {
+      "id": 55582,
+      "name": "Greener Grass Company",
+      "gameCount": 1
+    },
+    {
+      "id": 55791,
+      "name": "YeahMaybe",
+      "gameCount": 1
+    },
+    {
+      "id": 55966,
+      "name": "Handmark",
+      "gameCount": 1
+    },
+    {
+      "id": 56174,
+      "name": "PLURIAD",
+      "gameCount": 1
+    },
+    {
+      "id": 56463,
+      "name": "Eidos Sherbrooke",
+      "gameCount": 1
+    },
+    {
+      "id": 56601,
+      "name": "Ian Bell",
+      "gameCount": 1
+    },
+    {
+      "id": 56941,
+      "name": "Schisma Games",
+      "gameCount": 1
+    },
+    {
+      "id": 57095,
+      "name": "Anegar Games",
+      "gameCount": 1
+    },
+    {
+      "id": 57137,
+      "name": "Combat Cat Studio",
+      "gameCount": 1
+    },
+    {
+      "id": 57831,
+      "name": "Mega",
+      "gameCount": 1
+    },
+    {
+      "id": 57877,
+      "name": "DeadDevsTellNoLies",
+      "gameCount": 1
+    },
+    {
+      "id": 57880,
+      "name": "Takarajimasha",
+      "gameCount": 1
+    },
+    {
+      "id": 58137,
+      "name": "Floombo",
+      "gameCount": 1
+    },
+    {
+      "id": 58193,
+      "name": "ioi_xd",
+      "gameCount": 1
+    },
+    {
+      "id": 59149,
+      "name": "OpenTTD Team",
+      "gameCount": 1
+    },
+    {
+      "id": 59162,
+      "name": "Mediagenic",
+      "gameCount": 1
+    },
+    {
+      "id": 59165,
+      "name": "Moonlit Works",
+      "gameCount": 1
+    },
+    {
+      "id": 59445,
+      "name": "BG Productions",
+      "gameCount": 1
+    },
+    {
+      "id": 60316,
+      "name": "Seer Computer Systems",
+      "gameCount": 1
+    },
+    {
+      "id": 60357,
+      "name": "Darkwinter Software",
+      "gameCount": 1
+    },
+    {
+      "id": 60510,
+      "name": "Cyan Engineering",
+      "gameCount": 1
+    },
+    {
+      "id": 60640,
+      "name": "Curve Animation",
+      "gameCount": 1
+    },
+    {
+      "id": 60980,
+      "name": "FiftyEight Studios",
+      "gameCount": 1
+    },
+    {
+      "id": 61100,
+      "name": "Mosu",
+      "gameCount": 1
+    },
+    {
+      "id": 61229,
+      "name": "Godbey Games",
+      "gameCount": 1
+    },
+    {
+      "id": 62210,
+      "name": "Balazs Ronyai",
+      "gameCount": 1
+    },
+    {
+      "id": 62310,
+      "name": "Wilnyl",
+      "gameCount": 1
+    },
+    {
+      "id": 62312,
+      "name": "Philip",
+      "gameCount": 1
+    },
+    {
+      "id": 62313,
+      "name": "thePetHen",
+      "gameCount": 1
+    },
+    {
+      "id": 62314,
+      "name": "Skog",
+      "gameCount": 1
+    },
+    {
+      "id": 62626,
+      "name": "Tutto Passa",
+      "gameCount": 1
+    },
+    {
+      "id": 62627,
+      "name": "Vlado Ganaj",
+      "gameCount": 1
+    },
+    {
+      "id": 63298,
+      "name": "Brain Jar Games",
+      "gameCount": 1
+    },
+    {
+      "id": 63422,
+      "name": "Wordplay",
+      "gameCount": 1
+    },
+    {
+      "id": 63492,
+      "name": "Sam Cameron",
+      "gameCount": 1
+    },
+    {
+      "id": 63578,
+      "name": "Bellring Games",
+      "gameCount": 1
+    },
+    {
+      "id": 63827,
+      "name": "FoxySofts",
+      "gameCount": 1
+    },
+    {
+      "id": 63935,
+      "name": "Pinnacle Entertainment",
+      "gameCount": 1
+    },
+    {
+      "id": 64060,
+      "name": "Drillhounds",
+      "gameCount": 1
+    },
+    {
+      "id": 64265,
+      "name": "A Plus",
+      "gameCount": 1
+    },
+    {
+      "id": 64774,
+      "name": "Pawprint Studio",
+      "gameCount": 1
+    },
+    {
+      "id": 64812,
+      "name": "Acer Third Wave Software",
+      "gameCount": 1
+    },
+    {
+      "id": 65069,
+      "name": "Azerion casual",
+      "gameCount": 1
+    },
+    {
+      "id": 66521,
+      "name": "Kooapps",
+      "gameCount": 1
+    },
+    {
+      "id": 66550,
+      "name": "Spearsoft",
+      "gameCount": 1
+    },
+    {
+      "id": 66852,
+      "name": "Stormteller Games",
+      "gameCount": 1
+    },
+    {
+      "id": 66857,
+      "name": "DryIcedMatcha",
+      "gameCount": 1
+    },
+    {
+      "id": 66947,
+      "name": "Lyrical Games",
+      "gameCount": 1
+    },
+    {
+      "id": 67509,
+      "name": "Perfect Game Speed",
+      "gameCount": 1
+    },
+    {
+      "id": 67559,
+      "name": "Evil Tortilla Games",
+      "gameCount": 1
+    },
+    {
+      "id": 67560,
+      "name": "Joshua Williams",
+      "gameCount": 1
+    },
+    {
+      "id": 68081,
+      "name": "TRUSO",
+      "gameCount": 1
+    },
+    {
+      "id": 68596,
+      "name": "Jaguar Software",
+      "gameCount": 1
+    },
+    {
+      "id": 68980,
+      "name": "Hyperkinetic Studios",
+      "gameCount": 1
+    },
+    {
+      "id": 69144,
+      "name": "Intellectual Software Consultants",
+      "gameCount": 1
+    },
+    {
+      "id": 69145,
+      "name": "7th ARM Systems",
+      "gameCount": 1
+    },
+    {
+      "id": 70700,
+      "name": "Wych Elm",
+      "gameCount": 1
+    },
+    {
+      "id": 70731,
+      "name": "Kepler Ghost",
+      "gameCount": 1
+    },
+    {
+      "id": 70774,
+      "name": "Triiodide Studios",
+      "gameCount": 1
+    },
+    {
+      "id": 71522,
+      "name": "UQU Creative",
+      "gameCount": 1
+    },
+    {
+      "id": 71590,
+      "name": "Hunter Electronics",
+      "gameCount": 1
+    },
+    {
+      "id": 71591,
+      "name": "Eyepax",
+      "gameCount": 1
+    },
+    {
+      "id": 72357,
+      "name": "Delphi Interactive",
+      "gameCount": 1
+    },
+    {
+      "id": 74966,
+      "name": "WinWare",
+      "gameCount": 1
+    },
+    {
+      "id": 75237,
+      "name": "Nugem Studio",
+      "gameCount": 1
+    },
+    {
+      "id": 75688,
+      "name": "Brody Seyranian",
+      "gameCount": 1
+    },
+    {
+      "id": 76349,
+      "name": "Fantasy Research",
+      "gameCount": 1
+    },
+    {
+      "id": 77136,
+      "name": "Ludimedia SAS",
+      "gameCount": 1
+    },
+    {
+      "id": 78190,
+      "name": "Namco Bandai Networks Romania",
+      "gameCount": 1
+    },
+    {
+      "id": 78191,
+      "name": "Namco Bandai Networks Europe",
+      "gameCount": 1
+    },
+    {
+      "id": 78917,
+      "name": "P3 Games",
+      "gameCount": 1
+    },
+    {
+      "id": 80567,
+      "name": "Varcon Systems",
+      "gameCount": 1
+    },
+    {
+      "id": 81468,
+      "name": "Yerk Games",
+      "gameCount": 1
+    },
+    {
+      "id": 83580,
+      "name": "Angel Matrix",
+      "gameCount": 1
+    }
+  ],
+  "countryOnlyLeadShare": {
+    "count": 2643,
+    "total": 9966,
+    "percent": 26.5
+  },
+  "leadBasisCounts": {
+    "igdb_single_developer": 8642,
+    "igdb_developer_confirmed_by_wikidata": 929,
+    "igdb_first_developer": 358,
+    "wikidata_developer": 37
+  },
+  "leadStudiosWithoutCity": [
+    {
+      "id": 660,
+      "name": "Capcom Production Studio 1",
+      "precision": "country",
+      "country": "JP",
+      "ledGames": 17
+    },
+    {
+      "id": 159,
+      "name": "Konami Computer Entertainment Tokyo",
+      "precision": "country",
+      "country": "JP",
+      "ledGames": 14
+    },
+    {
+      "id": 892,
+      "name": "Capcom Production Studio 2",
+      "precision": "country",
+      "country": "JP",
+      "ledGames": 12
+    },
+    {
+      "id": 1246,
+      "name": "Nintendo EAD Software Development Group No.2",
+      "precision": "country",
+      "country": "JP",
+      "ledGames": 11
+    },
+    {
+      "id": 732,
+      "name": "Project Soul",
+      "precision": "country",
+      "country": "JP",
+      "ledGames": 10
+    },
+    {
+      "id": 1366,
+      "name": "Nintendo EAD Software Development Group No.3",
+      "precision": "country",
+      "country": "JP",
+      "ledGames": 9
+    },
+    {
+      "id": 9150,
+      "name": "MicroProse Software, Inc.",
+      "precision": "country",
+      "country": "US",
+      "ledGames": 9
+    },
+    {
+      "id": 42265,
+      "name": "Capcom Development Division 1",
+      "precision": "country",
+      "country": "JP",
+      "ledGames": 9
+    },
+    {
+      "id": 92,
+      "name": "NovaLogic",
+      "precision": "country",
+      "country": "US",
+      "ledGames": 8
+    },
+    {
+      "id": 93,
+      "name": "Square Enix 1st Production Department",
+      "precision": "country",
+      "country": "JP",
+      "ledGames": 8
+    },
+    {
+      "id": 419,
+      "name": "Project Aces",
+      "precision": "country",
+      "country": "JP",
+      "ledGames": 8
+    },
+    {
+      "id": 1241,
+      "name": "Artificial Mind & Movement",
+      "precision": "country",
+      "country": "CA",
+      "ledGames": 8
+    },
+    {
+      "id": 1831,
+      "name": "Compile",
+      "precision": "country",
+      "country": "JP",
+      "ledGames": 8
+    },
+    {
+      "id": 8653,
+      "name": "Scottgames",
+      "precision": "country",
+      "country": "US",
+      "ledGames": 8
+    },
+    {
+      "id": 663,
+      "name": "Capcom Production Studio 4",
+      "precision": "country",
+      "country": "JP",
+      "ledGames": 7
+    },
+    {
+      "id": 2340,
+      "name": "Codemasters Birmingham",
+      "precision": "country",
+      "country": "GB",
+      "ledGames": 7
+    },
+    {
+      "id": 2674,
+      "name": "Nintendo SPD Production Group No. 1",
+      "precision": "country",
+      "country": "JP",
+      "ledGames": 7
+    },
+    {
+      "id": 655,
+      "name": "Capcom Production Studio 3",
+      "precision": "country",
+      "country": "JP",
+      "ledGames": 6
+    },
+    {
+      "id": 2236,
+      "name": "Freebird Games",
+      "precision": "country",
+      "country": "CA",
+      "ledGames": 6
+    },
+    {
+      "id": 9969,
+      "name": "P Studio",
+      "precision": "country",
+      "country": "JP",
+      "ledGames": 6
+    },
+    {
+      "id": 19281,
+      "name": "Square Enix Business Division 3",
+      "precision": "country",
+      "country": "JP",
+      "ledGames": 6
+    },
+    {
+      "id": 32471,
+      "name": "Nintendo R&D4",
+      "precision": "country",
+      "country": "JP",
+      "ledGames": 6
+    },
+    {
+      "id": 45304,
+      "name": "Square Enix Creative Business Unit I",
+      "precision": "country",
+      "country": "JP",
+      "ledGames": 6
+    },
+    {
+      "id": 799,
+      "name": "Square Enix Product Development Division 1",
+      "precision": "country",
+      "country": "JP",
+      "ledGames": 5
+    },
+    {
+      "id": 903,
+      "name": "Interplay Productions",
+      "precision": "country",
+      "country": "US",
+      "ledGames": 5
+    },
+    {
+      "id": 1048,
+      "name": "Nintendo EAD Software Development Group No.4",
+      "precision": "country",
+      "country": "JP",
+      "ledGames": 5
+    },
+    {
+      "id": 1272,
+      "name": "Sega Sports R&D",
+      "precision": "country",
+      "country": "JP",
+      "ledGames": 5
+    },
+    {
+      "id": 1403,
+      "name": "Minakuchi Engineering",
+      "precision": "country",
+      "country": "JP",
+      "ledGames": 5
+    },
+    {
+      "id": 6189,
+      "name": "InterAction Studios",
+      "precision": "country",
+      "country": "GR",
+      "ledGames": 5
+    },
+    {
+      "id": 6916,
+      "name": "Bedtime Digital Games",
+      "precision": "country",
+      "country": "DK",
+      "ledGames": 5
+    },
+    {
+      "id": 10180,
+      "name": "Team Shinobi",
+      "precision": "country",
+      "country": "JP",
+      "ledGames": 5
+    },
+    {
+      "id": 11872,
+      "name": "NEKO WORKs",
+      "precision": "country",
+      "country": "JP",
+      "ledGames": 5
+    },
+    {
+      "id": 37610,
+      "name": "Rayll Studios",
+      "precision": "country",
+      "country": "IN",
+      "ledGames": 5
+    },
+    {
+      "id": 45209,
+      "name": "Nintendo EPD Production Group No. 3",
+      "precision": "country",
+      "country": "JP",
+      "ledGames": 5
+    },
+    {
+      "id": 51808,
+      "name": "100 Cozy Games",
+      "precision": "none",
+      "country": null,
+      "ledGames": 5
+    },
+    {
+      "id": 52975,
+      "name": "Square Product Development Division 1",
+      "precision": "country",
+      "country": "JP",
+      "ledGames": 5
+    },
+    {
+      "id": 24,
+      "name": "Sierra Entertainment",
+      "precision": "country",
+      "country": "US",
+      "ledGames": 4
+    },
+    {
+      "id": 335,
+      "name": "Square Product Development Division 3",
+      "precision": "country",
+      "country": "JP",
+      "ledGames": 4
+    },
+    {
+      "id": 402,
+      "name": "Day 1 Studios",
+      "precision": "country",
+      "country": "US",
+      "ledGames": 4
+    },
+    {
+      "id": 561,
+      "name": "Magnetic Fields",
+      "precision": "country",
+      "country": "GB",
+      "ledGames": 4
+    },
+    {
+      "id": 801,
+      "name": "Square Enix Product Development Division 5",
+      "precision": "country",
+      "country": "JP",
+      "ledGames": 4
+    },
+    {
+      "id": 1176,
+      "name": "MPS Labs",
+      "precision": "country",
+      "country": "US",
+      "ledGames": 4
+    },
+    {
+      "id": 1238,
+      "name": "Virgin Games USA",
+      "precision": "none",
+      "country": null,
+      "ledGames": 4
+    },
+    {
+      "id": 2252,
+      "name": "Compile Heart",
+      "precision": "country",
+      "country": "JP",
+      "ledGames": 4
+    },
+    {
+      "id": 2277,
+      "name": "Animation Arts",
+      "precision": "country",
+      "country": "DE",
+      "ledGames": 4
+    },
+    {
+      "id": 2327,
+      "name": "Sega AM3",
+      "precision": "country",
+      "country": "JP",
+      "ledGames": 4
+    },
+    {
+      "id": 2342,
+      "name": "Nintendo EAD Software Development Group No.5",
+      "precision": "country",
+      "country": "JP",
+      "ledGames": 4
+    },
+    {
+      "id": 4266,
+      "name": "Toylogic",
+      "precision": "country",
+      "country": "JP",
+      "ledGames": 4
+    },
+    {
+      "id": 4441,
+      "name": "FuturLab",
+      "precision": "country",
+      "country": "GB",
+      "ledGames": 4
+    },
+    {
+      "id": 4672,
+      "name": "Edmund McMillen",
+      "precision": "country",
+      "country": "US",
+      "ledGames": 4
+    },
+    {
+      "id": 4780,
+      "name": "Exor Studios",
+      "precision": "country",
+      "country": "PL",
+      "ledGames": 4
+    },
+    {
+      "id": 5254,
+      "name": "ClockStone Studios",
+      "precision": "country",
+      "country": "AT",
+      "ledGames": 4
+    },
+    {
+      "id": 5846,
+      "name": "Team GrisGris",
+      "precision": "country",
+      "country": "JP",
+      "ledGames": 4
+    },
+    {
+      "id": 6072,
+      "name": "SUPERHOT Team",
+      "precision": "country",
+      "country": "PL",
+      "ledGames": 4
+    },
+    {
+      "id": 6393,
+      "name": "Harvester Games",
+      "precision": "country",
+      "country": "PL",
+      "ledGames": 4
+    },
+    {
+      "id": 7097,
+      "name": "Thunder Lotus",
+      "precision": "country",
+      "country": "CA",
+      "ledGames": 4
+    },
+    {
+      "id": 7981,
+      "name": "Red Dot Games",
+      "precision": "country",
+      "country": "PL",
+      "ledGames": 4
+    },
+    {
+      "id": 9957,
+      "name": "Byking Inc.",
+      "precision": "country",
+      "country": "JP",
+      "ledGames": 4
+    },
+    {
+      "id": 10938,
+      "name": "Square Enix Product Development Division 2",
+      "precision": "country",
+      "country": "JP",
+      "ledGames": 4
+    },
+    {
+      "id": 11203,
+      "name": "Quiet River",
+      "precision": "country",
+      "country": "RU",
+      "ledGames": 4
+    },
+    {
+      "id": 14272,
+      "name": "etherane",
+      "precision": "country",
+      "country": "EE",
+      "ledGames": 4
+    },
+    {
+      "id": 14914,
+      "name": "Chilla's Art",
+      "precision": "country",
+      "country": "JP",
+      "ledGames": 4
+    },
+    {
+      "id": 15341,
+      "name": "Team Ladybug",
+      "precision": "country",
+      "country": "JP",
+      "ledGames": 4
+    },
+    {
+      "id": 16055,
+      "name": "NEXT Studio",
+      "precision": "country",
+      "country": "CN",
+      "ledGames": 4
+    },
+    {
+      "id": 24213,
+      "name": "Interplay",
+      "precision": "country",
+      "country": "US",
+      "ledGames": 4
+    },
+    {
+      "id": 28204,
+      "name": "Sen",
+      "precision": "country",
+      "country": "JP",
+      "ledGames": 4
+    },
+    {
+      "id": 32841,
+      "name": "Mimimi Games",
+      "precision": "country",
+      "country": "DE",
+      "ledGames": 4
+    },
+    {
+      "id": 38177,
+      "name": "PlaySide",
+      "precision": "country",
+      "country": "AU",
+      "ledGames": 4
+    },
+    {
+      "id": 42627,
+      "name": "Capcom Planning Room 2",
+      "precision": "country",
+      "country": "JP",
+      "ledGames": 4
+    },
+    {
+      "id": 45211,
+      "name": "Nintendo EPD Production Group No. 5",
+      "precision": "country",
+      "country": "JP",
+      "ledGames": 4
+    },
+    {
+      "id": 45959,
+      "name": "Devcats",
+      "precision": "none",
+      "country": null,
+      "ledGames": 4
+    },
+    {
+      "id": 55,
+      "name": "Turtle Rock Studios",
+      "precision": "country",
+      "country": "US",
+      "ledGames": 3
+    },
+    {
+      "id": 222,
+      "name": "BioWare Edmonton",
+      "precision": "country",
+      "country": "CA",
+      "ledGames": 3
+    },
+    {
+      "id": 258,
+      "name": "KnowWonder",
+      "precision": "country",
+      "country": "US",
+      "ledGames": 3
+    },
+    {
+      "id": 337,
+      "name": "Square Enix Product Development Division 4",
+      "precision": "country",
+      "country": "JP",
+      "ledGames": 3
+    },
+    {
+      "id": 515,
+      "name": "Razorworks Studios",
+      "precision": "country",
+      "country": "GB",
+      "ledGames": 3
+    },
+    {
+      "id": 572,
+      "name": "Appeal Studios",
+      "precision": "country",
+      "country": "BE",
+      "ledGames": 3
+    },
+    {
+      "id": 656,
+      "name": "Angel Studios",
+      "precision": "country",
+      "country": "US",
+      "ledGames": 3
+    },
+    {
+      "id": 720,
+      "name": "Infogrames Europe",
+      "precision": "country",
+      "country": "FR",
+      "ledGames": 3
+    },
+    {
+      "id": 773,
+      "name": "Nintendo EAD Tokyo Software Development Group No.1",
+      "precision": "country",
+      "country": "JP",
+      "ledGames": 3
+    },
+    {
+      "id": 866,
+      "name": "Nintendo SPD Production Group No. 2",
+      "precision": "country",
+      "country": "JP",
+      "ledGames": 3
+    },
+    {
+      "id": 902,
+      "name": "Yager Development",
+      "precision": "country",
+      "country": "DE",
+      "ledGames": 3
+    },
+    {
+      "id": 966,
+      "name": "KillHouse Games",
+      "precision": "country",
+      "country": "RO",
+      "ledGames": 3
+    },
+    {
+      "id": 1103,
+      "name": "Nintendo EAD Software Development Group No.1",
+      "precision": "country",
+      "country": "JP",
+      "ledGames": 3
+    },
+    {
+      "id": 1112,
+      "name": "Square Product Development Division 2",
+      "precision": "country",
+      "country": "JP",
+      "ledGames": 3
+    },
+    {
+      "id": 1140,
+      "name": "Digital Anvil",
+      "precision": "country",
+      "country": "US",
+      "ledGames": 3
+    },
+    {
+      "id": 1259,
+      "name": "FreeStyleGames",
+      "precision": "country",
+      "country": "GB",
+      "ledGames": 3
+    },
+    {
+      "id": 1336,
+      "name": "A2M",
+      "precision": "country",
+      "country": "CA",
+      "ledGames": 3
+    },
+    {
+      "id": 1487,
+      "name": "Cauldron HQ",
+      "precision": "country",
+      "country": "SK",
+      "ledGames": 3
+    },
+    {
+      "id": 1663,
+      "name": "Suspicious Developments",
+      "precision": "country",
+      "country": "GB",
+      "ledGames": 3
+    },
+    {
+      "id": 1906,
+      "name": "Hitmaker",
+      "precision": "country",
+      "country": "JP",
+      "ledGames": 3
+    },
+    {
+      "id": 1909,
+      "name": "Etranges Libellulles",
+      "precision": "country",
+      "country": "FR",
+      "ledGames": 3
+    },
+    {
+      "id": 1969,
+      "name": "Tate Interactive",
+      "precision": "none",
+      "country": null,
+      "ledGames": 3
+    },
+    {
+      "id": 2009,
+      "name": "United Game Artists",
+      "precision": "country",
+      "country": "JP",
+      "ledGames": 3
+    },
+    {
+      "id": 2046,
+      "name": "Zombie Studios",
+      "precision": "country",
+      "country": "US",
+      "ledGames": 3
+    },
+    {
+      "id": 2085,
+      "name": "AWE Productions",
+      "precision": "country",
+      "country": "US",
+      "ledGames": 3
+    },
+    {
+      "id": 2448,
+      "name": "Positech Games",
+      "precision": "country",
+      "country": "GB",
+      "ledGames": 3
+    },
+    {
+      "id": 2449,
+      "name": "Stoic",
+      "precision": "country",
+      "country": "US",
+      "ledGames": 3
+    },
+    {
+      "id": 2452,
+      "name": "Big Fish Studios",
+      "precision": "country",
+      "country": "US",
+      "ledGames": 3
+    },
+    {
+      "id": 2458,
+      "name": "Team Andromeda",
+      "precision": "country",
+      "country": "JP",
+      "ledGames": 3
+    }
+  ],
+  "insights": {
+    "topCountriesByGamesLed": [
+      {
+        "code": "US",
+        "name": "United States",
+        "gamesLed": 2598
+      },
+      {
+        "code": "JP",
+        "name": "Japan",
+        "gamesLed": 2572
+      },
+      {
+        "code": "GB",
+        "name": "United Kingdom",
+        "gamesLed": 1051
+      },
+      {
+        "code": "CA",
+        "name": "Canada",
+        "gamesLed": 587
+      },
+      {
+        "code": "FR",
+        "name": "France",
+        "gamesLed": 348
+      },
+      {
+        "code": "SE",
+        "name": "Sweden",
+        "gamesLed": 274
+      },
+      {
+        "code": "DE",
+        "name": "Germany",
+        "gamesLed": 249
+      },
+      {
+        "code": "PL",
+        "name": "Poland",
+        "gamesLed": 229
+      },
+      {
+        "code": "AU",
+        "name": "Australia",
+        "gamesLed": 159
+      },
+      {
+        "code": "RU",
+        "name": "Russia",
+        "gamesLed": 148
+      }
+    ],
+    "topCountriesPerMillion": [
+      {
+        "code": "SE",
+        "name": "Sweden",
+        "gamesLed": 274,
+        "gamesPerMillion": 25.83
+      },
+      {
+        "code": "FI",
+        "name": "Finland",
+        "gamesLed": 122,
+        "gamesPerMillion": 21.58
+      },
+      {
+        "code": "JP",
+        "name": "Japan",
+        "gamesLed": 2572,
+        "gamesPerMillion": 20.78
+      },
+      {
+        "code": "IS",
+        "name": "Iceland",
+        "gamesLed": 6,
+        "gamesPerMillion": 16.47
+      },
+      {
+        "code": "CA",
+        "name": "Canada",
+        "gamesLed": 587,
+        "gamesPerMillion": 15.87
+      },
+      {
+        "code": "CY",
+        "name": "Cyprus",
+        "gamesLed": 21,
+        "gamesPerMillion": 15.61
+      },
+      {
+        "code": "GB",
+        "name": "United Kingdom",
+        "gamesLed": 1051,
+        "gamesPerMillion": 15.61
+      },
+      {
+        "code": "MT",
+        "name": "Malta",
+        "gamesLed": 7,
+        "gamesPerMillion": 12.65
+      },
+      {
+        "code": "DK",
+        "name": "Denmark",
+        "gamesLed": 67,
+        "gamesPerMillion": 11.51
+      },
+      {
+        "code": "US",
+        "name": "United States",
+        "gamesLed": 2598,
+        "gamesPerMillion": 7.64
+      }
+    ],
+    "topLocalizationFlows": [],
+    "topQaFlows": []
+  }
+}

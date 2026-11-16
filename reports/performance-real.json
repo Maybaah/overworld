@@ -1,0 +1,286 @@
+{
+  "date": "2026-11-16T02:07:38.422Z",
+  "data": "real",
+  "mode": "headful",
+  "gpuFlags": false,
+  "attempts": [
+    {
+      "headless": false,
+      "gpuFlags": false,
+      "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 2060 SUPER (0x00001F06) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "software": false
+    }
+  ],
+  "gpu": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 2060 SUPER (0x00001F06) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "vendor": "Google Inc. (NVIDIA)"
+  },
+  "softwareRenderer": false,
+  "chrome": "Chrome/157.0.8103.51",
+  "viewport": "1920x1080",
+  "devicePixelRatio": 1,
+  "server": "vite dev server (unminified React development build)",
+  "dataset": {
+    "minYear": 1970,
+    "maxYear": 2027,
+    "games": 9966,
+    "companies": 6241
+  },
+  "criteria": "average >= 58 fps and p95 frame time <= 20 ms",
+  "denseCity": {
+    "key": "JP|Tokyo",
+    "name": "Tokyo",
+    "country": "JP",
+    "lat": 35.68241467877453,
+    "lng": 139.70480192128963,
+    "companies": 266
+  },
+  "scenarios": [
+    {
+      "id": "a-idle-country",
+      "title": "Idle at country level (default view, default slow auto-rotate)",
+      "expectedLevel": "country",
+      "level": "country",
+      "levelOk": true,
+      "points": 73,
+      "appFps": 87,
+      "frames": 438,
+      "durationMs": 4991,
+      "avgFps": 87.8,
+      "low1Fps": 55.6,
+      "medianMs": 11.9,
+      "p95Ms": 12.8,
+      "p99Ms": 18,
+      "maxMs": 18,
+      "over20Pct": 0,
+      "pass": true,
+      "extra": null,
+      "screenshot": "C:\\Users\\artem\\Desktop\\Projects\\Overworld\\docs\\screenshots\\real-a-idle-country.png"
+    },
+    {
+      "id": "b-orbit-country",
+      "title": "Orbiting continuously at country level",
+      "expectedLevel": "country",
+      "level": "country",
+      "levelOk": true,
+      "points": 73,
+      "appFps": 85,
+      "frames": 444,
+      "durationMs": 4996,
+      "avgFps": 88.9,
+      "low1Fps": 55.5,
+      "medianMs": 11.9,
+      "p95Ms": 16.7,
+      "p99Ms": 18,
+      "maxMs": 18.1,
+      "over20Pct": 0,
+      "pass": true,
+      "extra": null,
+      "screenshot": "C:\\Users\\artem\\Desktop\\Projects\\Overworld\\docs\\screenshots\\real-b-orbit-country.png"
+    },
+    {
+      "id": "c-orbit-city-europe",
+      "title": "City level over Europe, slow orbit",
+      "expectedLevel": "city",
+      "level": "city",
+      "levelOk": true,
+      "points": 474,
+      "appFps": 90,
+      "frames": 450,
+      "durationMs": 5001,
+      "avgFps": 90,
+      "low1Fps": 55.5,
+      "medianMs": 11.6,
+      "p95Ms": 13,
+      "p99Ms": 18,
+      "maxMs": 18.1,
+      "over20Pct": 0,
+      "pass": true,
+      "extra": null,
+      "screenshot": "C:\\Users\\artem\\Desktop\\Projects\\Overworld\\docs\\screenshots\\real-c-orbit-city-europe.png"
+    },
+    {
+      "id": "d-orbit-company-dense-city",
+      "title": "Company level over Tokyo (266 companies), slow orbit",
+      "expectedLevel": "company",
+      "level": "company",
+      "levelOk": true,
+      "points": 4885,
+      "appFps": 91,
+      "frames": 456,
+      "durationMs": 4991,
+      "avgFps": 91.4,
+      "low1Fps": 55.1,
+      "medianMs": 11.8,
+      "p95Ms": 16.3,
+      "p99Ms": 18.1,
+      "maxMs": 18.4,
+      "over20Pct": 0,
+      "pass": true,
+      "extra": null,
+      "screenshot": "C:\\Users\\artem\\Desktop\\Projects\\Overworld\\docs\\screenshots\\real-d-orbit-company-dense-city.png"
+    },
+    {
+      "id": "e1-year-play-country",
+      "title": "Year slider playing 1970 to 2027 at 350 ms/year, country level",
+      "expectedLevel": "country",
+      "level": "country",
+      "levelOk": true,
+      "points": 73,
+      "appFps": 89,
+      "frames": 1764,
+      "durationMs": 19945,
+      "avgFps": 88.4,
+      "low1Fps": 55.3,
+      "medianMs": 11.7,
+      "p95Ms": 16.9,
+      "p99Ms": 18,
+      "maxMs": 18.5,
+      "over20Pct": 0,
+      "pass": true,
+      "extra": true,
+      "screenshot": "C:\\Users\\artem\\Desktop\\Projects\\Overworld\\docs\\screenshots\\real-e1-year-play-country.png"
+    },
+    {
+      "id": "e2-year-play-company",
+      "title": "Year slider playing 1970 to 2027 at 350 ms/year, company level over Tokyo",
+      "expectedLevel": "company",
+      "level": "company",
+      "levelOk": true,
+      "points": 4885,
+      "appFps": 79,
+      "frames": 1616,
+      "durationMs": 19957,
+      "avgFps": 81,
+      "low1Fps": 46.3,
+      "medianMs": 12,
+      "p95Ms": 18,
+      "p99Ms": 18.6,
+      "maxMs": 24.5,
+      "over20Pct": 0.7,
+      "pass": true,
+      "extra": true,
+      "screenshot": "C:\\Users\\artem\\Desktop\\Projects\\Overworld\\docs\\screenshots\\real-e2-year-play-company.png"
+    },
+    {
+      "id": "f-game-arcs",
+      "title": "Game selected: Assassin's Creed Shadows (16 roles, 4 role types), arcs animating",
+      "expectedLevel": "country",
+      "level": "country",
+      "levelOk": true,
+      "points": 73,
+      "appFps": 69,
+      "frames": 358,
+      "durationMs": 4997,
+      "avgFps": 71.6,
+      "low1Fps": 51,
+      "medianMs": 12.1,
+      "p95Ms": 18.1,
+      "p99Ms": 18.6,
+      "maxMs": 22.6,
+      "over20Pct": 0.3,
+      "pass": true,
+      "extra": null,
+      "screenshot": "C:\\Users\\artem\\Desktop\\Projects\\Overworld\\docs\\screenshots\\real-f-game-arcs.png",
+      "game": {
+        "id": 300976,
+        "name": "Assassin's Creed Shadows",
+        "roles": 16,
+        "types": 4,
+        "arcs": 15,
+        "tier": {
+          "minRoles": 8,
+          "minTypes": 4
+        },
+        "scanned": 9966
+      }
+    },
+    {
+      "id": "g-game-filter-toggle",
+      "title": "Same game, toggling \"Other support\" and \"Port\" on/off once per second",
+      "expectedLevel": "country",
+      "level": "country",
+      "levelOk": true,
+      "points": 73,
+      "appFps": 72,
+      "frames": 422,
+      "durationMs": 5997,
+      "avgFps": 70.4,
+      "low1Fps": 39.4,
+      "medianMs": 12.1,
+      "p95Ms": 18,
+      "p99Ms": 22.7,
+      "maxMs": 29,
+      "over20Pct": 1.7,
+      "pass": true,
+      "extra": {
+        "ok": true,
+        "toggles": 5,
+        "slowFrames": 7,
+        "slowWithin250msOfToggle": 6,
+        "worstFrameMs": 29,
+        "slowFrameMs": [
+          24,
+          29,
+          23,
+          23,
+          23,
+          29,
+          22
+        ]
+      },
+      "screenshot": "C:\\Users\\artem\\Desktop\\Projects\\Overworld\\docs\\screenshots\\real-g-game-filter-toggle.png",
+      "toggleLabels": [
+        "Other support",
+        "Port"
+      ],
+      "pressedAfter": [
+        "false",
+        "false"
+      ]
+    }
+  ],
+  "functional": [
+    {
+      "name": "arcs",
+      "pass": true,
+      "evidence": "expected 15 (from detail data, 9 roles enabled); scene arc objects 15; globe arcsData prop 15"
+    },
+    {
+      "name": "role filter",
+      "pass": true,
+      "evidence": "\"Other support\" aria-pressed true -> false -> true; scene arcs 15 -> 2 (expected 2) -> 15; screenshots differ: true"
+    },
+    {
+      "name": "search",
+      "pass": true,
+      "evidence": "typed \"Knights of the Round\", 1 results, first \"Knights of the Round\" (is target: true); Enter -> card heading \"Knights of the Round\", selectedGameId 6816"
+    },
+    {
+      "name": "year slider",
+      "pass": true,
+      "evidence": "keyboard on slider; readout \"1985\" (range 1985); points drawn 5 at 1985 vs 73 at 2027; \"208 games led worldwide\""
+    },
+    {
+      "name": "place click",
+      "pass": false,
+      "evidence": "clicked US point at (960,540), hover tooltip \"United States / 2598 games led by 2027\"; panel \"null\", selectedPlace {\"level\":\"country\",\"key\":\"US\"}; level country -> country"
+    },
+    {
+      "name": "no console errors / failed requests",
+      "pass": true,
+      "evidence": "0 console errors, 0 page errors, 0 failed/4xx-5xx requests, 0 IGDB cover failures; IGDB cover failures counted on real data"
+    }
+  ],
+  "console": {
+    "consoleErrors": [],
+    "pageErrors": [],
+    "failedRequests": [],
+    "igdbCoverFailures": {
+      "expected": false,
+      "requests": 0,
+      "consoleMessages": 0
+    }
+  },
+  "overallPass": false
+}

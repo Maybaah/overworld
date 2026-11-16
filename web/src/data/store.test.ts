@@ -92,7 +92,7 @@ describe('store', () => {
     await useStore.getState().init();
     let s = useStore.getState();
     expect(s.status).toBe('ready');
-    expect(s.year).toBe(2005);
+    expect(s.year).toBe(new Date().getFullYear());
     expect(s.timeline?.countAt('company', 1, 2005)).toBe(1);
 
     vi.mocked(loadCore).mockRejectedValueOnce(new Error('HTTP 500'));

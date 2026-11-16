@@ -10,12 +10,56 @@ export interface SelectedPlace {
   key: PlaceKey;
 }
 
+export type AppMode = 'explore' | 'guess' | 'myglobe' | 'insights';
+
+export interface GlobeClick {
+  lat: number;
+  lng: number;
+  seq: number;
+}
+
+export interface ExtraArc {
+  id: string;
+  startLat: number;
+  startLng: number;
+  endLat: number;
+  endLng: number;
+  color: string;
+  width?: number;
+  label?: string;
+}
+
+export interface ExtraMarker {
+  id: string;
+  lat: number;
+  lng: number;
+  color: string;
+  kind: 'ring' | 'pin';
+  label?: string;
+}
+
+export interface CameraRequest {
+  lat: number;
+  lng: number;
+  altitude: number;
+  seq: number;
+}
+
 export interface AppState {
   status: 'loading' | 'ready' | 'error';
   error: string | null;
   meta: DataMeta | null;
   indexes: Indexes | null;
   timeline: Timeline | null;
+  fullTimeline: Timeline | null;
+  mode: AppMode;
+  globeClick: GlobeClick | null;
+  extraArcs: ExtraArc[];
+  extraMarkers: ExtraMarker[];
+  pointsVisible: boolean;
+  countryShade: Record<string, number> | null;
+  gameFilter: Set<number> | null;
+  cameraRequest: CameraRequest | null;
   year: number;
   playing: boolean;
   enabledRoles: Set<RoleType>;
@@ -29,6 +73,20 @@ export interface AppState {
   toggleRole: (role: RoleType) => void;
   selectGame: (id: number | null) => Promise<void>;
   selectPlace: (place: SelectedPlace | null) => void;
+  setMode: (mode: AppMode) => void;
+  reportGlobeClick: (lat: number, lng: number) => void;
+  setExtras: (arcs: ExtraArc[], markers: ExtraMarker[]) => void;
+  setPointsVisible: (visible: boolean) => void;
+  setCountryShade: (shade: Record<string, number> | null) => void;
+  setGameFilter: (ids: Set<number> | null) => void;
+  flyTo: (lat: number, lng: number, altitude: number) => void;
+}
+
+const MIN_YEAR = 1970;
+
+function timelineFor(indexes: Indexes, filter: Set<number> | null): Timeline {
+  const games = filter ? indexes.games.filter((g) => filter.has(g.id)) : indexes.games;
+  return buildTimeline({ ...indexes, games }, MIN_YEAR, new Date().getFullYear());
 }
 
 export const useStore = create<AppState>((set, get) => ({
@@ -37,7 +95,16 @@ export const useStore = create<AppState>((set, get) => ({
   meta: null,
   indexes: null,
   timeline: null,
-  year: 2026,
+  fullTimeline: null,
+  mode: 'explore',
+  globeClick: null,
+  extraArcs: [],
+  extraMarkers: [],
+  pointsVisible: true,
+  countryShade: null,
+  gameFilter: null,
+  cameraRequest: null,
+  year: new Date().getFullYear(),
   playing: false,
   enabledRoles: new Set<RoleType>(ROLE_TYPES),
   selectedGameId: null,
@@ -50,8 +117,8 @@ export const useStore = create<AppState>((set, get) => ({
     try {
       const { meta, companies, games } = await loadCore();
       const indexes = buildIndexes(companies, games);
-      const timeline = buildTimeline(indexes);
-      set({ status: 'ready', meta, indexes, timeline, year: timeline.maxYear });
+      const timeline = timelineFor(indexes, null);
+      set({ status: 'ready', meta, indexes, timeline, fullTimeline: timeline, year: timeline.maxYear });
     } catch (err) {
       set({ status: 'error', error: err instanceof Error ? err.message : String(err) });
     }
@@ -87,5 +154,50 @@ export const useStore = create<AppState>((set, get) => ({
 
   selectPlace(place) {
     set({ selectedPlace: place });
+  },
+
+  setMode(mode) {
+    if (get().mode === mode) return;
+    set({
+      mode,
+      playing: false,
+      selectedGameId: null,
+      selectedGameDetail: null,
+      detailError: null,
+      selectedPlace: null,
+      globeClick: null,
+      extraArcs: [],
+      extraMarkers: [],
+      countryShade: null,
+      gameFilter: null,
+      timeline: get().fullTimeline,
+      pointsVisible: mode !== 'guess',
+    });
+  },
+
+  reportGlobeClick(lat, lng) {
+    set({ globeClick: { lat, lng, seq: (get().globeClick?.seq ?? 0) + 1 } });
+  },
+
+  setExtras(arcs, markers) {
+    set({ extraArcs: arcs, extraMarkers: markers });
+  },
+
+  setPointsVisible(visible) {
+    set({ pointsVisible: visible });
+  },
+
+  setCountryShade(shade) {
+    set({ countryShade: shade });
+  },
+
+  setGameFilter(ids) {
+    const { indexes, fullTimeline } = get();
+    if (!indexes) return;
+    set({ gameFilter: ids, timeline: ids ? timelineFor(indexes, ids) : fullTimeline });
+  },
+
+  flyTo(lat, lng, altitude) {
+    set({ cameraRequest: { lat, lng, altitude, seq: (get().cameraRequest?.seq ?? 0) + 1 } });
   },
 }));
