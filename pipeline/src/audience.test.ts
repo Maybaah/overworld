@@ -15,13 +15,19 @@ describe('calibrate and estimatePlayers', () => {
     igdbPlayed: 0.0001 * (i + 1),
     ratingCount: 10 * (i + 1),
   }));
-  const c = calibrate(games);
+  const c = calibrate([...games, { igdbPlayed: 0.000001 }]);
 
   it('finds the factor that maps each relative signal onto Steam players', () => {
     expect(c.igdbPlayed).toBeCloseTo(40_000 / 0.0001, -3);
     expect(c.ratingCount).toBeCloseTo(4_000, 6);
     expect(c.rawgAdded).toBeNull();
     expect(c.pairs.igdbPlayed).toBe(40);
+  });
+
+  it('ignores IGDB played shares from fewer than three users', () => {
+    const q = calibrate([...games, { igdbPlayed: 0.000001 }]);
+    expect(estimatePlayers({ igdbPlayed: 0.000002 }, q)).toBeNull();
+    expect(estimatePlayers({ igdbPlayed: 0.000003 }, q)!.basis).toBe('igdb_played');
   });
 
   it('takes the strongest signal, Steam included', () => {

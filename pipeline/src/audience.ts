@@ -7,6 +7,9 @@ export const REVIEW_MULTIPLIER = 40;
 export const PLAYER_FLOOR = 5_000;
 const CALIBRATION_MIN_STEAM = 20_000;
 const CALIBRATION_MIN_PAIRS = 30;
+// IGDB "Played" is a share of all marks; its smallest step is one IGDB user. One or two marks are noise,
+// so a share counts only from this many users up.
+export const MIN_IGDB_USERS = 3;
 
 export type AudienceBasis = 'steam' | 'igdb_played' | 'rawg_added' | 'igdb_ratings';
 
@@ -22,6 +25,7 @@ export interface Calibration {
   igdbPlayed: number | null;
   rawgAdded: number | null;
   ratingCount: number | null;
+  minIgdbPlayed: number; // share of MIN_IGDB_USERS users
   pairs: Record<'igdbPlayed' | 'rawgAdded' | 'ratingCount', number>;
 }
 
@@ -41,7 +45,9 @@ function median(values: number[]): number | null {
 
 export function calibrate(games: Iterable<AudienceSignals>): Calibration {
   const ratios: Record<'igdbPlayed' | 'rawgAdded' | 'ratingCount', number[]> = { igdbPlayed: [], rawgAdded: [], ratingCount: [] };
+  let quantum = Infinity;
   for (const g of games) {
+    if (g.igdbPlayed && g.igdbPlayed > 0) quantum = Math.min(quantum, g.igdbPlayed);
     const steam = steamEstimate(g);
     if (steam === null || steam < CALIBRATION_MIN_STEAM) continue;
     for (const key of ['igdbPlayed', 'rawgAdded', 'ratingCount'] as const) {
@@ -54,6 +60,7 @@ export function calibrate(games: Iterable<AudienceSignals>): Calibration {
     igdbPlayed: pick('igdbPlayed'),
     rawgAdded: pick('rawgAdded'),
     ratingCount: pick('ratingCount'),
+    minIgdbPlayed: Number.isFinite(quantum) ? quantum * MIN_IGDB_USERS * 0.999 : 0,
     pairs: { igdbPlayed: ratios.igdbPlayed.length, rawgAdded: ratios.rawgAdded.length, ratingCount: ratios.ratingCount.length },
   };
 }
@@ -64,7 +71,7 @@ export function estimatePlayers(s: AudienceSignals, c: Calibration): { players: 
   const options: [number, AudienceBasis][] = [];
   const steam = steamEstimate(s);
   if (steam !== null) options.push([steam, 'steam']);
-  if (s.igdbPlayed && c.igdbPlayed) options.push([s.igdbPlayed * c.igdbPlayed, 'igdb_played']);
+  if (s.igdbPlayed && c.igdbPlayed && s.igdbPlayed >= c.minIgdbPlayed) options.push([s.igdbPlayed * c.igdbPlayed, 'igdb_played']);
   if (s.rawgAdded && c.rawgAdded) options.push([s.rawgAdded * c.rawgAdded, 'rawg_added']);
   if (s.ratingCount && c.ratingCount) options.push([s.ratingCount * c.ratingCount, 'igdb_ratings']);
   if (options.length === 0) return null;
