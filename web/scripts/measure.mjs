@@ -537,6 +537,8 @@ async function main() {
       const screenshot = await shot(id);
       const rec = { id, title, expectedLevel: expectLevel, level, levelOk, points, covers, appFps, ...s, pass, extra, screenshot };
       scenarios.push(rec);
+      const ms = await page.evaluate(() => window.__overworld.mosaic?.() ?? null);
+      if (ms) log(`  mosaic: ${ms.cells} cells, build ${Math.round(ms.buildMs)} ms, max apply ${Math.round(ms.applyMs)} ms, max frame work ${Math.round(ms.frameMs)} ms, covers ${ms.lowLoaded} small ${ms.highLoaded} large`);
       log(`  avg ${s.avgFps} fps, 1% low ${s.low1Fps}, median ${s.medianMs} ms, p95 ${s.p95Ms} ms, frames ${s.frames}, >20ms ${s.over20Pct}%, level ${level}${levelOk ? '' : ` (expected ${expectLevel})`} -> ${pass ? 'PASS' : 'FAIL'}`);
       return rec;
     }
@@ -695,48 +697,38 @@ async function main() {
     await page.evaluate(() => window.__m.pov(20, 10, 2.5, 0));
     await sleep(800);
     const coverWaitStart = Date.now();
-    await page.waitForFunction(() => window.__overworld.coversLoaded() >= 20, { timeout: 20000 }).catch(() => {});
-    const coverState = await page.evaluate(() => ({
-      level: window.__overworld.level(),
-      covers: window.__overworld.coverCount(),
-      loaded: window.__overworld.coversLoaded(),
-      images: window.__overworld.imagesLoaded(),
-    }));
+    await page.waitForFunction(() => window.__overworld.mosaic().lowLoaded >= 200, { timeout: 30000 }).catch(() => {});
+    const coverState = await page.evaluate(() => ({ level: window.__overworld.level(), ...window.__overworld.mosaic() }));
     await shot('covers-country');
     addFunc(
-      'cover images (country level)',
-      coverState.level === 'country' && coverState.loaded >= 20,
-      `level ${coverState.level}; ${coverState.covers} covers placed, ${coverState.loaded} of them showing their loaded image after ${Math.round((Date.now() - coverWaitStart) / 100) / 10} s (need >= 20); ${coverState.images} images uploaded to the atlas so far`,
+      'mosaic covers (country level)',
+      coverState.level === 'country' && coverState.cells > 0 && coverState.lowLoaded >= 200,
+      `level ${coverState.level}; ${coverState.cells} mosaic cells, ${coverState.triangles} triangles, built in ${Math.round(coverState.buildMs)} ms; ${coverState.lowLoaded} covers loaded after ${Math.round((Date.now() - coverWaitStart) / 100) / 10} s (need >= 200), ${coverState.highLoaded} large`,
     );
 
     const finalYear = dataMeta.maxYear;
-    const coversFinal = await page.evaluate(() => window.__overworld.visibleCovers());
+    const cellsFinal = await page.evaluate(() => window.__overworld.mosaic().cells);
     const ptsFinal = await page.evaluate(() => window.__overworld.pointCount());
     await page.focus('input.ow-range');
     const steps = finalYear - 1985;
     for (let i = 0; i < Math.floor(steps / 10); i++) await page.keyboard.press('PageDown');
     for (let i = 0; i < steps % 10; i++) await page.keyboard.press('ArrowLeft');
-    await sleep(800);
+    await page.waitForFunction((n) => window.__overworld.mosaic().cells !== n, { timeout: 15000 }, cellsFinal).catch(() => {});
     const yearText = await page.evaluate(() => document.querySelector('.ow-year')?.textContent ?? null);
     const rangeVal = await page.evaluate(() => document.querySelector('input.ow-range')?.value ?? null);
     const pts1985 = await page.evaluate(() => window.__overworld.pointCount());
     const total1985 = await page.evaluate(() => document.querySelector('.ow-slider-total')?.textContent ?? null);
-    const covers1985 = await page.evaluate(() => window.__overworld.visibleCovers());
+    const cells1985 = await page.evaluate(() => window.__overworld.mosaic().cells);
     await shot('year-1985');
     addFunc(
       'year slider',
       yearText === '1985' && pts1985 < ptsFinal,
       `keyboard on slider; readout "${yearText}" (range ${rangeVal}); places drawn (covers + dots) ${pts1985} at 1985 vs ${ptsFinal} at ${finalYear}; "${total1985?.trim()}"`,
     );
-    const gameOf = (list) => new Map(list.map((k) => [k.split(':').slice(0, 2).join(':'), k.split(':')[2]]));
-    const before = gameOf(coversFinal);
-    const after = gameOf(covers1985);
-    const shared = [...after.keys()].filter((k) => before.has(k));
-    const changed = shared.filter((k) => before.get(k) !== after.get(k));
     addFunc(
-      'year changes covers',
-      changed.length >= 1,
-      `same view, ${finalYear} -> 1985: ${coversFinal.length} -> ${covers1985.length} covers; ${shared.length} places have a cover in both years, ${changed.length} of them now show a different game (need >= 1)`,
+      'year rebuilds the mosaic',
+      cells1985 > 0 && cells1985 < cellsFinal,
+      `${finalYear} -> 1985: ${cellsFinal} -> ${cells1985} mosaic cells (need fewer, more than 0)`,
     );
 
     await ensureAlive();
@@ -751,23 +743,22 @@ async function main() {
       return { x: p.x, y: p.y };
     }, top);
     await page.mouse.move(xy.x, xy.y);
-    await sleep(300);
+    await page.waitForFunction(() => [...document.querySelectorAll("div")].some((d) => d.style.pointerEvents === "none" && d.style.display === "block" && d.textContent), { timeout: 6000 }).catch(() => {});
     const tip = await page.evaluate(() => {
-      const t = [...document.querySelectorAll('div')].find((d) => d.style.pointerEvents === 'none' && d.style.display === 'block' && /games led by/.test(d.textContent));
+      const t = [...document.querySelectorAll('div')].find((d) => d.style.pointerEvents === 'none' && d.style.display === 'block' && d.textContent);
       return t ? t.textContent.replace(/\n/g, ' / ') : null;
     });
     await shot('place-hover');
     await page.mouse.down();
     await page.mouse.up();
     await sleep(2200);
-    const placeLabel = await page.evaluate(() => document.querySelector('aside[aria-label^="Place:"]')?.getAttribute('aria-label') ?? null);
-    const levelAfter = await page.evaluate(() => window.__overworld.level());
-    const selPlace = await page.evaluate(() => JSON.stringify(window.__m.useStore.getState().selectedPlace));
+    const selGame = await page.evaluate(() => window.__m.useStore.getState().selectedGameId);
+    const card = await page.evaluate(() => document.querySelector('aside[aria-label^="Game:"]')?.getAttribute('aria-label')?.slice(6) ?? null);
     await shot('place-click');
     addFunc(
-      'place click',
-      !!placeLabel && levelBefore !== levelAfter,
-      `clicked ${top.code} point at (${Math.round(xy.x)},${Math.round(xy.y)}), hover tooltip "${tip}"; panel "${placeLabel}", selectedPlace ${selPlace}; level ${levelBefore} -> ${levelAfter}`,
+      'mosaic click',
+      !!tip && selGame !== null && !!card && tip.startsWith(card),
+      `hovered ${top.code} centre at (${Math.round(xy.x)},${Math.round(xy.y)}) at level ${levelBefore}, tooltip "${tip}"; click selected game ${selGame}, card "${card}"`,
     );
 
     await sleep(500);

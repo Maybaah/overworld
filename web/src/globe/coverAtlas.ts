@@ -23,7 +23,6 @@ export class CoverAtlas {
   private wanted: string[] = [];
   private pinned = new Set<string>();
   private readonly abort = new AbortController();
-  private readonly target = new THREE.Vector2();
   private disposed = false;
   private loadedTotal = 0;
 
@@ -33,12 +32,13 @@ export class CoverAtlas {
     private readonly layout: AtlasLayout = ATLAS,
     private readonly url: (id: string) => string = (id) => coverUrl(id),
     private readonly maxInFlight = MAX_IN_FLIGHT,
+    private readonly mipmaps = true,
   ) {
     this.slots = new SlotCache<string>(slotCount(layout));
     const t = new THREE.DataTexture(null, layout.size, layout.size, THREE.RGBAFormat, THREE.UnsignedByteType);
     t.source.dataReady = false;
-    t.generateMipmaps = true;
-    t.minFilter = THREE.LinearMipmapLinearFilter;
+    t.generateMipmaps = this.mipmaps;
+    t.minFilter = this.mipmaps ? THREE.LinearMipmapLinearFilter : THREE.LinearFilter;
     t.magFilter = THREE.LinearFilter;
     t.flipY = false;
     t.colorSpace = THREE.NoColorSpace;
@@ -113,15 +113,33 @@ export class CoverAtlas {
       }
       if (got.evicted !== null) this.readyAt.delete(got.evicted);
       const o = slotOrigin(got.slot, this.layout);
-      const src = new THREE.Texture(bitmap as unknown as HTMLImageElement);
-      this.target.set(o.x, o.y);
-      this.renderer.copyTextureToTexture(src, this.texture, null, this.target);
+      this.upload(bitmap, o.x, o.y);
       bitmap.close();
       this.readyAt.set(key, this.clock());
       this.loadedTotal++;
       changed = true;
     }
+    if (changed && this.mipmaps) this.renderer.getContext().generateMipmap(this.renderer.getContext().TEXTURE_2D);
     return changed;
+  }
+
+  // Straight texSubImage2D: three's copyTextureToTexture reads pixel-store state back from the GPU on every copy,
+  // which stalls the main thread while the GPU is busy.
+  private upload(bitmap: ImageBitmap, x: number, y: number): void {
+    const gl = this.renderer.getContext() as WebGL2RenderingContext;
+    const state = this.renderer.state;
+    let props = this.renderer.properties.get(this.texture) as { __webglTexture?: WebGLTexture };
+    if (!props.__webglTexture) {
+      this.renderer.initTexture(this.texture);
+      props = this.renderer.properties.get(this.texture) as { __webglTexture?: WebGLTexture };
+    }
+    state.activeTexture(gl.TEXTURE0);
+    state.bindTexture(gl.TEXTURE_2D, props.__webglTexture!);
+    state.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
+    state.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
+    state.pixelStorei(gl.UNPACK_ALIGNMENT, 4);
+    state.pixelStorei(gl.UNPACK_COLORSPACE_CONVERSION_WEBGL, gl.NONE);
+    gl.texSubImage2D(gl.TEXTURE_2D, 0, x, y, gl.RGBA, gl.UNSIGNED_BYTE, bitmap);
   }
 
   dispose(): void {

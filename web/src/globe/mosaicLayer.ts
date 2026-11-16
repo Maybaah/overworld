@@ -10,7 +10,7 @@ const HIGH: AtlasLayout = { size: 2048, slotW: 136, slotH: 192, imageW: 132, ima
 const HIGH_CAPACITY = 150;
 const HIGH_MIN_PX = 70;
 const TABLE_W = 2048;
-const BASE_COLOR = new THREE.Color('#2b3442');
+const BASE_COLOR = new THREE.Color('#4a5466');
 
 const VERTEX = `
 attribute float aCell;
@@ -61,6 +61,8 @@ export interface MosaicStats {
   cells: number;
   triangles: number;
   buildMs: number;
+  applyMs: number;
+  frameMs: number;
   lowLoaded: number;
   highLoaded: number;
 }
@@ -81,6 +83,8 @@ export class MosaicLayer {
   private pending: Extract<MosaicRequest, { type: 'build' }> | null = null;
   private readonly picks = new Map<number, (id: number | null) => void>();
   private buildMs = 0;
+  private applyMs = 0;
+  private frameMs = 0;
   private needHigh = true;
   private onChange: () => void = () => {};
 
@@ -89,8 +93,8 @@ export class MosaicLayer {
     renderer: THREE.WebGLRenderer,
     clock: () => number,
   ) {
-    this.low = new CoverAtlas(renderer, clock, LOW, (id) => coverUrl(id), 8);
-    this.high = new CoverAtlas(renderer, clock, HIGH, (id) => coverUrl(id, 'cover_big'), 4);
+    this.low = new CoverAtlas(renderer, clock, LOW, (id) => coverUrl(id), 8, false);
+    this.high = new CoverAtlas(renderer, clock, HIGH, (id) => coverUrl(id, 'cover_big'), 4, false);
     this.table = this.makeTable(1);
     this.material = new THREE.ShaderMaterial({
       vertexShader: VERTEX,
@@ -169,6 +173,8 @@ export class MosaicLayer {
       cells: this.cells.length,
       triangles: pos ? pos.count / 3 : 0,
       buildMs: this.buildMs,
+      applyMs: this.applyMs,
+      frameMs: this.frameMs,
       lowLoaded: this.low.loadedCount(),
       highLoaded: this.high.loadedCount(),
     };
@@ -179,6 +185,15 @@ export class MosaicLayer {
   }
 
   frame(camera: THREE.PerspectiveCamera, heightPx: number): boolean {
+    const t0 = performance.now();
+    try {
+      return this.frameInner(camera, heightPx);
+    } finally {
+      this.frameMs = Math.max(this.frameMs, performance.now() - t0);
+    }
+  }
+
+  private frameInner(camera: THREE.PerspectiveCamera, heightPx: number): boolean {
     if (this.needHigh && this.cells.length > 0) {
       this.needHigh = false;
       this.high.want(this.pickHigh(camera, heightPx));
@@ -220,7 +235,9 @@ export class MosaicLayer {
       this.post(next);
     }
     this.buildMs = msg.ms;
+    const t0 = performance.now();
     this.apply(msg.mesh);
+    this.applyMs = Math.max(this.applyMs, performance.now() - t0);
   }
 
   private apply(m: MosaicMesh): void {
