@@ -5,30 +5,39 @@ import type { MosaicCell, MosaicMesh } from './mosaic/build';
 import type { MosaicRequest, MosaicResponse, WorkerGame } from './mosaic/protocol';
 import { GLOBE_RADIUS } from './outline';
 
-// Three sharpness tiers; a cell gets the next tier once it shows its cover taller than the current tier's pixels.
-const LOW: AtlasLayout = { size: 3072, slotW: 64, slotH: 88, imageW: 60, imageH: 85 };
-const MID: AtlasLayout = { size: 4096, height: 2048, slotW: 268, slotH: 378, imageW: 264, imageH: 374 };
-const TOP: AtlasLayout = { size: 3072, height: 2176, slotW: 768, slotH: 1088, imageW: 762, imageH: 1080 };
-const MID_CAPACITY = 75;
-const TOP_CAPACITY = 8;
+// Sharpness tiers: a cell moves to the next tier once its cover spans more screen pixels than the current tier has.
+interface Tier {
+  layout: AtlasLayout;
+  size: 'cover_small' | 'cover_big' | 'cover_big_2x' | '1080p';
+  capacity: number;
+  inFlight: number;
+}
+const TIERS: Tier[] = [
+  { layout: { size: 3072, slotW: 64, slotH: 88, imageW: 60, imageH: 85 }, size: 'cover_small', capacity: 1632, inFlight: 8 },
+  { layout: { size: 4096, height: 2048, slotW: 268, slotH: 378, imageW: 264, imageH: 374 }, size: 'cover_big', capacity: 75, inFlight: 4 },
+  { layout: { size: 4096, slotW: 532, slotH: 752, imageW: 528, imageH: 748 }, size: 'cover_big_2x', capacity: 35, inFlight: 4 },
+  { layout: { size: 3072, height: 2176, slotW: 768, slotH: 1088, imageW: 762, imageH: 1080 }, size: '1080p', capacity: 8, inFlight: 2 },
+];
 const TABLE_W = 2048;
-const STRIDE = 3;
+const STRIDE = TIERS.length;
 const BASE_COLOR = new THREE.Color('#4a5466');
 
 const VERTEX = `
 attribute float aCell;
 uniform sampler2D uTable;
 varying vec2 vUv;
-flat varying vec4 vLow;
-flat varying vec4 vHigh;
+flat varying vec4 vT0;
+flat varying vec4 vT1;
+flat varying vec4 vT2;
+flat varying vec4 vT3;
 flat varying float vCell;
-flat varying vec4 vTop;
 ivec2 at(int k) { return ivec2(k % ${TABLE_W}, k / ${TABLE_W}); }
 void main() {
-  int c = int(aCell + 0.5);
-  vLow = texelFetch(uTable, at(${STRIDE} * c), 0);
-  vHigh = texelFetch(uTable, at(${STRIDE} * c + 1), 0);
-  vTop = texelFetch(uTable, at(${STRIDE} * c + 2), 0);
+  int c = ${STRIDE} * int(aCell + 0.5);
+  vT0 = texelFetch(uTable, at(c), 0);
+  vT1 = texelFetch(uTable, at(c + 1), 0);
+  vT2 = texelFetch(uTable, at(c + 2), 0);
+  vT3 = texelFetch(uTable, at(c + 3), 0);
   vCell = aCell;
   vUv = uv;
   gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
@@ -36,26 +45,29 @@ void main() {
 `;
 
 const FRAGMENT = `
-uniform sampler2D uLow;
-uniform sampler2D uHigh;
-uniform sampler2D uTop;
+uniform sampler2D uT0;
+uniform sampler2D uT1;
+uniform sampler2D uT2;
+uniform sampler2D uT3;
 uniform vec3 uBase;
 uniform float uHover;
 uniform float uSelected;
 uniform float uDim;
 varying vec2 vUv;
-flat varying vec4 vLow;
-flat varying vec4 vHigh;
-flat varying vec4 vTop;
+flat varying vec4 vT0;
+flat varying vec4 vT1;
+flat varying vec4 vT2;
+flat varying vec4 vT3;
 flat varying float vCell;
 float hash(float n) { return fract(sin(n * 12.9898) * 43758.5453); }
 vec2 inRect(vec4 r, vec2 uv) { return vec2(mix(r.x, r.z, uv.x), mix(r.y, r.w, 1.0 - uv.y)); }
 void main() {
   vec2 uv = clamp(vUv, 0.0, 1.0);
   vec3 col;
-  if (vTop.x >= 0.0) col = textureLod(uTop, inRect(vTop, uv), 0.0).rgb;
-  else if (vHigh.x >= 0.0) col = textureLod(uHigh, inRect(vHigh, uv), 0.0).rgb;
-  else if (vLow.x >= 0.0) col = textureLod(uLow, inRect(vLow, uv), 0.0).rgb;
+  if (vT3.x >= 0.0) col = textureLod(uT3, inRect(vT3, uv), 0.0).rgb;
+  else if (vT2.x >= 0.0) col = textureLod(uT2, inRect(vT2, uv), 0.0).rgb;
+  else if (vT1.x >= 0.0) col = textureLod(uT1, inRect(vT1, uv), 0.0).rgb;
+  else if (vT0.x >= 0.0) col = textureLod(uT0, inRect(vT0, uv), 0.0).rgb;
   else col = uBase * (0.75 + 0.5 * hash(vCell + 1.0));
   float hover = 1.0 - step(0.5, abs(vCell - uHover));
   float selected = 1.0 - step(0.5, abs(vCell - uSelected));
@@ -77,9 +89,7 @@ export interface MosaicStats {
 
 export class MosaicLayer {
   private readonly worker: Worker;
-  private readonly low: CoverAtlas;
-  private readonly high: CoverAtlas;
-  private readonly top: CoverAtlas;
+  private readonly atlases: CoverAtlas[];
   private pixelRatio = 1;
   private readonly material: THREE.ShaderMaterial;
   private readonly lineMaterial = new THREE.LineBasicMaterial({ color: '#05070b', transparent: true, opacity: 0.85 });
@@ -103,9 +113,7 @@ export class MosaicLayer {
     renderer: THREE.WebGLRenderer,
     clock: () => number,
   ) {
-    this.low = new CoverAtlas(renderer, clock, LOW, (id) => coverUrl(id), 8, false);
-    this.high = new CoverAtlas(renderer, clock, MID, (id) => coverUrl(id, 'cover_big'), 4, false);
-    this.top = new CoverAtlas(renderer, clock, TOP, (id) => coverUrl(id, '1080p'), 2, false);
+    this.atlases = TIERS.map((t) => new CoverAtlas(renderer, clock, t.layout, (id) => coverUrl(id, t.size), t.inFlight, false));
     this.pixelRatio = renderer.getPixelRatio();
     this.table = this.makeTable(1);
     this.material = new THREE.ShaderMaterial({
@@ -113,9 +121,10 @@ export class MosaicLayer {
       fragmentShader: FRAGMENT,
       uniforms: {
         uTable: { value: this.table },
-        uLow: { value: this.low.texture },
-        uHigh: { value: this.high.texture },
-        uTop: { value: this.top.texture },
+        uT0: { value: this.atlases[0]!.texture },
+        uT1: { value: this.atlases[1]!.texture },
+        uT2: { value: this.atlases[2]!.texture },
+        uT3: { value: this.atlases[3]!.texture },
         uBase: { value: BASE_COLOR },
         uHover: { value: -1 },
         uSelected: { value: -1 },
@@ -188,8 +197,8 @@ export class MosaicLayer {
       buildMs: this.buildMs,
       applyMs: this.applyMs,
       frameMs: this.frameMs,
-      lowLoaded: this.low.loadedCount(),
-      highLoaded: this.high.loadedCount() + this.top.loadedCount(),
+      lowLoaded: this.atlases[0]!.loadedCount(),
+      highLoaded: this.atlases.slice(1).reduce((a, t) => a + t.loadedCount(), 0),
     };
   }
 
@@ -209,22 +218,17 @@ export class MosaicLayer {
   private frameInner(camera: THREE.PerspectiveCamera, heightPx: number): boolean {
     if (this.needHigh && this.cells.length > 0) {
       this.needHigh = false;
-      const { mid, top } = this.pickSharp(camera, heightPx);
-      this.high.want(mid);
-      this.top.want(top);
+      this.pickSharp(camera, heightPx).forEach((keys, k) => this.atlases[k + 1]!.want(keys));
     }
-    const lowChanged = this.low.frame();
-    const topChanged = this.top.frame();
-    const changed = this.high.frame() || lowChanged || topChanged;
+    let changed = false;
+    for (const a of this.atlases) changed = a.frame() || changed;
     if (changed) this.fillTable();
     return changed;
   }
 
   dispose(): void {
     this.worker.terminate();
-    this.low.dispose();
-    this.high.dispose();
-    this.top.dispose();
+    for (const a of this.atlases) a.dispose();
     this.table.dispose();
     this.mesh.geometry.dispose();
     this.lines.geometry.dispose();
@@ -285,7 +289,7 @@ export class MosaicLayer {
       .sort((a, b) => b[0] - a[0])
       .map(([, i]) => m.cells[i]!.cover)
       .filter((c): c is string => !!c);
-    this.low.want(order.slice(0, Math.floor(LOW.size / LOW.slotW) * Math.floor(LOW.size / LOW.slotH)));
+    this.atlases[0]!.want(order.slice(0, TIERS[0]!.capacity));
     this.needHigh = true;
     this.fillTable();
     this.onChange();
@@ -308,24 +312,23 @@ export class MosaicLayer {
     data.fill(-1);
     this.cells.forEach((c, i) => {
       if (!c.cover) return;
-      const base = 4 * STRIDE * i;
-      const lo = this.low.uv(c.cover);
-      if (lo) data.set(lo, base);
-      const mid = this.high.uv(c.cover);
-      if (mid) data.set(mid, base + 4);
-      const top = this.top.uv(c.cover);
-      if (top) data.set(top, base + 8);
+      this.atlases.forEach((a, k) => {
+        const r = a.uv(c.cover!);
+        if (r) data.set(r, 4 * (STRIDE * i + k));
+      });
     });
     this.table.needsUpdate = true;
   }
 
   // Pixels the cover spans on screen, from its laid-out height, the distance and how much the cell faces the camera.
-  private pickSharp(camera: THREE.PerspectiveCamera, heightPx: number): { mid: string[]; top: string[] } {
+  // Returns, for each tier above the first, the covers that need it, biggest first; cells off screen are skipped.
+  private pickSharp(camera: THREE.PerspectiveCamera, heightPx: number): string[][] {
     const focal = (heightPx * this.pixelRatio) / (2 * Math.tan((camera.fov * Math.PI) / 360));
     const cam = camera.position;
     const camLen = cam.length();
     const scored: [number, string][] = [];
     const p = new THREE.Vector3();
+    const ndc = new THREE.Vector3();
     for (const c of this.cells) {
       if (!c.cover) continue;
       const phi = ((90 - c.lat) * Math.PI) / 180;
@@ -335,12 +338,18 @@ export class MosaicLayer {
       if (facing < 0.1) continue;
       const size = c.imageH * (Math.PI / 180) * GLOBE_RADIUS;
       const px = (size / Math.max(1, p.distanceTo(cam))) * focal * Math.sqrt(facing);
-      if (px > LOW.imageH) scored.push([px, c.cover]);
+      if (px <= TIERS[0]!.layout.imageH) continue;
+      ndc.copy(p).project(camera);
+      const reach = 1 + (2 * px) / (heightPx * this.pixelRatio);
+      if (Math.abs(ndc.x) > reach + 0.5 || Math.abs(ndc.y) > reach) continue;
+      scored.push([px, c.cover]);
     }
-    scored.sort((a, b) => b[0] - a[0]);
-    return {
-      mid: scored.slice(0, MID_CAPACITY).map(([, k]) => k),
-      top: scored.filter(([px]) => px > MID.imageH).slice(0, TOP_CAPACITY).map(([, k]) => k),
-    };
+    scored.sort((x, y) => y[0] - x[0]);
+    return TIERS.slice(1).map((t, k) =>
+      scored
+        .filter(([px]) => px > TIERS[k]!.layout.imageH)
+        .slice(0, t.capacity)
+        .map(([, key]) => key),
+    );
   }
 }

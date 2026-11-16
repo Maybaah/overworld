@@ -398,6 +398,7 @@ export function GlobeView() {
     let mosaicPicking = false;
     let mosaicMovedAt = -Infinity;
     let mosaicSettled = true;
+    let mosaicPickedAt = -Infinity;
     relayoutRef.current = 'fresh';
     let lastMove = -Infinity;
     let lastLayout = -Infinity;
@@ -627,8 +628,9 @@ ${where}`;
         mosaicMovedAt = now;
         mosaicSettled = false;
       }
-      if (!mosaicSettled && now - mosaicMovedAt > 250) {
-        mosaicSettled = true;
+      if (!mosaicSettled && (now - mosaicMovedAt > 250 || now - mosaicPickedAt > 400)) {
+        mosaicSettled = now - mosaicMovedAt > 250;
+        mosaicPickedAt = now;
         mosaic.cameraMoved();
       }
       mosaic.frame(camera as THREE.PerspectiveCamera, canvas.clientHeight);

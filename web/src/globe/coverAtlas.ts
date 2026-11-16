@@ -4,7 +4,7 @@ import { ATLAS, atlasHeight, slotCount, slotOrigin, slotUv, SlotCache, type Atla
 export const MAX_IN_FLIGHT = 4;
 const UPLOADS_PER_FRAME = 2;
 
-export function coverUrl(id: string, size: 'cover_small' | 'cover_big' | '1080p' = 'cover_small'): string {
+export function coverUrl(id: string, size: 'cover_small' | 'cover_big' | 'cover_big_2x' | '1080p' = 'cover_small'): string {
   return `https://images.igdb.com/igdb/image/upload/t_${size}/${id}.jpg`;
 }
 
