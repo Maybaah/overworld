@@ -607,7 +607,7 @@ export function merge(input: MergeInput): MergeResult {
       loc.source = { source: 'curated', id: normalizeCompanyName(fix.name), url: fix.evidenceUrl };
       loc.basis = 'correction';
     } else if (wd && hq && !placeRejected) {
-      loc.country = wd.country ?? igdbCountry;
+      loc.country = wd.country ?? igdbCountry ?? input.resolveCountry(hq.lat, hq.lng);
       loc.city = input.resolveCity(hq.label, hq.lat, hq.lng);
       loc.lat = hq.lat;
       loc.lng = hq.lng;

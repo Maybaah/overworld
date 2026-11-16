@@ -156,6 +156,16 @@ describe('country conflicts (round 4, item 3)', () => {
     ]);
   });
 
+  it('takes the country from the coordinates when neither IGDB nor Wikidata has one', () => {
+    const r = merge(input({
+      companies: [company(1, 'Playlogic Entertainment')],
+      games: g,
+      wikidataCompanies: [wdCompany(1, { hq: { qid: 'Q727', label: 'Amsterdam', lat: 52.37, lng: 4.89 }, country: null })],
+      resolveCountry: () => 'NL',
+    }));
+    expect(r.companies[0]).toMatchObject({ country: 'NL', city: 'Amsterdam', precision: 'city' });
+  });
+
   it('uses the record country when it has one, and keeps the place when the countries agree', () => {
     const differ = merge(input({
       companies: [company(1, 'A', { country: GB })],
