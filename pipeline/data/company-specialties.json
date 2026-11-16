@@ -1,1 +1,20 @@
-[]
+[
+  {
+    "igdbCompanyId": 5731,
+    "name": "Skywalker Sound",
+    "specialty": "audio",
+    "evidenceUrl": "https://en.wikipedia.org/wiki/Skywalker_Sound"
+  },
+  {
+    "igdbCompanyId": 16660,
+    "name": "Lionbridge Technologies",
+    "specialty": "localization",
+    "evidenceUrl": "https://en.wikipedia.org/wiki/Lionbridge_Technologies"
+  },
+  {
+    "igdbCompanyId": 46563,
+    "name": "Atomhawk",
+    "specialty": "art",
+    "evidenceUrl": "https://atomhawk.com/"
+  }
+]
