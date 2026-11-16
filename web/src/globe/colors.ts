@@ -6,8 +6,8 @@ export function hexToRgb(hex: string): [number, number, number] {
 export const COLORS = {
   background: '#07090d',
   globe: '#0b1018',
-  countryFill: '#111a26',
-  countryStroke: '#2b3a4f',
+  countryFill: '#3a4352',
+  countryStroke: '#5d6a7c',
   atmosphere: '#3a6ea5',
   lead: '#F0E442',
   idle: '#9aa3b2',

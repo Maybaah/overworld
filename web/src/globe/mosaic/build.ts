@@ -213,8 +213,16 @@ function splitTriangle(t: number[], out: number[]): void {
   }
 }
 
+export interface CellPiece {
+  gameId: number;
+  outer: Ring;
+  holes: Ring[];
+  box: [number, number, number, number];
+}
+
 export interface CountryMosaic {
   key: string;
+  pieces: CellPiece[];
   position: number[];
   uv: number[];
   cell: number[]; // local cell index
@@ -271,7 +279,7 @@ function regionOf(cell: ClippedCell): Region {
 // then each city's part is split between its games, which may move freely inside it.
 export function buildCountryMosaic(games: readonly MosaicGame[], country: CountryRegion, o: MosaicOptions): CountryMosaic {
   const key = games.map((g) => g.id).join(',');
-  const out: CountryMosaic = { key, position: [], uv: [], cell: [], lines: [], cells: [] };
+  const out: CountryMosaic = { key, pieces: [], position: [], uv: [], cell: [], lines: [], cells: [] };
   if (games.length === 0) return out;
   const proj = country.projection;
   const weight = (g: MosaicGame) => Math.max(1, g.popularity) ** POPULARITY_EXPONENT;
@@ -314,6 +322,7 @@ export function buildCountryMosaic(games: readonly MosaicGame[], country: Countr
     const centre = proj.inverse(cx, cy);
     out.cells.push({ gameId: g.id, cover: g.cover, lat: centre.lat, lng: centre.lng, area: c.area });
     for (const piece of c.pieces) {
+      out.pieces.push({ gameId: g.id, outer: piece.outer, holes: piece.holes, box: bbox(piece.outer) });
       const contour = piece.outer.map((p) => new THREE.Vector2(p[0], p[1]));
       const holes = piece.holes.map((r) => r.map((p) => new THREE.Vector2(p[0], p[1])));
       const verts = [...contour, ...holes.flat()];
@@ -361,6 +370,11 @@ export function buildCountryMosaic(games: readonly MosaicGame[], country: Countr
 
 export class MosaicBuilder {
   private readonly cache = new Map<string, CountryMosaic>();
+  private readonly current = new Map<string, CountryMosaic>();
+
+  piecesOf(code: string): CellPiece[] | null {
+    return this.current.get(code)?.pieces ?? null;
+  }
 
   constructor(
     private readonly regions: Map<string, CountryRegion>,
@@ -380,6 +394,7 @@ export class MosaicBuilder {
     const areas = new Map([...this.regions].map(([c, r]) => [c, r.area]));
     const budget = cellBudget(counts, areas, this.options);
     const parts: CountryMosaic[] = [];
+    this.current.clear();
     const next = new Map<string, CountryMosaic>();
     for (const [code, list] of byCountry) {
       const chosen = list.slice(0, budget.get(code) ?? 1);
@@ -387,6 +402,7 @@ export class MosaicBuilder {
       let m = this.cache.get(key);
       if (!m) m = buildCountryMosaic(chosen, this.regions.get(code)!, this.options);
       next.set(key, m);
+      this.current.set(code, m);
       parts.push(m);
     }
     this.cache.clear();

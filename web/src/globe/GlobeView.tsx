@@ -22,6 +22,7 @@ import { CITY_FROM, LEVELS } from './levels';
 import { CountriesLayer } from './countriesLayer';
 import { CoversLayer, type CoverEntry } from './coversLayer';
 import { MarkersLayer, type MarkerItem } from './markersLayer';
+import { MosaicLayer } from './mosaicLayer';
 import { PICK_RADIUS_PX } from './picking';
 import { isClick, pointerToCanvas } from './pointer';
 import { POINT_ALTITUDE, PointsLayer, type PickedPoint } from './pointsLayer';
@@ -50,6 +51,7 @@ declare global {
       imagesLoaded(): number;
       visibleCovers(): string[];
       imagery(): string;
+      mosaic(): import("./mosaicLayer").MosaicStats;
       namesPlaced(): number;
       lastLayoutMs(): number;
       setYear(y: number): void;
@@ -140,7 +142,7 @@ export function GlobeView() {
   const needUpgrade = useRef(false);
   const mountedRef = useRef(true);
   const [ready, setReady] = useState(false);
-  const [imagery, setImagery] = useState<ImageryState>('pending');
+  const [imagery, setImagery] = useState<ImageryState>('off');
   const imageryRef = useRef(imagery);
   imageryRef.current = imagery;
   const [shapes, setShapes] = useState<CountryShape[]>(() => loadCountryShapes());
@@ -351,7 +353,7 @@ export function GlobeView() {
     const initial = useStore.getState();
     layer.setTimeline(timeline, initial.gameFilter === null);
     layer.setYear(initial.year);
-    layer.setVisible(initial.pointsVisible);
+    layer.setVisible(false);
     layer.setAltitude(globe.pointOfView().altitude);
     layerRef.current = layer;
     const markers = new MarkersLayer(globe, scene, renderer.getPixelRatio());
@@ -374,9 +376,28 @@ export function GlobeView() {
     });
     covers.setTimeline(timeline, initial.gameFilter);
     covers.setYear(initial.year);
-    covers.setVisible(initial.pointsVisible);
+    covers.setVisible(false);
     coversRef.current = covers;
-    names?.setPillsVisible(initial.pointsVisible);
+    names?.setPillsVisible(false);
+    const mosaic = new MosaicLayer(scene, renderer, () => performance.now() / 1000);
+    mosaic.init(
+      indexes.games.flatMap((g) => {
+        const c = indexes.companyById.get(g.leadCompanyId);
+        if (!c || !c.country || c.lat === null || c.lng === null) return [];
+        return [{ id: g.id, cover: g.cover, popularity: g.popularity, lat: c.lat, lng: c.lng, country: c.country, exact: c.precision === 'city', year: g.year }];
+      }),
+    );
+    const mosaicShown = (s: { pointsVisible: boolean; countryShade: unknown }) => s.pointsVisible && s.countryShade === null;
+    const requestMosaic = (s: { year: number; gameFilter: Set<number> | null; timeline: { maxYear: number } | null }) => {
+      if (s.timeline) mosaic.request(s.year, s.timeline.maxYear, s.gameFilter);
+    };
+    requestMosaic(initial);
+    mosaic.setVisible(mosaicShown(initial));
+    mosaic.setSelected(initial.selectedGameId);
+    let mosaicHover: number | null = null;
+    let mosaicPicking = false;
+    let mosaicMovedAt = -Infinity;
+    let mosaicSettled = true;
     relayoutRef.current = 'fresh';
     let lastMove = -Infinity;
     let lastLayout = -Infinity;
@@ -438,6 +459,22 @@ export function GlobeView() {
       placeTooltip();
     };
 
+    const setMosaicTooltip = (id: number | null) => {
+      canvas.style.cursor = id !== null ? 'pointer' : '';
+      if (!tooltip) return;
+      const g = id !== null ? indexes.gameById.get(id) : undefined;
+      if (!g) {
+        tooltip.style.display = 'none';
+        return;
+      }
+      const c = indexes.companyById.get(g.leadCompanyId);
+      const where = c ? [c.name, c.city, c.country].filter(Boolean).join(', ') : '';
+      tooltip.textContent = `${g.name}${g.year ? ` (${g.year})` : ''}
+${where}`;
+      tooltip.style.display = 'block';
+      placeTooltip();
+    };
+
     const pointsPickable = () => {
       const s = useStore.getState();
       return s.mode !== 'guess' && s.pointsVisible;
@@ -481,6 +518,8 @@ export function GlobeView() {
       covers.setHover(null);
       labels?.setHover(null);
       hoveredLabel = null;
+      mosaicHover = null;
+      mosaic.setHover(null);
     };
     const onDown = (ev: PointerEvent) => {
       const p = track(ev);
@@ -495,6 +534,15 @@ export function GlobeView() {
       pointer.down = false;
       const p = track(ev);
       if (!isClick(pointer.downX, pointer.downY, p.x, p.y)) return;
+      if (mosaic.visible) {
+        const geo = globe.toGlobeCoords(p.nx * canvas.clientWidth, p.ny * canvas.clientHeight);
+        if (!geo) return;
+        void mosaic.pick(geo.lat, geo.lng).then((id) => {
+          if (id !== null) void useStore.getState().selectGame(id);
+          else useStore.getState().reportGlobeClick(geo.lat, geo.lng);
+        });
+        return;
+      }
       const hit = pointsPickable() ? pickAt(p.x, p.y, currentFrame()) : null;
       if (hit) {
         useStore.getState().selectPlace({ level: hit.level, key: layer.keyAt(hit.level, hit.index) });
@@ -518,6 +566,9 @@ export function GlobeView() {
     if (opened.selectedGameId !== null) fly(gameTarget(indexes, layout, companyIndex, opened.selectedGameId));
     else if (opened.selectedPlace) fly(placeTarget(indexes, layout, companyIndex, opened.selectedPlace));
     const unsubscribe = useStore.subscribe((s, prev) => {
+      if (s.timeline !== prev.timeline || s.gameFilter !== prev.gameFilter || s.year !== prev.year) requestMosaic(s);
+      if (s.pointsVisible !== prev.pointsVisible || s.countryShade !== prev.countryShade) mosaic.setVisible(mosaicShown(s));
+      if (s.selectedGameId !== prev.selectedGameId) mosaic.setSelected(s.selectedGameId);
       if (s.timeline !== prev.timeline || s.gameFilter !== prev.gameFilter) {
         if (s.timeline) {
           layer.setTimeline(s.timeline, s.gameFilter === null);
@@ -533,9 +584,6 @@ export function GlobeView() {
         if (relayoutRef.current === 'none') relayoutRef.current = 'sticky';
       }
       if (s.pointsVisible !== prev.pointsVisible) {
-        layer.setVisible(s.pointsVisible);
-        covers.setVisible(s.pointsVisible);
-        names?.setPillsVisible(s.pointsVisible);
         relayoutRef.current = 'fresh';
         if (!s.pointsVisible) {
           setHover(null);
@@ -574,7 +622,16 @@ export function GlobeView() {
           lastWorld[i] = world[i]!;
         }
       }
-      if (moved) needUpgrade.current = true;
+      if (moved) {
+        needUpgrade.current = true;
+        mosaicMovedAt = now;
+        mosaicSettled = false;
+      }
+      if (!mosaicSettled && now - mosaicMovedAt > 250) {
+        mosaicSettled = true;
+        mosaic.cameraMoved();
+      }
+      mosaic.frame(camera as THREE.PerspectiveCamera, canvas.clientHeight);
       if (needUpgrade.current && detailRef.current && now - lastUpgrade > 350) {
         const pov = globe.pointOfView();
         if (pov.altitude < CITY_FROM) {
@@ -610,7 +667,24 @@ export function GlobeView() {
 
       if (dirtyRef.current) {
         dirtyRef.current = false;
-        if (pointer.inside && !pointer.down) {
+        if (pointer.inside && !pointer.down && mosaic.visible) {
+          const geo = globe.toGlobeCoords(pointer.lx, pointer.ly);
+          if (!geo) {
+            mosaicHover = null;
+            mosaic.setHover(null);
+            setMosaicTooltip(null);
+          } else if (!mosaicPicking) {
+            mosaicPicking = true;
+            void mosaic.pick(geo.lat, geo.lng).then((id) => {
+              mosaicPicking = false;
+              if (id !== mosaicHover) {
+                mosaicHover = id;
+                mosaic.setHover(id);
+                setMosaicTooltip(id);
+              } else placeTooltip();
+            });
+          }
+        } else if (pointer.inside && !pointer.down) {
           const rect = canvas.getBoundingClientRect();
           const w2 = rect.width;
           const h2 = rect.height;
@@ -636,6 +710,7 @@ export function GlobeView() {
         level: () => layer.level(),
         pointCount: () => layer.pointCount(),
         coverCount: () => covers.coverCount(),
+        mosaic: () => mosaic.stats(),
         coversLoaded: () => covers.loadedCovers(),
         imagesLoaded: () => covers.imagesLoaded(),
         visibleCovers: () => covers.visibleGames(),
@@ -675,6 +750,7 @@ export function GlobeView() {
       if (debug) delete window.__overworld;
       layer.dispose();
       covers.dispose();
+      mosaic.dispose();
       coversRef.current = null;
       markers.dispose();
       outline.dispose();

@@ -1,11 +1,11 @@
 import * as THREE from 'three';
-import { ATLAS, slotCount, slotOrigin, slotUv, SlotCache } from './atlasSlots';
+import { ATLAS, slotCount, slotOrigin, slotUv, SlotCache, type AtlasLayout } from './atlasSlots';
 
 export const MAX_IN_FLIGHT = 4;
 const UPLOADS_PER_FRAME = 2;
 
-export function coverUrl(id: string): string {
-  return `https://images.igdb.com/igdb/image/upload/t_cover_small/${id}.jpg`;
+export function coverUrl(id: string, size: 'cover_small' | 'cover_big' = 'cover_small'): string {
+  return `https://images.igdb.com/igdb/image/upload/t_${size}/${id}.jpg`;
 }
 
 interface Ready {
@@ -15,7 +15,7 @@ interface Ready {
 
 export class CoverAtlas {
   readonly texture: THREE.DataTexture;
-  private readonly slots = new SlotCache<string>(slotCount());
+  private readonly slots: SlotCache<string>;
   private readonly readyAt = new Map<string, number>();
   private readonly failed = new Set<string>();
   private readonly inFlight = new Set<string>();
@@ -30,8 +30,12 @@ export class CoverAtlas {
   constructor(
     private readonly renderer: THREE.WebGLRenderer,
     private readonly clock: () => number,
+    private readonly layout: AtlasLayout = ATLAS,
+    private readonly url: (id: string) => string = (id) => coverUrl(id),
+    private readonly maxInFlight = MAX_IN_FLIGHT,
   ) {
-    const t = new THREE.DataTexture(null, ATLAS.size, ATLAS.size, THREE.RGBAFormat, THREE.UnsignedByteType);
+    this.slots = new SlotCache<string>(slotCount(layout));
+    const t = new THREE.DataTexture(null, layout.size, layout.size, THREE.RGBAFormat, THREE.UnsignedByteType);
     t.source.dataReady = false;
     t.generateMipmaps = true;
     t.minFilter = THREE.LinearMipmapLinearFilter;
@@ -52,7 +56,7 @@ export class CoverAtlas {
 
   uv(key: string): [number, number, number, number] | null {
     const slot = this.readyAt.has(key) ? this.slots.peek(key) : undefined;
-    return slot === undefined ? null : slotUv(slot);
+    return slot === undefined ? null : slotUv(slot, this.layout);
   }
 
   readyTime(key: string): number | undefined {
@@ -70,7 +74,7 @@ export class CoverAtlas {
   private pump(): void {
     if (this.disposed) return;
     for (const key of this.wanted) {
-      if (this.inFlight.size >= MAX_IN_FLIGHT) return;
+      if (this.inFlight.size >= this.maxInFlight) return;
       if (this.readyAt.has(key) || this.failed.has(key) || this.inFlight.has(key)) continue;
       if (this.uploads.some((u) => u.key === key)) continue;
       this.load(key);
@@ -79,12 +83,12 @@ export class CoverAtlas {
 
   private load(key: string): void {
     this.inFlight.add(key);
-    fetch(coverUrl(key), { mode: 'cors', signal: this.abort.signal })
+    fetch(this.url(key), { mode: 'cors', signal: this.abort.signal })
       .then((r) => {
         if (!r.ok) throw new Error(`HTTP ${r.status}`);
         return r.blob();
       })
-      .then((blob) => createImageBitmap(blob, { resizeWidth: ATLAS.imageW, resizeHeight: ATLAS.imageH, resizeQuality: 'high' }))
+      .then((blob) => createImageBitmap(blob, { resizeWidth: this.layout.imageW, resizeHeight: this.layout.imageH, resizeQuality: 'high' }))
       .then((bitmap) => {
         if (this.disposed) bitmap.close();
         else this.uploads.push({ key, bitmap });
@@ -108,7 +112,7 @@ export class CoverAtlas {
         continue;
       }
       if (got.evicted !== null) this.readyAt.delete(got.evicted);
-      const o = slotOrigin(got.slot);
+      const o = slotOrigin(got.slot, this.layout);
       const src = new THREE.Texture(bitmap as unknown as HTMLImageElement);
       this.target.set(o.x, o.y);
       this.renderer.copyTextureToTexture(src, this.texture, null, this.target);

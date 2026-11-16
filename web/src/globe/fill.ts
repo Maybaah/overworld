@@ -39,7 +39,21 @@ function splitTriangle(t: Tri, maxDeg: number, out: number[]): void {
   }
 }
 
-function polygonTriangles(rings: number[][][], maxDeg: number, out: number[]): void {
+function jumps(ring: number[][]): boolean {
+  for (let i = 1; i < ring.length; i++) if (Math.abs(ring[i]![0]! - ring[i - 1]![0]!) > 180) return true;
+  return false;
+}
+
+// A polygon cut by the antimeridian (Chukotka, Fiji) gets its western longitudes shifted by 360 so it triangulates
+// as one piece instead of spanning the whole map; a ring around a pole keeps its longitudes.
+export function unwrapPolygon(rings: number[][][]): number[][][] {
+  if (!rings.some(jumps)) return rings;
+  const shifted = rings.map((r) => r.map((p) => (p[0]! < 0 ? [p[0]! + 360, p[1]!] : p)));
+  return shifted.some(jumps) ? rings : shifted;
+}
+
+function polygonTriangles(polygon: number[][][], maxDeg: number, out: number[]): void {
+  const rings = unwrapPolygon(polygon);
   const outer = rings[0];
   if (!outer || outer.length < 4) return;
   const contour = outer.map((p) => new THREE.Vector2(p[0], p[1]));
