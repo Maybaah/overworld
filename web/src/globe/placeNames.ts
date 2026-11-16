@@ -16,7 +16,29 @@ export interface NamedShape {
   geometry: { type: string; coordinates: unknown };
 }
 
-export function ringCentroid(ring: Ring): { lat: number; lng: number; area: number } {
+// Rings that cross the antimeridian (Fiji, Russia's far east) jump from +180 to -180;
+// shift every point next to its predecessor so the centroid is not pulled across the globe.
+function unwrapRing(ring: Ring): Ring {
+  const out: Ring = [];
+  let prev: number | null = null;
+  for (const p of ring) {
+    let lng = p[0]!;
+    if (prev !== null) {
+      while (lng - prev > 180) lng -= 360;
+      while (lng - prev < -180) lng += 360;
+    }
+    out.push([lng, p[1]!]);
+    prev = lng;
+  }
+  return out;
+}
+
+function wrapLng(lng: number): number {
+  return ((((lng + 180) % 360) + 360) % 360) - 180;
+}
+
+export function ringCentroid(input: Ring): { lat: number; lng: number; area: number } {
+  const ring = unwrapRing(input);
   let a = 0;
   let cx = 0;
   let cy = 0;
@@ -37,9 +59,9 @@ export function ringCentroid(ring: Ring): { lat: number; lng: number; area: numb
       sx += p[0]!;
       sy += p[1]!;
     }
-    return { lng: sx / Math.max(1, n), lat: sy / Math.max(1, n), area: 0 };
+    return { lng: wrapLng(sx / Math.max(1, n)), lat: sy / Math.max(1, n), area: 0 };
   }
-  const lng = cx / (6 * a);
+  const lng = wrapLng(cx / (6 * a));
   const lat = cy / (6 * a);
   return { lng, lat, area: Math.abs(a) * Math.cos((lat * Math.PI) / 180) };
 }

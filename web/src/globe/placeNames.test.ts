@@ -102,3 +102,28 @@ describe('RectGrid', () => {
     expect(g.hits({ x: 43, y: 30, w: 5, h: 5 })).toBe(false);
   });
 });
+
+describe('antimeridian', () => {
+  it('keeps the centroid of a ring that crosses 180° on the right side of the globe', () => {
+    const ring = [
+      [178, -16],
+      [180, -16],
+      [-179, -17],
+      [-179, -18],
+      [180, -18],
+      [178, -18],
+      [178, -16],
+    ];
+    const c = ringCentroid(ring);
+    expect(Math.abs(c.lng)).toBeGreaterThan(170);
+    expect(c.lat).toBeGreaterThan(-18);
+    expect(c.lat).toBeLessThan(-16);
+  });
+
+  it('puts the Fiji name near Fiji with the real shapes', () => {
+    const fiji = countryAnchors(loadCountryShapes()).find((a) => a.name === 'Fiji')!;
+    expect(Math.abs(fiji.lng)).toBeGreaterThan(170);
+    expect(fiji.lat).toBeLessThan(-12);
+    expect(fiji.lat).toBeGreaterThan(-22);
+  });
+});
