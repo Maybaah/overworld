@@ -109,3 +109,20 @@ export function loadCompanyGames(): Promise<Map<number, CompanyGameEntry[]>> {
   }
   return companyGamesPromise;
 }
+
+let steamMapPromise: Promise<Record<string, number>> | null = null;
+
+export function resetSteamMapCache(): void {
+  steamMapPromise = null;
+}
+
+export function loadSteamMap(): Promise<Record<string, number>> {
+  if (!steamMapPromise) {
+    const promise = fetchJson<Record<string, number>>('steam.json');
+    steamMapPromise = promise;
+    promise.catch(() => {
+      if (steamMapPromise === promise) steamMapPromise = null;
+    });
+  }
+  return steamMapPromise;
+}
