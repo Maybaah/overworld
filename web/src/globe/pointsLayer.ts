@@ -89,6 +89,7 @@ export interface PointsLayerOptions {
   layout: CompanyLayout;
   pixelRatio: number;
   countryName(code: string): string;
+  animate?: boolean;
 }
 
 export class PointsLayer {
@@ -98,9 +99,11 @@ export class PointsLayer {
   private year: number;
   private timeline: Timeline;
   private shown = true;
+  private readonly animate: boolean;
   private readonly opts: PointsLayerOptions;
 
   constructor(opts: PointsLayerOptions) {
+    this.animate = opts.animate ?? true;
     this.opts = opts;
     this.timeline = opts.timeline;
     this.year = opts.timeline.maxYear;
@@ -240,7 +243,7 @@ export class PointsLayer {
   }
 
   frame(dtMs: number): void {
-    const step = Math.min(1, dtMs / FADE_MS);
+    const step = this.animate ? Math.min(1, dtMs / FADE_MS) : 1;
     for (const level of LEVELS) {
       const st = this.levels[level];
       const target = level === this.active && this.shown ? 1 : 0;

@@ -109,6 +109,9 @@ const tooltipStyle = {
   zIndex: 10,
 } as const;
 
+// Over the North Atlantic, so North America, Europe and Africa are all in view at load.
+const START_VIEW = { lat: 36, lng: -32, altitude: 2.1 };
+
 export function GlobeView() {
   const indexes = useStore((s) => s.indexes);
   const hasTimeline = useStore((s) => s.timeline !== null);
@@ -271,6 +274,7 @@ export function GlobeView() {
       controls.autoRotate = false;
     };
     const st = useStore.getState();
+    if (st.selectedGameId === null && st.selectedPlace === null) globe.pointOfView(START_VIEW, 0);
     controls.autoRotate = !reducedMotion && st.selectedGameId === null && st.selectedPlace === null;
     controls.autoRotateSpeed = 0.35;
     controls.addEventListener('start', stopRotation);
@@ -342,6 +346,7 @@ export function GlobeView() {
       layout,
       pixelRatio: renderer.getPixelRatio(),
       countryName,
+      animate: !reducedMotion,
     });
     const initial = useStore.getState();
     layer.setTimeline(timeline, initial.gameFilter === null);
