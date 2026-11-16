@@ -111,6 +111,12 @@ const tooltipStyle = {
   zIndex: 10,
 } as const;
 
+// The globe never needs to come closer than a few units, so a far near plane buys depth precision:
+// the mosaic sits a hair above the land fill and flickered against it with the default near plane.
+const CAMERA_NEAR = 2;
+// Farther than this the whole globe is already in view and the mosaic turns to noise.
+const MAX_DISTANCE = 100 * (1 + 2.4);
+
 // Over the North Atlantic, so North America, Europe and Africa are all in view at load.
 const START_VIEW = { lat: 36, lng: -32, altitude: 2.1 };
 
@@ -279,6 +285,10 @@ export function GlobeView() {
     if (st.selectedGameId === null && st.selectedPlace === null) globe.pointOfView(START_VIEW, 0);
     controls.autoRotate = !reducedMotion && st.selectedGameId === null && st.selectedPlace === null;
     controls.autoRotateSpeed = 0.35;
+    controls.maxDistance = MAX_DISTANCE;
+    const camera = globe.camera() as THREE.PerspectiveCamera;
+    camera.near = CAMERA_NEAR;
+    camera.updateProjectionMatrix();
     controls.addEventListener('start', stopRotation);
     return () => controls.removeEventListener('start', stopRotation);
   }, [ready, reducedMotion]);

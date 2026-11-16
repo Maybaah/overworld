@@ -19,6 +19,7 @@ const TIERS: Tier[] = [
   { layout: { size: 3072, height: 2176, slotW: 768, slotH: 1088, imageW: 762, imageH: 1080 }, size: '1080p', capacity: 8, inFlight: 2 },
 ];
 const TABLE_W = 2048;
+const STICKY = 1.5;
 const STRIDE = TIERS.length;
 const BASE_COLOR = new THREE.Color('#52525b');
 
@@ -53,6 +54,7 @@ uniform vec3 uBase;
 uniform float uHover;
 uniform float uSelected;
 uniform float uDim;
+uniform vec2 uT0Size;
 varying vec2 vUv;
 flat varying vec4 vT0;
 flat varying vec4 vT1;
@@ -67,7 +69,13 @@ void main() {
   if (vT3.x >= 0.0) col = textureLod(uT3, inRect(vT3, uv), 0.0).rgb;
   else if (vT2.x >= 0.0) col = textureLod(uT2, inRect(vT2, uv), 0.0).rgb;
   else if (vT1.x >= 0.0) col = textureLod(uT1, inRect(vT1, uv), 0.0).rgb;
-  else if (vT0.x >= 0.0) col = textureLod(uT0, inRect(vT0, uv), 0.0).rgb;
+  else if (vT0.x >= 0.0) {
+    // Small covers are minified when zoomed out, so they sample their mip chain to stay calm instead of sparkling.
+    vec2 st = inRect(vT0, uv);
+    vec2 px = st * uT0Size;
+    float lod = clamp(log2(max(length(dFdx(px)), length(dFdy(px)))), 0.0, 3.0);
+    col = textureLod(uT0, st, lod).rgb;
+  }
   else col = uBase * (0.75 + 0.5 * hash(vCell + 1.0));
   float hover = 1.0 - step(0.5, abs(vCell - uHover));
   float selected = 1.0 - step(0.5, abs(vCell - uSelected));
@@ -113,7 +121,7 @@ export class MosaicLayer {
     renderer: THREE.WebGLRenderer,
     clock: () => number,
   ) {
-    this.atlases = TIERS.map((t) => new CoverAtlas(renderer, clock, t.layout, (id) => coverUrl(id, t.size), t.inFlight, false));
+    this.atlases = TIERS.map((t, k) => new CoverAtlas(renderer, clock, t.layout, (id) => coverUrl(id, t.size), t.inFlight, k === 0));
     this.pixelRatio = renderer.getPixelRatio();
     this.table = this.makeTable(1);
     this.material = new THREE.ShaderMaterial({
@@ -129,7 +137,11 @@ export class MosaicLayer {
         uHover: { value: -1 },
         uSelected: { value: -1 },
         uDim: { value: 0.55 },
+        uT0Size: { value: new THREE.Vector2(TIERS[0]!.layout.size, TIERS[0]!.layout.height ?? TIERS[0]!.layout.size) },
       },
+      polygonOffset: true,
+      polygonOffsetFactor: -2,
+      polygonOffsetUnits: -2,
     });
     this.mesh = new THREE.Mesh(new THREE.BufferGeometry(), this.material);
     this.lines = new THREE.LineSegments(new THREE.BufferGeometry(), this.lineMaterial);
@@ -345,11 +357,16 @@ export class MosaicLayer {
       scored.push([px, c.cover]);
     }
     scored.sort((x, y) => y[0] - x[0]);
-    return TIERS.slice(1).map((t, k) =>
-      scored
+    // A cover already loaded in a tier keeps its place against slightly bigger newcomers, so tiles do not
+    // drop back to a blurrier version and pop again while the globe turns.
+    return TIERS.slice(1).map((t, k) => {
+      const atlas = this.atlases[k + 1]!;
+      return scored
         .filter(([px]) => px > TIERS[k]!.layout.imageH)
+        .map(([px, key]) => [atlas.uv(key) ? px * STICKY : px, key] as [number, string])
+        .sort((x, y) => y[0] - x[0])
         .slice(0, t.capacity)
-        .map(([, key]) => key),
-    );
+        .map(([, key]) => key);
+    });
   }
 }
