@@ -207,6 +207,53 @@ describe('validateOutput', () => {
     expect(failed()).toEqual(['flows-file']);
   });
 
+  it('catches located companies without a location source or basis', () => {
+    edit<Company[]>('companies.json', (c) => {
+      const x = c.filter((k) => k.precision !== 'none');
+      x[0]!.locationSource = null;
+      x[1]!.locationBasis = null;
+    });
+    expect(failed()).toEqual(['company-location-fields']);
+    expect(validateOutput(out).checks.find((c) => c.name === 'company-location-fields')!.count).toBe(2);
+  });
+
+  it('catches precision city without a city name', () => {
+    edit<Company[]>('companies.json', (c) => { c.find((k) => k.precision === 'city')!.city = ' '; });
+    expect(failed()).toEqual(['company-location-fields']);
+    edit<Company[]>('companies.json', (c) => { c.find((k) => k.precision === 'city')!.city = null; });
+    expect(failed()).toEqual(['company-location-fields']);
+  });
+
+  it('catches precision none with a location basis', () => {
+    edit<Company[]>('companies.json', (c) => { c.find((k) => k.precision === 'none')!.locationBasis = 'country'; });
+    expect(failed()).toEqual(['company-location-fields']);
+  });
+
+  it('warns, without failing, about coordinates far from the stated country', () => {
+    const before = validateOutput(out).warnings[0]!;
+    expect(before.name).toBe('Coordinates far from the stated country');
+    edit<Company[]>('companies.json', (c) => {
+      const x = c.find((k) => k.precision === 'country')!;
+      x.country = 'FR';
+      x.lat = -33.9;
+      x.lng = 151.2;
+    });
+    const r = validateOutput(out);
+    expect(r.ok).toBe(true);
+    expect(r.warnings[0]!.count).toBe(before.count + 1);
+    expect(r.warnings[0]!.items.some((i) => /\(FR,/.test(i))).toBe(true);
+    const md = formatSummary(r);
+    expect(md).toContain(`Coordinates far from the stated country: ${before.count + 1}`);
+    expect(md).toContain('Overseas territories');
+  });
+
+  it('lists low-confidence leads in the markdown', () => {
+    edit<GameDetail[]>('details/0.json', (d) => { d[0]!.leadBasis = 'igdb_first_developer'; });
+    const r = validateOutput(out);
+    expect(r.lowConfidenceLeads).toHaveLength(1);
+    expect(formatSummary(r)).toContain('## Low-confidence leads');
+  });
+
   it('fails cleanly when files are missing', () => {
     rmSync(join(out, 'games.json'));
     const r = validateOutput(out);

@@ -26,16 +26,11 @@ export async function emit(
     if (m && (m[2] || Number(m[1]) >= chunks)) await rm(path.join(detailsDir, f), { force: true });
   }
 
-  const steam: Record<number, number> = {};
-  for (const [i, d] of result.details.entries()) {
-    if (d.steamAppId !== null && steam[d.steamAppId] === undefined) steam[d.steamAppId] = result.games[i]!.id;
-  }
-
   const companies = [...result.companies].sort((a, b) => a.id - b.id);
   await writeJson(path.join(outDir, 'meta.json'), result.meta);
   await writeJson(path.join(outDir, 'companies.json'), companies);
   await writeJson(path.join(outDir, 'games.json'), result.games);
-  await writeJson(path.join(outDir, 'steam.json'), steam);
+  await writeJson(path.join(outDir, 'steam.json'), result.steam);
   const aggregates = buildAggregates({ ...result, companies }, population);
   await writeJson(path.join(outDir, 'company-games.json'), aggregates.companyGames);
   await writeJson(path.join(outDir, 'stats.json'), aggregates.stats);

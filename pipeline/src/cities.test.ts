@@ -1,10 +1,12 @@
 import { beforeAll, describe, expect, it } from 'vitest';
-import { createCityResolver, type CityRecord, type CityResolver } from './cities';
+import { createCityIndex, createCityResolver, type CityIndex, type CityRecord, type CityResolver } from './cities';
 
 let resolve: CityResolver;
+let index: CityIndex;
 
 beforeAll(() => {
-  resolve = createCityResolver();
+  index = createCityIndex();
+  resolve = index.resolveCity;
 });
 
 describe('city resolver with the real city list', () => {
@@ -22,6 +24,23 @@ describe('city resolver with the real city list', () => {
     expect(resolve('Redwood City', 37.48, -122.24)).toBe('Redwood City');
     expect(resolve('Santa Monica', 34.02, -118.49)).toBe('Santa Monica');
     expect(resolve('Seongnam', 37.42, 127.13)).toBe('Seongnam');
+  });
+
+  it('puts a ward of a metropolis next to a smaller big city into the most populous one, unless the label is a city nearby', () => {
+    expect(resolve('Ōta', 35.56, 139.72)).toBe('Tokyo');
+    expect(resolve('Yokohama', 35.44, 139.64)).toBe('Yokohama');
+  });
+
+  it('strips a trailing -shi, -si or " shi" from every result', () => {
+    expect(resolve('Kōnan-shi', 0, -30)).toBe('Kōnan');
+    expect(resolve('Hachiōji shi', 0, -30)).toBe('Hachiōji');
+    expect(resolve('Seongnam-si', 37.42, 127.13)).toBe('Seongnam');
+  });
+
+  it('finds the country of the nearest city within 50 km', () => {
+    expect(index.resolveCountry(51.06, -0.33)).toBe('GB');
+    expect(index.resolveCountry(-36.72, 142.2)).toBe('AU');
+    expect(index.resolveCountry(0, -30)).toBeNull();
   });
 
   it('keeps the label in the open ocean', () => {
@@ -60,7 +79,24 @@ describe('city resolver rules on a small list', () => {
     expect(r('Some Building', 30.02, 30)).toBe('Some Building');
   });
 
-  it('rule a has priority over rule b', () => {
+  it('picks the most populous big city within 20 km, not the nearest', () => {
+    const list: CityRecord[] = [
+      { name: 'Near Big', population: 1_100_000, lat: 60, lng: 60 },
+      { name: 'Far Bigger', population: 5_000_000, lat: 60.15, lng: 60 },
+    ];
+    expect(createCityResolver(list)('Ward', 60.01, 60)).toBe('Far Bigger');
+  });
+
+  it('a city with the label name within 15 km beats any big city', () => {
+    const list: CityRecord[] = [
+      { name: 'Metropolis', population: 5_000_000, lat: 60, lng: 60 },
+      { name: 'Satellite', population: 50_000, lat: 60.05, lng: 60 },
+    ];
+    expect(createCityResolver(list)('Satellite', 60.04, 60)).toBe('Satellite');
+    expect(createCityResolver(list)('Elsewhere', 60.04, 60)).toBe('Metropolis');
+  });
+
+  it('a label that matches no nearby city falls to the big city', () => {
     expect(r('Bigtown', 50.05, 50)).toBe('Bigtown');
     expect(r('Metropolis', 10.05, 10.05)).toBe('Metropolis');
     expect(r('Smallville', 10.05, 10.05)).toBe('Metropolis');

@@ -21,6 +21,7 @@ function big(n: number) {
     game(i + 1, [row(i + 1, (i % 3) + 1, { developer: true })], {
       totalRatingCount: n - i,
       steamAppId: i % 2 === 0 ? 1000 + i : null,
+      steamAppIds: i % 2 === 0 ? [1000 + i] : [],
     }),
   );
   return merge(input({ companies: [company(1, 'A'), company(2, 'B'), company(3, 'C')], games }));

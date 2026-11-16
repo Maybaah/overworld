@@ -9,6 +9,7 @@ import {
   type GameDetail,
   type GameSummary,
   type LeadBasis,
+  type LocationBasis,
   type LocationPrecision,
   type RoleType,
   type SourceRef,
@@ -45,6 +46,14 @@ export interface LocationCorrection {
   evidenceUrl: string;
 }
 
+export interface LeadOverride {
+  igdbGameId: number;
+  game: string;
+  igdbCompanyId: number;
+  company: string;
+  evidenceUrl: string;
+}
+
 export interface MergeInput {
   games: RawIgdbGame[];
   companies: RawIgdbCompany[];
@@ -54,7 +63,9 @@ export interface MergeInput {
   moby: RawMobyGame[] | null;
   specialties: Specialty[];
   locationCorrections: LocationCorrection[];
+  leadOverrides: LeadOverride[];
   resolveCity: (label: string, lat: number, lng: number) => string;
+  resolveCountry: (lat: number, lng: number) => string | null;
   gameLimit: number;
   now: Date;
 }
@@ -65,6 +76,7 @@ export interface CountryConflict {
   wikidataQid: string;
   wikidataCountry: string | null;
   igdbCountry: string | null;
+  wikidataCity: string | null;
 }
 
 export interface MergeReport {
@@ -77,6 +89,16 @@ export interface MergeReport {
   unmatchedSupportCompanies: { companyId: number; name: string; gameCount: number }[];
   unusedLocationCorrections: { name: string; igdbCompanyId: number | null }[];
   countryFromGames: number;
+  cityFromParent: { companyId: number; name: string; parentId: number; parentName: string; city: string }[];
+  unusedLeadOverrides: { igdbGameId: number; game: string; igdbCompanyId: number; reason: string }[];
+  lowConfidenceLeads: {
+    gameId: number;
+    name: string;
+    companyId: number;
+    company: string;
+    others: { companyId: number; name: string }[];
+  }[];
+  steamIdsContested: number;
   leadStudiosWithoutCity: {
     companyId: number;
     name: string;
@@ -91,12 +113,15 @@ export interface MergeResult {
   companies: Company[];
   games: GameSummary[];
   details: GameDetail[];
+  steam: Record<string, number>;
   report: MergeReport;
 }
 
 export const MOBY_ONLY_COMPANY_OFFSET = 20_000_000;
 
 const LEAD_BASES: LeadBasis[] = [
+  'curated',
+  'igdb_developer_heuristic',
   'igdb_single_developer',
   'igdb_developer_confirmed_by_wikidata',
   'igdb_first_developer',
@@ -121,6 +146,22 @@ export function mapMobyRole(roleName: string): RoleType {
 
 const INDIE_GENRE_ID = 32;
 const LEAD_WORKLIST_SIZE = 100;
+const LOW_CONFIDENCE_SIZE = 150;
+const PORT_HOUSE_SHARE = 0.4;
+const PORT_HOUSE_MIN_ROWS = 3;
+
+const DIVISION_MARKER =
+  /\b(production studio|development division|division|department|dept|r ?& ?d|ead|epd|spd|group no|production group|team|development group|studio no|cs\d*|am ?\d|\d+(st|nd|rd|th)|software development)\b/i;
+
+function looksLikeDivision(childName: string, parentName: string): boolean {
+  const firstWord = (n: string) => normalizeCompanyName(n).split(' ')[0] ?? '';
+  const parentFirst = firstWord(parentName);
+  return parentFirst !== '' && firstWord(childName) === parentFirst && DIVISION_MARKER.test(childName);
+}
+
+function steamIdsOf(g: RawIgdbGame): number[] {
+  return g.steamAppIds ?? (g.steamAppId !== null && g.steamAppId !== undefined ? [g.steamAppId] : []);
+}
 
 function utcYear(unixSeconds: number | null): number | null {
   return unixSeconds === null ? null : new Date(unixSeconds * 1000).getUTCFullYear();
@@ -165,6 +206,7 @@ interface GameWork {
   year: number | null;
   leadId: number;
   basis: LeadBasis;
+  candidates: number[];
   roles: GameCompanyRole[];
   companyRefs: { companyId: number; ref: SourceRef }[];
   sources: SourceRef[];
@@ -220,6 +262,25 @@ export function merge(input: MergeInput): MergeResult {
   const specialtyOf = (id: number): Specialty | undefined =>
     specById.get(id) ?? specByName.get(normName.get(id) ?? '');
 
+  const overrideByGame = new Map(input.leadOverrides.map((o) => [o.igdbGameId, o]));
+  const usedOverrides = new Set<number>();
+  const unusedOverrides: MergeReport['unusedLeadOverrides'] = [];
+
+  const portRows = new Map<number, number>();
+  const developerRows = new Map<number, number>();
+  for (const g of input.games) {
+    for (const r of g.involvedCompanies) {
+      if (r.porting) portRows.set(r.company, (portRows.get(r.company) ?? 0) + 1);
+      if (r.developer) developerRows.set(r.company, (developerRows.get(r.company) ?? 0) + 1);
+    }
+  }
+  const isPortHouse = (id: number): boolean => {
+    const ports = portRows.get(id) ?? 0;
+    return ports >= PORT_HOUSE_MIN_ROWS && ports / (ports + (developerRows.get(id) ?? 0)) >= PORT_HOUSE_SHARE;
+  };
+  const igdbOrWikidataCountry = (id: number): string | null =>
+    numericToAlpha2(companyById.get(id)?.country) ?? wdCompanyById.get(id)?.country ?? null;
+
   const mobyOnlyNames = new Map<number, string>();
   const dropped: MergeReport['droppedGames'] = [];
   const works: GameWork[] = [];
@@ -270,7 +331,13 @@ export function merge(input: MergeInput): MergeResult {
     let basis: LeadBasis | null = null;
     let leadRef = gameRef;
 
-    if (pool.length === 1) {
+    const override = overrideByGame.get(game.id);
+    if (override && companyById.has(override.igdbCompanyId)) {
+      usedOverrides.add(game.id);
+      leadId = override.igdbCompanyId;
+      basis = 'curated';
+      leadRef = { source: 'curated', id: `lead-${game.id}`, url: override.evidenceUrl };
+    } else if (pool.length === 1) {
       leadId = pool[0]!.company;
       basis = 'igdb_single_developer';
     } else if (pool.length > 1) {
@@ -280,8 +347,16 @@ export function merge(input: MergeInput): MergeResult {
         basis = 'igdb_developer_confirmed_by_wikidata';
       }
       if (leadId === null) {
-        leadId = pool[0]!.company;
-        basis = 'igdb_first_developer';
+        let left = pool;
+        const withoutPortHouses = left.filter((r) => !isPortHouse(r.company));
+        if (withoutPortHouses.length > 0) left = withoutPortHouses;
+        const origin = wdGame?.countryOfOrigin;
+        if (origin) {
+          const sameCountry = left.filter((r) => igdbOrWikidataCountry(r.company) === origin);
+          if (sameCountry.length > 0) left = sameCountry;
+        }
+        leadId = left[0]!.company;
+        basis = left.length === 1 ? 'igdb_developer_heuristic' : 'igdb_first_developer';
       }
     } else {
       const hit = pickByWikidata(rows);
@@ -321,6 +396,7 @@ export function merge(input: MergeInput): MergeResult {
       }
     }
     if (leadId === null || basis === null) return 'no lead';
+    const candidates = pool.map((r) => r.company);
 
     const roles: GameCompanyRole[] = [];
     const companyRefs: GameWork['companyRefs'] = [];
@@ -395,7 +471,18 @@ export function merge(input: MergeInput): MergeResult {
         (a.platform ?? '').localeCompare(b.platform ?? ''),
     );
 
-    return { raw: game, year, leadId, basis, roles, companyRefs, sources };
+    return { raw: game, year, leadId, basis, candidates, roles, companyRefs, sources };
+  }
+
+  for (const o of input.leadOverrides) {
+    if (usedOverrides.has(o.igdbGameId)) continue;
+    const gameKnown = input.games.some((g) => g.id === o.igdbGameId);
+    const reason = !companyById.has(o.igdbCompanyId)
+      ? 'company not found in igdb-companies'
+      : gameKnown
+        ? 'game not built'
+        : 'game not found in igdb-games';
+    unusedOverrides.push({ igdbGameId: o.igdbGameId, game: o.game, igdbCompanyId: o.igdbCompanyId, reason });
   }
 
   const kept = works
@@ -424,6 +511,7 @@ export function merge(input: MergeInput): MergeResult {
 
   const rejected: CountryConflict[] = [];
   const mismatches: CountryConflict[] = [];
+  const cityFromParent: MergeReport['cityFromParent'] = [];
   const wikidataMatchCounts: Record<WikidataMatchBasis, number> = { external_id: 0, via_game: 0, name: 0 };
   const companiesByPrecision: Record<LocationPrecision, number> = { city: 0, country: 0, none: 0 };
   const companyIds = [...agg.keys()].sort((a, b) => a - b);
@@ -439,6 +527,125 @@ export function merge(input: MergeInput): MergeResult {
     const entry = { country: wdGame.countryOfOrigin, qid: wdGame.qid };
     if (list) list.push(entry);
     else ledWithCountry.set(w.leadId, [entry]);
+  }
+
+  interface Location {
+    country: string | null;
+    city: string | null;
+    lat: number | null;
+    lng: number | null;
+    precision: LocationPrecision;
+    source: SourceRef | null;
+    basis: LocationBasis | null;
+    wd: RawWikidataCompany | null;
+    fix: LocationCorrection | null;
+    rejected: CountryConflict | null;
+    mismatch: CountryConflict | null;
+    fromGames: boolean;
+  }
+
+  const locations = new Map<number, Location>();
+  function locationOf(raw: RawIgdbCompany): Location {
+    const cached = locations.get(raw.id);
+    if (cached) return cached;
+
+    const igdbCountry = numericToAlpha2(raw.country);
+    let wd = wdCompanyById.get(raw.id) ?? null;
+    let rejectedRecord: CountryConflict | null = null;
+    let mismatch: CountryConflict | null = null;
+    if (wd && igdbCountry !== null && wd.country !== null && igdbCountry !== wd.country && wd.matchedBy === 'name') {
+      rejectedRecord = {
+        companyId: raw.id,
+        name: raw.name,
+        wikidataQid: wd.qid,
+        wikidataCountry: wd.country,
+        igdbCountry,
+        wikidataCity: wd.hq?.label ?? null,
+      };
+      wd = null;
+    }
+    const hq = wd?.hq && validCoords(wd.hq.lat, wd.hq.lng) ? wd.hq : null;
+    let placeRejected = false;
+    if (wd && hq && igdbCountry !== null) {
+      const hqCountry = wd.country ?? input.resolveCountry(hq.lat, hq.lng);
+      if (hqCountry !== null && hqCountry !== igdbCountry) {
+        placeRejected = true;
+        mismatch = {
+          companyId: raw.id,
+          name: raw.name,
+          wikidataQid: wd.qid,
+          wikidataCountry: hqCountry,
+          igdbCountry,
+          wikidataCity: hq.label,
+        };
+      }
+    }
+
+    const loc: Location = {
+      country: null,
+      city: null,
+      lat: null,
+      lng: null,
+      precision: 'none',
+      source: null,
+      basis: null,
+      wd,
+      fix: null,
+      rejected: rejectedRecord,
+      mismatch,
+      fromGames: false,
+    };
+
+    const fix = correctionFor(raw.id, raw.name);
+    if (fix) {
+      loc.fix = fix;
+      loc.country = fix.country;
+      loc.city = fix.city;
+      loc.lat = fix.lat;
+      loc.lng = fix.lng;
+      loc.precision = 'city';
+      loc.source = { source: 'curated', id: normalizeCompanyName(fix.name), url: fix.evidenceUrl };
+      loc.basis = 'correction';
+    } else if (wd && hq && !placeRejected) {
+      loc.country = wd.country ?? igdbCountry;
+      loc.city = input.resolveCity(hq.label, hq.lat, hq.lng);
+      loc.lat = hq.lat;
+      loc.lng = hq.lng;
+      loc.precision = 'city';
+      loc.source = wikidataRef(wd.qid);
+      loc.basis = wd.hqBasis ?? 'headquarters';
+    } else {
+      loc.country = igdbCountry ?? wd?.country ?? null;
+      const centre = countryCentre(loc.country);
+      if (centre) {
+        loc.lat = centre.lat;
+        loc.lng = centre.lng;
+        loc.precision = 'country';
+        loc.source = igdbCountry !== null ? igdbCompanyRef(raw) : wikidataRef(wd!.qid);
+        loc.basis = 'country';
+      }
+    }
+
+    if (loc.country === null) {
+      const led = ledWithCountry.get(raw.id);
+      if (led && led.length > 0 && led.every((l) => l.country === led[0]!.country)) {
+        loc.country = led[0]!.country;
+        loc.fromGames = true;
+        if (loc.precision === 'none') {
+          const centre = countryCentre(loc.country);
+          if (centre) {
+            loc.lat = centre.lat;
+            loc.lng = centre.lng;
+            loc.precision = 'country';
+            loc.source = wikidataRef(led[0]!.qid);
+            loc.basis = 'games_origin';
+          }
+        }
+      }
+    }
+
+    locations.set(raw.id, loc);
+    return loc;
   }
 
   for (const id of companyIds) {
@@ -460,89 +667,55 @@ export function merge(input: MergeInput): MergeResult {
         lng: fix?.lng ?? null,
         precision: fix ? 'city' : 'none',
         locationSource: fixRef,
+        locationBasis: fix ? 'correction' : null,
         founded: null,
         parentId: null,
         firstYear: a.firstYear,
         lastYear: a.lastYear,
         gameCount: a.gameCount,
         leadCount: a.leadCount,
-        sources: dedupeRefs([{ source: 'mobygames', id: String(id - MOBY_ONLY_COMPANY_OFFSET) }, ...(fixRef ? [fixRef] : []), ...a.refs]),
+        sources: dedupeRefs([
+          { source: 'mobygames', id: String(id - MOBY_ONLY_COMPANY_OFFSET) },
+          ...(fixRef ? [fixRef] : []),
+          ...a.refs,
+        ]),
       });
       companiesByPrecision[fix ? 'city' : 'none']++;
       continue;
     }
 
-    const igdbRef = igdbCompanyRef(raw);
-    const igdbCountry = numericToAlpha2(raw.country);
-    let wd = wdCompanyById.get(id) ?? null;
-    if (wd) {
-      const conflict = { companyId: id, name: raw.name, wikidataQid: wd.qid, wikidataCountry: wd.country, igdbCountry };
-      const differ = igdbCountry !== null && wd.country !== null && igdbCountry !== wd.country;
-      if (differ && wd.matchedBy === 'name') {
-        rejected.push(conflict);
-        wd = null;
-      } else if (differ) {
-        mismatches.push(conflict);
-      }
-    }
-    if (wd) wikidataMatchCounts[wd.matchedBy]++;
+    const base = locationOf(raw);
+    if (base.rejected) rejected.push(base.rejected);
+    if (base.mismatch) mismatches.push(base.mismatch);
+    if (base.wd) wikidataMatchCounts[base.wd.matchedBy]++;
+    if (base.fix) usedCorrections.add(base.fix);
+    if (base.fromGames) countryFromGames++;
 
-    let country: string | null = null;
-    let city: string | null = null;
-    let lat: number | null = null;
-    let lng: number | null = null;
-    let precision: LocationPrecision = 'none';
-    let locationSource: SourceRef | null = null;
+    let { country, city, lat, lng, precision } = base;
+    let locationSource = base.source;
+    let locationBasis = base.basis;
 
-    const fix = correctionFor(id, raw.name);
-    let fixRef: SourceRef | null = null;
-    if (fix) {
-      usedCorrections.add(fix);
-      fixRef = { source: 'curated', id: normalizeCompanyName(fix.name), url: fix.evidenceUrl };
-      country = fix.country;
-      city = fix.city;
-      lat = fix.lat;
-      lng = fix.lng;
-      precision = 'city';
-      locationSource = fixRef;
-    } else if (wd?.hq && validCoords(wd.hq.lat, wd.hq.lng)) {
-      country = wd.country ?? igdbCountry;
-      city = input.resolveCity(wd.hq.label, wd.hq.lat, wd.hq.lng);
-      lat = wd.hq.lat;
-      lng = wd.hq.lng;
-      precision = 'city';
-      locationSource = wikidataRef(wd.qid);
-    } else {
-      const fromIgdb = igdbCountry !== null;
-      country = igdbCountry ?? wd?.country ?? null;
-      const centre = countryCentre(country);
-      if (centre) {
-        lat = centre.lat;
-        lng = centre.lng;
-        precision = 'country';
-        locationSource = fromIgdb ? igdbRef : wikidataRef(wd!.qid);
-      }
-    }
-
-    if (country === null) {
-      const led = ledWithCountry.get(id);
-      if (led && led.length > 0 && led.every((l) => l.country === led[0]!.country)) {
-        country = led[0]!.country;
-        countryFromGames++;
-        if (precision === 'none') {
-          const centre = countryCentre(country);
-          if (centre) {
-            lat = centre.lat;
-            lng = centre.lng;
-            precision = 'country';
-            locationSource = wikidataRef(led[0]!.qid);
-          }
+    if (precision !== 'city' && country !== null && raw.parent !== null) {
+      const parentRaw = companyById.get(raw.parent);
+      if (parentRaw && looksLikeDivision(raw.name, parentRaw.name)) {
+        const parent = locationOf(parentRaw);
+        if (parent.precision === 'city' && parent.city && parent.country === country) {
+          city = parent.city;
+          lat = parent.lat;
+          lng = parent.lng;
+          precision = 'city';
+          locationSource = parent.source;
+          locationBasis = 'parent';
+          cityFromParent.push({ companyId: id, name: raw.name, parentId: parentRaw.id, parentName: parentRaw.name, city });
         }
       }
     }
     companiesByPrecision[precision]++;
 
-    const startYear = utcYear(raw.startDate);
+    const extraRefs: SourceRef[] = [igdbCompanyRef(raw)];
+    if (base.wd) extraRefs.push(wikidataRef(base.wd.qid));
+    if (base.fix) extraRefs.push({ source: 'curated', id: normalizeCompanyName(base.fix.name), url: base.fix.evidenceUrl });
+
     companies.push({
       id,
       name: raw.name,
@@ -552,13 +725,14 @@ export function merge(input: MergeInput): MergeResult {
       lng,
       precision,
       locationSource,
-      founded: wd?.inception ?? startYear,
+      locationBasis,
+      founded: base.wd?.inception ?? utcYear(raw.startDate),
       parentId: raw.parent !== null && outputIds.has(raw.parent) ? raw.parent : null,
       firstYear: a.firstYear,
       lastYear: a.lastYear,
       gameCount: a.gameCount,
       leadCount: a.leadCount,
-      sources: dedupeRefs([igdbRef, ...(wd ? [wikidataRef(wd.qid)] : []), ...(fixRef ? [fixRef] : []), ...a.refs]),
+      sources: dedupeRefs([...extraRefs, ...a.refs]),
     });
   }
 
@@ -574,12 +748,38 @@ export function merge(input: MergeInput): MergeResult {
     indie: w.raw.genres.includes(INDIE_GENRE_ID),
   }));
 
+  const claims = new Map<number, { pos: number; index: number; size: number }>();
+  const contested = new Set<number>();
+  kept.forEach((w, pos) => {
+    const ids = steamIdsOf(w.raw);
+    ids.forEach((id, index) => {
+      const mine = { pos, index, size: ids.length };
+      const cur = claims.get(id);
+      if (!cur) {
+        claims.set(id, mine);
+        return;
+      }
+      contested.add(id);
+      if (mine.index < cur.index || (mine.index === cur.index && mine.size < cur.size)) claims.set(id, mine);
+    });
+  });
+  const steam: Record<string, number> = {};
+  const ownSteamId = new Map<number, number>();
+  for (const id of [...claims.keys()].sort((a, b) => a - b)) {
+    const gameId = kept[claims.get(id)!.pos]!.raw.id;
+    steam[String(id)] = gameId;
+  }
+  kept.forEach((w, pos) => {
+    const first = steamIdsOf(w.raw).find((id) => claims.get(id)!.pos === pos);
+    if (first !== undefined) ownSteamId.set(w.raw.id, first);
+  });
+
   const details: GameDetail[] = kept.map((w) => ({
     id: w.raw.id,
     leadBasis: w.basis,
     platforms: w.raw.platforms,
     screenshots: w.raw.screenshots,
-    steamAppId: w.raw.steamAppId,
+    steamAppId: ownSteamId.get(w.raw.id) ?? null,
     roles: w.roles,
     sources: w.sources,
   }));
@@ -632,6 +832,7 @@ export function merge(input: MergeInput): MergeResult {
     companies,
     games,
     details,
+    steam,
     report: {
       droppedGames: dropped,
       leadBasisCounts,
@@ -644,6 +845,21 @@ export function merge(input: MergeInput): MergeResult {
         .filter((c) => !usedCorrections.has(c))
         .map((c) => ({ name: c.name, igdbCompanyId: c.igdbCompanyId ?? null })),
       countryFromGames,
+      cityFromParent,
+      unusedLeadOverrides: unusedOverrides,
+      lowConfidenceLeads: kept
+        .filter((w) => w.basis === 'igdb_first_developer')
+        .slice(0, LOW_CONFIDENCE_SIZE)
+        .map((w) => ({
+          gameId: w.raw.id,
+          name: w.raw.name,
+          companyId: w.leadId,
+          company: companyById.get(w.leadId)?.name ?? String(w.leadId),
+          others: w.candidates
+            .filter((id) => id !== w.leadId)
+            .map((id) => ({ companyId: id, name: companyById.get(id)?.name ?? String(id) })),
+        })),
+      steamIdsContested: contested.size,
       leadStudiosWithoutCity: companies
         .filter((c) => c.leadCount > 0 && c.precision !== 'city')
         .sort((a, b) => b.leadCount - a.leadCount || a.id - b.id)

@@ -45,6 +45,7 @@ export function game(id: number, rows: RawIgdbInvolvedCompany[], over: Partial<R
     screenshots: [],
     involvedCompanies: rows,
     steamAppId: null,
+    steamAppIds: [],
     ...over,
   };
 }
@@ -102,7 +103,9 @@ export function input(over: Partial<MergeInput> = {}): MergeInput {
     moby: null,
     specialties: [],
     locationCorrections: [],
+    leadOverrides: [],
     resolveCity: (label) => label,
+    resolveCountry: () => null,
     gameLimit: 10_000,
     now: new Date('2026-01-01T00:00:00Z'),
     ...over,

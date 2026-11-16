@@ -344,20 +344,23 @@ describe('merge: company location (f)', () => {
     expect(c).toMatchObject({ country: 'JP', precision: 'country', founded: null });
     expect(c.sources.map((s) => s.source)).toEqual(['igdb']);
     expect(r.report.rejectedWikidataMatches).toEqual([
-      { companyId: 1, name: 'A', wikidataQid: 'Q1', wikidataCountry: 'US', igdbCountry: 'JP' },
+      { companyId: 1, name: 'A', wikidataQid: 'Q1', wikidataCountry: 'US', igdbCountry: 'JP', wikidataCity: 'Austin' },
     ]);
     expect(r.report.wikidataMatchCounts.name).toBe(0);
   });
 
-  it('keeps an external-id or via-game Wikidata record with a different country and reports it', () => {
+  it('rejects the Wikidata place of an external-id or via-game record with a different country, keeps the record, and reports it', () => {
     for (const matchedBy of ['external_id', 'via_game'] as const) {
       const r = merge(input({
         companies: [company(1, 'A', { country: 392 })],
         games: g,
         wikidataCompanies: [wdCompany(1, { matchedBy, country: 'US', hq: { qid: 'Q1', label: 'Austin', lat: 30, lng: -97 } })],
       }));
-      expect(r.companies[0]).toMatchObject({ country: 'US', city: 'Austin', precision: 'city' });
-      expect(r.report.countryMismatches).toHaveLength(1);
+      expect(r.companies[0]).toMatchObject({ country: 'JP', city: null, precision: 'country', locationBasis: 'country' });
+      expect(r.companies[0]!.sources.map((x) => x.source)).toEqual(['igdb', 'wikidata']);
+      expect(r.report.countryMismatches).toEqual([
+        { companyId: 1, name: 'A', wikidataQid: 'Q1', wikidataCountry: 'US', igdbCountry: 'JP', wikidataCity: 'Austin' },
+      ]);
       expect(r.report.rejectedWikidataMatches).toHaveLength(0);
       expect(r.report.wikidataMatchCounts[matchedBy]).toBe(1);
     }

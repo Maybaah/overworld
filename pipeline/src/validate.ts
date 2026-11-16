@@ -18,7 +18,8 @@ import {
   type SourceRef,
 } from '../../shared/model';
 import { loadConfig } from './config';
-import { countryName } from './countries';
+import { countryAreaKm2, countryCentre, countryName } from './countries';
+import { distanceKm } from './cities';
 
 export interface ValidationCheck {
   name: string;
@@ -44,7 +45,16 @@ export interface ValidationResult {
   countryOnlyLeadShare: { count: number; total: number; percent: number };
   leadBasisCounts: Record<string, number>;
   insights: Insights;
+  warnings: ValidationWarning[];
+  lowConfidenceLeads: { gameId: number; name: string; lead: string; others: string[] }[];
   leadStudiosWithoutCity: { id: number; name: string; precision: LocationPrecision; country: string | null; ledGames: number }[];
+}
+
+export interface ValidationWarning {
+  name: string;
+  description: string;
+  count: number;
+  items: string[];
 }
 
 export interface Insights {
@@ -85,6 +95,8 @@ function emptyResult(check: Check): ValidationResult {
     countryOnlyLeadShare: { count: 0, total: 0, percent: 0 },
     leadBasisCounts: {},
     insights: { topCountriesByGamesLed: [], topCountriesPerMillion: [], topLocalizationFlows: [], topQaFlows: [] },
+    warnings: [],
+    lowConfidenceLeads: [],
     leadStudiosWithoutCity: [],
   };
 }
@@ -383,7 +395,55 @@ export function validateOutput(outDir: string): ValidationResult {
     }
   }
 
-  const checks = [missing, chunkCheck, dupCompanies, dupGames, leads, sourcesCheck, coords, refs, sorted, roleTypes, counts, gameCount, cgCheck, statsCheck, flowsCheck].map((c) => c.result());
+  const locationFields = new Check(
+    'company-location-fields',
+    'located companies have a location source and basis; city precision has a city name; precision none has no basis',
+  );
+  for (const c of companies) {
+    const label = `company ${c.id} "${c.name}"`;
+    if (c.precision === 'city' || c.precision === 'country') {
+      if (!c.locationSource) locationFields.fail(`${label}: precision ${c.precision} without locationSource`);
+      if (!c.locationBasis) locationFields.fail(`${label}: precision ${c.precision} without locationBasis`);
+    }
+    if (c.precision === 'city' && (typeof c.city !== 'string' || c.city.trim() === '')) {
+      locationFields.fail(`${label}: precision city without a city name`);
+    }
+    if (c.precision === 'none' && c.locationBasis) locationFields.fail(`${label}: precision none but locationBasis ${c.locationBasis}`);
+  }
+
+  const farItems: string[] = [];
+  for (const c of companies) {
+    if ((c.precision !== 'city' && c.precision !== 'country') || !validCoord(c.lat, c.lng)) continue;
+    const centre = countryCentre(c.country);
+    const area = countryAreaKm2(c.country);
+    if (!centre || area === null) continue;
+    const limit = Math.max(800, 2.5 * Math.sqrt(area / Math.PI));
+    const km = distanceKm(c.lat!, c.lng!, centre.lat, centre.lng);
+    if (km > limit) farItems.push(`company ${c.id} "${c.name}" (${c.country}, ${c.city ?? 'country centre'}): ${Math.round(km)} km from the country centre, limit ${Math.round(limit)} km`);
+  }
+  const warnings: ValidationWarning[] = [
+    {
+      name: 'Coordinates far from the stated country',
+      description: 'Overseas territories and distant branch offices can appear here legitimately.',
+      count: farItems.length,
+      items: farItems,
+    },
+  ];
+
+  const lowConfidenceLeads: ValidationResult['lowConfidenceLeads'] = [];
+  for (const g of games) {
+    if (lowConfidenceLeads.length >= 30) break;
+    const d = detailByGame.get(g.id);
+    if (d?.leadBasis !== 'igdb_first_developer') continue;
+    lowConfidenceLeads.push({
+      gameId: g.id,
+      name: g.name,
+      lead: companyById.get(g.leadCompanyId)?.name ?? String(g.leadCompanyId),
+      others: (d.roles ?? []).filter((r) => r.role === 'co_developer').map((r) => companyById.get(r.companyId)?.name ?? String(r.companyId)),
+    });
+  }
+
+  const checks = [missing, chunkCheck, dupCompanies, dupGames, leads, sourcesCheck, coords, refs, sorted, roleTypes, counts, gameCount, cgCheck, statsCheck, flowsCheck, locationFields].map((c) => c.result());
 
   const precision = {} as ValidationResult['precision'];
   for (const p of PRECISIONS) {
@@ -410,6 +470,8 @@ export function validateOutput(outDir: string): ValidationResult {
     flaggedCompanies,
     countryOnlyLeadShare: { count: countryLeads, total: games.length, percent: pct(countryLeads, games.length) },
     leadBasisCounts,
+    warnings,
+    lowConfidenceLeads,
     leadStudiosWithoutCity: companies
       .filter((c) => c.leadCount > 0 && c.precision !== 'city')
       .sort((a, b) => b.leadCount - a.leadCount || a.id - b.id)
@@ -437,6 +499,8 @@ function buildInsights(stats: StatsFile | null, flows: FlowsFile | null): Insigh
     topQaFlows: flowList.filter((f) => f.role === 'qa').slice(0, 10),
   };
 }
+
+const esc = (text: string): string => text.replace(/\|/g, '\\|');
 
 export function formatSummary(result: ValidationResult, topFlagged = 50): string {
   const lines: string[] = [];
@@ -472,6 +536,16 @@ export function formatSummary(result: ValidationResult, topFlagged = 50): string
   };
   flowTable('Top 10 localization flows (lead studio country to localizer country)', ins.topLocalizationFlows);
   flowTable('Top 10 QA flows (lead studio country to QA country)', ins.topQaFlows);
+  lines.push('', '## Warnings (not failures)', '');
+  for (const w of result.warnings) {
+    lines.push(`### ${w.name}: ${w.count}`, '', w.description, '');
+    for (const item of w.items.slice(0, 50)) lines.push(`- ${item}`);
+  }
+  lines.push('', '## Low-confidence leads', '', 'Games with several IGDB developers where nothing told them apart (first 30 by popularity).', '');
+  if (result.lowConfidenceLeads.length > 0) {
+    lines.push('| Game | Chosen lead | Other developers |', '| --- | --- | --- |');
+    for (const g of result.lowConfidenceLeads) lines.push(`| ${esc(g.name)} | ${esc(g.lead)} | ${esc(g.others.join(', '))} |`);
+  } else lines.push('None.');
   lines.push('', '## Lead studios without a city', '');
   if (result.leadStudiosWithoutCity.length === 0) lines.push('None.');
   else {

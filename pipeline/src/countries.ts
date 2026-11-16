@@ -1,7 +1,7 @@
 import countries from 'world-countries';
 
 const byNumeric = new Map<number, string>();
-const byAlpha2 = new Map<string, { name: string; region: string; subregion: string; lat: number; lng: number | null }>();
+const byAlpha2 = new Map<string, { name: string; region: string; subregion: string; area: number; lat: number; lng: number | null }>();
 
 for (const c of countries) {
   if (c.ccn3) byNumeric.set(Number(c.ccn3), c.cca2);
@@ -10,6 +10,7 @@ for (const c of countries) {
     name: c.name.common,
     region: c.region,
     subregion: c.subregion,
+    area: c.area,
     lat: lat ?? Number.NaN,
     lng: lng ?? null,
   });
@@ -36,4 +37,10 @@ export function countryRegion(alpha2: string | null | undefined): { region: stri
   if (!alpha2) return null;
   const c = byAlpha2.get(alpha2.toUpperCase());
   return c ? { region: c.region, subregion: c.subregion } : null;
+}
+
+export function countryAreaKm2(alpha2: string | null | undefined): number | null {
+  if (!alpha2) return null;
+  const c = byAlpha2.get(alpha2.toUpperCase());
+  return c && c.area > 0 ? c.area : null;
 }

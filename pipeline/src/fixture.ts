@@ -14,9 +14,13 @@ import {
   type GameDetail,
   type GameSummary,
   type LeadBasis,
+  type FlowsFile,
   type RoleType,
   type SourceRef,
+  type StatsFile,
 } from '../../shared/model';
+import { buildFlows, buildStats } from './aggregates';
+import type { RawPopulation } from './raw';
 
 const GAME_COUNT = 10_000;
 const COMPANY_COUNT = 9_000;
@@ -67,6 +71,18 @@ export interface Fixture {
   details: GameDetail[];
   steam: Record<string, number>;
   companyGames: CompanyGamesFile;
+  stats: StatsFile;
+  flows: FlowsFile;
+}
+
+function fixturePopulation(): RawPopulation {
+  const out: RawPopulation['countries'] = {};
+  for (const c of countries) {
+    let h = 17;
+    for (const ch of c.cca2) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
+    out[c.cca2] = { population: 400_000 + (h % 4000) * 100_000, year: 2023, qid: `Q${h % 100_000}` };
+  }
+  return { retrieved: '2026-01-01', countries: out };
 }
 
 function mulberry32(seed: number) {
@@ -325,7 +341,14 @@ export function generateFixture(seed = 20260101): Fixture {
     ],
   };
 
-  return { meta, companies, games, details, steam, companyGames };
+  const merged = { companies, games, details };
+  const stats = buildStats(merged, fixturePopulation());
+  const indieByYear = new Map<number, number>();
+  for (const g of games) if (g.year !== null && g.indie) indieByYear.set(g.year, (indieByYear.get(g.year) ?? 0) + 1);
+  for (const y of stats.years) y.indie = indieByYear.get(y.year) ?? 0;
+  const flows = buildFlows(merged);
+
+  return { meta, companies, games, details, steam, companyGames, stats, flows };
 }
 
 export function writeFixture(outDir: string, fixture: Fixture = generateFixture()): void {
@@ -337,6 +360,8 @@ export function writeFixture(outDir: string, fixture: Fixture = generateFixture(
   write('games.json', fixture.games);
   write('steam.json', fixture.steam);
   write('company-games.json', fixture.companyGames);
+  write('stats.json', fixture.stats);
+  write('flows.json', fixture.flows);
   const size = fixture.meta.detailChunkSize;
   for (let n = 0; n < fixture.meta.detailChunks; n++) {
     write(`details/${n}.json`, fixture.details.slice(n * size, (n + 1) * size));
