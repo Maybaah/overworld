@@ -8,13 +8,19 @@ import { ModeNav } from './ModeNav';
 beforeEach(() => seedStore());
 
 describe('ModeNav', () => {
-  it('is a labelled group of four toggle buttons with Explore pressed', () => {
+  it('is a labelled group of three toggle buttons with Explore pressed', () => {
     render(<ModeNav />);
     const group = screen.getByRole('group', { name: 'Mode' });
     const buttons = screen.getAllByRole('button');
     expect(group).toContainElement(buttons[0]!);
-    expect(buttons.map((b) => b.textContent)).toEqual(['Explore', 'Guess', 'My globe', 'Insights']);
-    expect(buttons.map((b) => b.getAttribute('aria-pressed'))).toEqual(['true', 'false', 'false', 'false']);
+    expect(buttons.map((b) => b.textContent)).toEqual(['Explore', 'My globe', 'Insights']);
+    expect(buttons.map((b) => b.getAttribute('aria-pressed'))).toEqual(['true', 'false', 'false']);
+  });
+
+  it('lists Guess only while guess mode is open', () => {
+    useStore.setState({ mode: 'guess' });
+    render(<ModeNav />);
+    expect(screen.getByRole('button', { name: 'Guess' })).toHaveAttribute('aria-pressed', 'true');
   });
 
   it('clicking sets the mode', async () => {
@@ -31,14 +37,14 @@ describe('ModeNav', () => {
     await user.tab();
     expect(screen.getByRole('button', { name: 'Explore' })).toHaveFocus();
     await user.keyboard('{ArrowRight}');
-    expect(screen.getByRole('button', { name: 'Guess' })).toHaveFocus();
+    expect(screen.getByRole('button', { name: 'My globe' })).toHaveFocus();
     await user.keyboard('{ArrowLeft}{ArrowLeft}');
     expect(screen.getByRole('button', { name: 'Insights' })).toHaveFocus();
     await user.keyboard('{ArrowRight}');
     expect(screen.getByRole('button', { name: 'Explore' })).toHaveFocus();
     await user.keyboard('{End}');
     expect(screen.getByRole('button', { name: 'Insights' })).toHaveFocus();
-    await user.keyboard('{Home}{ArrowRight}{ArrowRight}');
+    await user.keyboard('{Home}{ArrowRight}');
     expect(useStore.getState().mode).toBe('explore');
     await user.keyboard('{Enter}');
     expect(useStore.getState().mode).toBe('myglobe');

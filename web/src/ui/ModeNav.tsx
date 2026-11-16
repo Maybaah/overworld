@@ -1,17 +1,21 @@
 import { useRef, type KeyboardEvent } from 'react';
 import { useStore, type AppMode } from '../data/store';
 
-const MODES: { id: AppMode; label: string }[] = [
+const ALL_MODES: { id: AppMode; label: string }[] = [
   { id: 'explore', label: 'Explore' },
   { id: 'guess', label: 'Guess' },
   { id: 'myglobe', label: 'My globe' },
   { id: 'insights', label: 'Insights' },
 ];
 
+// Guess mode is built but not released: it only shows in the nav when a link opened it.
+const UNLISTED: AppMode[] = ['guess'];
+
 export function ModeNav() {
   const mode = useStore((s) => s.mode);
   const setMode = useStore((s) => s.setMode);
   const refs = useRef<(HTMLButtonElement | null)[]>([]);
+  const MODES = ALL_MODES.filter((m) => !UNLISTED.includes(m.id) || m.id === mode);
 
   function onKeyDown(e: KeyboardEvent<HTMLButtonElement>, index: number) {
     let next = index;

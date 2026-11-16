@@ -82,9 +82,9 @@ describe('Overlay', () => {
       seedStore();
       const user = userEvent.setup();
       render(<Overlay />);
-      await user.click(screen.getByRole('button', { name: 'Guess' }));
-      expect(useStore.getState().mode).toBe('guess');
-      expect(screen.getByRole('button', { name: 'Guess' })).toHaveAttribute('aria-pressed', 'true');
+      await user.click(screen.getByRole('button', { name: 'Insights' }));
+      expect(useStore.getState().mode).toBe('insights');
+      expect(screen.getByRole('button', { name: 'Insights' })).toHaveAttribute('aria-pressed', 'true');
       expect(screen.getByRole('button', { name: 'Explore' })).toHaveAttribute('aria-pressed', 'false');
     });
 
