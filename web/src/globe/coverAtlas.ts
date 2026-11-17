@@ -3,6 +3,7 @@ import { ATLAS, atlasHeight, slotCount, slotOrigin, slotUv, SlotCache, type Atla
 
 export const MAX_IN_FLIGHT = 4;
 const UPLOADS_PER_FRAME = 2;
+const MIPS_EVERY_MS = 250;
 
 export function coverUrl(id: string, size: 'cover_small' | 'cover_big' | 'cover_big_2x' | '1080p' = 'cover_small'): string {
   return `https://images.igdb.com/igdb/image/upload/t_${size}/${id}.jpg`;
@@ -25,6 +26,8 @@ export class CoverAtlas {
   private readonly abort = new AbortController();
   private disposed = false;
   private loadedTotal = 0;
+  private mipsDirty = false;
+  private mipsAt = -Infinity;
 
   constructor(
     private readonly renderer: THREE.WebGLRenderer,
@@ -119,7 +122,18 @@ export class CoverAtlas {
       this.loadedTotal++;
       changed = true;
     }
-    if (changed && this.mipmaps) this.renderer.getContext().generateMipmap(this.renderer.getContext().TEXTURE_2D);
+    // Mip levels of a big atlas are costly to rebuild, so uploads in a burst share one rebuild.
+    if (changed) this.mipsDirty = true;
+    const now = performance.now();
+    if (this.mipsDirty && this.mipmaps && now - this.mipsAt >= MIPS_EVERY_MS) {
+      this.mipsDirty = false;
+      this.mipsAt = now;
+      const gl = this.renderer.getContext();
+      const props = this.renderer.properties.get(this.texture) as { __webglTexture?: WebGLTexture };
+      this.renderer.state.activeTexture(gl.TEXTURE0);
+      this.renderer.state.bindTexture(gl.TEXTURE_2D, props.__webglTexture!);
+      gl.generateMipmap(gl.TEXTURE_2D);
+    }
     return changed;
   }
 
