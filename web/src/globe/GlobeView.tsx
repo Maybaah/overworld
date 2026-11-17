@@ -9,7 +9,6 @@ import {
   loadDetailedCountryShapes,
   type CountryShape,
 } from './countries';
-import { nearShapes, prepareDetail, upgradeShapes, type DetailShape } from './detail';
 import { DebugHud, type Readout } from './DebugHud';
 import { frameTarget, gameTarget, placeTarget, type Target } from './flight';
 import { FrameStats } from './frameStats';
@@ -18,11 +17,14 @@ import { MapLabels } from './mapLabels';
 import { countryAnchors } from './placeNames';
 import type { Rect } from './rectGrid';
 import { layoutCompanies } from './layout';
-import { CITY_FROM, LEVELS } from './levels';
+import { LEVELS } from './levels';
 import { CountriesLayer } from './countriesLayer';
 import { CoversLayer, type CoverEntry } from './coversLayer';
 import { MarkersLayer, type MarkerItem } from './markersLayer';
 import { MosaicLayer } from './mosaicLayer';
+import { GlobeControls, screenToGeo, type PovTarget } from './controls';
+import { GLOBE_RADIUS } from './outline';
+import { MOSAIC_ALTITUDE } from './mosaic/build';
 import type { MosaicFocus } from './mosaic/build';
 import { mosaicInput } from './mosaic/layouts';
 import { PICK_RADIUS_PX } from './picking';
@@ -78,9 +80,16 @@ function focusOf(pov: { lat: number; lng: number; altitude: number }, fov: numbe
   return { lat: Math.round(pov.lat / grid) * grid, lng: Math.round(pov.lng / grid) * grid, radius, zoom };
 }
 
-function focusKey(f: MosaicFocus | null): string {
-  return f ? `${f.lat.toFixed(2)},${f.lng.toFixed(2)},${f.zoom}` : '';
+// A new zoom step, or panning more than half a view away, changes which countries get extra cells.
+function focusChanged(a: MosaicFocus | null, b: MosaicFocus | null): boolean {
+  if (!a || !b) return a !== b;
+  if (a.zoom !== b.zoom) return true;
+  const r = Math.PI / 180;
+  const c = Math.sin(a.lat * r) * Math.sin(b.lat * r) + Math.cos(a.lat * r) * Math.cos(b.lat * r) * Math.cos((a.lng - b.lng) * r);
+  return Math.acos(Math.min(1, Math.max(-1, c))) / r > a.radius * 0.5;
 }
+
+const PICK_RADIUS = GLOBE_RADIUS * (1 + MOSAIC_ALTITUDE);
 
 const NO_ARCS: RoleArcs = { arcs: [], markers: [], labels: [] };
 const FLY_MS = 1200;
@@ -88,7 +97,6 @@ const SHADE_TOP = '#2f8f9d';
 const EXTRA_STROKE = 0.45;
 const BASE_RADIUS = 99.6;
 const SETTLE_MS = 160;
-const MOVING_LAYOUT_MS = 650;
 const TILE_PROPS = { globeTileEngineMaxLevel: TILE_MAX_LEVEL } as Record<string, unknown>;
 
 function useWindowSize() {
@@ -136,8 +144,6 @@ const tooltipStyle = {
 // The globe never needs to come closer than a few units, so a far near plane buys depth precision:
 // the mosaic sits a hair above the land fill and flickered against it with the default near plane.
 const CAMERA_NEAR = 2;
-// Farther than this the whole globe is already in view and the mosaic turns to noise.
-const MAX_DISTANCE = 100 * (1 + 2.4);
 
 // Over the North Atlantic, so North America, Europe and Africa are all in view at load.
 const START_VIEW = { lat: 36, lng: -32, altitude: 2.1 };
@@ -161,13 +167,10 @@ export function GlobeView() {
   const relayoutRef = useRef<'none' | 'sticky' | 'fresh'>('fresh');
   const markersRef = useRef<MarkersLayer | null>(null);
   const countriesRef = useRef<CountriesLayer | null>(null);
+  const navRef = useRef<GlobeControls | null>(null);
   const labelsRef = useRef<LabelManager | null>(null);
   const statsRef = useRef(new FrameStats());
   const dirtyRef = useRef(false);
-  const detailRequested = useRef(false);
-  const detailRef = useRef<DetailShape[] | null>(null);
-  const upgradedRef = useRef(new Set<string>());
-  const needUpgrade = useRef(false);
   const mountedRef = useRef(true);
   const [ready, setReady] = useState(false);
   const [imagery, setImagery] = useState<ImageryState>('off');
@@ -282,17 +285,17 @@ export function GlobeView() {
   const onZoom = useCallback((pov: { altitude: number }) => {
     layerRef.current?.setAltitude(pov.altitude);
     dirtyRef.current = true;
-    if (pov.altitude < CITY_FROM && !detailRequested.current) {
-      detailRequested.current = true;
-      loadDetailedCountryShapes()
-        .then((s) => {
-          detailRef.current = prepareDetail(s);
-          needUpgrade.current = true;
-        })
-        .catch(() => {
-          detailRequested.current = false;
-        });
-    }
+  }, []);
+
+  // The fill uses the same detailed outlines as the mosaic and the borders, loaded once, so coasts match.
+  useEffect(() => {
+    let live = true;
+    void loadDetailedCountryShapes().then((s) => {
+      if (live) setShapes(s);
+    });
+    return () => {
+      live = false;
+    };
   }, []);
   const onGlobeReady = useCallback(() => setReady(true), []);
 
@@ -300,19 +303,23 @@ export function GlobeView() {
     const globe = globeRef.current;
     if (!ready || !globe) return;
     const controls = globe.controls();
-    const stopRotation = () => {
-      controls.autoRotate = false;
-    };
+    controls.enabled = false;
+    controls.autoRotate = false;
     const st = useStore.getState();
     if (st.selectedGameId === null && st.selectedPlace === null) globe.pointOfView(START_VIEW, 0);
-    controls.autoRotate = !reducedMotion && st.selectedGameId === null && st.selectedPlace === null;
-    controls.autoRotateSpeed = 0.35;
-    controls.maxDistance = MAX_DISTANCE;
     const camera = globe.camera() as THREE.PerspectiveCamera;
     camera.near = CAMERA_NEAR;
     camera.updateProjectionMatrix();
-    controls.addEventListener('start', stopRotation);
-    return () => controls.removeEventListener('start', stopRotation);
+    const nav = new GlobeControls(
+      globe.renderer().domElement,
+      globe as unknown as PovTarget,
+      !reducedMotion && st.selectedGameId === null && st.selectedPlace === null,
+    );
+    navRef.current = nav;
+    return () => {
+      nav.dispose();
+      navRef.current = null;
+    };
   }, [ready, reducedMotion]);
 
   useEffect(() => {
@@ -429,7 +436,6 @@ export function GlobeView() {
     let mosaicPicking = false;
     let mosaicMovedAt = -Infinity;
     let mosaicSettled = true;
-    let mosaicPickedAt = -Infinity;
     relayoutRef.current = 'fresh';
     let lastMove = -Infinity;
     let lastLayout = -Infinity;
@@ -440,9 +446,11 @@ export function GlobeView() {
       const t0 = performance.now();
       const level = layer.level();
       const arcRects = labels?.obstacles() ?? [];
-      const chosen = covers.select({ frame, level, counts: layer.counts(level), sticky, obstacles: arcRects });
-      for (const l of LEVELS) covers.coveredMask(l, layer.coveredMask(l));
-      layer.applyCovered();
+      const chosen = mosaic.visible ? [] : covers.select({ frame, level, counts: layer.counts(level), sticky, obstacles: arcRects });
+      if (!mosaic.visible) {
+        for (const l of LEVELS) covers.coveredMask(l, layer.coveredMask(l));
+        layer.applyCovered();
+      }
       if (names) {
         const st = useStore.getState();
         const cityCounts = st.timeline ? st.timeline.levelAt('city', st.year) : new Uint32Array(0);
@@ -451,9 +459,9 @@ export function GlobeView() {
         names.layout({
           frame,
           altitude: globe.pointOfView().altitude,
-          showCities: level !== 'country',
+          showCities: false,
           cityCounts,
-          obstacles: [...covers.rects(), ...arcRects],
+          obstacles: mosaic.visible ? arcRects : [...covers.rects(), ...arcRects],
           cityAround: (i, x, y) => cityRects.get(i) ?? { x: x - 5, y: y - 5, w: 10, h: 10 },
           sticky,
         });
@@ -567,7 +575,7 @@ ${where}`;
       const p = track(ev);
       if (!isClick(pointer.downX, pointer.downY, p.x, p.y)) return;
       if (mosaic.visible) {
-        const geo = globe.toGlobeCoords(p.nx * canvas.clientWidth, p.ny * canvas.clientHeight);
+        const geo = screenToGeo(camera, p.nx * canvas.clientWidth, p.ny * canvas.clientHeight, canvas.clientWidth, canvas.clientHeight, PICK_RADIUS);
         if (!geo) return;
         void mosaic.pick(geo.lat, geo.lng).then((id) => {
           if (id !== null) void useStore.getState().selectGame(id);
@@ -580,7 +588,7 @@ ${where}`;
         useStore.getState().selectPlace({ level: hit.level, key: layer.keyAt(hit.level, hit.index) });
         return;
       }
-      const geo = globe.toGlobeCoords(p.nx * canvas.clientWidth, p.ny * canvas.clientHeight);
+      const geo = screenToGeo(camera, p.nx * canvas.clientWidth, p.ny * canvas.clientHeight, canvas.clientWidth, canvas.clientHeight, PICK_RADIUS);
       if (geo) useStore.getState().reportGlobeClick(geo.lat, geo.lng);
     };
     canvas.addEventListener('pointermove', onMove);
@@ -590,7 +598,7 @@ ${where}`;
 
     const fly = (target: Target | null) => {
       if (!target) return;
-      globe.controls().autoRotate = false;
+      navRef.current?.stop();
       globe.pointOfView(target, FLY_MS);
     };
     let lastCameraSeq = initial.cameraRequest?.seq ?? 0;
@@ -638,12 +646,12 @@ ${where}`;
     const vp = new THREE.Matrix4();
     const lastWorld = new Float64Array(16);
     let last = performance.now();
-    let lastUpgrade = 0;
     let raf = requestAnimationFrame(function loop(now) {
       raf = requestAnimationFrame(loop);
       const dt = now - last;
       last = now;
       stats.push(now, dt);
+      navRef.current?.update(Math.min(0.1, dt / 1000), (camera as THREE.PerspectiveCamera).fov, canvas.clientHeight);
       layer.frame(dt);
 
       const world = camera.matrixWorld.elements;
@@ -655,36 +663,22 @@ ${where}`;
         }
       }
       if (moved) {
-        needUpgrade.current = true;
         mosaicMovedAt = now;
         mosaicSettled = false;
+        onZoom(globe.pointOfView());
       }
-      if (!mosaicSettled && (now - mosaicMovedAt > 250 || now - mosaicPickedAt > 400)) {
-        mosaicSettled = now - mosaicMovedAt > 250;
-        mosaicPickedAt = now;
+      if (!mosaicSettled && now - mosaicMovedAt > 250) {
+        mosaicSettled = true;
         mosaic.cameraMoved();
-        if (mosaicSettled) {
-          const cam = camera as THREE.PerspectiveCamera;
-          const next = focusOf(globe.pointOfView(), cam.fov, cam.aspect);
-          if (focusKey(next) !== focusKey(mosaicFocus)) {
-            mosaicFocus = next;
-            requestMosaic(useStore.getState());
-          }
+        const cam = camera as THREE.PerspectiveCamera;
+        const next = focusOf(globe.pointOfView(), cam.fov, cam.aspect);
+        if (focusChanged(mosaicFocus, next)) {
+          mosaicFocus = next;
+          requestMosaic(useStore.getState());
         }
       }
       if (mosaic.year !== useStore.getState().shownYear) useStore.getState().setShownYear(mosaic.year);
       mosaic.frame(camera as THREE.PerspectiveCamera, canvas.clientHeight);
-      if (needUpgrade.current && detailRef.current && now - lastUpgrade > 350) {
-        const pov = globe.pointOfView();
-        if (pov.altitude < CITY_FROM) {
-          const next = nearShapes(detailRef.current, pov.lat, pov.lng, pov.altitude).find((d) => !upgradedRef.current.has(d.key));
-          if (next) {
-            upgradedRef.current.add(next.key);
-            lastUpgrade = now;
-            setShapes((prev) => upgradeShapes(prev, next));
-          } else needUpgrade.current = false;
-        } else needUpgrade.current = false;
-      }
       vp.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse);
       const frame: LabelFrame = { viewProjection: vp.elements, camera: camera.position, width: canvas.clientWidth, height: canvas.clientHeight };
       labels?.tick(frame, moved, now);
@@ -699,7 +693,7 @@ ${where}`;
       }
       const settled = now - lastMove >= SETTLE_MS;
       const relayout = relayoutRef.current;
-      if (relayout !== 'none' || (settled && pendingSettle) || (!settled && now - lastLayout >= MOVING_LAYOUT_MS)) {
+      if (relayout !== 'none' || (settled && pendingSettle)) {
         layoutPlaces(frame, relayout === 'sticky' || (!settled && relayout !== 'fresh'));
         relayoutRef.current = 'none';
         lastLayout = now;
@@ -710,7 +704,7 @@ ${where}`;
       if (dirtyRef.current) {
         dirtyRef.current = false;
         if (pointer.inside && !pointer.down && mosaic.visible) {
-          const geo = globe.toGlobeCoords(pointer.lx, pointer.ly);
+          const geo = screenToGeo(camera, pointer.lx, pointer.ly, canvas.clientWidth, canvas.clientHeight, PICK_RADIUS);
           if (!geo) {
             mosaicHover = null;
             mosaic.setHover(null);
@@ -837,7 +831,7 @@ ${where}`;
     if (!ready || !globe || !detail) return;
     const lead = arcs.markers.find((m) => m.lead);
     if (!lead) return;
-    globe.controls().autoRotate = false;
+    navRef.current?.stop();
     globe.pointOfView(frameTarget(lead, arcs.markers.filter((m) => !m.lead)), FLY_MS);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [detail, ready]);
@@ -869,7 +863,6 @@ ${where}`;
         atmosphereAltitude={0.18}
         enablePointerInteraction={false}
         onGlobeReady={onGlobeReady}
-        onZoom={onZoom}
         arcsData={arcsData}
         arcStartLat="startLat"
         arcStartLng="startLng"

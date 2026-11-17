@@ -4,7 +4,6 @@ import { makeProjected, projectPoints, type ProjectedPoints } from './picking';
 import type { Rect } from './rectGrid';
 import type { LabelFrame, LabelSource } from './labels';
 
-export const COUNTRY_NAMES_ABOVE = 0.8;
 export const MAX_NAMES = 45;
 const NAME_ALTITUDE = 0.008;
 const COUNTRY_PX = 13;
@@ -175,7 +174,7 @@ export class MapLabels {
     const cands: (NameCandidate & { text: string; px: number; pos: Float32Array })[] = [];
     const prefer = input.sticky ? this.placedIds : null;
     const boost = (id: string) => (prefer?.has(id) ? -1e7 : 0);
-    if (input.altitude > COUNTRY_NAMES_ABOVE) {
+    {
       projectPoints(this.countryPos, frame.viewProjection, frame.camera, frame.width, frame.height, this.countryProj, MIN_FACING);
       this.countries.forEach((c, i) => {
         if (!this.countryProj.visible[i]) return;
