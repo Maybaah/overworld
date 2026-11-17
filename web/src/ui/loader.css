@@ -1,0 +1,81 @@
+.ow-loader {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  background: var(--bg);
+  color: var(--text-secondary);
+  font-family: var(--font-text);
+  transition: opacity 450ms var(--ease);
+}
+
+.ow-loader-out {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.ow-loader-globe {
+  width: 112px;
+  height: 112px;
+  transform: rotate(-18deg);
+}
+
+.ow-loader-rim {
+  fill: var(--bg-surface);
+  stroke: var(--text-secondary);
+  stroke-width: 1.5;
+}
+
+.ow-loader-line {
+  fill: none;
+  stroke: var(--bg-overlay);
+  stroke-width: 1.2;
+}
+
+.ow-loader-meridian {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1.2;
+  transform-origin: 60px 60px;
+  animation: ow-loader-turn 3.6s linear infinite;
+}
+
+.ow-loader-text {
+  margin: 0;
+  font-size: 13px;
+  letter-spacing: 0.01em;
+}
+
+@keyframes ow-loader-turn {
+  0% {
+    transform: scaleX(1);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.9;
+  }
+  50% {
+    transform: scaleX(0);
+    opacity: 0.9;
+  }
+  90% {
+    opacity: 0.9;
+  }
+  100% {
+    transform: scaleX(-1);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ow-loader-meridian {
+    animation: none;
+  }
+  .ow-loader {
+    transition: none;
+  }
+}

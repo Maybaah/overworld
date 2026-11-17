@@ -62,6 +62,8 @@ export interface AppState {
   cameraRequest: CameraRequest | null;
   year: number;
   playing: boolean;
+  globeReady: boolean; // the first mosaic and its covers are on the globe
+  shownYear: number | null; // the year the globe shows now; trails year while it rebuilds
   enabledRoles: Set<RoleType>;
   selectedGameId: number | null;
   selectedGameDetail: GameDetail | null;
@@ -70,6 +72,8 @@ export interface AppState {
   init: () => Promise<void>;
   setYear: (year: number) => void;
   setPlaying: (playing: boolean) => void;
+  setGlobeReady: () => void;
+  setShownYear: (year: number | null) => void;
   toggleRole: (role: RoleType) => void;
   selectGame: (id: number | null) => Promise<void>;
   selectPlace: (place: SelectedPlace | null) => void;
@@ -106,6 +110,8 @@ export const useStore = create<AppState>((set, get) => ({
   cameraRequest: null,
   year: new Date().getFullYear(),
   playing: false,
+  globeReady: false,
+  shownYear: null,
   enabledRoles: new Set<RoleType>(ROLE_TYPES),
   selectedGameId: null,
   selectedGameDetail: null,
@@ -130,6 +136,14 @@ export const useStore = create<AppState>((set, get) => ({
 
   setPlaying(playing) {
     set({ playing });
+  },
+
+  setGlobeReady() {
+    set({ globeReady: true });
+  },
+
+  setShownYear(shownYear) {
+    set({ shownYear });
   },
 
   toggleRole(role) {
