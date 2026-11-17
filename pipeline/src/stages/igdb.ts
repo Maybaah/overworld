@@ -29,12 +29,12 @@ const ID_BATCH = 500;
 const STEAM_ITEMS = 'https://api.steampowered.com/IStoreBrowseService/GetItems/v1/';
 const STEAM_BATCH = 200;
 
-interface GameFieldNames {
+export interface GameFieldNames {
   gameType: string;
   externalGameSource: string;
 }
 
-const CURRENT_FIELDS: GameFieldNames = { gameType: 'game_type', externalGameSource: 'external_game_source' };
+export const CURRENT_FIELDS: GameFieldNames = { gameType: 'game_type', externalGameSource: 'external_game_source' };
 const LEGACY_FIELDS: GameFieldNames = { gameType: 'category', externalGameSource: 'category' };
 
 const gameFields = (f: GameFieldNames) =>
@@ -67,7 +67,7 @@ function gamesQuery(f: GameFieldNames, offset: number, minRating = 1): string {
   );
 }
 
-function gamesByIdQuery(f: GameFieldNames, ids: number[]): string {
+export function gamesByIdQuery(f: GameFieldNames, ids: number[]): string {
   return (
     `fields ${gameFields(f)}; ` +
     `where id = (${ids.join(',')}) & ${f.gameType} = (${GAME_TYPE_IDS.join(',')}) & involved_companies != null & themes != (${EROTIC_THEME}); ` +
@@ -75,7 +75,7 @@ function gamesByIdQuery(f: GameFieldNames, ids: number[]): string {
   );
 }
 
-function companiesQuery(ids: number[]): string {
+export function companiesQuery(ids: number[]): string {
   return (
     'fields name,slug,url,country,start_date,parent,changed_company_id; ' +
     `where id = (${ids.join(',')}); limit ${COMPANY_BATCH};`
@@ -84,14 +84,14 @@ function companiesQuery(ids: number[]): string {
 
 const GENRES_QUERY = 'fields name; limit 500;';
 
-type Row = Record<string, unknown>;
+export type Row = Record<string, unknown>;
 
 const isRow = (v: unknown): v is Row => typeof v === 'object' && v !== null && !Array.isArray(v);
-const list = (v: unknown): unknown[] => (Array.isArray(v) ? v : []);
-const numOrNull = (v: unknown): number | null => (typeof v === 'number' && Number.isFinite(v) ? v : null);
+export const list = (v: unknown): unknown[] => (Array.isArray(v) ? v : []);
+export const numOrNull = (v: unknown): number | null => (typeof v === 'number' && Number.isFinite(v) ? v : null);
 const str = (v: unknown): string => (typeof v === 'string' ? v : '');
 
-function refId(v: unknown): number | null {
+export function refId(v: unknown): number | null {
   if (typeof v === 'number' && Number.isFinite(v)) return v;
   if (isRow(v)) return numOrNull(v.id);
   return null;
@@ -124,7 +124,7 @@ function steamAppIds(externals: unknown, f: GameFieldNames): number[] {
   return ids;
 }
 
-function mapGame(v: Row, f: GameFieldNames): RawIgdbGame | null {
+export function mapGame(v: Row, f: GameFieldNames): RawIgdbGame | null {
   const id = numOrNull(v.id);
   if (id === null) return null;
   const steamIds = steamAppIds(v.external_games, f);
@@ -153,7 +153,7 @@ function mapGame(v: Row, f: GameFieldNames): RawIgdbGame | null {
   };
 }
 
-function mapCompany(v: Row): RawIgdbCompany | null {
+export function mapCompany(v: Row): RawIgdbCompany | null {
   const id = numOrNull(v.id);
   if (id === null) return null;
   return {
@@ -172,31 +172,18 @@ function looksLikeUnknownField(body: string): boolean {
   return /field|unknown|category|game_type|external_game_source/i.test(body);
 }
 
-export async function runIgdbStage(
+export interface IgdbClient {
+  http: ReturnType<typeof createHttp>;
+  post: (endpoint: string, body: string) => Promise<{ status: number; text: string }>;
+  postRows: (endpoint: string, body: string) => Promise<Row[]>;
+  parseRows: (endpoint: string, text: string) => Row[];
+}
+
+export async function igdbClient(
   config: PipelineConfig,
-  deps: {
-    fetchImpl?: typeof fetch;
-    sleep?: (ms: number) => Promise<void>;
-    log?: (msg: string) => void;
-  } = {},
-): Promise<{ games: number; companies: number; skipped: boolean }> {
-  const log = deps.log ?? ((msg: string) => console.log(msg));
-  const gamesFile = path.join(config.stageDir, STAGE_FILES.igdbGames);
-  const companiesFile = path.join(config.stageDir, STAGE_FILES.igdbCompanies);
-  const genresFile = path.join(config.stageDir, STAGE_FILES.igdbGenres);
-
-  if (!config.refresh) {
-    const [g, c, ge] = await Promise.all([
-      readJsonIfExists<RawIgdbGame[]>(gamesFile),
-      readJsonIfExists<RawIgdbCompany[]>(companiesFile),
-      readJsonIfExists<RawIgdbGenre[]>(genresFile),
-    ]);
-    if (g && c && ge) {
-      log(`IGDB: stage files exist, skipping (${g.length} games, ${c.length} companies)`);
-      return { games: g.length, companies: c.length, skipped: true };
-    }
-  }
-
+  deps: { fetchImpl?: typeof fetch; sleep?: (ms: number) => Promise<void> },
+  log: (msg: string) => void,
+): Promise<IgdbClient> {
   const { twitchClientId, twitchClientSecret } = config;
   if (!twitchClientId || !twitchClientSecret) {
     throw new Error(
@@ -270,6 +257,36 @@ export async function runIgdbStage(
     return parsed.filter(isRow);
   }
 
+
+  return { http, post, postRows, parseRows };
+}
+
+export async function runIgdbStage(
+  config: PipelineConfig,
+  deps: {
+    fetchImpl?: typeof fetch;
+    sleep?: (ms: number) => Promise<void>;
+    log?: (msg: string) => void;
+  } = {},
+): Promise<{ games: number; companies: number; skipped: boolean }> {
+  const log = deps.log ?? ((msg: string) => console.log(msg));
+  const gamesFile = path.join(config.stageDir, STAGE_FILES.igdbGames);
+  const companiesFile = path.join(config.stageDir, STAGE_FILES.igdbCompanies);
+  const genresFile = path.join(config.stageDir, STAGE_FILES.igdbGenres);
+
+  if (!config.refresh) {
+    const [g, c, ge] = await Promise.all([
+      readJsonIfExists<RawIgdbGame[]>(gamesFile),
+      readJsonIfExists<RawIgdbCompany[]>(companiesFile),
+      readJsonIfExists<RawIgdbGenre[]>(genresFile),
+    ]);
+    if (g && c && ge) {
+      log(`IGDB: stage files exist, skipping (${g.length} games, ${c.length} companies)`);
+      return { games: g.length, companies: c.length, skipped: true };
+    }
+  }
+
+  const { post, postRows, parseRows } = await igdbClient(config, deps, log);
   let fields = CURRENT_FIELDS;
   let triedLegacy = false;
 

@@ -15,6 +15,7 @@ import type {
   RawWikidataGame,
 } from './raw';
 import { readJson, readJsonIfExists } from './stageio';
+import { runCountriesStage } from './stages/countries';
 import { runIgdbStage } from './stages/igdb';
 import { runMobygamesStage } from './stages/mobygames';
 import { runPopulationStage } from './stages/population';
@@ -23,7 +24,7 @@ import { runRawgStage } from './stages/rawg';
 import { runWikidataStage } from './stages/wikidata';
 import { parseValidateArgs, runValidation } from './validate';
 
-export const STAGE_NAMES = ['steamspy', 'rawg', 'igdb', 'wikidata', 'population', 'mobygames', 'merge', 'validate'] as const;
+export const STAGE_NAMES = ['steamspy', 'rawg', 'igdb', 'countries', 'wikidata', 'population', 'mobygames', 'merge', 'validate'] as const;
 export type StageName = (typeof STAGE_NAMES)[number];
 
 export type StageFn = (config: PipelineConfig) => Promise<unknown> | unknown;
@@ -83,6 +84,7 @@ export function runValidateStage(config: PipelineConfig, argv: string[] = proces
 
 export const defaultStages: StageMap = {
   igdb: runIgdbStage,
+  countries: (config) => runCountriesStage(config),
   wikidata: runWikidataStage,
   population: runPopulationStage,
   mobygames: runMobygamesStage,
