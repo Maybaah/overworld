@@ -50,3 +50,24 @@ describe('triangulateShape', () => {
     }
   });
 });
+
+describe('polar rings', () => {
+  const shape = (rings: number[][][]): CountryShape => ({ id: '010', geometry: { type: 'Polygon', coordinates: rings as unknown as number[] } });
+  const lats = (t: number[]) => t.filter((_, i) => i % 2 === 1);
+
+  it('fills a ring around the south pole down to the pole', () => {
+    const ring = [[-180, -70], [-90, -70], [0, -70], [90, -70], [180, -70], [180, -90], [-180, -90], [-180, -70]];
+    const t = triangulatePlanar(shape([ring]));
+    expect(t.length).toBeGreaterThan(0);
+    expect(Math.min(...lats(t))).toBeLessThan(-85);
+    expect(Math.max(...lats(t))).toBeLessThanOrEqual(-70 + 1e-6);
+  });
+
+  it('fills a coast stored as the hole of a ring along the pole line', () => {
+    const pole = [[-180, -90], [180, -90], [90, -90], [0, -90], [-90, -90], [-180, -90]];
+    const coast = [[-180, -70], [-90, -70], [0, -70], [90, -70], [180, -70]];
+    const t = triangulatePlanar(shape([pole, coast]));
+    expect(t.length).toBeGreaterThan(0);
+    expect(Math.min(...lats(t))).toBeLessThan(-85);
+  });
+});

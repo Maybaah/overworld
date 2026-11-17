@@ -52,7 +52,52 @@ export function unwrapPolygon(rings: number[][][]): number[][][] {
   return shifted.some(jumps) ? rings : shifted;
 }
 
+// A ring around a pole (Antarctica) is triangulated in a polar projection, where it is a plain loop;
+// in longitude and latitude its run along the pole line makes the triangulation fail.
+function polarTriangles(polygon: number[][][], maxDeg: number, out: number[]): void {
+  const south = Math.min(...polygon[0]!.map((p) => p[1]!)) < 0;
+  const project = (ring: number[][]) => {
+    const pts: THREE.Vector2[] = [];
+    for (const [lng, lat] of ring) {
+      const r = 90 - (south ? -lat! : lat!);
+      if (r < 1e-6) continue;
+      const a = (lng! * Math.PI) / 180;
+      const v = new THREE.Vector2(r * Math.cos(a), r * Math.sin(a));
+      const prev = pts[pts.length - 1];
+      if (!prev || prev.distanceToSquared(v) > 1e-12) pts.push(v);
+    }
+    if (pts.length > 1 && pts[0]!.distanceToSquared(pts[pts.length - 1]!) < 1e-12) pts.pop();
+    return pts;
+  };
+  // The detailed map stores Antarctica as a ring along the pole line with the coast as its hole;
+  // the pole line collapses to a point here, so the biggest remaining ring is the outline.
+  const rings = polygon.map(project).filter((r) => r.length >= 3);
+  if (rings.length === 0) return;
+  const size = (r: THREE.Vector2[]) => Math.abs(THREE.ShapeUtils.area(r));
+  const outer = rings.reduce((m, r) => (size(r) > size(m) ? r : m));
+  const contour = outer;
+  const holes = rings.filter((r) => r !== outer);
+  const verts = [...contour, ...holes.flat()];
+  const flat: number[] = [];
+  for (const f of THREE.ShapeUtils.triangulateShape(contour, holes)) {
+    const a = verts[f[0]!]!;
+    const b = verts[f[1]!]!;
+    const c = verts[f[2]!]!;
+    splitTriangle([a.x, a.y, b.x, b.y, c.x, c.y], maxDeg, flat);
+  }
+  for (let i = 0; i < flat.length; i += 2) {
+    const x = flat[i]!;
+    const y = flat[i + 1]!;
+    const r = Math.hypot(x, y);
+    out.push((Math.atan2(y, x) * 180) / Math.PI, south ? r - 90 : 90 - r);
+  }
+}
+
 function polygonTriangles(polygon: number[][][], maxDeg: number, out: number[]): void {
+  if (polygon[0] && jumps(polygon[0]) && unwrapPolygon(polygon) === polygon) {
+    polarTriangles(polygon, maxDeg, out);
+    return;
+  }
   const rings = unwrapPolygon(polygon);
   const outer = rings[0];
   if (!outer || outer.length < 4) return;
