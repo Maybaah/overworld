@@ -22,7 +22,7 @@ import { CountriesLayer } from './countriesLayer';
 import { CoversLayer, type CoverEntry } from './coversLayer';
 import { MarkersLayer, type MarkerItem } from './markersLayer';
 import { MosaicLayer } from './mosaicLayer';
-import { GlobeControls, screenToGeo, type PovTarget } from './controls';
+import { GlobeControls, navBus, screenToGeo, type NavCommand, type PovTarget } from './controls';
 import { GLOBE_RADIUS } from './outline';
 import { MOSAIC_ALTITUDE } from './mosaic/build';
 import type { MosaicFocus } from './mosaic/build';
@@ -145,6 +145,8 @@ const tooltipStyle = {
 // The globe never needs to come closer than a few units, so a far near plane buys depth precision:
 // the mosaic sits a hair above the land fill and flickered against it with the default near plane.
 const CAMERA_NEAR = 2;
+// Beyond this the extra pixels cost more GPU time than they add sharpness.
+const MAX_PIXEL_RATIO = 2;
 
 // Over the North Atlantic, so North America, Europe and Africa are all in view at load.
 const START_VIEW = { lat: 36, lng: -32, altitude: 2.1 };
@@ -317,7 +319,19 @@ export function GlobeView() {
       !reducedMotion && st.selectedGameId === null && st.selectedPlace === null,
     );
     navRef.current = nav;
+    const onNav = (e: Event) => {
+      const cmd = (e as CustomEvent<NavCommand>).detail;
+      if (cmd.kind === 'zoom') nav.zoomBy(cmd.amount);
+      else {
+        nav.stop();
+        globe.pointOfView({ ...START_VIEW, lng: globe.pointOfView().lng }, FLY_MS);
+      }
+    };
+    navBus.addEventListener('nav', onNav);
+    const renderer = globe.renderer();
+    if (renderer.getPixelRatio() > MAX_PIXEL_RATIO) renderer.setPixelRatio(MAX_PIXEL_RATIO);
     return () => {
+      navBus.removeEventListener('nav', onNav);
       nav.dispose();
       navRef.current = null;
     };
@@ -488,7 +502,7 @@ export function GlobeView() {
 
     const setHover = (p: PickedPoint | null) => {
       hovered = p;
-      canvas.style.cursor = p ? 'pointer' : '';
+      canvas.style.cursor = p ? 'pointer' : 'grab';
       if (!tooltip) return;
       if (!p) {
         tooltip.style.display = 'none';
@@ -502,7 +516,7 @@ export function GlobeView() {
     };
 
     const setMosaicTooltip = (id: number | null) => {
-      canvas.style.cursor = id !== null ? 'pointer' : '';
+      canvas.style.cursor = id !== null ? 'pointer' : 'grab';
       if (!tooltip) return;
       const g = id !== null ? indexes.gameById.get(id) : undefined;
       if (!g) {

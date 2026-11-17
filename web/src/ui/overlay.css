@@ -617,6 +617,27 @@
   font-size: 12px;
 }
 
+.ow-nav {
+  position: absolute;
+  left: 16px;
+  bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 4px;
+}
+
+.ow-nav .ow-icon-btn {
+  width: 36px;
+  height: 36px;
+  border-color: transparent;
+  color: var(--text);
+}
+
+.ow-nav .ow-icon-btn:hover {
+  background: var(--bg-elevated);
+}
+
 .ow-attribution {
   position: absolute;
   right: 16px;
@@ -762,6 +783,7 @@
   }
 
   .ow-root[data-sheet='true'] .ow-slider,
+  .ow-root[data-sheet='true'] .ow-nav,
   .ow-root[data-sheet='true'] .ow-attribution {
     display: none;
   }

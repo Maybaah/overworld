@@ -11,6 +11,7 @@ import { Search } from './Search';
 import { GameCard } from './GameCard';
 import { PlacePanel } from './PlacePanel';
 import { YearSlider } from './YearSlider';
+import { NavButtons } from './NavButtons';
 import { Attribution } from './Attribution';
 import { ModeNav } from './ModeNav';
 import { GuessPanel } from '../guess/GuessPanel';
@@ -103,6 +104,7 @@ export function Overlay() {
         {!collapseRight && mode !== 'guess' && <GameCard />}
       </div>
       {(explore || mode === 'myglobe') && <YearSlider />}
+      {mode !== 'guess' && <NavButtons />}
       <Attribution />
     </div>
   );

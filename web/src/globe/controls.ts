@@ -20,6 +20,15 @@ const SPIN_TAU = 0.32;
 const HOLD_TAU = 0.05;
 const AUTO_DEG_PER_S = 2.2;
 const MAX_DEG_PER_PX = 0.45;
+const KEY_PAN_PX = 140;
+const KEY_ZOOM = 0.45;
+
+// Buttons outside the globe (zoom in/out, back to the start view) talk to the controls through this.
+export type NavCommand = { kind: 'zoom'; amount: number } | { kind: 'home' };
+export const navBus = new EventTarget();
+export function sendNav(cmd: NavCommand): void {
+  navBus.dispatchEvent(new CustomEvent<NavCommand>('nav', { detail: cmd }));
+}
 
 const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v));
 
@@ -97,6 +106,8 @@ export class GlobeControls {
   private readonly pointers = new Map<number, { x: number; y: number }>();
   private pinch = 0;
   private auto: boolean;
+  private fov = 50;
+  private height = 800;
   private readonly detach: () => void;
 
   constructor(
@@ -106,9 +117,11 @@ export class GlobeControls {
     private readonly onInput: () => void = () => {},
   ) {
     this.auto = autoRotate;
+    el.style.cursor = 'grab';
     const down = (e: PointerEvent) => {
       if (e.pointerType === 'mouse' && e.button !== 0) return;
       el.setPointerCapture?.(e.pointerId);
+      el.style.cursor = 'grabbing';
       this.pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
       if (this.pointers.size === 2) this.pinch = this.spread();
       this.input.dragging = true;
@@ -135,7 +148,29 @@ export class GlobeControls {
     const up = (e: PointerEvent) => {
       if (!this.pointers.delete(e.pointerId)) return;
       if (this.pointers.size < 2) this.pinch = 0;
-      if (this.pointers.size === 0) this.input.dragging = false;
+      if (this.pointers.size === 0) {
+        this.input.dragging = false;
+        el.style.cursor = 'grab';
+      }
+    };
+    const key = (e: KeyboardEvent) => {
+      const t = e.target as HTMLElement | null;
+      if (e.ctrlKey || e.metaKey || e.altKey) return;
+      if (t && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT|BUTTON)$/.test(t.tagName))) return;
+      const step: Record<string, () => void> = {
+        ArrowLeft: () => this.panBy(KEY_PAN_PX, 0),
+        ArrowRight: () => this.panBy(-KEY_PAN_PX, 0),
+        ArrowUp: () => this.panBy(0, KEY_PAN_PX),
+        ArrowDown: () => this.panBy(0, -KEY_PAN_PX),
+        '+': () => this.zoomBy(-KEY_ZOOM),
+        '=': () => this.zoomBy(-KEY_ZOOM),
+        '-': () => this.zoomBy(KEY_ZOOM),
+        _: () => this.zoomBy(KEY_ZOOM),
+      };
+      const fn = step[e.key];
+      if (!fn) return;
+      e.preventDefault();
+      fn();
     };
     const wheel = (e: WheelEvent) => {
       e.preventDefault();
@@ -148,7 +183,9 @@ export class GlobeControls {
     el.addEventListener('pointerup', up);
     el.addEventListener('pointercancel', up);
     el.addEventListener('wheel', wheel, { passive: false });
+    window.addEventListener('keydown', key);
     this.detach = () => {
+      window.removeEventListener('keydown', key);
       el.removeEventListener('pointerdown', down);
       el.removeEventListener('pointermove', move);
       el.removeEventListener('pointerup', up);
@@ -168,7 +205,25 @@ export class GlobeControls {
     this.input.zoom = 0;
   }
 
+  // Eased zoom by a log step (negative = closer).
+  zoomBy(amount: number): void {
+    this.input.zoom += amount;
+    this.touched();
+  }
+
+  // A push that glides the view by about this many screen pixels and slows to a stop.
+  panBy(dxPx: number, dyPx: number): void {
+    const pov = this.target.pointOfView();
+    const k = degreesPerPixel(pov.altitude, this.fov, this.height);
+    const cosLat = Math.max(0.2, Math.cos((pov.lat * Math.PI) / 180));
+    this.motion.spinLat += (dyPx * k) / SPIN_TAU;
+    this.motion.spinLng += (-dxPx * k) / cosLat / SPIN_TAU;
+    this.touched();
+  }
+
   update(dt: number, fovDeg: number, heightPx: number): boolean {
+    this.fov = fovDeg;
+    this.height = heightPx;
     const pov = this.target.pointOfView();
     let next = advance(pov, this.input, this.motion, dt, fovDeg, heightPx);
     this.input.panX = 0;
