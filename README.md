@@ -17,7 +17,7 @@ The globe is a satellite map with country and city names. Each place shows the c
 - **Insights** – games per capita by country, genres by region, indie and major-publisher output over time, and where outside work flows between countries.
 - **Sharing** – a share button with a card image; every game has its own link-preview page.
 
-Status: the data pipeline, Explore, My globe, Insights and sharing are built, tested and reviewed in a real browser. A guess-the-location game is built but not released yet (it opens only with `?mode=guess`). Localization, QA and art/audio links are nearly empty until a source that records them is added. See [PROGRESS.md](PROGRESS.md) for the current state and the decisions behind it, and `reports/` for the validation, review and performance reports.
+Status: the data pipeline, Explore, My globe, Insights and sharing are built, tested and reviewed in a real browser. A guess-the-location game is built but not released yet (it opens only with `?mode=guess`). Localization, QA and art/audio links are nearly empty until a source that records them is added. See [PROGRESS.md](PROGRESS.md) for the current state and the decisions behind it, and `reports/` for the validation and performance reports.
 
 ## How the data is made
 

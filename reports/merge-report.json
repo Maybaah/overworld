@@ -8767,7 +8767,7 @@
     }
   ],
   "leadBasisCounts": {
-    "curated": 44,
+    "curated": 54,
     "igdb_developer_heuristic": 253,
     "igdb_single_developer": 35671,
     "igdb_developer_confirmed_by_wikidata": 1597,
@@ -8781,8 +8781,8 @@
     "name": 899
   },
   "companiesByPrecision": {
-    "city": 3510,
-    "country": 8352,
+    "city": 3513,
+    "country": 8357,
     "none": 10479
   },
   "rejectedWikidataMatches": [

@@ -27,6 +27,15 @@
     "storeUrl": "https://store.steampowered.com/app/1855040"
   },
   {
+    "country": "BF",
+    "game": "Sodaga, les guerriers de la lumière",
+    "year": 2026,
+    "developer": "Emmanuel Lompo",
+    "city": null,
+    "evidenceUrl": "https://afrique.le360.ma/societe/sodaga-les-guerriers-de-la-lumiere-un-jeu-video-made-in-burkina-qui-veut-valoriser-le-soldat_TRS572WEZBFVRMG647UCSPIGKA/",
+    "storeUrl": null
+  },
+  {
     "country": "BJ",
     "game": "Clash of Myths",
     "year": 2026,
@@ -81,6 +90,15 @@
     "storeUrl": "https://store.steampowered.com/app/2528890"
   },
   {
+    "country": "BW",
+    "game": "MHELE: Morabaraba & 12 Morris",
+    "year": 2026,
+    "developer": "Kemlow Capital",
+    "city": "Gaborone",
+    "evidenceUrl": "https://play.google.com/store/apps/details?id=com.kemlow.mhele",
+    "storeUrl": "https://play.google.com/store/apps/details?id=com.kemlow.mhele"
+  },
+  {
     "country": "CD",
     "game": "Eat! Bunny! Eat!",
     "year": null,
@@ -97,6 +115,24 @@
     "city": "Kinshasa",
     "evidenceUrl": "https://moonia.itch.io",
     "storeUrl": "https://moonia.itch.io"
+  },
+  {
+    "country": "GA",
+    "game": "Gabon Culture Quiz",
+    "year": 2025,
+    "developer": "OM Tech",
+    "city": "Libreville",
+    "evidenceUrl": "https://play.google.com/store/apps/details?id=com.octave.gabonculturequiz",
+    "storeUrl": "https://play.google.com/store/apps/details?id=com.octave.gabonculturequiz"
+  },
+  {
+    "country": "GA",
+    "game": "Grand Village",
+    "year": 2025,
+    "developer": "Village Interactive Studio",
+    "city": null,
+    "evidenceUrl": "https://www.gabonreview.com/moov-africa-gabon-telecom-lance-la-4e-edition-de-la-e-league-avec-un-jeu-100-gabonais/",
+    "storeUrl": null
   },
   {
     "country": "HT",
@@ -253,6 +289,42 @@
     "storeUrl": null
   },
   {
+    "country": "NE",
+    "game": "Les Héros du Sahel",
+    "year": 2016,
+    "developer": "Housseyni Issa Mahaman (MOGMedia Design)",
+    "city": null,
+    "evidenceUrl": "https://burkina24.com/2016/09/14/les-heros-du-sahel-un-jeu-video-100-nigerien/",
+    "storeUrl": null
+  },
+  {
+    "country": "PF",
+    "game": "Bob Mighty",
+    "year": 2021,
+    "developer": "Ecole Poly3D - Tahiti",
+    "city": null,
+    "evidenceUrl": "https://www.service-public.pf/dgen/tahiti-infos-poly3d-les-talents-se-revelent-apres-une-semaine-depreuves/",
+    "storeUrl": "https://ecole-poly3d.itch.io/bob-mighty-promo-2021"
+  },
+  {
+    "country": "PF",
+    "game": "Hiro's Fantastic Journey",
+    "year": null,
+    "developer": "Ecole Poly3D - Tahiti",
+    "city": null,
+    "evidenceUrl": "https://www.service-public.pf/dgen/tahiti-infos-poly3d-les-talents-se-revelent-apres-une-semaine-depreuves/",
+    "storeUrl": "https://ecole-poly3d.itch.io/hiros-fantastic-journey-promo1-2me-anne"
+  },
+  {
+    "country": "PF",
+    "game": "Tahiti Olympics",
+    "year": null,
+    "developer": "Ecole Poly3D - Tahiti",
+    "city": null,
+    "evidenceUrl": "https://www.service-public.pf/dgen/tahiti-infos-poly3d-les-talents-se-revelent-apres-une-semaine-depreuves/",
+    "storeUrl": "https://symbolzz.itch.io/tahiti-olympics"
+  },
+  {
     "country": "RW",
     "game": "Keza 3D",
     "year": null,
@@ -262,6 +334,15 @@
     "storeUrl": null
   },
   {
+    "country": "TG",
+    "game": "The Boy in Savannah",
+    "year": 2016,
+    "developer": "Limpiyè Pana and Pio Tchédou (LimPio)",
+    "city": null,
+    "evidenceUrl": "https://lanouvelletribune.info/2016/08/the-boy-in-savannah-un-jeu-togolais/",
+    "storeUrl": "https://pio.gumroad.com/l/YorhIT"
+  },
+  {
     "country": "TJ",
     "game": "Captain Gazman: Day Of The Rage",
     "year": 2024,
@@ -269,6 +350,15 @@
     "city": "Isfara",
     "evidenceUrl": "https://lvl90dru1d.itch.io",
     "storeUrl": "https://lvl90dru1d.itch.io/captain-gazman"
+  },
+  {
+    "country": "TZ",
+    "game": "Transports Simulator Tanzania",
+    "year": 2026,
+    "developer": "Mittesh GAMES",
+    "city": "Dar es Salaam",
+    "evidenceUrl": "https://play.google.com/store/apps/details?id=com.mittesh.TransportsSimulatorTanzania",
+    "storeUrl": "https://play.google.com/store/apps/details?id=com.mittesh.TransportsSimulatorTanzania"
   },
   {
     "country": "ZW",

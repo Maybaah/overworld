@@ -2,7 +2,7 @@
 
 Verdict: PASS
 
-39279 games, 22341 companies, 114914 roles
+39289 games, 22349 companies, 114924 roles
 
 ## Checks
 
@@ -27,7 +27,7 @@ Verdict: PASS
 
 | Role | Count |
 | --- | ---: |
-| lead_developer | 39279 |
+| lead_developer | 39289 |
 | co_developer | 6335 |
 | port | 2709 |
 | publisher | 64728 |
@@ -41,11 +41,11 @@ Verdict: PASS
 
 | Precision | Companies | Share |
 | --- | ---: | ---: |
-| city | 3510 | 15.7% |
-| country | 8352 | 37.4% |
+| city | 3513 | 15.7% |
+| country | 8357 | 37.4% |
 | none | 10479 | 46.9% |
 
-Games whose lead studio has only a country-level location: 13337 of 39279 (34%)
+Games whose lead studio has only a country-level location: 13344 of 39289 (34%)
 
 ## Lead basis
 
@@ -54,7 +54,7 @@ Games whose lead studio has only a country-level location: 13337 of 39279 (34%)
 | igdb_single_developer | 35671 |
 | igdb_developer_confirmed_by_wikidata | 1597 |
 | igdb_first_developer | 1203 |
-| curated | 44 |
+| curated | 54 |
 | igdb_developer_heuristic | 253 |
 | wikidata_developer | 492 |
 | mobygames_developer | 19 |
