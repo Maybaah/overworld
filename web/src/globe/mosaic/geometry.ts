@@ -107,6 +107,7 @@ export interface Site {
   x: number;
   y: number;
   weight: number;
+  want?: number; // the area the site was fitted for; a warm start scales its weight to the new area
 }
 
 export function powerCell(sites: readonly Site[], i: number, bounds: readonly Pt[]): Pt[] {
@@ -318,13 +319,26 @@ export class RegionIndex {
         }
       }
     }
-    for (let y = 0; y < GRID; y++)
-      for (let x = 0; x < GRID; x++) {
-        const k = y * GRID + x;
-        if (edge[k]) continue;
-        const c: Pt = [this.box[0] + (x + 0.5) * this.sx, this.box[1] + (y + 0.5) * this.sy];
-        if (pointInRegion(c, region)) this.inside[k] = 1;
+    // Scanlines through the cell centres: even-odd crossings over all rings give the inside spans.
+    const rings = [...region.outers, ...region.holes];
+    const xs: number[] = [];
+    for (let y = 0; y < GRID; y++) {
+      const cy = this.box[1] + (y + 0.5) * this.sy;
+      xs.length = 0;
+      for (const ring of rings) {
+        for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+          const a = ring[i]!;
+          const b = ring[j]!;
+          if (a[1] > cy !== b[1] > cy) xs.push(((b[0] - a[0]) * (cy - a[1])) / (b[1] - a[1]) + a[0]);
+        }
       }
+      xs.sort((p, q) => p - q);
+      for (let k = 0; k + 1 < xs.length; k += 2) {
+        const x0 = Math.max(0, Math.ceil((xs[k]! - this.box[0]) / this.sx - 0.5));
+        const x1 = Math.min(GRID - 1, Math.floor((xs[k + 1]! - this.box[0]) / this.sx - 0.5));
+        for (let x = x0; x <= x1; x++) if (!edge[y * GRID + x]) this.inside[y * GRID + x] = 1;
+      }
+    }
   }
 
   private gx(x: number): number {
@@ -448,12 +462,15 @@ function cellCentroid(c: ClippedCell): Pt | null {
 export interface FitResult {
   cells: ClippedCell[];
   sites: Pt[];
+  fitted: Site[];
+  index: RegionIndex; // of the full outline
   error: number; // share of the area given to the wrong cells
 }
 
 export interface FitOptions {
   iterations: number;
   tether: number; // 0 = sites move freely to their cell centre, 1 = sites stay at home
+  start: readonly (Site | null | undefined)[]; // where a site ended in an earlier fit, to start from there
 }
 
 // Voronoi treemap: a power diagram whose sites start at their home points, drift towards their cell centres
@@ -465,7 +482,7 @@ export function fitPowerDiagram(
   region: Region,
   options: Partial<FitOptions> = {},
 ): FitResult {
-  const { iterations = 40, tether = 0.25 } = options;
+  const { iterations = 40, tether = 0.25, start } = options;
   const n = points.length;
   const rb = bbox(region.outers.flat());
   const span = Math.max(rb[2] - rb[0], rb[3] - rb[1]);
@@ -481,7 +498,11 @@ export function fitPowerDiagram(
   const total = regionArea(coarse.region);
   const sumT = targets.reduce((a, b) => a + b, 0) || 1;
   const want = targets.map((t) => (t / sumT) * total);
-  const sites: Site[] = points.map((p, i) => ({ x: p[0], y: p[1], weight: (want[i]! / Math.PI) * 0.25 }));
+  const sites: Site[] = points.map((p, i) => {
+    const s = start?.[i];
+    if (!s) return { x: p[0], y: p[1], weight: (want[i]! / Math.PI) * 0.25 };
+    return { x: s.x, y: s.y, weight: s.want ? s.weight * (want[i]! / s.want) : s.weight };
+  });
   const siteBox: [number, number, number, number] = [rb[0] - span, rb[1] - span, rb[2] + span, rb[3] + span];
   const grid = new SiteGrid(siteBox, n);
   const cellsOf = (index: RegionIndex) => {
@@ -519,8 +540,8 @@ export function fitPowerDiagram(
   };
   keepSitesInOwnCells();
 
-  let best: { sites: Site[]; error: number } | null = null;
-  for (let it = 0; it <= iterations; it++) {
+  let best: { sites: Site[]; error: number } | null = iterations === 0 ? { sites: sites.map((s) => ({ ...s })), error: 0 } : null;
+  for (let it = 0; it <= iterations && iterations > 0; it++) {
     const cells = cellsOf(coarse);
     let error = 0;
     for (let i = 0; i < n; i++) error += Math.abs(cells[i]!.area - want[i]!);
@@ -548,5 +569,5 @@ export function fitPowerDiagram(
     keepSitesInOwnCells();
   }
   best!.sites.forEach((s, i) => Object.assign(sites[i]!, s));
-  return { cells: cellsOf(full), sites: sites.map((s) => [s.x, s.y] as Pt), error: best!.error };
+  return { cells: cellsOf(full), sites: sites.map((s) => [s.x, s.y] as Pt), fitted: sites.map((s, i) => ({ x: s.x, y: s.y, weight: s.weight, want: want[i]! })), index: full, error: best!.error };
 }
