@@ -13,6 +13,8 @@ import type { Company, GameSummary } from '@shared';
 import { cellBudget, countryRegions, DEFAULT_OPTIONS } from '../src/globe/mosaic/build';
 import type { CountryShape } from '../src/globe/countries';
 import { SPRITE_LAYOUT, type SpriteIndex } from '../src/globe/mosaic/sprites';
+import { TITLE_PREFIX, titleKey } from '../src/globe/titleCovers';
+import { titleCardSvg } from './title-cards';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const dataArg = process.argv.find((a) => a.startsWith('--data='))?.slice(7);
@@ -30,7 +32,7 @@ const areas = new Map([...regions].map(([c, r]) => [c, r.area]));
 
 const placed = games.flatMap((g) => {
   const c = companies.get(g.leadCompanyId);
-  return c?.country && c.lat !== null && regions.has(c.country) && g.cover ? [{ g, country: c.country }] : [];
+  return c?.country && c.lat !== null && regions.has(c.country) ? [{ g, country: c.country }] : [];
 });
 const lastYear = Math.max(...games.map((g) => g.year ?? 0));
 const wanted = new Set<number>();
@@ -45,11 +47,25 @@ for (let y = FIRST_YEAR; y <= lastYear; y++) {
   const budget = cellBudget(new Map([...byCountry].map(([c, l]) => [c, l.length])), areas, DEFAULT_OPTIONS);
   for (const [c, list] of byCountry) for (const g of list.slice(0, budget.get(c) ?? 1)) wanted.add(g.id);
 }
-const covers = games.filter((g) => wanted.has(g.id) && g.cover).map((g) => g.cover!);
+// Games without a cover get a title card: a tile in the sheets and a full-size image in covers/title/.
+const covers = games.filter((g) => wanted.has(g.id)).map((g) => g.cover ?? titleKey(g.id));
+const cardOf = new Map(games.filter((g) => !g.cover).map((g) => [titleKey(g.id), g]));
+const regionName = new Intl.DisplayNames(['en'], { type: 'region' });
+const cards = new Map<string, Buffer>();
+async function titleCard(key: string): Promise<Buffer | null> {
+  const g = cardOf.get(key);
+  if (!g) return null;
+  const c = companies.get(g.leadCompanyId);
+  const byline = c?.country ? (regionName.of(c.country) ?? c.country) : (c?.name ?? '');
+  const png = await sharp(Buffer.from(titleCardSvg(g.name, byline, g.year))).png().toBuffer();
+  cards.set(key, png);
+  return png;
+}
 console.log(`cover sprites: ${covers.length} covers from ${placed.length} placed games, years ${FIRST_YEAR}-${lastYear}`);
 
 await mkdir(cacheDir, { recursive: true });
 async function fetchCover(id: string): Promise<Buffer | null> {
+  if (id.startsWith(TITLE_PREFIX)) return titleCard(id);
   const file = path.join(cacheDir, `${id}.jpg`);
   if (existsSync(file)) return readFile(file);
   for (let attempt = 0; attempt < 3; attempt++) {
@@ -110,6 +126,9 @@ for (let p = 0; p < pages; p++) {
     .webp({ quality: 78 })
     .toFile(path.join(outDir, `sprite-${p}.webp`));
 }
+await mkdir(path.join(outDir, 'title'), { recursive: true });
+for (const key of cardOf.keys()) if (!cards.has(key)) await titleCard(key);
+for (const [key, png] of cards) await sharp(png).webp({ quality: 86 }).toFile(path.join(outDir, 'title', `${key}.webp`));
 const index: SpriteIndex = { version: 1, pages, slots };
 await writeFile(path.join(outDir, 'index.json'), JSON.stringify(index));
-console.log(`cover sprites: ${tiles.length} packed into ${pages} pages, ${missing} missing`);
+console.log(`cover sprites: ${tiles.length} packed into ${pages} pages, ${cards.size} title cards, ${missing} missing`);

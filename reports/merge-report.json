@@ -8767,7 +8767,7 @@
     }
   ],
   "leadBasisCounts": {
-    "curated": 12,
+    "curated": 44,
     "igdb_developer_heuristic": 253,
     "igdb_single_developer": 35671,
     "igdb_developer_confirmed_by_wikidata": 1597,
@@ -8781,9 +8781,9 @@
     "name": 899
   },
   "companiesByPrecision": {
-    "city": 3496,
-    "country": 8337,
-    "none": 10478
+    "city": 3510,
+    "country": 8352,
+    "none": 10479
   },
   "rejectedWikidataMatches": [
     {
@@ -11058,7 +11058,16 @@
       "gameCount": 1
     }
   ],
-  "unusedLocationCorrections": [],
+  "unusedLocationCorrections": [
+    {
+      "name": "Moonia",
+      "igdbCompanyId": 1980734833
+    },
+    {
+      "name": "DirexPlay",
+      "igdbCompanyId": 1953512682
+    }
+  ],
   "countryFromGames": 1777,
   "cityFromParent": [
     {

@@ -4,7 +4,7 @@
 
 ## Wuchang: Fallen Feathers (2025)
 
-- Game id: 171225, popularity rank 1231 of 39247, popularity 1816320
+- Game id: 171225, popularity rank 1231 of 39279, popularity 1816320
 - IGDB: https://www.igdb.com/games/wuchang-fallen-feathers
 - Lead studio: Leenzee Games (company 37575)
   - Location: China; 35, 105; precision country
@@ -17,276 +17,287 @@
 | Chengdu Lingze Technology Co., Ltd. | co_developer |  | https://www.mobygames.com/game/245525/wuchang-fallen-feathers/ |
 | 505 Games | publisher |  | https://www.igdb.com/games/wuchang-fallen-feathers |
 
-## Krunker (2018)
+## Rogue Company (2020)
 
-- Game id: 109096, popularity rank 1968 of 39247, popularity 1045840
-- IGDB: https://www.igdb.com/games/krunker
-- Lead studio: FRVR (company 48202)
-  - Location: Portugal; 39.5, -8; precision country
-  - Location source: https://www.igdb.com/companies/frvr
-- Lead chosen by: igdb_single_developer
-
-| Company | Role | Platform | Source |
-| --- | --- | --- | --- |
-| FRVR | lead_developer |  | https://www.igdb.com/games/krunker |
-| Yendis Entertainment Pty Ltd | publisher |  | https://www.igdb.com/games/krunker |
-| FRVR | publisher |  | https://www.mobygames.com/game/205607/krunker/ |
-
-## Brighter Shores (2024)
-
-- Game id: 291334, popularity rank 4960 of 39247, popularity 377080
-- IGDB: https://www.igdb.com/games/brighter-shores
-- Lead studio: Fen Research (company 55704)
-  - Location: United Kingdom; 54, -2; precision country
-  - Location source: https://www.igdb.com/companies/fen-research
-- Lead chosen by: igdb_single_developer
-
-| Company | Role | Platform | Source |
-| --- | --- | --- | --- |
-| Fen Research | lead_developer |  | https://www.igdb.com/games/brighter-shores |
-| Fen Research | publisher |  | https://www.igdb.com/games/brighter-shores |
-
-## Color Guardians (2015)
-
-- Game id: 19947, popularity rank 7812 of 39247, popularity 205467
-- IGDB: https://www.igdb.com/games/color-guardians
-- Lead studio: Fair Play Labs (company 26794)
-  - Location: Costa Rica; 10, -84; precision country
-  - Location source: https://www.wikidata.org/wiki/Q107530622
-- Lead chosen by: wikidata_developer
-
-| Company | Role | Platform | Source |
-| --- | --- | --- | --- |
-| Fair Play Labs | lead_developer |  | https://www.wikidata.org/wiki/Q124064240 |
-| Niffler Ltd. | publisher |  | https://www.igdb.com/games/color-guardians |
-| CrossFunction | publisher | PlayStation 4 | https://www.mobygames.com/game/86830/color-guardians/ |
-| CrossFunction | publisher | PS Vita | https://www.mobygames.com/game/86830/color-guardians/ |
-| Fair Play Labs | publisher | PlayStation 4 | https://www.mobygames.com/game/86830/color-guardians/ |
-| Fair Play Labs | publisher | PS Vita | https://www.mobygames.com/game/86830/color-guardians/ |
-
-## ArcheAge: Unchained (2019)
-
-- Game id: 125340, popularity rank 9749 of 39247, popularity 150160
-- IGDB: https://www.igdb.com/games/archeage-unchained
-- Lead studio: XLGAMES (company 22577)
-  - Location: Seongnam, South Korea; 37.438611111, 127.137777777; precision city
-  - Location source: https://www.wikidata.org/wiki/Q12606770
-- Lead chosen by: igdb_single_developer
-
-| Company | Role | Platform | Source |
-| --- | --- | --- | --- |
-| XLGAMES | lead_developer |  | https://www.igdb.com/games/archeage-unchained |
-| Trion Worlds | publisher |  | https://www.igdb.com/games/archeage-unchained |
-| gamigo US | publisher |  | https://www.igdb.com/games/archeage-unchained |
-| Kakao Games Europe B.V. | publisher |  | https://www.mobygames.com/game/136154/archeage-unchained/ |
-
-## Last Inua (2014)
-
-- Game id: 10494, popularity rank 10363 of 39247, popularity 134797
-- IGDB: https://www.igdb.com/games/last-inua
-- Lead studio: Glowforth (company 44363)
-  - Location: unknown; no coordinates; precision none
-  - Location source: none
-- Lead chosen by: igdb_single_developer
-
-| Company | Role | Platform | Source |
-| --- | --- | --- | --- |
-| Glowforth | lead_developer |  | https://www.igdb.com/games/last-inua |
-| Wired Productions | publisher |  | https://www.igdb.com/games/last-inua |
-
-## Sonic the Hedgehog Pocket Adventure (1999)
-
-- Game id: 43323, popularity rank 12977 of 39247, popularity 95127
-- IGDB: https://www.igdb.com/games/sonic-the-hedgehog-pocket-adventure
-- Lead studio: SNK (company 1474)
-  - Location: Osaka, Japan; 34.721111111, 135.486666666; precision city
-  - Location source: https://www.wikidata.org/wiki/Q1044563
-- Lead chosen by: igdb_single_developer
-
-| Company | Role | Platform | Source |
-| --- | --- | --- | --- |
-| SNK | lead_developer |  | https://www.igdb.com/games/sonic-the-hedgehog-pocket-adventure |
-| Sega | publisher |  | https://www.igdb.com/games/sonic-the-hedgehog-pocket-adventure |
-| SNK | publisher |  | https://www.igdb.com/games/sonic-the-hedgehog-pocket-adventure |
-
-## Hegemony Rome: The Rise of Caesar (2014)
-
-- Game id: 10406, popularity rank 15151 of 39247, popularity 72415
-- IGDB: https://www.igdb.com/games/hegemony-rome-the-rise-of-caesar
-- Lead studio: Longbow Games (company 6073)
-  - Location: Toronto, Canada; 43.670277777, -79.386666666; precision city
-  - Location source: https://www.wikidata.org/wiki/Q63184796
-- Lead chosen by: igdb_single_developer
-
-| Company | Role | Platform | Source |
-| --- | --- | --- | --- |
-| Longbow Games | lead_developer |  | https://www.igdb.com/games/hegemony-rome-the-rise-of-caesar |
-| Kasedo Games | publisher |  | https://www.igdb.com/games/hegemony-rome-the-rise-of-caesar |
-
-## Nancy Drew: Midnight in Salem (2019)
-
-- Game id: 124420, popularity rank 16534 of 39247, popularity 63418
-- IGDB: https://www.igdb.com/games/nancy-drew-midnight-in-salem
-- Lead studio: Her Interactive (company 2246)
-  - Location: Bellevue, United States; 47.614444444, -122.1925; precision city
-  - Location source: https://www.wikidata.org/wiki/Q3133362
-- Lead chosen by: igdb_single_developer
-
-| Company | Role | Platform | Source |
-| --- | --- | --- | --- |
-| Her Interactive | lead_developer |  | https://www.igdb.com/games/nancy-drew-midnight-in-salem |
-| Her Interactive | publisher |  | https://www.igdb.com/games/nancy-drew-midnight-in-salem |
-
-## Curious George (2006)
-
-- Game id: 3867, popularity rank 19613 of 39247, popularity 44393
-- IGDB: https://www.igdb.com/games/curious-george
-- Lead studio: Monkey Bar Games (company 1315)
-  - Location: Chapel Hill, United States; 35.907308333, -79.049922222; precision city
-  - Location source: https://www.wikidata.org/wiki/Q2999820
-- Lead chosen by: igdb_single_developer
-
-| Company | Role | Platform | Source |
-| --- | --- | --- | --- |
-| Monkey Bar Games | lead_developer |  | https://www.igdb.com/games/curious-george |
-| Namco | publisher |  | https://www.igdb.com/games/curious-george |
-| Universal Pictures | publisher |  | https://www.igdb.com/games/curious-george |
-
-## Slotpark (2014)
-
-- Game id: 360765, popularity rank 20517 of 39247, popularity 44393
-- IGDB: https://www.igdb.com/games/slotpark
-- Lead studio: Funstage (company 66620)
-  - Location: Austria; 47.33333333, 13.33333333; precision country
-  - Location source: https://www.igdb.com/companies/funstage
-- Lead chosen by: igdb_single_developer
-
-| Company | Role | Platform | Source |
-| --- | --- | --- | --- |
-| Funstage | lead_developer |  | https://www.igdb.com/games/slotpark |
-| Funstage | publisher |  | https://www.igdb.com/games/slotpark |
-
-## Animallica (2017)
-
-- Game id: 43361, popularity rank 22545 of 39247, popularity 36480
-- IGDB: https://www.igdb.com/games/animallica
-- Lead studio: Animallica Games Studio (company 25017)
-  - Location: unknown; no coordinates; precision none
-  - Location source: none
-- Lead chosen by: igdb_single_developer
-
-| Company | Role | Platform | Source |
-| --- | --- | --- | --- |
-| Animallica Games Studio | lead_developer |  | https://www.igdb.com/games/animallica |
-| Animallica Games Studio | publisher |  | https://www.igdb.com/games/animallica |
-
-## Project Firestart (1989)
-
-- Game id: 40941, popularity rank 23821 of 39247, popularity 31709
-- IGDB: https://www.igdb.com/games/project-firestart
-- Lead studio: Dynamix (company 317)
-  - Location: Eugene, United States; 44.052222222, -123.0925; precision city
-  - Location source: https://www.wikidata.org/wiki/Q1269052
-- Lead chosen by: igdb_single_developer
-
-| Company | Role | Platform | Source |
-| --- | --- | --- | --- |
-| Dynamix | lead_developer |  | https://www.igdb.com/games/project-firestart |
-| Electronic Arts | publisher |  | https://www.igdb.com/games/project-firestart |
-
-## The Starship Damrey (2013)
-
-- Game id: 20853, popularity rank 26303 of 39247, popularity 25367
-- IGDB: https://www.igdb.com/games/the-starship-damrey
-- Lead studio: LEVEL-5 (company 837)
-  - Location: Fukuoka, Japan; 33.590138888, 130.401722222; precision city
-  - Location source: https://www.wikidata.org/wiki/Q674686
-- Lead chosen by: igdb_single_developer
-
-| Company | Role | Platform | Source |
-| --- | --- | --- | --- |
-| LEVEL-5 | lead_developer |  | https://www.igdb.com/games/the-starship-damrey |
-| LEVEL-5 | publisher |  | https://www.igdb.com/games/the-starship-damrey |
-
-## The Gravedigger (2024)
-
-- Game id: 311267, popularity rank 27958 of 39247, popularity 25367
-- IGDB: https://www.igdb.com/games/the-gravedigger
-- Lead studio: Authogin (company 45173)
+- Game id: 122235, popularity rank 1969 of 39279, popularity 1044840
+- IGDB: https://www.igdb.com/games/rogue-company
+- Lead studio: First Watch Games (company 22563)
   - Location: United States; 38, -97; precision country
-  - Location source: https://www.igdb.com/companies/authogin
+  - Location source: https://www.wikidata.org/wiki/Q67201633
 - Lead chosen by: igdb_single_developer
 
 | Company | Role | Platform | Source |
 | --- | --- | --- | --- |
-| Authogin | lead_developer |  | https://www.igdb.com/games/the-gravedigger |
-| Authogin | publisher |  | https://www.igdb.com/games/the-gravedigger |
+| First Watch Games | lead_developer |  | https://www.igdb.com/games/rogue-company |
+| Hi-Rez Studios | publisher |  | https://www.igdb.com/games/rogue-company |
 
-## FireForce (1992)
+## Blood Bowl 2 (2015)
 
-- Game id: 13050, popularity rank 29739 of 39247, popularity 19025
-- IGDB: https://www.igdb.com/games/fireforce
-- Lead studio: International Computer Entertainment (company 1152)
+- Game id: 6059, popularity rank 4963 of 39279, popularity 376471
+- IGDB: https://www.igdb.com/games/blood-bowl-2
+- Lead studio: Cyanide Studio (company 404)
+  - Location: Nanterre, France; 48.89198, 2.20675; precision city
+  - Location source: https://en.wikipedia.org/wiki/Cyanide_(company)
+- Lead chosen by: igdb_single_developer
+
+| Company | Role | Platform | Source |
+| --- | --- | --- | --- |
+| Cyanide Studio | lead_developer |  | https://www.igdb.com/games/blood-bowl-2 |
+| Focus Entertainment | publisher |  | https://www.igdb.com/games/blood-bowl-2 |
+| Focus Home Interactive SAS | publisher |  | https://www.mobygames.com/game/82226/blood-bowl-ii/ |
+
+## Aokana: Four Rhythms Across the Blue (2016)
+
+- Game id: 54630, popularity rank 7818 of 39279, popularity 204960
+- IGDB: https://www.igdb.com/games/aokana-four-rhythms-across-the-blue
+- Lead studio: sprite (company 22077)
+  - Location: Japan; 36, 138; precision country
+  - Location source: https://www.igdb.com/companies/sprite
+- Lead chosen by: igdb_single_developer
+
+| Company | Role | Platform | Source |
+| --- | --- | --- | --- |
+| sprite | lead_developer |  | https://www.igdb.com/games/aokana-four-rhythms-across-the-blue |
+| NekoNyan | port |  | https://www.igdb.com/games/aokana-four-rhythms-across-the-blue |
+| fairys | port |  | https://www.igdb.com/games/aokana-four-rhythms-across-the-blue |
+| PQube | publisher |  | https://www.igdb.com/games/aokana-four-rhythms-across-the-blue |
+| NekoNyan | publisher |  | https://www.igdb.com/games/aokana-four-rhythms-across-the-blue |
+| HIKARI FIELD | publisher |  | https://www.igdb.com/games/aokana-four-rhythms-across-the-blue |
+| sprite | publisher |  | https://www.igdb.com/games/aokana-four-rhythms-across-the-blue |
+| Piacci | publisher |  | https://www.igdb.com/games/aokana-four-rhythms-across-the-blue |
+
+## Perfect Heist 2 (2021)
+
+- Game id: 157499, popularity rank 9757 of 39279, popularity 149800
+- IGDB: https://www.igdb.com/games/perfect-heist-2
+- Lead studio: yeswecamp (company 23809)
   - Location: unknown; no coordinates; precision none
   - Location source: none
 - Lead chosen by: igdb_single_developer
 
 | Company | Role | Platform | Source |
 | --- | --- | --- | --- |
-| International Computer Entertainment | lead_developer |  | https://www.igdb.com/games/fireforce |
-| International Computer Entertainment | publisher |  | https://www.igdb.com/games/fireforce |
+| yeswecamp | lead_developer |  | https://www.igdb.com/games/perfect-heist-2 |
+| yeswecamp | publisher |  | https://www.igdb.com/games/perfect-heist-2 |
 
-## Aestik (2024)
+## Just Dance 2018 (2017)
 
-- Game id: 218138, popularity rank 32357 of 39247, popularity 19025
-- IGDB: https://www.igdb.com/games/aestik
-- Lead studio: Hooded Traveler Games (company 43399)
-  - Location: Switzerland; 47, 8; precision country
-  - Location source: https://www.igdb.com/companies/hooded-traveler-games
+- Game id: 37067, popularity rank 10372 of 39279, popularity 134797
+- IGDB: https://www.igdb.com/games/just-dance-2018
+- Lead studio: Ubisoft Paris (company 841)
+  - Location: Paris, France; 48.856666666, 2.352222222; precision city
+  - Location source: https://www.wikidata.org/wiki/Q1041320
+- Lead chosen by: igdb_developer_confirmed_by_wikidata
+
+| Company | Role | Platform | Source |
+| --- | --- | --- | --- |
+| Ubisoft Paris | lead_developer |  | https://www.igdb.com/games/just-dance-2018 |
+| Ubisoft Montreal | co_developer |  | https://www.igdb.com/games/just-dance-2018 |
+| Ubisoft Shanghai | co_developer |  | https://www.igdb.com/games/just-dance-2018 |
+| Ubisoft Bucharest | co_developer |  | https://www.igdb.com/games/just-dance-2018 |
+| Ubisoft Pune | co_developer |  | https://www.igdb.com/games/just-dance-2018 |
+| Ubisoft Entertainment | publisher |  | https://www.igdb.com/games/just-dance-2018 |
+
+## Evil Dead: Hail to the King (2000)
+
+- Game id: 47078, popularity rank 12987 of 39279, popularity 95127
+- IGDB: https://www.igdb.com/games/evil-dead-hail-to-the-king
+- Lead studio: Heavy Iron Studios (company 895)
+  - Location: Los Angeles, United States; 34.05223, -118.24368; precision city
+  - Location source: https://www.wikidata.org/wiki/Q655656
 - Lead chosen by: igdb_single_developer
 
 | Company | Role | Platform | Source |
 | --- | --- | --- | --- |
-| Hooded Traveler Games | lead_developer |  | https://www.igdb.com/games/aestik |
+| Heavy Iron Studios | lead_developer |  | https://www.igdb.com/games/evil-dead-hail-to-the-king |
+| THQ | publisher |  | https://www.igdb.com/games/evil-dead-hail-to-the-king |
 
-## Against (2021)
+## Adolescent Santa Claus (2018)
 
-- Game id: 152211, popularity rank 33492 of 39247, popularity 16141
-- IGDB: https://www.igdb.com/games/against
-- Lead studio: Joy Way (company 25100)
+- Game id: 103592, popularity rank 15163 of 39279, popularity 72415
+- IGDB: https://www.igdb.com/games/adolescent-santa-claus
+- Lead studio: TALESSHOP Co., Ltd. (company 24441)
+  - Location: South Korea; 37, 127.5; precision country
+  - Location source: https://www.igdb.com/companies/talesshop-co-dot-ltd
+- Lead chosen by: igdb_single_developer
+
+| Company | Role | Platform | Source |
+| --- | --- | --- | --- |
+| TALESSHOP Co., Ltd. | lead_developer |  | https://www.igdb.com/games/adolescent-santa-claus |
+| TALESSHOP Co., Ltd. | publisher |  | https://www.igdb.com/games/adolescent-santa-claus |
+
+## Mario Bros. (1983)
+
+- Game id: 131939, popularity rank 16548 of 39279, popularity 63418
+- IGDB: https://www.igdb.com/games/mario-bros--1
+- Lead studio: Nintendo (company 70)
+  - Location: Kyoto, Japan; 35.011611111, 135.768111111; precision city
+  - Location source: https://www.wikidata.org/wiki/Q8093
+- Lead chosen by: igdb_single_developer
+
+| Company | Role | Platform | Source |
+| --- | --- | --- | --- |
+| Nintendo | lead_developer |  | https://www.igdb.com/games/mario-bros--1 |
+| Nintendo | publisher |  | https://www.igdb.com/games/mario-bros--1 |
+
+## PO'ed (1995)
+
+- Game id: 4327, popularity rank 19629 of 39279, popularity 44393
+- IGDB: https://www.igdb.com/games/po-ed
+- Lead studio: Any Channel (company 24470)
+  - Location: United States; 38, -97; precision country
+  - Location source: https://www.wikidata.org/wiki/Q7119903
+- Lead chosen by: igdb_single_developer
+
+| Company | Role | Platform | Source |
+| --- | --- | --- | --- |
+| Any Channel | lead_developer |  | https://www.igdb.com/games/po-ed |
+| Accolade | port |  | https://www.igdb.com/games/po-ed |
+| Accolade | publisher |  | https://www.igdb.com/games/po-ed |
+| Time Warner Interactive | publisher |  | https://www.igdb.com/games/po-ed |
+| Coconuts Japan | publisher |  | https://www.igdb.com/games/po-ed |
+
+## Fate Seeker: Journey (2022)
+
+- Game id: 228213, popularity rank 20534 of 39279, popularity 44200
+- IGDB: https://www.igdb.com/games/fate-seeker-journey
+- Lead studio: JSL ENTERTAINMENT (company 22241)
+  - Location: Taiwan; 23.5, 121; precision country
+  - Location source: https://www.igdb.com/companies/jsl-entertainment
+- Lead chosen by: igdb_single_developer
+
+| Company | Role | Platform | Source |
+| --- | --- | --- | --- |
+| JSL ENTERTAINMENT | lead_developer |  | https://www.igdb.com/games/fate-seeker-journey |
+| JSL ENTERTAINMENT | publisher |  | https://www.igdb.com/games/fate-seeker-journey |
+
+## Moonlight Minions (2014)
+
+- Game id: 17581, popularity rank 22563 of 39279, popularity 36208
+- IGDB: https://www.igdb.com/games/moonlight-minions
+- Lead studio: Shorebound Studios (company 4807)
   - Location: unknown; no coordinates; precision none
   - Location source: none
 - Lead chosen by: igdb_single_developer
 
 | Company | Role | Platform | Source |
 | --- | --- | --- | --- |
-| Joy Way | lead_developer |  | https://www.igdb.com/games/against |
-| Joy Way | publisher |  | https://www.igdb.com/games/against |
+| Shorebound Studios | lead_developer |  | https://www.igdb.com/games/moonlight-minions |
+| Shorebound Studios | publisher |  | https://www.igdb.com/games/moonlight-minions |
 
-## De Mambo (2017)
+## Slayers (1994)
 
-- Game id: 18358, popularity rank 36097 of 39247, popularity 8456
-- IGDB: https://www.igdb.com/games/de-mambo
-- Lead studio: The Dangerous Kitchen (company 9412)
-  - Location: United Kingdom; 54, -2; precision country
-  - Location source: https://www.wikidata.org/wiki/Q45319468
+- Game id: 42462, popularity rank 23840 of 39279, popularity 31709
+- IGDB: https://www.igdb.com/games/slayers
+- Lead studio: BEC (company 2018)
+  - Location: Tokyo, Japan; 35.689444444, 139.691666666; precision city
+  - Location source: https://www.wikidata.org/wiki/Q11336950
 - Lead chosen by: igdb_single_developer
 
 | Company | Role | Platform | Source |
 | --- | --- | --- | --- |
-| The Dangerous Kitchen | lead_developer |  | https://www.igdb.com/games/de-mambo |
-| The Dangerous Kitchen | publisher |  | https://www.igdb.com/games/de-mambo |
+| BEC | lead_developer |  | https://www.igdb.com/games/slayers |
+| Banpresto | publisher |  | https://www.igdb.com/games/slayers |
 
-## Aethernaut (2022)
+## Grandia Xtreme (2002)
 
-- Game id: 136660, popularity rank 38790 of 39247, popularity 5235
-- IGDB: https://www.igdb.com/games/aethernaut
-- Lead studio: Dragon Slumber (company 12019)
-  - Location: Canada; 60, -95; precision country
-  - Location source: https://www.igdb.com/companies/dragon-slumber
+- Game id: 21660, popularity rank 26324 of 39279, popularity 25367
+- IGDB: https://www.igdb.com/games/grandia-xtreme
+- Lead studio: Game Arts (company 1151)
+  - Location: Tokyo, Japan; 35.693944444, 139.753611111; precision city
+  - Location source: https://www.wikidata.org/wiki/Q1493042
 - Lead chosen by: igdb_single_developer
 
 | Company | Role | Platform | Source |
 | --- | --- | --- | --- |
-| Dragon Slumber | lead_developer |  | https://www.igdb.com/games/aethernaut |
-| Dragon Slumber | publisher |  | https://www.igdb.com/games/aethernaut |
+| Game Arts | lead_developer |  | https://www.igdb.com/games/grandia-xtreme |
+| Enix | publisher |  | https://www.igdb.com/games/grandia-xtreme |
+
+## I'm on Observation Duty 7 (2024)
+
+- Game id: 318811, popularity rank 27982 of 39279, popularity 25367
+- IGDB: https://www.igdb.com/games/im-on-observation-duty-7
+- Lead studio: Notovia (company 37929)
+  - Location: unknown; no coordinates; precision none
+  - Location source: none
+- Lead chosen by: igdb_first_developer
+
+| Company | Role | Platform | Source |
+| --- | --- | --- | --- |
+| Notovia | lead_developer |  | https://www.igdb.com/games/im-on-observation-duty-7 |
+| Dreamloop Games | co_developer |  | https://www.igdb.com/games/im-on-observation-duty-7 |
+| Dreamloop Games | port |  | https://www.igdb.com/games/im-on-observation-duty-7 |
+| Dreamloop Games | publisher |  | https://www.igdb.com/games/im-on-observation-duty-7 |
+| Notovia | publisher |  | https://www.igdb.com/games/im-on-observation-duty-7 |
+
+## Alien Breed 3D 2: The Killing Grounds (1996)
+
+- Game id: 14240, popularity rank 29763 of 39279, popularity 19025
+- IGDB: https://www.igdb.com/games/alien-breed-3d-2-the-killing-grounds
+- Lead studio: Team17 (company 16437)
+  - Location: Wakefield, United Kingdom; 53.6825, -1.4975; precision city
+  - Location source: https://www.wikidata.org/wiki/Q1384984
+- Lead chosen by: igdb_single_developer
+
+| Company | Role | Platform | Source |
+| --- | --- | --- | --- |
+| Team17 | lead_developer |  | https://www.igdb.com/games/alien-breed-3d-2-the-killing-grounds |
+| Ocean | publisher |  | https://www.igdb.com/games/alien-breed-3d-2-the-killing-grounds |
+| Team17 | publisher |  | https://www.igdb.com/games/alien-breed-3d-2-the-killing-grounds |
+
+## Hungry Hearts Diner Neo (2022)
+
+- Game id: 224193, popularity rank 32384 of 39279, popularity 19025
+- IGDB: https://www.igdb.com/games/hungry-hearts-diner-neo
+- Lead studio: 2D Fantasista (company 65458)
+  - Location: Japan; 36, 138; precision country
+  - Location source: https://www.igdb.com/companies/2d-fantasista
+- Lead chosen by: igdb_single_developer
+
+| Company | Role | Platform | Source |
+| --- | --- | --- | --- |
+| 2D Fantasista | lead_developer |  | https://www.igdb.com/games/hungry-hearts-diner-neo |
+| GAGEX | publisher |  | https://www.igdb.com/games/hungry-hearts-diner-neo |
+
+## Pixel Starships 2 (2025)
+
+- Game id: 220468, popularity rank 33520 of 39279, popularity 15960
+- IGDB: https://www.igdb.com/games/pixel-starships-2
+- Lead studio: Savy Soda (company 22794)
+  - Location: unknown; no coordinates; precision none
+  - Location source: none
+- Lead chosen by: igdb_single_developer
+
+| Company | Role | Platform | Source |
+| --- | --- | --- | --- |
+| Savy Soda | lead_developer |  | https://www.igdb.com/games/pixel-starships-2 |
+| Savy Soda | publisher |  | https://www.igdb.com/games/pixel-starships-2 |
+
+## Summer Islands (2025)
+
+- Game id: 76192, popularity rank 36127 of 39279, popularity 8456
+- IGDB: https://www.igdb.com/games/summer-islands
+- Lead studio: Marttalin Games (company 60897)
+  - Location: Germany; 51, 9; precision country
+  - Location source: https://www.igdb.com/companies/marttalin-games
+- Lead chosen by: igdb_single_developer
+
+| Company | Role | Platform | Source |
+| --- | --- | --- | --- |
+| Marttalin Games | lead_developer |  | https://www.igdb.com/games/summer-islands |
+| Marttalin Games | publisher |  | https://www.igdb.com/games/summer-islands |
+
+## Agent in Depth (2024)
+
+- Game id: 216716, popularity rank 38822 of 39279, popularity 5235
+- IGDB: https://www.igdb.com/games/agent-in-depth
+- Lead studio: Naturepixel Studios (company 66763)
+  - Location: unknown; no coordinates; precision none
+  - Location source: none
+- Lead chosen by: igdb_first_developer
+
+| Company | Role | Platform | Source |
+| --- | --- | --- | --- |
+| Naturepixel Studios | lead_developer |  | https://www.igdb.com/games/agent-in-depth |
+| SkyBrave | co_developer |  | https://www.igdb.com/games/agent-in-depth |
+| Next in Game | publisher |  | https://www.igdb.com/games/agent-in-depth |

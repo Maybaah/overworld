@@ -1,11 +1,14 @@
 import * as THREE from 'three';
 import { ATLAS, atlasHeight, slotCount, slotOrigin, slotUv, SlotCache, type AtlasLayout } from './atlasSlots';
+import { dataBase } from '../data/loader';
+import { TITLE_PREFIX } from './titleCovers';
 
 export const MAX_IN_FLIGHT = 4;
 const UPLOADS_PER_FRAME = 2;
 const MIPS_EVERY_MS = 250;
 
 export function coverUrl(id: string, size: 'cover_small' | 'cover_big' | 'cover_big_2x' | '1080p' = 'cover_small'): string {
+  if (id.startsWith(TITLE_PREFIX)) return `${dataBase()}/covers/title/${id}.webp`;
   return `https://images.igdb.com/igdb/image/upload/t_${size}/${id}.jpg`;
 }
 

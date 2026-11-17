@@ -1,6 +1,7 @@
 import type { Company, GameSummary } from '@shared';
 import type { Layout } from './build';
 import type { WorkerGame } from './protocol';
+import { titleKey } from '../titleCovers';
 
 // Precomputed mosaic layouts for every year (web/scripts/mosaic-layouts.ts), so the year slider only has to
 // cut cells instead of fitting them. Binary, little endian:
@@ -14,7 +15,7 @@ export function mosaicInput(games: readonly GameSummary[], companyById: Readonly
   return games.flatMap((g) => {
     const c = companyById.get(g.leadCompanyId);
     if (!c || !c.country || c.lat === null || c.lng === null) return [];
-    return [{ id: g.id, cover: g.cover, popularity: g.popularity, lat: c.lat, lng: c.lng, country: c.country, exact: c.precision === 'city', year: g.year }];
+    return [{ id: g.id, cover: g.cover ?? titleKey(g.id), popularity: g.popularity, lat: c.lat, lng: c.lng, country: c.country, exact: c.precision === 'city', year: g.year }];
   });
 }
 

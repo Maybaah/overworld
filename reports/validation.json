@@ -115,15 +115,15 @@
     }
   ],
   "totals": {
-    "games": 39247,
-    "companies": 22311,
-    "roles": 114876
+    "games": 39279,
+    "companies": 22341,
+    "roles": 114914
   },
   "roleCounts": {
-    "lead_developer": 39247,
-    "co_developer": 6334,
+    "lead_developer": 39279,
+    "co_developer": 6335,
     "port": 2709,
-    "publisher": 64723,
+    "publisher": 64728,
     "localization": 1,
     "qa": 0,
     "art": 1,
@@ -132,16 +132,16 @@
   },
   "precision": {
     "city": {
-      "count": 3496,
+      "count": 3510,
       "percent": 15.7
     },
     "country": {
-      "count": 8337,
+      "count": 8352,
       "percent": 37.4
     },
     "none": {
-      "count": 10478,
-      "percent": 47
+      "count": 10479,
+      "percent": 46.9
     }
   },
   "flaggedCompanies": [
@@ -38046,6 +38046,11 @@
       "gameCount": 1
     },
     {
+      "id": 44623,
+      "name": "Les Kalifas",
+      "gameCount": 1
+    },
+    {
       "id": 44636,
       "name": "Eidenz",
       "gameCount": 1
@@ -52537,15 +52542,15 @@
     }
   ],
   "countryOnlyLeadShare": {
-    "count": 13321,
-    "total": 39247,
-    "percent": 33.9
+    "count": 13337,
+    "total": 39279,
+    "percent": 34
   },
   "leadBasisCounts": {
     "igdb_single_developer": 35671,
     "igdb_developer_confirmed_by_wikidata": 1597,
     "igdb_first_developer": 1203,
-    "curated": 12,
+    "curated": 44,
     "igdb_developer_heuristic": 253,
     "wikidata_developer": 492,
     "mobygames_developer": 19

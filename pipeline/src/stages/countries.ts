@@ -167,8 +167,9 @@ export async function runCountriesStage(
       company = listed.get(curatedCompanyId(entry)) ?? curatedCompany(entry);
       listed.set(company.id, company);
       companyById.set(company.id, company);
-      leads.push({ igdbGameId: game.id, game: game.name, igdbCompanyId: company.id, company: company.name, evidenceUrl: entry.evidenceUrl });
     }
+    // The listed studio leads even when IGDB names other developers too.
+    leads.push({ igdbGameId: game.id, game: game.name, igdbCompanyId: company.id, company: company.name, evidenceUrl: entry.evidenceUrl });
     const fix = correctionFor(entry, company.id, company.name, cities);
     if (fix) corrections.push(fix);
     else if (company.country === null) {
