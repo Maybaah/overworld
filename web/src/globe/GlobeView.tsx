@@ -97,6 +97,7 @@ const SHADE_TOP = '#2f8f9d';
 const EXTRA_STROKE = 0.45;
 const BASE_RADIUS = 99.6;
 const SETTLE_MS = 160;
+const MOVING_PICK_MS = 300;
 const TILE_PROPS = { globeTileEngineMaxLevel: TILE_MAX_LEVEL } as Record<string, unknown>;
 
 function useWindowSize() {
@@ -436,6 +437,7 @@ export function GlobeView() {
     let mosaicPicking = false;
     let mosaicMovedAt = -Infinity;
     let mosaicSettled = true;
+    let mosaicPickedAt = -Infinity;
     relayoutRef.current = 'fresh';
     let lastMove = -Infinity;
     let lastLayout = -Infinity;
@@ -667,8 +669,14 @@ ${where}`;
         mosaicSettled = false;
         onZoom(globe.pointOfView());
       }
+      // Covers coming into view load while the globe still turns; the settled pass also re-picks sharp ones.
+      if (!mosaicSettled && now - mosaicPickedAt > MOVING_PICK_MS) {
+        mosaicPickedAt = now;
+        mosaic.cameraMoved();
+      }
       if (!mosaicSettled && now - mosaicMovedAt > 250) {
         mosaicSettled = true;
+        mosaicPickedAt = now;
         mosaic.cameraMoved();
         const cam = camera as THREE.PerspectiveCamera;
         const next = focusOf(globe.pointOfView(), cam.fov, cam.aspect);
