@@ -5,6 +5,7 @@
 export const STAGE_FILES = {
   igdbGames: 'igdb-games.json',
   igdbCompanies: 'igdb-companies.json',
+  countryStudios: 'country-studios.json',
   igdbGenres: 'igdb-genres.json',
   wikidataGames: 'wikidata-games.json',
   wikidataCompanies: 'wikidata-companies.json',

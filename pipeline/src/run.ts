@@ -49,8 +49,10 @@ export async function runMergeStage(config: PipelineConfig): Promise<Record<stri
   const population = await readJsonIfExists<RawPopulation>(file(STAGE_FILES.population));
   const specialties = (await readJsonIfExists<Specialty[]>(path.join(config.curatedDir, 'company-specialties.json'))) ?? [];
 
-  const locationCorrections =
-    (await readJsonIfExists<LocationCorrection[]>(path.join(config.curatedDir, 'company-locations.json'))) ?? [];
+  const locationCorrections = [
+    ...((await readJsonIfExists<LocationCorrection[]>(path.join(config.curatedDir, 'company-locations.json'))) ?? []),
+    ...((await readJsonIfExists<LocationCorrection[]>(file(STAGE_FILES.countryStudios))) ?? []),
+  ];
 
   const leadOverrides = (await readJsonIfExists<LeadOverride[]>(path.join(config.curatedDir, 'lead-overrides.json'))) ?? [];
   const cityIndex = createCityIndex();

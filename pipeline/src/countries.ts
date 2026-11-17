@@ -16,6 +16,12 @@ for (const c of countries) {
   });
 }
 
+export function alpha2ToNumeric(alpha2: string | null | undefined): number | null {
+  if (!alpha2) return null;
+  for (const [n, a] of byNumeric) if (a === alpha2.toUpperCase()) return n;
+  return null;
+}
+
 export function numericToAlpha2(n: number | null | undefined): string | null {
   if (n === null || n === undefined) return null;
   return byNumeric.get(n) ?? null;

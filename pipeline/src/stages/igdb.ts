@@ -37,7 +37,7 @@ export interface GameFieldNames {
 export const CURRENT_FIELDS: GameFieldNames = { gameType: 'game_type', externalGameSource: 'external_game_source' };
 const LEGACY_FIELDS: GameFieldNames = { gameType: 'category', externalGameSource: 'category' };
 
-const gameFields = (f: GameFieldNames) =>
+export const gameFields = (f: GameFieldNames) =>
   [
     'name',
     'slug',
