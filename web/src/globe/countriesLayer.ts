@@ -1,7 +1,4 @@
 import * as THREE from 'three';
-import { LineMaterial } from 'three/examples/jsm/lines/LineMaterial.js';
-import { LineSegments2 } from 'three/examples/jsm/lines/LineSegments2.js';
-import { LineSegmentsGeometry } from 'three/examples/jsm/lines/LineSegmentsGeometry.js';
 import { alpha2OfNumeric, shadeBucket, shadeColor, SHADE_BUCKETS, type CountryShape } from './countries';
 import { triangulateShape } from './fill';
 import { buildOutline } from './outline';
@@ -9,10 +6,6 @@ import { buildOutline } from './outline';
 const TINT_BASE = '#3b6f8a';
 const IMAGERY_STROKE = '#e3e9f0';
 const IMAGERY_STROKE_OPACITY = 0.42;
-const BORDER_WIDTH = 2;
-const HALO_WIDTH = 5;
-const HALO_COLOR = '#050507';
-const HALO_OPACITY = 0.75;
 
 export function tintAlpha(bucket: number): number {
   if (bucket <= 0) return 0;
@@ -21,14 +14,12 @@ export function tintAlpha(bucket: number): number {
 
 export class CountriesLayer {
   private readonly fillMaterial = new THREE.MeshBasicMaterial({ vertexColors: true, side: THREE.DoubleSide });
-  private readonly lineMaterial: LineMaterial;
-  private readonly haloMaterial: LineMaterial;
+  private readonly lineMaterial: THREE.LineBasicMaterial;
   private readonly stroke: THREE.Color;
   private readonly mesh: THREE.Mesh;
-  private readonly lines: LineSegments2;
-  private readonly halo: LineSegments2;
+  private readonly lines: THREE.LineSegments;
   private fillGeometry = new THREE.BufferGeometry();
-  private lineGeometry = new LineSegmentsGeometry();
+  private lineGeometry = new THREE.BufferGeometry();
   private borderShapes: readonly CountryShape[] | null = null;
   private readonly fillCache = new WeakMap<CountryShape, Float32Array>();
   private readonly lineCache = new WeakMap<CountryShape, Float32Array>();
@@ -45,27 +36,16 @@ export class CountriesLayer {
     shadeTop: string,
   ) {
     this.stroke = new THREE.Color(stroke);
-    this.lineMaterial = new LineMaterial({ color: stroke, linewidth: BORDER_WIDTH, transparent: true });
-    this.haloMaterial = new LineMaterial({ color: HALO_COLOR, linewidth: HALO_WIDTH, transparent: true, opacity: HALO_OPACITY, depthWrite: false });
+    this.lineMaterial = new THREE.LineBasicMaterial({ color: stroke, transparent: true });
     this.mesh = new THREE.Mesh(this.fillGeometry, this.fillMaterial);
-    this.lines = new LineSegments2(this.lineGeometry, this.lineMaterial);
-    this.halo = new LineSegments2(this.lineGeometry, this.haloMaterial);
+    this.lines = new THREE.LineSegments(this.lineGeometry, this.lineMaterial);
     this.mesh.frustumCulled = false;
     this.lines.frustumCulled = false;
-    this.halo.frustumCulled = false;
     this.mesh.renderOrder = 0;
-    this.halo.renderOrder = 0.7;
     this.lines.renderOrder = 1;
     this.bucketColors = Array.from({ length: SHADE_BUCKETS }, (_, b) => new THREE.Color(shadeColor(b, fill, shadeTop)));
     this.tintColors = Array.from({ length: SHADE_BUCKETS }, (_, b) => new THREE.Color(shadeColor(b, TINT_BASE, shadeTop)));
-    scene.add(this.mesh, this.halo, this.lines);
-  }
-
-  setResolution(width: number, height: number): void {
-    const r = this.lineMaterial.resolution;
-    if (r.x === width && r.y === height) return;
-    r.set(width, height);
-    this.haloMaterial.resolution.set(width, height);
+    scene.add(this.mesh, this.lines);
   }
 
   // Borders can come from a more detailed map than the fill, so they line up with the mosaic's edges.
@@ -90,10 +70,9 @@ export class CountriesLayer {
       o += l.length;
     }
     this.lineGeometry.dispose();
-    this.lineGeometry = new LineSegmentsGeometry();
-    this.lineGeometry.setPositions(linePos);
+    this.lineGeometry = new THREE.BufferGeometry();
+    this.lineGeometry.setAttribute('position', new THREE.BufferAttribute(linePos, 3));
     this.lines.geometry = this.lineGeometry;
-    this.halo.geometry = this.lineGeometry;
   }
 
   set(shapes: readonly CountryShape[]): void {
@@ -141,7 +120,7 @@ export class CountriesLayer {
     this.mesh.visible = !tinted || this.shade !== null;
     if (tinted) this.lineMaterial.color.set(IMAGERY_STROKE);
     else this.lineMaterial.color.copy(this.stroke);
-    this.lineMaterial.opacity = tinted ? IMAGERY_STROKE_OPACITY : 0.95;
+    this.lineMaterial.opacity = tinted ? IMAGERY_STROKE_OPACITY : 0.9;
     this.lineMaterial.needsUpdate = true;
     const attr = this.fillGeometry.getAttribute('color') as THREE.BufferAttribute | undefined;
     if (!attr) return;
@@ -161,11 +140,10 @@ export class CountriesLayer {
   }
 
   dispose(): void {
-    this.scene.remove(this.mesh, this.halo, this.lines);
+    this.scene.remove(this.mesh, this.lines);
     this.fillGeometry.dispose();
     this.lineGeometry.dispose();
     this.fillMaterial.dispose();
     this.lineMaterial.dispose();
-    this.haloMaterial.dispose();
   }
 }

@@ -674,7 +674,6 @@ ${where}`;
       }
       if (mosaic.year !== useStore.getState().shownYear) useStore.getState().setShownYear(mosaic.year);
       mosaic.frame(camera as THREE.PerspectiveCamera, canvas.clientHeight);
-      outline.setResolution(canvas.clientWidth, canvas.clientHeight);
       if (needUpgrade.current && detailRef.current && now - lastUpgrade > 350) {
         const pov = globe.pointOfView();
         if (pov.altitude < CITY_FROM) {

@@ -7,7 +7,7 @@ export const COLORS = {
   background: '#09090b',
   globe: '#111114',
   countryFill: '#3f3f46',
-  countryStroke: '#e4e4e7',
+  countryStroke: '#ffffff',
   atmosphere: '#71717a',
   lead: '#F0E442',
   idle: '#9aa3b2',
