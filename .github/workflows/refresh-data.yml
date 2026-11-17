@@ -50,6 +50,9 @@ jobs:
       - name: Pack cover sprite sheets
         run: npm run sprites
 
+      - name: Precompute mosaic layouts for every year
+        run: npm run layouts
+
       - name: Upload reports
         if: always()
         uses: actions/upload-artifact@v4
