@@ -8,6 +8,7 @@ import {
   fitPowerDiagram,
   orient,
   pointInRegion,
+  RegionIndex,
   regionArea,
   ringArea,
   segmentInside,
@@ -16,7 +17,6 @@ import {
   type Pt,
   type Region,
   type Ring,
-  type RegionIndex,
   type Site,
 } from './geometry';
 
@@ -369,6 +369,13 @@ function regionOf(cell: ClippedCell): Region {
 
 // Two levels: the country is split between cities (area by the cities' total popularity, sites at the cities),
 // then each city's part is split between its games, which may move freely inside it.
+const landIndexes = new WeakMap<CountryRegion, RegionIndex>();
+function landIndex(country: CountryRegion): RegionIndex {
+  let index = landIndexes.get(country);
+  if (!index) landIndexes.set(country, (index = new RegionIndex(country.region)));
+  return index;
+}
+
 // memory keeps where every site ended last time, so the next build (another year, more games when zoomed in)
 // starts from there: cells stay where they were and the fit needs few iterations.
 export function buildCountryMosaic(
@@ -381,6 +388,8 @@ export function buildCountryMosaic(
   const out: CountryMosaic = { key, sites: [], pieces: [], position: [], uv: [], cell: [], lines: [], cells: [] };
   if (games.length === 0) return out;
   const proj = country.projection;
+  const land = landIndex(country);
+  const onLand = (p: Pt) => land.containsBox([p[0], p[1], p[0], p[1]]) || pointInRegion(p, country.region);
   const weight = (g: MosaicGame) => Math.max(1, g.popularity) ** POPULARITY_EXPONENT;
   const cities = metroGroups(games, country);
   const homes = placeSites(cities.map((list) => list[0]!), country);
@@ -439,6 +448,9 @@ export function buildCountryMosaic(
         const a = verts[f[0]!]!;
         const bb = verts[f[1]!]!;
         const cc = verts[f[2]!]!;
+        // Clipping a cell by a ragged coast leaves zero-width bridges along the cell's edge between bits of land;
+        // their triangles lie over the sea and showed as thin streaks of cover across the water.
+        if (!onLand([(a.x + bb.x + cc.x) / 3, (a.y + bb.y + cc.y) / 3])) continue;
         splitTriangle([a.x, a.y, bb.x, bb.y, cc.x, cc.y], flat);
       }
       for (let k = 0; k < flat.length; k += 2) {
