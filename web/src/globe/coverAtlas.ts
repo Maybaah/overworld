@@ -18,7 +18,9 @@ interface Ready {
 }
 
 export class CoverAtlas {
-  readonly texture: THREE.DataTexture;
+  // A 1x1 stand-in until the first cover arrives, so tiers that are never needed take no GPU memory.
+  texture: THREE.DataTexture;
+  private allocated = false;
   private readonly slots: SlotCache<string>;
   private readonly readyAt = new Map<string, number>();
   private readonly failed = new Set<string>();
@@ -41,6 +43,14 @@ export class CoverAtlas {
     private readonly mipmaps = true,
   ) {
     this.slots = new SlotCache<string>(slotCount(layout));
+    this.texture = new THREE.DataTexture(new Uint8Array(4), 1, 1, THREE.RGBAFormat, THREE.UnsignedByteType);
+    this.texture.needsUpdate = true;
+  }
+
+  private allocate(): void {
+    if (this.allocated) return;
+    this.allocated = true;
+    const { layout } = this;
     const t = new THREE.DataTexture(null, layout.size, atlasHeight(layout), THREE.RGBAFormat, THREE.UnsignedByteType);
     t.source.dataReady = false;
     t.generateMipmaps = this.mipmaps;
@@ -49,7 +59,8 @@ export class CoverAtlas {
     t.flipY = false;
     t.colorSpace = THREE.NoColorSpace;
     t.needsUpdate = true;
-    renderer.initTexture(t);
+    this.renderer.initTexture(t);
+    this.texture.dispose();
     this.texture = t;
   }
 
@@ -110,6 +121,7 @@ export class CoverAtlas {
 
   frame(): boolean {
     let changed = false;
+    if (this.uploads.length > 0) this.allocate();
     for (let n = 0; n < UPLOADS_PER_FRAME && this.uploads.length > 0; n++) {
       const { key, bitmap } = this.uploads.shift()!;
       const got = this.slots.acquire(key, (k) => this.pinned.has(k));

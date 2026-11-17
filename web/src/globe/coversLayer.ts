@@ -437,7 +437,10 @@ export class CoversLayer {
     (u.uViewport!.value as THREE.Vector2).set(viewW, viewH);
     const t = this.opts.animate ? Math.min(1, (performance.now() - this.hoverStart) / HOVER_MS) : 1;
     u.uHoverScale!.value = 1 + (HOVER_SCALE - 1) * t;
-    if (this.atlas.frame()) this.dirty = true;
+    if (this.atlas.frame()) {
+      this.dirty = true;
+      u.uAtlas!.value = this.atlas.texture;
+    }
     if (!this.dirty) return;
     this.dirty = false;
     this.write();

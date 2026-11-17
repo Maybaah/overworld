@@ -357,6 +357,7 @@ export class MosaicLayer {
     }
     let changed = false;
     for (const a of this.atlases) changed = a.frame() || changed;
+    if (changed) this.syncAtlasTextures();
     if (changed) this.tableDirty = true;
     if (this.tableDirty && now - this.tableAt >= TABLE_EVERY_MS) this.fillTables(false);
     this.stepFade(now);
@@ -369,6 +370,16 @@ export class MosaicLayer {
     this.sprites.dispose();
     for (const v of this.views()) v.dispose();
     this.base.dispose();
+  }
+
+  private syncAtlasTextures(): void {
+    const keys = ['uT0', 'uT1', 'uT2', 'uT3'] as const;
+    keys.forEach((k, i) => {
+      const t = this.atlases[i]!.texture;
+      if (this.base.uniforms[k]!.value === t) return;
+      this.base.uniforms[k]!.value = t;
+      for (const v of this.views()) v.material.uniforms[k]!.value = t;
+    });
   }
 
   private views(): View[] {
