@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 
 // Small covers packed at build time (web/scripts/cover-sprites.ts). A 2px copied border keeps mip levels clean.
-export const SPRITE_LAYOUT = { size: 2048, slotW: 52, slotH: 72, imageW: 48, imageH: 68 } as const;
+export const SPRITE_LAYOUT = { size: 2048, slotW: 44, slotH: 60, imageW: 40, imageH: 56 } as const;
 
 export interface SpriteIndex {
   version: 1;
