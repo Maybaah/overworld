@@ -2,32 +2,46 @@
 import { feature } from 'topojson-client';
 import type { GeometryCollection, Topology } from 'topojson-specification';
 import type { CountryShape } from '../countries';
-import { countryRegions, MosaicBuilder, type CountryRegion, type MosaicGame } from './build';
+import { countryRegions, MosaicBuilder, type BuildResult, type CountryMosaic, type CountryRegion, type Layout, type MosaicFocus } from './build';
 import { pointInRing, type Pt } from './geometry';
-import type { MosaicRequest, MosaicResponse, WorkerGame } from './protocol';
+import { decodeLayouts, gamesUpTo } from './layouts';
+import type { BuildRequest, MosaicRequest, MosaicResponse, WorkerGame } from './protocol';
 
 declare const self: DedicatedWorkerGlobalScope;
 
 let games: WorkerGame[] = [];
 let regions: Map<string, CountryRegion> | null = null;
 let builder: MosaicBuilder | null = null;
+let layouts: Map<number, Layout> | null = null;
+let shown = new Map<string, CountryMosaic>();
 let ready: Promise<void> | null = null;
+let queued: BuildRequest | null = null;
+let running = false;
+let lastYear: number | null = null;
+let direction = 0;
+const prefetched = new Map<string, BuildResult>();
 
-async function init(): Promise<void> {
-  const mod = await import('world-atlas/countries-50m.json');
+async function init(layoutsUrl: string): Promise<void> {
+  const [mod, buf] = await Promise.all([
+    import('world-atlas/countries-50m.json'),
+    fetch(layoutsUrl)
+      .then((r) => (r.ok ? r.arrayBuffer() : null))
+      .catch(() => null),
+  ]);
   const topo = mod.default as unknown as Topology;
   const shapes = feature(topo, topo.objects.countries as GeometryCollection).features as unknown as CountryShape[];
   regions = countryRegions(shapes);
   builder = new MosaicBuilder(regions);
+  layouts = buf ? decodeLayouts(buf, games) : null;
 }
 
 function pick(lat: number, lng: number): number | null {
-  if (!builder || !regions) return null;
-  for (const [code, r] of regions) {
-    const pieces = builder.piecesOf(code);
-    if (!pieces) continue;
+  if (!regions) return null;
+  for (const [code, m] of shown) {
+    const r = regions.get(code);
+    if (!r) continue;
     const p: Pt = r.projection.forward(lat, lng);
-    for (const piece of pieces) {
+    for (const piece of m.pieces) {
       if (p[0] < piece.box[0] || p[0] > piece.box[2] || p[1] < piece.box[1] || p[1] > piece.box[3]) continue;
       if (pointInRing(p, piece.outer) && !piece.holes.some((h) => pointInRing(p, h))) return piece.gameId;
     }
@@ -35,11 +49,78 @@ function pick(lat: number, lng: number): number | null {
   return null;
 }
 
+function keyOf(year: number, focus: MosaicFocus | null): string {
+  return `${year}|${focus ? `${focus.lat.toFixed(1)},${focus.lng.toFixed(1)},${focus.radius.toFixed(1)},${focus.zoom}` : ''}`;
+}
+
+function build(year: number, maxYear: number, filter: number[] | null, focus: MosaicFocus | null): BuildResult {
+  const set = filter ? new Set(filter) : null;
+  const chosen = set ? gamesUpTo(games, year, maxYear).filter((g) => set.has(g.id)) : gamesUpTo(games, year, maxYear);
+  const layout = set ? undefined : layouts?.get(Math.min(year, maxYear));
+  if (layout) builder!.useLayout(layout);
+  return builder!.build(chosen, focus, !!layout);
+}
+
+function respond(msg: BuildRequest, result: BuildResult, ms: number): void {
+  shown = result.countries;
+  const { mesh } = result;
+  const res: MosaicResponse = { type: 'mesh', seq: msg.seq, year: msg.year, mesh, ms };
+  self.postMessage(res, [mesh.position.buffer, mesh.uv.buffer, mesh.cell.buffer, mesh.lines.buffer]);
+}
+
+// Zooming far in adds cells in steps (x4, x8, ...) so the first extra covers show quickly.
+function focusSteps(focus: MosaicFocus | null): (MosaicFocus | null)[] {
+  if (!focus || focus.zoom <= FIRST_STEP) return [focus];
+  const out: MosaicFocus[] = [];
+  for (let z = FIRST_STEP; z < focus.zoom; z *= 2) out.push({ ...focus, zoom: z });
+  out.push(focus);
+  return out;
+}
+
+const FIRST_STEP = 4;
+let steps: { msg: BuildRequest; focus: MosaicFocus | null }[] = [];
+
+// Builds the latest request step by step; when idle, builds the next year in the direction the slider last moved.
+function pump(): void {
+  if (running) return;
+  running = true;
+  setTimeout(() => {
+    running = false;
+    const msg = queued;
+    if (msg) {
+      queued = null;
+      if (lastYear !== null && msg.year !== lastYear) direction = Math.sign(msg.year - lastYear);
+      lastYear = msg.year;
+      steps = focusSteps(msg.focus).map((focus) => ({ msg, focus }));
+    }
+    const step = steps.shift();
+    if (!step) return;
+    const { msg: m, focus } = step;
+    const key = keyOf(m.year, focus);
+    const t0 = performance.now();
+    const ready = m.filter ? null : prefetched.get(key);
+    prefetched.clear();
+    respond(m, ready ?? build(m.year, m.maxYear, m.filter, focus), performance.now() - t0);
+    if (steps.length > 0) pump();
+    else if (!m.filter && direction !== 0) {
+      const next = m.year + direction;
+      if (next >= 1970 && next <= m.maxYear) prefetchLater({ ...m, year: next });
+    }
+  }, 0);
+}
+
+function prefetchLater(msg: BuildRequest): void {
+  setTimeout(() => {
+    if (queued || running) return;
+    prefetched.set(keyOf(msg.year, msg.focus), build(msg.year, msg.maxYear, null, msg.focus));
+  }, 0);
+}
+
 self.onmessage = async (ev: MessageEvent<MosaicRequest>) => {
   const msg = ev.data;
   if (msg.type === 'init') {
     games = msg.games;
-    ready = init();
+    ready = init(msg.layoutsUrl);
     return;
   }
   await ready;
@@ -48,16 +129,7 @@ self.onmessage = async (ev: MessageEvent<MosaicRequest>) => {
     self.postMessage(res);
     return;
   }
-  const filter = msg.filter ? new Set(msg.filter) : null;
-  const chosen: MosaicGame[] = [];
-  for (const g of games) {
-    const y = g.year === null ? msg.maxYear : g.year;
-    if (y > msg.year) continue;
-    if (filter && !filter.has(g.id)) continue;
-    chosen.push(g);
-  }
-  const t0 = performance.now();
-  const mesh = builder!.build(chosen);
-  const res: MosaicResponse = { type: 'mesh', seq: msg.seq, mesh, ms: performance.now() - t0 };
-  self.postMessage(res, [mesh.position.buffer, mesh.uv.buffer, mesh.cell.buffer, mesh.lines.buffer]);
+  queued = msg;
+  steps = [];
+  pump();
 };

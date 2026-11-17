@@ -25,6 +25,7 @@ export class SpriteSheets {
   private index: SpriteIndex | null = null;
   private readonly loaded = new Set<number>();
   private readonly abort = new AbortController();
+  readonly done: Promise<void>;
 
   constructor(
     private readonly renderer: THREE.WebGLRenderer,
@@ -32,7 +33,7 @@ export class SpriteSheets {
     private readonly onPage: () => void,
   ) {
     this.texture.needsUpdate = true;
-    void this.load(baseUrl);
+    this.done = this.load(baseUrl);
   }
 
   uv(cover: string): [number, number, number, number] | null {

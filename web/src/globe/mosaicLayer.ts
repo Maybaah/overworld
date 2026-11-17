@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import type { AtlasLayout } from './atlasSlots';
 import { CoverAtlas, coverUrl } from './coverAtlas';
-import type { MosaicCell, MosaicMesh } from './mosaic/build';
+import type { MosaicCell, MosaicFocus, MosaicMesh } from './mosaic/build';
 import type { MosaicRequest, MosaicResponse, WorkerGame } from './mosaic/protocol';
 import { GLOBE_RADIUS } from './outline';
 import { SpriteSheets, SPRITE_LAYOUT } from './mosaic/sprites';
@@ -15,7 +15,7 @@ interface Tier {
   inFlight: number;
 }
 const TIERS: Tier[] = [
-  { layout: { size: 3072, slotW: 64, slotH: 88, imageW: 60, imageH: 85 }, size: 'cover_small', capacity: 1632, inFlight: 8 },
+  { layout: { size: 4096, slotW: 64, slotH: 88, imageW: 60, imageH: 85 }, size: 'cover_small', capacity: 2944, inFlight: 12 },
   { layout: { size: 4096, height: 2048, slotW: 268, slotH: 378, imageW: 264, imageH: 374 }, size: 'cover_big', capacity: 75, inFlight: 4 },
   { layout: { size: 4096, slotW: 532, slotH: 752, imageW: 528, imageH: 748 }, size: 'cover_big_2x', capacity: 35, inFlight: 4 },
   { layout: { size: 3072, height: 2176, slotW: 768, slotH: 1088, imageW: 762, imageH: 1080 }, size: '1080p', capacity: 8, inFlight: 2 },
@@ -126,8 +126,11 @@ export class MosaicLayer {
   private cells: MosaicCell[] = [];
   private cellByGame = new Map<number, number>();
   private seq = 0;
-  private busy = false;
-  private pending: Extract<MosaicRequest, { type: 'build' }> | null = null;
+  private shownYear: number | null = null;
+  private firstMesh!: () => void;
+  // Resolves once the first mosaic is on the globe and the cover sprite sheets are in.
+  readonly ready: Promise<void>;
+  private visibleLow: string[] | null = null;
   private readonly picks = new Map<number, (id: number | null) => void>();
   private buildMs = 0;
   private showing = 0;
@@ -148,6 +151,8 @@ export class MosaicLayer {
       this.wantLow();
       this.fillTable();
     });
+    const meshIn = new Promise<void>((resolve) => (this.firstMesh = resolve));
+    this.ready = Promise.all([meshIn, this.sprites.done]).then(() => undefined);
     this.table = this.makeTable(1);
     this.material = new THREE.ShaderMaterial({
       vertexShader: VERTEX,
@@ -186,16 +191,17 @@ export class MosaicLayer {
   }
 
   init(games: WorkerGame[]): void {
-    this.post({ type: 'init', games });
+    this.post({ type: 'init', games, layoutsUrl: `${dataBase()}/mosaic-layouts.bin` });
   }
 
-  request(year: number, maxYear: number, filter: ReadonlySet<number> | null): void {
-    const msg: MosaicRequest = { type: 'build', seq: ++this.seq, year, maxYear, filter: filter ? [...filter] : null };
-    if (this.busy) this.pending = msg;
-    else {
-      this.busy = true;
-      this.post(msg);
-    }
+  // The worker keeps only the latest request, so requests can come as fast as the slider moves.
+  request(year: number, maxYear: number, filter: ReadonlySet<number> | null, focus: MosaicFocus | null): void {
+    this.post({ type: 'build', seq: ++this.seq, year, maxYear, filter: filter ? [...filter] : null, focus });
+  }
+
+  // The year of the mosaic on the globe now.
+  get year(): number | null {
+    return this.shownYear;
   }
 
   pick(lat: number, lng: number): Promise<number | null> {
@@ -258,7 +264,10 @@ export class MosaicLayer {
   private frameInner(camera: THREE.PerspectiveCamera, heightPx: number): boolean {
     if (this.needHigh && this.cells.length > 0) {
       this.needHigh = false;
-      this.pickSharp(camera, heightPx).forEach((keys, k) => this.atlases[k + 1]!.want(keys));
+      const { low, sharp } = this.pickSharp(camera, heightPx);
+      this.visibleLow = low;
+      this.wantLow();
+      sharp.forEach((keys, k) => this.atlases[k + 1]!.want(keys));
     }
     let changed = false;
     for (const a of this.atlases) changed = a.frame() || changed;
@@ -289,16 +298,11 @@ export class MosaicLayer {
       this.picks.delete(msg.seq);
       return;
     }
-    this.busy = false;
-    if (this.pending) {
-      const next = this.pending;
-      this.pending = null;
-      this.busy = true;
-      this.post(next);
-    }
     this.buildMs = msg.ms;
     const t0 = performance.now();
+    this.shownYear = msg.year;
     this.apply(msg.mesh);
+    this.firstMesh();
     this.applyMs = Math.max(this.applyMs, performance.now() - t0);
   }
 
@@ -338,8 +342,10 @@ export class MosaicLayer {
   }
 
   // Covers in the prebuilt sprite sheets never need the small on-demand atlas.
+  // Covers on screen come first, so zoomed-in detail cells get theirs before off-screen ones.
   private wantLow(): void {
-    this.atlases[0]!.want(this.lowOrder.filter((c) => !this.sprites.has(c)).slice(0, TIERS[0]!.capacity));
+    const order = this.visibleLow ?? this.lowOrder;
+    this.atlases[0]!.want(order.filter((c) => !this.sprites.has(c)).slice(0, TIERS[0]!.capacity));
   }
 
   private gameAt(cell: number): number | null {
@@ -375,11 +381,12 @@ export class MosaicLayer {
 
   // Pixels the cover spans on screen, from its laid-out height, the distance and how much the cell faces the camera.
   // Returns, for each tier above the first, the covers that need it, biggest first; cells off screen are skipped.
-  private pickSharp(camera: THREE.PerspectiveCamera, heightPx: number): string[][] {
+  private pickSharp(camera: THREE.PerspectiveCamera, heightPx: number): { low: string[]; sharp: string[][] } {
     const focal = (heightPx * this.pixelRatio) / (2 * Math.tan((camera.fov * Math.PI) / 360));
     const cam = camera.position;
     const camLen = cam.length();
     const scored: [number, string][] = [];
+    const onScreen: [number, string][] = [];
     const p = new THREE.Vector3();
     const ndc = new THREE.Vector3();
     for (const c of this.cells) {
@@ -391,16 +398,19 @@ export class MosaicLayer {
       if (facing < 0.1) continue;
       const size = c.imageH * (Math.PI / 180) * GLOBE_RADIUS;
       const px = (size / Math.max(1, p.distanceTo(cam))) * focal * Math.sqrt(facing);
-      if (px <= TIERS[0]!.layout.imageH) continue;
       ndc.copy(p).project(camera);
       const reach = 1 + (2 * px) / (heightPx * this.pixelRatio);
       if (Math.abs(ndc.x) > reach + 0.5 || Math.abs(ndc.y) > reach) continue;
-      scored.push([px, c.cover]);
+      onScreen.push([px, c.cover]);
+      if (px > TIERS[0]!.layout.imageH) scored.push([px, c.cover]);
     }
+    onScreen.sort((x, y) => y[0] - x[0]);
+    const seen = new Set(onScreen.map(([, k]) => k));
+    const low = [...onScreen.map(([, k]) => k), ...this.lowOrder.filter((k) => !seen.has(k))];
     scored.sort((x, y) => y[0] - x[0]);
     // A cover already loaded in a tier keeps its place against slightly bigger newcomers, so tiles do not
     // drop back to a blurrier version and pop again while the globe turns.
-    return TIERS.slice(1).map((t, k) => {
+    const sharp = TIERS.slice(1).map((t, k) => {
       const atlas = this.atlases[k + 1]!;
       return scored
         .filter(([px]) => px > TIERS[k]!.layout.imageH)
@@ -409,5 +419,6 @@ export class MosaicLayer {
         .slice(0, t.capacity)
         .map(([, key]) => key);
     });
+    return { low, sharp };
   }
 }

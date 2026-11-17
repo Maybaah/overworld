@@ -23,6 +23,8 @@ import { CountriesLayer } from './countriesLayer';
 import { CoversLayer, type CoverEntry } from './coversLayer';
 import { MarkersLayer, type MarkerItem } from './markersLayer';
 import { MosaicLayer } from './mosaicLayer';
+import type { MosaicFocus } from './mosaic/build';
+import { mosaicInput } from './mosaic/layouts';
 import { PICK_RADIUS_PX } from './picking';
 import { isClick, pointerToCanvas } from './pointer';
 import { POINT_ALTITUDE, PointsLayer, type PickedPoint } from './pointsLayer';
@@ -56,8 +58,28 @@ declare global {
       lastLayoutMs(): number;
       setYear(y: number): void;
       playYears(msPerYear: number): Promise<void>;
+      store(): typeof useStore;
     };
   }
+}
+
+// Zoomed in past the starting view, countries in view get more mosaic cells, up to every game they have.
+const FOCUS_BASE_ALTITUDE = 2.1;
+
+function focusOf(pov: { lat: number; lng: number; altitude: number }, fov: number, aspect: number): MosaicFocus | null {
+  const alt = Math.max(0.01, pov.altitude);
+  // Cells grow on screen as the camera comes closer, so they get more numerous slower than the view shrinks.
+  const raw = (FOCUS_BASE_ALTITUDE / alt) ** 1.2;
+  if (raw < 1.5) return null;
+  const zoom = 2 ** Math.round(Math.log2(raw));
+  const half = Math.min(Math.acos(1 / (1 + alt)), alt * Math.tan((fov * Math.PI) / 360) * Math.max(1, aspect));
+  const radius = (half * 180) / Math.PI;
+  const grid = Math.max(0.5, radius / 3);
+  return { lat: Math.round(pov.lat / grid) * grid, lng: Math.round(pov.lng / grid) * grid, radius, zoom };
+}
+
+function focusKey(f: MosaicFocus | null): string {
+  return f ? `${f.lat.toFixed(2)},${f.lng.toFixed(2)},${f.zoom}` : '';
 }
 
 const NO_ARCS: RoleArcs = { arcs: [], markers: [], labels: [] };
@@ -393,16 +415,12 @@ export function GlobeView() {
     coversRef.current = covers;
     names?.setPillsVisible(false);
     const mosaic = new MosaicLayer(scene, renderer, () => performance.now() / 1000);
-    mosaic.init(
-      indexes.games.flatMap((g) => {
-        const c = indexes.companyById.get(g.leadCompanyId);
-        if (!c || !c.country || c.lat === null || c.lng === null) return [];
-        return [{ id: g.id, cover: g.cover, popularity: g.popularity, lat: c.lat, lng: c.lng, country: c.country, exact: c.precision === 'city', year: g.year }];
-      }),
-    );
+    mosaic.init(mosaicInput(indexes.games, indexes.companyById));
+    void mosaic.ready.then(() => useStore.getState().setGlobeReady());
     const mosaicShown = (s: { pointsVisible: boolean; countryShade: unknown }) => s.pointsVisible && s.countryShade === null;
+    let mosaicFocus: MosaicFocus | null = null;
     const requestMosaic = (s: { year: number; gameFilter: Set<number> | null; timeline: { maxYear: number } | null }) => {
-      if (s.timeline) mosaic.request(s.year, s.timeline.maxYear, s.gameFilter);
+      if (s.timeline) mosaic.request(s.year, s.timeline.maxYear, s.gameFilter, mosaicFocus);
     };
     requestMosaic(initial);
     mosaic.setVisible(mosaicShown(initial));
@@ -645,7 +663,16 @@ ${where}`;
         mosaicSettled = now - mosaicMovedAt > 250;
         mosaicPickedAt = now;
         mosaic.cameraMoved();
+        if (mosaicSettled) {
+          const cam = camera as THREE.PerspectiveCamera;
+          const next = focusOf(globe.pointOfView(), cam.fov, cam.aspect);
+          if (focusKey(next) !== focusKey(mosaicFocus)) {
+            mosaicFocus = next;
+            requestMosaic(useStore.getState());
+          }
+        }
       }
+      if (mosaic.year !== useStore.getState().shownYear) useStore.getState().setShownYear(mosaic.year);
       mosaic.frame(camera as THREE.PerspectiveCamera, canvas.clientHeight);
       outline.setResolution(canvas.clientWidth, canvas.clientHeight);
       if (needUpgrade.current && detailRef.current && now - lastUpgrade > 350) {
@@ -734,6 +761,7 @@ ${where}`;
         namesPlaced: () => names?.placedCount() ?? 0,
         lastLayoutMs: () => layoutMs,
         setYear: (y) => useStore.getState().setYear(y),
+        store: () => useStore,
         playYears: (msPerYear) =>
           new Promise<void>((resolve) => {
             const tl = useStore.getState().timeline!;
