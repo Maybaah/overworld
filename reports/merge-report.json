@@ -8769,9 +8769,9 @@
   "leadBasisCounts": {
     "curated": 12,
     "igdb_developer_heuristic": 253,
-    "igdb_single_developer": 35428,
+    "igdb_single_developer": 35671,
     "igdb_developer_confirmed_by_wikidata": 1597,
-    "igdb_first_developer": 1201,
+    "igdb_first_developer": 1203,
     "wikidata_developer": 492,
     "mobygames_developer": 19
   },
@@ -8782,8 +8782,8 @@
   },
   "companiesByPrecision": {
     "city": 3496,
-    "country": 8181,
-    "none": 10474
+    "country": 8337,
+    "none": 10478
   },
   "rejectedWikidataMatches": [
     {
@@ -10898,6 +10898,11 @@
       "gameCount": 1
     },
     {
+      "companyId": 55320,
+      "name": "AlexDev2",
+      "gameCount": 1
+    },
+    {
       "companyId": 55540,
       "name": "kajik",
       "gameCount": 1
@@ -11035,6 +11040,11 @@
     {
       "companyId": 73592,
       "name": "Square Enix Creative Studio 7",
+      "gameCount": 1
+    },
+    {
+      "companyId": 73782,
+      "name": "Colorblind Pixel",
       "gameCount": 1
     },
     {

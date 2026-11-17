@@ -2,295 +2,291 @@
 
 20 games, seed 1, spread across the popularity range (most popular first).
 
-## Tom Clancy's Ghost Recon: Breakpoint (2019)
+## Wuchang: Fallen Feathers (2025)
 
-- Game id: 118218, popularity rank 1223 of 39002, popularity 1832000
-- IGDB: https://www.igdb.com/games/tom-clancys-ghost-recon-breakpoint
-- Lead studio: Ubisoft Paris (company 841)
-  - Location: Paris, France; 48.856666666, 2.352222222; precision city
-  - Location source: https://www.wikidata.org/wiki/Q1041320
+- Game id: 171225, popularity rank 1231 of 39247, popularity 1816320
+- IGDB: https://www.igdb.com/games/wuchang-fallen-feathers
+- Lead studio: Leenzee Games (company 37575)
+  - Location: China; 35, 105; precision country
+  - Location source: https://www.igdb.com/companies/leenzee-games
 - Lead chosen by: igdb_single_developer
 
 | Company | Role | Platform | Source |
 | --- | --- | --- | --- |
-| Ubisoft Paris | lead_developer |  | https://www.igdb.com/games/tom-clancys-ghost-recon-breakpoint |
-| Ubisoft Entertainment | publisher |  | https://www.igdb.com/games/tom-clancys-ghost-recon-breakpoint |
-| Ubisoft Bucharest | support |  | https://www.igdb.com/games/tom-clancys-ghost-recon-breakpoint |
-| Ubisoft Montpellier | support |  | https://www.igdb.com/games/tom-clancys-ghost-recon-breakpoint |
-| Ubisoft Milan | support |  | https://www.igdb.com/games/tom-clancys-ghost-recon-breakpoint |
-| Ubisoft Kyiv | support |  | https://www.igdb.com/games/tom-clancys-ghost-recon-breakpoint |
-| Ubisoft Belgrade | support |  | https://www.igdb.com/games/tom-clancys-ghost-recon-breakpoint |
-| Ubisoft Bordeaux | support |  | https://www.igdb.com/games/tom-clancys-ghost-recon-breakpoint |
-| Ubisoft Odesa | support |  | https://www.igdb.com/games/tom-clancys-ghost-recon-breakpoint |
+| Leenzee Games | lead_developer |  | https://www.igdb.com/games/wuchang-fallen-feathers |
+| Chengdu Lingze Technology Co., Ltd. | co_developer |  | https://www.mobygames.com/game/245525/wuchang-fallen-feathers/ |
+| 505 Games | publisher |  | https://www.igdb.com/games/wuchang-fallen-feathers |
 
-## NBA 2K26 (2025)
+## Krunker (2018)
 
-- Game id: 353901, popularity rank 1956 of 39002, popularity 1050560
-- IGDB: https://www.igdb.com/games/nba-2k26
-- Lead studio: Visual Concepts (company 694)
-  - Location: Novato, United States; 38.1075, -122.569722222; precision city
-  - Location source: https://www.wikidata.org/wiki/Q133482
+- Game id: 109096, popularity rank 1968 of 39247, popularity 1045840
+- IGDB: https://www.igdb.com/games/krunker
+- Lead studio: FRVR (company 48202)
+  - Location: Portugal; 39.5, -8; precision country
+  - Location source: https://www.igdb.com/companies/frvr
 - Lead chosen by: igdb_single_developer
 
 | Company | Role | Platform | Source |
 | --- | --- | --- | --- |
-| Visual Concepts | lead_developer |  | https://www.igdb.com/games/nba-2k26 |
-| 2K | publisher |  | https://www.igdb.com/games/nba-2k26 |
+| FRVR | lead_developer |  | https://www.igdb.com/games/krunker |
+| Yendis Entertainment Pty Ltd | publisher |  | https://www.igdb.com/games/krunker |
+| FRVR | publisher |  | https://www.mobygames.com/game/205607/krunker/ |
 
-## Loading Screen Simulator (2015)
+## Brighter Shores (2024)
 
-- Game id: 43136, popularity rank 4929 of 39002, popularity 380509
-- IGDB: https://www.igdb.com/games/loading-screen-simulator
-- Lead studio: Cake Eater Games (company 72188)
-  - Location: Russia; 60, 100; precision country
-  - Location source: https://www.igdb.com/companies/cake-eater-games
+- Game id: 291334, popularity rank 4960 of 39247, popularity 377080
+- IGDB: https://www.igdb.com/games/brighter-shores
+- Lead studio: Fen Research (company 55704)
+  - Location: United Kingdom; 54, -2; precision country
+  - Location source: https://www.igdb.com/companies/fen-research
 - Lead chosen by: igdb_single_developer
 
 | Company | Role | Platform | Source |
 | --- | --- | --- | --- |
-| Cake Eater Games | lead_developer |  | https://www.igdb.com/games/loading-screen-simulator |
-| CakeEaterGames | co_developer |  | https://www.mobygames.com/game/92611/loading-screen-simulator/ |
-| CakeEaterGames | publisher |  | https://www.mobygames.com/game/92611/loading-screen-simulator/ |
+| Fen Research | lead_developer |  | https://www.igdb.com/games/brighter-shores |
+| Fen Research | publisher |  | https://www.igdb.com/games/brighter-shores |
 
-## Tribe Nine (2025)
+## Color Guardians (2015)
 
-- Game id: 130317, popularity rank 7764 of 39002, popularity 208680
-- IGDB: https://www.igdb.com/games/tribe-nine
-- Lead studio: Akatsuki Inc. (company 16441)
-  - Location: Tokyo, Japan; 35.689444444, 139.691666666; precision city
-  - Location source: https://www.wikidata.org/wiki/Q59186636
+- Game id: 19947, popularity rank 7812 of 39247, popularity 205467
+- IGDB: https://www.igdb.com/games/color-guardians
+- Lead studio: Fair Play Labs (company 26794)
+  - Location: Costa Rica; 10, -84; precision country
+  - Location source: https://www.wikidata.org/wiki/Q107530622
+- Lead chosen by: wikidata_developer
+
+| Company | Role | Platform | Source |
+| --- | --- | --- | --- |
+| Fair Play Labs | lead_developer |  | https://www.wikidata.org/wiki/Q124064240 |
+| Niffler Ltd. | publisher |  | https://www.igdb.com/games/color-guardians |
+| CrossFunction | publisher | PlayStation 4 | https://www.mobygames.com/game/86830/color-guardians/ |
+| CrossFunction | publisher | PS Vita | https://www.mobygames.com/game/86830/color-guardians/ |
+| Fair Play Labs | publisher | PlayStation 4 | https://www.mobygames.com/game/86830/color-guardians/ |
+| Fair Play Labs | publisher | PS Vita | https://www.mobygames.com/game/86830/color-guardians/ |
+
+## ArcheAge: Unchained (2019)
+
+- Game id: 125340, popularity rank 9749 of 39247, popularity 150160
+- IGDB: https://www.igdb.com/games/archeage-unchained
+- Lead studio: XLGAMES (company 22577)
+  - Location: Seongnam, South Korea; 37.438611111, 127.137777777; precision city
+  - Location source: https://www.wikidata.org/wiki/Q12606770
 - Lead chosen by: igdb_single_developer
 
 | Company | Role | Platform | Source |
 | --- | --- | --- | --- |
-| Akatsuki Inc. | lead_developer |  | https://www.igdb.com/games/tribe-nine |
-| Akatsuki Inc. | publisher |  | https://www.igdb.com/games/tribe-nine |
+| XLGAMES | lead_developer |  | https://www.igdb.com/games/archeage-unchained |
+| Trion Worlds | publisher |  | https://www.igdb.com/games/archeage-unchained |
+| gamigo US | publisher |  | https://www.igdb.com/games/archeage-unchained |
+| Kakao Games Europe B.V. | publisher |  | https://www.mobygames.com/game/136154/archeage-unchained/ |
 
-## Eiyuden Chronicle: Hundred Heroes (2024)
+## Last Inua (2014)
 
-- Game id: 137451, popularity rank 9689 of 39002, popularity 152204
-- IGDB: https://www.igdb.com/games/eiyuden-chronicle-hundred-heroes
-- Lead studio: Rabbit & Bear Studios (company 35000)
-  - Location: Japan; 36, 138; precision country
-  - Location source: https://www.wikidata.org/wiki/Q99432233
-- Lead chosen by: igdb_single_developer
-
-| Company | Role | Platform | Source |
-| --- | --- | --- | --- |
-| Rabbit & Bear Studios | lead_developer |  | https://www.igdb.com/games/eiyuden-chronicle-hundred-heroes |
-| 505 Games | publisher |  | https://www.igdb.com/games/eiyuden-chronicle-hundred-heroes |
-
-## Rad Rodgers (2018)
-
-- Game id: 90322, popularity rank 10299 of 39002, popularity 138287
-- IGDB: https://www.igdb.com/games/rad-rodgers
-- Lead studio: Slipgate Studios (company 13312)
-  - Location: Aalborg, Denmark; 57.05, 9.916666666; precision city
-  - Location source: https://www.wikidata.org/wiki/Q16986584
-- Lead chosen by: igdb_single_developer
-
-| Company | Role | Platform | Source |
-| --- | --- | --- | --- |
-| Slipgate Studios | lead_developer |  | https://www.igdb.com/games/rad-rodgers |
-| 3D Realms | publisher |  | https://www.igdb.com/games/rad-rodgers |
-| THQ Nordic | publisher |  | https://www.igdb.com/games/rad-rodgers |
-
-## QuizUp (2013)
-
-- Game id: 9487, popularity rank 12896 of 39002, popularity 95127
-- IGDB: https://www.igdb.com/games/quizup
-- Lead studio: Plain Vanilla Games (company 5085)
-  - Location: Iceland; 65, -18; precision country
-  - Location source: https://www.igdb.com/companies/plain-vanilla-games
-- Lead chosen by: igdb_single_developer
-
-| Company | Role | Platform | Source |
-| --- | --- | --- | --- |
-| Plain Vanilla Games | lead_developer |  | https://www.igdb.com/games/quizup |
-| Glu Mobile | publisher |  | https://www.igdb.com/games/quizup |
-
-## Crystal Catacombs (2015)
-
-- Game id: 17893, popularity rank 15056 of 39002, popularity 74160
-- IGDB: https://www.igdb.com/games/crystal-catacombs
-- Lead studio: Crescent Moon Games (company 1493)
-  - Location: New York City, United States; 40.712777777, -74.006111111; precision city
-  - Location source: https://www.wikidata.org/wiki/Q105364475
-- Lead chosen by: igdb_single_developer
-
-| Company | Role | Platform | Source |
-| --- | --- | --- | --- |
-| Crescent Moon Games | lead_developer |  | https://www.igdb.com/games/crystal-catacombs |
-| Levels or Lives | publisher |  | https://www.igdb.com/games/crystal-catacombs |
-| Super Fun Games | publisher |  | https://www.igdb.com/games/crystal-catacombs |
-
-## Ghost House (1986)
-
-- Game id: 45649, popularity rank 16431 of 39002, popularity 63418
-- IGDB: https://www.igdb.com/games/ghost-house
-- Lead studio: Sega Enterprises, Ltd. (company 4981)
-  - Location: Tokyo, Japan; 35.6895, 139.69171; precision city
-  - Location source: https://en.wikipedia.org/wiki/Sega
-- Lead chosen by: igdb_single_developer
-
-| Company | Role | Platform | Source |
-| --- | --- | --- | --- |
-| Sega Enterprises, Ltd. | lead_developer |  | https://www.igdb.com/games/ghost-house |
-| Sega Enterprises, Ltd. | publisher |  | https://www.igdb.com/games/ghost-house |
-
-## Incantation (2024)
-
-- Game id: 278670, popularity rank 19491 of 39002, popularity 45080
-- IGDB: https://www.igdb.com/games/incantation--1
-- Lead studio: SOFTSTAR Entertainment (company 15996)
-  - Location: Taipei, Taiwan; 25.0125, 121.465; precision city
-  - Location source: https://www.wikidata.org/wiki/Q10934832
-- Lead chosen by: igdb_single_developer
-
-| Company | Role | Platform | Source |
-| --- | --- | --- | --- |
-| SOFTSTAR Entertainment | lead_developer |  | https://www.igdb.com/games/incantation--1 |
-| Eastasiasoft | publisher |  | https://www.igdb.com/games/incantation--1 |
-| SOFTSTAR Entertainment | publisher |  | https://www.igdb.com/games/incantation--1 |
-
-## Marvel: Ultimate Alliance 2 (2009)
-
-- Game id: 200963, popularity rank 20389 of 39002, popularity 44393
-- IGDB: https://www.igdb.com/games/marvel-ultimate-alliance-2--1
-- Lead studio: n-Space (company 319)
-  - Location: Orlando, United States; 28.533611111, -81.386666666; precision city
-  - Location source: https://www.wikidata.org/wiki/Q610952
-- Lead chosen by: igdb_single_developer
-
-| Company | Role | Platform | Source |
-| --- | --- | --- | --- |
-| n-Space | lead_developer |  | https://www.igdb.com/games/marvel-ultimate-alliance-2--1 |
-| Activision | publisher |  | https://www.igdb.com/games/marvel-ultimate-alliance-2--1 |
-
-## Dale Hardshovel HD (2015)
-
-- Game id: 35229, popularity rank 22405 of 39002, popularity 37952
-- IGDB: https://www.igdb.com/games/dale-hardshovel-hd
-- Lead studio: phime studio (company 16473)
-  - Location: Zrenjanin, Serbia; 45.377777777, 20.386111111; precision city
-  - Location source: https://www.wikidata.org/wiki/Q54834702
-- Lead chosen by: igdb_single_developer
-
-| Company | Role | Platform | Source |
-| --- | --- | --- | --- |
-| phime studio | lead_developer |  | https://www.igdb.com/games/dale-hardshovel-hd |
-| phime studio | publisher |  | https://www.igdb.com/games/dale-hardshovel-hd |
-
-## Garage: Bad Dream Adventure (1999)
-
-- Game id: 24947, popularity rank 23672 of 39002, popularity 31709
-- IGDB: https://www.igdb.com/games/garage-bad-dream-adventure
-- Lead studio: Kinotrope (company 11279)
-  - Location: Tokyo, Japan; 35.689444444, 139.691666666; precision city
-  - Location source: https://www.wikidata.org/wiki/Q17211790
-- Lead chosen by: igdb_single_developer
-
-| Company | Role | Platform | Source |
-| --- | --- | --- | --- |
-| Kinotrope | lead_developer |  | https://www.igdb.com/games/garage-bad-dream-adventure |
-| Toshiba-EMI | publisher |  | https://www.igdb.com/games/garage-bad-dream-adventure |
-
-## Unreal (1990)
-
-- Game id: 12806, popularity rank 26139 of 39002, popularity 25367
-- IGDB: https://www.igdb.com/games/unreal--1
-- Lead studio: Ordilogic System (company 14963)
-  - Location: France; 46, 2; precision country
-  - Location source: https://www.wikidata.org/wiki/Q3551934
-- Lead chosen by: igdb_single_developer
-
-| Company | Role | Platform | Source |
-| --- | --- | --- | --- |
-| Ordilogic System | lead_developer |  | https://www.igdb.com/games/unreal--1 |
-| Ubi Soft Entertainment | publisher |  | https://www.igdb.com/games/unreal--1 |
-| Art & Magic | support |  | https://www.igdb.com/games/unreal--1 |
-| Maniacs of Noise | support |  | https://www.igdb.com/games/unreal--1 |
-
-## Shopping Cart Hero (2009)
-
-- Game id: 234985, popularity rank 27784 of 39002, popularity 25367
-- IGDB: https://www.igdb.com/games/shopping-cart-hero
-- Lead studio: MonkeyWantBanana (company 77155)
+- Game id: 10494, popularity rank 10363 of 39247, popularity 134797
+- IGDB: https://www.igdb.com/games/last-inua
+- Lead studio: Glowforth (company 44363)
   - Location: unknown; no coordinates; precision none
   - Location source: none
 - Lead chosen by: igdb_single_developer
 
 | Company | Role | Platform | Source |
 | --- | --- | --- | --- |
-| MonkeyWantBanana | lead_developer |  | https://www.igdb.com/games/shopping-cart-hero |
-| MonkeyWantBanana | publisher |  | https://www.igdb.com/games/shopping-cart-hero |
+| Glowforth | lead_developer |  | https://www.igdb.com/games/last-inua |
+| Wired Productions | publisher |  | https://www.igdb.com/games/last-inua |
 
-## The Terminator (1990)
+## Sonic the Hedgehog Pocket Adventure (1999)
 
-- Game id: 7688, popularity rank 29553 of 39002, popularity 19025
-- IGDB: https://www.igdb.com/games/the-terminator--1
-- Lead studio: Bethesda Softworks (company 16565)
-  - Location: Rockville, United States; 39.084, -77.15276; precision city
-  - Location source: https://www.wikidata.org/wiki/Q684425
+- Game id: 43323, popularity rank 12977 of 39247, popularity 95127
+- IGDB: https://www.igdb.com/games/sonic-the-hedgehog-pocket-adventure
+- Lead studio: SNK (company 1474)
+  - Location: Osaka, Japan; 34.721111111, 135.486666666; precision city
+  - Location source: https://www.wikidata.org/wiki/Q1044563
 - Lead chosen by: igdb_single_developer
 
 | Company | Role | Platform | Source |
 | --- | --- | --- | --- |
-| Bethesda Softworks | lead_developer |  | https://www.igdb.com/games/the-terminator--1 |
-| Bethesda Softworks | publisher |  | https://www.igdb.com/games/the-terminator--1 |
+| SNK | lead_developer |  | https://www.igdb.com/games/sonic-the-hedgehog-pocket-adventure |
+| Sega | publisher |  | https://www.igdb.com/games/sonic-the-hedgehog-pocket-adventure |
+| SNK | publisher |  | https://www.igdb.com/games/sonic-the-hedgehog-pocket-adventure |
 
-## Teen Titans One-on-One (2003)
+## Hegemony Rome: The Rise of Caesar (2014)
 
-- Game id: 185799, popularity rank 32155 of 39002, popularity 19025
-- IGDB: https://www.igdb.com/games/teen-titans-one-on-one
-- Lead studio: Cartoon Network (company 10592)
-  - Location: New York City, United States; 40.712777777, -74.006111111; precision city
-  - Location source: https://www.wikidata.org/wiki/Q708290
+- Game id: 10406, popularity rank 15151 of 39247, popularity 72415
+- IGDB: https://www.igdb.com/games/hegemony-rome-the-rise-of-caesar
+- Lead studio: Longbow Games (company 6073)
+  - Location: Toronto, Canada; 43.670277777, -79.386666666; precision city
+  - Location source: https://www.wikidata.org/wiki/Q63184796
 - Lead chosen by: igdb_single_developer
 
 | Company | Role | Platform | Source |
 | --- | --- | --- | --- |
-| Cartoon Network | lead_developer |  | https://www.igdb.com/games/teen-titans-one-on-one |
-| Cartoon Network | publisher |  | https://www.igdb.com/games/teen-titans-one-on-one |
+| Longbow Games | lead_developer |  | https://www.igdb.com/games/hegemony-rome-the-rise-of-caesar |
+| Kasedo Games | publisher |  | https://www.igdb.com/games/hegemony-rome-the-rise-of-caesar |
 
-## Talent Not Included (2016)
+## Nancy Drew: Midnight in Salem (2019)
 
-- Game id: 32469, popularity rank 33283 of 39002, popularity 17013
-- IGDB: https://www.igdb.com/games/talent-not-included
-- Lead studio: Frima Studio (company 6970)
-  - Location: Québec, Canada; 46.816111, -71.224167; precision city
-  - Location source: https://www.wikidata.org/wiki/Q3087859
+- Game id: 124420, popularity rank 16534 of 39247, popularity 63418
+- IGDB: https://www.igdb.com/games/nancy-drew-midnight-in-salem
+- Lead studio: Her Interactive (company 2246)
+  - Location: Bellevue, United States; 47.614444444, -122.1925; precision city
+  - Location source: https://www.wikidata.org/wiki/Q3133362
 - Lead chosen by: igdb_single_developer
 
 | Company | Role | Platform | Source |
 | --- | --- | --- | --- |
-| Frima Studio | lead_developer |  | https://www.igdb.com/games/talent-not-included |
-| Frima Studio | publisher |  | https://www.igdb.com/games/talent-not-included |
+| Her Interactive | lead_developer |  | https://www.igdb.com/games/nancy-drew-midnight-in-salem |
+| Her Interactive | publisher |  | https://www.igdb.com/games/nancy-drew-midnight-in-salem |
 
-## Eggstreme Farming (2026)
+## Curious George (2006)
 
-- Game id: 416949, popularity rank 35871 of 39002, popularity 8840
-- IGDB: https://www.igdb.com/games/eggstreme-farming
-- Lead studio: Sagitta Studios (company 52733)
+- Game id: 3867, popularity rank 19613 of 39247, popularity 44393
+- IGDB: https://www.igdb.com/games/curious-george
+- Lead studio: Monkey Bar Games (company 1315)
+  - Location: Chapel Hill, United States; 35.907308333, -79.049922222; precision city
+  - Location source: https://www.wikidata.org/wiki/Q2999820
+- Lead chosen by: igdb_single_developer
+
+| Company | Role | Platform | Source |
+| --- | --- | --- | --- |
+| Monkey Bar Games | lead_developer |  | https://www.igdb.com/games/curious-george |
+| Namco | publisher |  | https://www.igdb.com/games/curious-george |
+| Universal Pictures | publisher |  | https://www.igdb.com/games/curious-george |
+
+## Slotpark (2014)
+
+- Game id: 360765, popularity rank 20517 of 39247, popularity 44393
+- IGDB: https://www.igdb.com/games/slotpark
+- Lead studio: Funstage (company 66620)
+  - Location: Austria; 47.33333333, 13.33333333; precision country
+  - Location source: https://www.igdb.com/companies/funstage
+- Lead chosen by: igdb_single_developer
+
+| Company | Role | Platform | Source |
+| --- | --- | --- | --- |
+| Funstage | lead_developer |  | https://www.igdb.com/games/slotpark |
+| Funstage | publisher |  | https://www.igdb.com/games/slotpark |
+
+## Animallica (2017)
+
+- Game id: 43361, popularity rank 22545 of 39247, popularity 36480
+- IGDB: https://www.igdb.com/games/animallica
+- Lead studio: Animallica Games Studio (company 25017)
   - Location: unknown; no coordinates; precision none
   - Location source: none
 - Lead chosen by: igdb_single_developer
 
 | Company | Role | Platform | Source |
 | --- | --- | --- | --- |
-| Sagitta Studios | lead_developer |  | https://www.igdb.com/games/eggstreme-farming |
-| Sagitta Studios | publisher |  | https://www.igdb.com/games/eggstreme-farming |
+| Animallica Games Studio | lead_developer |  | https://www.igdb.com/games/animallica |
+| Animallica Games Studio | publisher |  | https://www.igdb.com/games/animallica |
 
-## Wuxia archive: Crisis escape (2018)
+## Project Firestart (1989)
 
-- Game id: 109330, popularity rank 38548 of 39002, popularity 5320
-- IGDB: https://www.igdb.com/games/wuxia-archive-crisis-escape
-- Lead studio: Ryu Productions Co., Ltd (company 18295)
+- Game id: 40941, popularity rank 23821 of 39247, popularity 31709
+- IGDB: https://www.igdb.com/games/project-firestart
+- Lead studio: Dynamix (company 317)
+  - Location: Eugene, United States; 44.052222222, -123.0925; precision city
+  - Location source: https://www.wikidata.org/wiki/Q1269052
+- Lead chosen by: igdb_single_developer
+
+| Company | Role | Platform | Source |
+| --- | --- | --- | --- |
+| Dynamix | lead_developer |  | https://www.igdb.com/games/project-firestart |
+| Electronic Arts | publisher |  | https://www.igdb.com/games/project-firestart |
+
+## The Starship Damrey (2013)
+
+- Game id: 20853, popularity rank 26303 of 39247, popularity 25367
+- IGDB: https://www.igdb.com/games/the-starship-damrey
+- Lead studio: LEVEL-5 (company 837)
+  - Location: Fukuoka, Japan; 33.590138888, 130.401722222; precision city
+  - Location source: https://www.wikidata.org/wiki/Q674686
+- Lead chosen by: igdb_single_developer
+
+| Company | Role | Platform | Source |
+| --- | --- | --- | --- |
+| LEVEL-5 | lead_developer |  | https://www.igdb.com/games/the-starship-damrey |
+| LEVEL-5 | publisher |  | https://www.igdb.com/games/the-starship-damrey |
+
+## The Gravedigger (2024)
+
+- Game id: 311267, popularity rank 27958 of 39247, popularity 25367
+- IGDB: https://www.igdb.com/games/the-gravedigger
+- Lead studio: Authogin (company 45173)
+  - Location: United States; 38, -97; precision country
+  - Location source: https://www.igdb.com/companies/authogin
+- Lead chosen by: igdb_single_developer
+
+| Company | Role | Platform | Source |
+| --- | --- | --- | --- |
+| Authogin | lead_developer |  | https://www.igdb.com/games/the-gravedigger |
+| Authogin | publisher |  | https://www.igdb.com/games/the-gravedigger |
+
+## FireForce (1992)
+
+- Game id: 13050, popularity rank 29739 of 39247, popularity 19025
+- IGDB: https://www.igdb.com/games/fireforce
+- Lead studio: International Computer Entertainment (company 1152)
   - Location: unknown; no coordinates; precision none
   - Location source: none
 - Lead chosen by: igdb_single_developer
 
 | Company | Role | Platform | Source |
 | --- | --- | --- | --- |
-| Ryu Productions Co., Ltd | lead_developer |  | https://www.igdb.com/games/wuxia-archive-crisis-escape |
-| Gamirror Games | publisher |  | https://www.igdb.com/games/wuxia-archive-crisis-escape |
+| International Computer Entertainment | lead_developer |  | https://www.igdb.com/games/fireforce |
+| International Computer Entertainment | publisher |  | https://www.igdb.com/games/fireforce |
+
+## Aestik (2024)
+
+- Game id: 218138, popularity rank 32357 of 39247, popularity 19025
+- IGDB: https://www.igdb.com/games/aestik
+- Lead studio: Hooded Traveler Games (company 43399)
+  - Location: Switzerland; 47, 8; precision country
+  - Location source: https://www.igdb.com/companies/hooded-traveler-games
+- Lead chosen by: igdb_single_developer
+
+| Company | Role | Platform | Source |
+| --- | --- | --- | --- |
+| Hooded Traveler Games | lead_developer |  | https://www.igdb.com/games/aestik |
+
+## Against (2021)
+
+- Game id: 152211, popularity rank 33492 of 39247, popularity 16141
+- IGDB: https://www.igdb.com/games/against
+- Lead studio: Joy Way (company 25100)
+  - Location: unknown; no coordinates; precision none
+  - Location source: none
+- Lead chosen by: igdb_single_developer
+
+| Company | Role | Platform | Source |
+| --- | --- | --- | --- |
+| Joy Way | lead_developer |  | https://www.igdb.com/games/against |
+| Joy Way | publisher |  | https://www.igdb.com/games/against |
+
+## De Mambo (2017)
+
+- Game id: 18358, popularity rank 36097 of 39247, popularity 8456
+- IGDB: https://www.igdb.com/games/de-mambo
+- Lead studio: The Dangerous Kitchen (company 9412)
+  - Location: United Kingdom; 54, -2; precision country
+  - Location source: https://www.wikidata.org/wiki/Q45319468
+- Lead chosen by: igdb_single_developer
+
+| Company | Role | Platform | Source |
+| --- | --- | --- | --- |
+| The Dangerous Kitchen | lead_developer |  | https://www.igdb.com/games/de-mambo |
+| The Dangerous Kitchen | publisher |  | https://www.igdb.com/games/de-mambo |
+
+## Aethernaut (2022)
+
+- Game id: 136660, popularity rank 38790 of 39247, popularity 5235
+- IGDB: https://www.igdb.com/games/aethernaut
+- Lead studio: Dragon Slumber (company 12019)
+  - Location: Canada; 60, -95; precision country
+  - Location source: https://www.igdb.com/companies/dragon-slumber
+- Lead chosen by: igdb_single_developer
+
+| Company | Role | Platform | Source |
+| --- | --- | --- | --- |
+| Dragon Slumber | lead_developer |  | https://www.igdb.com/games/aethernaut |
+| Dragon Slumber | publisher |  | https://www.igdb.com/games/aethernaut |

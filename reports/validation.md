@@ -2,7 +2,7 @@
 
 Verdict: PASS
 
-39002 games, 22151 companies, 114410 roles
+39247 games, 22311 companies, 114876 roles
 
 ## Checks
 
@@ -27,39 +27,39 @@ Verdict: PASS
 
 | Role | Count |
 | --- | ---: |
-| lead_developer | 39002 |
-| co_developer | 6332 |
-| port | 2697 |
-| publisher | 64527 |
+| lead_developer | 39247 |
+| co_developer | 6334 |
+| port | 2709 |
+| publisher | 64723 |
 | localization | 1 |
 | qa | 0 |
 | art | 1 |
 | audio | 1 |
-| support | 1849 |
+| support | 1860 |
 
 ## Companies by location precision
 
 | Precision | Companies | Share |
 | --- | ---: | ---: |
-| city | 3496 | 15.8% |
-| country | 8181 | 36.9% |
-| none | 10474 | 47.3% |
+| city | 3496 | 15.7% |
+| country | 8337 | 37.4% |
+| none | 10478 | 47% |
 
-Games whose lead studio has only a country-level location: 13078 of 39002 (33.5%)
+Games whose lead studio has only a country-level location: 13321 of 39247 (33.9%)
 
 ## Lead basis
 
 | Basis | Games |
 | --- | ---: |
-| igdb_single_developer | 35428 |
+| igdb_single_developer | 35671 |
 | igdb_developer_confirmed_by_wikidata | 1597 |
-| igdb_first_developer | 1201 |
+| igdb_first_developer | 1203 |
 | curated | 12 |
 | igdb_developer_heuristic | 253 |
 | wikidata_developer | 492 |
 | mobygames_developer | 19 |
 
-## Flagged companies (no location): 10474
+## Flagged companies (no location): 10478
 
 Top 50 by game count
 
@@ -137,16 +137,16 @@ Top 50 by game count
 
 | Country | Games led | Per million |
 | --- | ---: | ---: |
+| Andorra (AD) | 10 | 111.42 |
 | Finland (FI) | 394 | 69.7 |
 | Sweden (SE) | 699 | 65.88 |
+| Guam (GU) | 10 | 65 |
 | Cyprus (CY) | 75 | 55.76 |
 | Japan (JP) | 6849 | 55.32 |
 | Iceland (IS) | 17 | 46.67 |
 | United Kingdom (GB) | 3099 | 46.03 |
 | Canada (CA) | 1479 | 39.98 |
 | Denmark (DK) | 180 | 30.91 |
-| Poland (PL) | 916 | 24.39 |
-| Estonia (EE) | 32 | 23.36 |
 
 ### Top 10 localization flows (lead studio country to localizer country)
 

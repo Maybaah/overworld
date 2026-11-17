@@ -115,33 +115,33 @@
     }
   ],
   "totals": {
-    "games": 39002,
-    "companies": 22151,
-    "roles": 114410
+    "games": 39247,
+    "companies": 22311,
+    "roles": 114876
   },
   "roleCounts": {
-    "lead_developer": 39002,
-    "co_developer": 6332,
-    "port": 2697,
-    "publisher": 64527,
+    "lead_developer": 39247,
+    "co_developer": 6334,
+    "port": 2709,
+    "publisher": 64723,
     "localization": 1,
     "qa": 0,
     "art": 1,
     "audio": 1,
-    "support": 1849
+    "support": 1860
   },
   "precision": {
     "city": {
       "count": 3496,
-      "percent": 15.8
+      "percent": 15.7
     },
     "country": {
-      "count": 8181,
-      "percent": 36.9
+      "count": 8337,
+      "percent": 37.4
     },
     "none": {
-      "count": 10474,
-      "percent": 47.3
+      "count": 10478,
+      "percent": 47
     }
   },
   "flaggedCompanies": [
@@ -11591,6 +11591,11 @@
       "gameCount": 2
     },
     {
+      "id": 54475,
+      "name": "prikarin",
+      "gameCount": 2
+    },
+    {
       "id": 54568,
       "name": "Blockage",
       "gameCount": 2
@@ -19513,6 +19518,11 @@
     {
       "id": 12427,
       "name": "Lead Money Games",
+      "gameCount": 1
+    },
+    {
+      "id": 12434,
+      "name": "Semanoor International",
       "gameCount": 1
     },
     {
@@ -37991,6 +38001,11 @@
       "gameCount": 1
     },
     {
+      "id": 44569,
+      "name": "Eureka",
+      "gameCount": 1
+    },
+    {
       "id": 44590,
       "name": "Gample",
       "gameCount": 1
@@ -41116,6 +41131,11 @@
       "gameCount": 1
     },
     {
+      "id": 53808,
+      "name": "Vata Games",
+      "gameCount": 1
+    },
+    {
       "id": 53823,
       "name": "Stigma Studios",
       "gameCount": 1
@@ -41283,11 +41303,6 @@
     {
       "id": 54387,
       "name": "KamilFirma",
-      "gameCount": 1
-    },
-    {
-      "id": 54475,
-      "name": "prikarin",
       "gameCount": 1
     },
     {
@@ -41548,6 +41563,11 @@
     {
       "id": 55308,
       "name": "A Little More Games",
+      "gameCount": 1
+    },
+    {
+      "id": 55320,
+      "name": "AlexDev2",
       "gameCount": 1
     },
     {
@@ -52517,14 +52537,14 @@
     }
   ],
   "countryOnlyLeadShare": {
-    "count": 13078,
-    "total": 39002,
-    "percent": 33.5
+    "count": 13321,
+    "total": 39247,
+    "percent": 33.9
   },
   "leadBasisCounts": {
-    "igdb_single_developer": 35428,
+    "igdb_single_developer": 35671,
     "igdb_developer_confirmed_by_wikidata": 1597,
-    "igdb_first_developer": 1201,
+    "igdb_first_developer": 1203,
     "curated": 12,
     "igdb_developer_heuristic": 253,
     "wikidata_developer": 492,
@@ -53562,6 +53582,12 @@
     ],
     "topCountriesPerMillion": [
       {
+        "code": "AD",
+        "name": "Andorra",
+        "gamesLed": 10,
+        "gamesPerMillion": 111.42
+      },
+      {
         "code": "FI",
         "name": "Finland",
         "gamesLed": 394,
@@ -53572,6 +53598,12 @@
         "name": "Sweden",
         "gamesLed": 699,
         "gamesPerMillion": 65.88
+      },
+      {
+        "code": "GU",
+        "name": "Guam",
+        "gamesLed": 10,
+        "gamesPerMillion": 65
       },
       {
         "code": "CY",
@@ -53608,18 +53640,6 @@
         "name": "Denmark",
         "gamesLed": 180,
         "gamesPerMillion": 30.91
-      },
-      {
-        "code": "PL",
-        "name": "Poland",
-        "gamesLed": 916,
-        "gamesPerMillion": 24.39
-      },
-      {
-        "code": "EE",
-        "name": "Estonia",
-        "gamesLed": 32,
-        "gamesPerMillion": 23.36
       }
     ],
     "topLocalizationFlows": [],
