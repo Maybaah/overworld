@@ -374,6 +374,9 @@ export function GlobeView() {
     outline.setShade(useStore.getState().countryShade);
     outline.setImagery(imageryRef.current === 'on');
     countriesRef.current = outline;
+    void loadDetailedCountryShapes().then((s) => {
+      if (countriesRef.current === outline) outline.setBorders(s);
+    });
     const labels = labelRootRef.current ? new LabelManager(labelRootRef.current, globe) : null;
     const names = mapRootRef.current ? new MapLabels(mapRootRef.current, globe, anchors, indexes.cities, !reducedMotion) : null;
     const covers = new CoversLayer({
@@ -644,6 +647,7 @@ ${where}`;
         mosaic.cameraMoved();
       }
       mosaic.frame(camera as THREE.PerspectiveCamera, canvas.clientHeight);
+      outline.setResolution(canvas.clientWidth, canvas.clientHeight);
       if (needUpgrade.current && detailRef.current && now - lastUpgrade > 350) {
         const pov = globe.pointOfView();
         if (pov.altitude < CITY_FROM) {
