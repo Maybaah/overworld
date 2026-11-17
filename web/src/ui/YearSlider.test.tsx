@@ -7,7 +7,7 @@ import { YearSlider } from './YearSlider';
 
 beforeEach(() => {
   seedStore();
-  useStore.setState({ year: 2000 });
+  useStore.setState({ year: 2000, shownYear: null });
 });
 
 afterEach(() => {
@@ -66,6 +66,18 @@ describe('YearSlider', () => {
     expect(useStore.getState().playing).toBe(false);
     act(() => void vi.advanceTimersByTime(2000));
     expect(year()).toBe(2003);
+  });
+
+  it('waits for the globe to show the current year before the next step', () => {
+    vi.useFakeTimers();
+    useStore.setState({ shownYear: 1999 });
+    render(<YearSlider />);
+    fireEvent.click(screen.getByRole('button', { name: 'Play timeline' }));
+    act(() => void vi.advanceTimersByTime(700));
+    expect(year()).toBe(2000);
+    act(() => useStore.setState({ shownYear: 2000 }));
+    act(() => void vi.advanceTimersByTime(50));
+    expect(year()).toBe(2001);
   });
 
   it('stops at the end and restarts from 1970 when played from the end', () => {

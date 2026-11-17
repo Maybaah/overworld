@@ -4,6 +4,8 @@ import { formatCount } from './format';
 
 const STEP_MS = 350;
 const REDUCED_STEP_MS = 1000;
+const TICK_MS = 50;
+const MAX_WAIT_MS = 3000;
 
 function prefersReducedMotion(): boolean {
   return typeof window !== 'undefined' && typeof window.matchMedia === 'function'
@@ -38,15 +40,22 @@ export function YearSlider() {
 
   useEffect(() => {
     if (!playing) return;
+    const step = reduced ? REDUCED_STEP_MS : STEP_MS;
+    let elapsed = 0;
     const id = setInterval(() => {
-      const { year: current } = useStore.getState();
+      const { year: current, shownYear } = useStore.getState();
       if (current >= max) {
         setPlaying(false);
         return;
       }
+      elapsed += TICK_MS;
+      if (elapsed < step) return;
+      // Wait for the globe to show this year before moving on, so no year is skipped.
+      if (shownYear !== null && shownYear !== current && elapsed < MAX_WAIT_MS) return;
+      elapsed = 0;
       setYear(current + 1);
       if (current + 1 >= max) setPlaying(false);
-    }, reduced ? REDUCED_STEP_MS : STEP_MS);
+    }, TICK_MS);
     return () => clearInterval(id);
   }, [playing, reduced, max, setYear, setPlaying]);
 
