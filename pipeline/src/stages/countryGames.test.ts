@@ -60,3 +60,19 @@ describe('placeOf and correctionFor', () => {
     expect(correctionFor(entry(), 7, 'Black Division Games', cities)).toMatchObject({ igdbCompanyId: 7, country: 'KE', city: 'Nairobi', evidenceUrl: 'https://example.org/kenya' });
   });
 });
+
+describe('curated records', () => {
+  it('gives games and studios IGDB lacks stable ids above IGDB range, linked to each other', async () => {
+    const { curatedGame, curatedCompany, CURATED_ID_BASE } = await import('./countryGames');
+    const e = entry({ storeUrl: 'https://store.example/nx' });
+    const g = curatedGame(e);
+    const c = curatedCompany(e);
+    expect(g.id).toBe(curatedGame(e).id);
+    expect(g.id).toBeGreaterThanOrEqual(CURATED_ID_BASE);
+    expect(c.id).toBeLessThan(2 ** 31);
+    expect(g.involvedCompanies[0]).toMatchObject({ company: c.id, developer: true });
+    expect(g.url).toBe('https://store.example/nx');
+    expect(c).toMatchObject({ name: 'Black Division Games', url: 'https://example.org/kenya', country: 404, curated: true });
+    expect(g.firstReleaseDate).toBe(Date.UTC(2016, 0, 1) / 1000);
+  });
+});

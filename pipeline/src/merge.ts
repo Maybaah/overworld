@@ -174,11 +174,11 @@ function utcYear(unixSeconds: number | null): number | null {
 }
 
 function igdbCompanyRef(c: RawIgdbCompany): SourceRef {
-  return { source: 'igdb', id: String(c.id), url: c.url };
+  return c.curated ? { source: 'curated', id: `company-${c.id}`, url: c.url } : { source: 'igdb', id: String(c.id), url: c.url };
 }
 
 function igdbGameRef(g: RawIgdbGame): SourceRef {
-  return { source: 'igdb', id: String(g.id), url: g.url };
+  return g.curated ? { source: 'curated', id: `game-${g.id}`, url: g.url } : { source: 'igdb', id: String(g.id), url: g.url };
 }
 
 function wikidataRef(qid: string): SourceRef {

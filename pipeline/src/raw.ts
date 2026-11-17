@@ -6,6 +6,7 @@ export const STAGE_FILES = {
   igdbGames: 'igdb-games.json',
   igdbCompanies: 'igdb-companies.json',
   countryStudios: 'country-studios.json',
+  countryLeads: 'country-leads.json',
   igdbGenres: 'igdb-genres.json',
   wikidataGames: 'wikidata-games.json',
   wikidataCompanies: 'wikidata-companies.json',
@@ -68,6 +69,7 @@ export interface RawIgdbGame {
   // Estimated players (pipeline/src/audience.ts) once Steam data exists; null in rating-only runs.
   players?: number | null;
   playersBasis?: 'steam' | 'igdb_played' | 'rawg_added' | 'igdb_ratings' | null;
+  curated?: boolean; // not on IGDB: added from pipeline/data/country-games.json, url is the evidence
 }
 
 export interface RawIgdbCompany {
@@ -79,6 +81,7 @@ export interface RawIgdbCompany {
   startDate: number | null; // unix seconds
   parent: number | null;
   changedCompanyId: number | null;
+  curated?: boolean; // not on IGDB: added from pipeline/data/country-games.json, url is the evidence
 }
 
 export interface RawIgdbGenre {

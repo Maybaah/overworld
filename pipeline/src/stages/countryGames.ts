@@ -1,5 +1,6 @@
 import type { LocationCorrection } from '../merge';
-import type { RawIgdbGame } from '../raw';
+import type { RawIgdbCompany, RawIgdbGame } from '../raw';
+import { alpha2ToNumeric } from '../countries';
 import type { CityRecord } from '../cities';
 import { normalizeCompanyName, sameCompanyLoosely } from '../names';
 import { normalizeTitle } from './mobygames';
@@ -14,6 +15,62 @@ export interface CountryGame {
   evidenceUrl: string;
   igdbGameId?: number | null;
   igdbSlug?: string | null;
+  notOnIgdb?: boolean; // skip the IGDB search: its namesake there is another game
+  storeUrl?: string | null;
+}
+
+// Games and studios IGDB does not have get ids far above IGDB's, stable for the same title or studio.
+export const CURATED_ID_BASE = 1_900_000_000;
+
+function stableId(key: string, offset: number): number {
+  let h = 2166136261;
+  for (let i = 0; i < key.length; i++) h = Math.imul(h ^ key.charCodeAt(i), 16777619);
+  return CURATED_ID_BASE + offset + ((h >>> 0) % 40_000_000);
+}
+
+function slugOf(s: string): string {
+  return fold(s)
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '');
+}
+
+export function curatedCompanyId(entry: CountryGame): number {
+  return stableId(`${entry.country}|${slugOf(entry.developer)}`, 50_000_000);
+}
+
+export function curatedCompany(entry: CountryGame): RawIgdbCompany {
+  return {
+    id: curatedCompanyId(entry),
+    name: entry.developer,
+    slug: slugOf(entry.developer),
+    url: entry.evidenceUrl,
+    country: alpha2ToNumeric(entry.country),
+    startDate: null,
+    parent: null,
+    changedCompanyId: null,
+    curated: true,
+  };
+}
+
+export function curatedGame(entry: CountryGame): RawIgdbGame {
+  const company = curatedCompanyId(entry);
+  return {
+    id: stableId(`${entry.country}|${slugOf(entry.game)}`, 0),
+    name: entry.game,
+    slug: slugOf(entry.game),
+    url: entry.storeUrl ?? entry.evidenceUrl,
+    firstReleaseDate: entry.year === null ? null : Date.UTC(entry.year, 0, 1) / 1000,
+    totalRatingCount: 0,
+    gameType: 0,
+    genres: [],
+    platforms: [],
+    cover: null,
+    screenshots: [],
+    involvedCompanies: [{ id: company, company, developer: true, publisher: false, porting: false, supporting: false }],
+    steamAppId: null,
+    steamAppIds: [],
+    curated: true,
+  };
 }
 
 export function yearOf(g: RawIgdbGame): number | null {

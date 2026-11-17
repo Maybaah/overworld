@@ -4,8 +4,8 @@ import { STAGE_FILES, type RawIgdbCompany, type RawIgdbGame } from '../raw';
 import { readJson, readJsonIfExists, writeJson } from '../stageio';
 import { loadCityRecords } from '../cities';
 import { alpha2ToNumeric } from '../countries';
-import type { LocationCorrection } from '../merge';
-import { correctionFor, developerOf, pickSearchHit, type CountryGame } from './countryGames';
+import type { LeadOverride, LocationCorrection } from '../merge';
+import { correctionFor, CURATED_ID_BASE, curatedCompany, curatedCompanyId, curatedGame, developerOf, pickSearchHit, type CountryGame } from './countryGames';
 import { companiesQuery, CURRENT_FIELDS, gameFields, gamesByIdQuery, igdbClient, list, mapCompany, mapGame, numOrNull, refId } from './igdb';
 
 const PAGE = 500;
@@ -41,12 +41,13 @@ export function pickFloor(candidates: FloorCandidate[], country: number, need: n
 export async function runCountriesStage(
   config: PipelineConfig,
   deps: { fetchImpl?: typeof fetch; sleep?: (ms: number) => Promise<void>; log?: (msg: string) => void } = {},
-): Promise<{ countries: number; added: number; companiesAdded: number; handListed: number; unresolved: number }> {
+): Promise<{ countries: number; added: number; companiesAdded: number; handListed: number; notOnIgdb: number }> {
   const log = deps.log ?? ((msg: string) => console.log(msg));
   const gamesFile = path.join(config.stageDir, STAGE_FILES.igdbGames);
   const companiesFile = path.join(config.stageDir, STAGE_FILES.igdbCompanies);
-  const games = await readJson<RawIgdbGame[]>(gamesFile);
-  const companies = await readJson<RawIgdbCompany[]>(companiesFile);
+  // Games and studios from the hand list are rebuilt on every run, so edits to the list take effect.
+  const games = (await readJson<RawIgdbGame[]>(gamesFile)).filter((g) => !g.curated);
+  const companies = (await readJson<RawIgdbCompany[]>(companiesFile)).filter((c) => !c.curated);
   const { postRows } = await igdbClient(config, deps, log);
 
   const countryOf = new Map<number, number>();
@@ -107,16 +108,17 @@ export async function runCountriesStage(
     }
   }
 
-  // Hand-checked games for countries IGDB has no studios for.
+  // Hand-checked games for countries IGDB has no studios for. A game missing from IGDB, or one IGDB lists
+  // without a matching developer, gets its game or studio record from the list itself, marked as curated.
   const curated = (await readJsonIfExists<CountryGame[]>(path.join(config.curatedDir, 'country-games.json'))) ?? [];
   const byId = new Map([...games, ...added].map((g) => [g.id, g]));
   const matched: { entry: CountryGame; game: RawIgdbGame }[] = [];
-  const unresolved: { country: string; game: string; reason: string }[] = [];
   const fields = gameFields(CURRENT_FIELDS);
   const quote = (t: string) => t.replace(/[\\"]/g, ' ');
+  let notOnIgdb = 0;
   for (const entry of curated) {
     let game: RawIgdbGame | null = entry.igdbGameId ? (byId.get(entry.igdbGameId) ?? null) : null;
-    if (!game) {
+    if (!game && !entry.notOnIgdb) {
       const where = entry.igdbGameId
         ? `where id = ${entry.igdbGameId};`
         : entry.igdbSlug
@@ -128,12 +130,8 @@ export async function runCountriesStage(
       game = entry.igdbGameId || entry.igdbSlug ? (hits[0] ?? null) : pickSearchHit(entry, hits);
     }
     if (!game) {
-      unresolved.push({ country: entry.country, game: entry.game, reason: 'not found on IGDB' });
-      continue;
-    }
-    if (!game.involvedCompanies.some((c) => c.developer)) {
-      unresolved.push({ country: entry.country, game: entry.game, reason: 'IGDB lists no developer' });
-      continue;
+      game = curatedGame(entry);
+      notOnIgdb++;
     }
     matched.push({ entry, game });
     if (!known.has(game.id)) {
@@ -144,7 +142,9 @@ export async function runCountriesStage(
   }
 
   const haveCompany = new Set(companies.map((c) => c.id));
-  const missing = [...new Set(added.flatMap((g) => g.involvedCompanies.map((c) => c.company)))].filter((id) => !haveCompany.has(id));
+  const missing = [...new Set(added.flatMap((g) => g.involvedCompanies.map((c) => c.company)))].filter(
+    (id) => !haveCompany.has(id) && id < CURATED_ID_BASE,
+  );
   const newCompanies: RawIgdbCompany[] = [];
   for (let i = 0; i < missing.length; i += PAGE) {
     for (const row of await postRows('companies', companiesQuery(missing.slice(i, i + PAGE)))) {
@@ -152,18 +152,22 @@ export async function runCountriesStage(
       if (c) newCompanies.push(c);
     }
   }
-  const allCompanies = [...companies, ...newCompanies];
-  const names = new Map(allCompanies.map((c) => [c.id, c.name]));
-  const companyById = new Map(allCompanies.map((c) => [c.id, c]));
+  const listed = new Map<number, RawIgdbCompany>();
+  const allCompanies = () => [...companies, ...newCompanies, ...listed.values()];
+  const names = new Map(allCompanies().map((c) => [c.id, c.name]));
+  const companyById = new Map(allCompanies().map((c) => [c.id, c]));
   const cities = matched.length > 0 ? loadCityRecords() : [];
   const corrections: LocationCorrection[] = [];
+  const leads: LeadOverride[] = [];
   let patched = 0;
   for (const { entry, game } of matched) {
     const dev = developerOf(entry, game, names);
-    const company = dev === null ? undefined : companyById.get(dev);
-    if (!company) {
-      unresolved.push({ country: entry.country, game: entry.game, reason: `no IGDB developer matches ${entry.developer}` });
-      continue;
+    let company = dev === null ? undefined : companyById.get(dev);
+    if (!company || company.curated) {
+      company = listed.get(curatedCompanyId(entry)) ?? curatedCompany(entry);
+      listed.set(company.id, company);
+      companyById.set(company.id, company);
+      leads.push({ igdbGameId: game.id, game: game.name, igdbCompanyId: company.id, company: company.name, evidenceUrl: entry.evidenceUrl });
     }
     const fix = correctionFor(entry, company.id, company.name, cities);
     if (fix) corrections.push(fix);
@@ -174,12 +178,12 @@ export async function runCountriesStage(
   }
 
   await writeJson(gamesFile, [...games, ...added]);
-  await writeJson(companiesFile, allCompanies.sort((a, b) => a.id - b.id));
+  await writeJson(companiesFile, allCompanies().sort((a, b) => a.id - b.id));
   await writeJson(path.join(config.stageDir, STAGE_FILES.countryStudios), corrections);
-  for (const u of unresolved) log(`countries: ${u.country} "${u.game}" skipped: ${u.reason}`);
+  await writeJson(path.join(config.stageDir, STAGE_FILES.countryLeads), leads);
   log(
-    `countries: added ${added.length} games (${countries} countries by IGDB studios, ${matched.length} of ${curated.length} hand-listed), ` +
-      `${newCompanies.length} new companies, ${corrections.length} studios placed in a city, ${patched} given a country`,
+    `countries: added ${added.length} games (${countries} countries by IGDB studios, ${matched.length} hand-listed, ${notOnIgdb} of them not on IGDB), ` +
+      `${newCompanies.length} new companies, ${listed.size} studios from the list, ${corrections.length} placed in a city, ${patched} given a country`,
   );
-  return { countries, added: added.length, companiesAdded: newCompanies.length, handListed: matched.length, unresolved: unresolved.length };
+  return { countries, added: added.length, companiesAdded: newCompanies.length, handListed: matched.length, notOnIgdb };
 }
