@@ -13,7 +13,8 @@
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
     "fixture": "tsx pipeline/src/fixture.ts",
-    "sprites": "tsx web/scripts/cover-sprites.ts"
+    "sprites": "tsx web/scripts/cover-sprites.ts",
+    "layouts": "tsx web/scripts/mosaic-layouts.ts"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",

@@ -16,6 +16,8 @@ import {
   type Pt,
   type Region,
   type Ring,
+  type RegionIndex,
+  type Site,
 } from './geometry';
 
 export const MOSAIC_ALTITUDE = 0.0041;
@@ -38,10 +40,13 @@ export interface MosaicOptions {
   maxCells: number;
   minCellArea: number; // square degrees of arc
   iterations: number;
+  detailIterations: number; // for countries given extra cells when zoomed in; their old sites start in place
+  topIterations?: number; // for splitting the country between metro areas; defaults to iterations
   tether: number;
 }
 
-export const DEFAULT_OPTIONS: MosaicOptions = { maxCells: 1200, minCellArea: 0.12, iterations: 40, tether: 0.15 };
+export const DEFAULT_OPTIONS: MosaicOptions = { maxCells: 3000, minCellArea: 0.05, iterations: 40, detailIterations: 5, tether: 0.15 };
+const MAX_DETAIL_CELLS = 16000;
 
 export interface MosaicCell {
   gameId: number;
@@ -66,6 +71,7 @@ export interface CountryRegion {
   region: Region;
   area: number;
   center: { lat: number; lng: number };
+  radius: number; // degrees of arc from the centre to the farthest corner of the projected box
 }
 
 function rings(shape: CountryShape): number[][][][] {
@@ -126,7 +132,9 @@ export function countryRegions(shapes: readonly CountryShape[]): Map<string, Cou
         else region.holes.push(orient(r, true));
       });
     }
-    out.set(code, { code, projection, region, area: regionArea(region), center });
+    const b = bbox(region.outers.flat());
+    const radius = Math.max(Math.hypot(b[0], b[1]), Math.hypot(b[2], b[1]), Math.hypot(b[0], b[3]), Math.hypot(b[2], b[3]));
+    out.set(code, { code, projection, region, area: regionArea(region), center, radius });
   }
   return out;
 }
@@ -178,18 +186,72 @@ export function insideNear(p: Pt, region: Region, step: number, seed: number): P
   return interiorPoint(seed, region);
 }
 
+// Cells are shared by the geometric mean of a country's game count and its area, so dense small countries
+// (Japan, Korea) and big sparse ones (Canada, Russia) both get a fair number; every country gets at least one.
 export function cellBudget(counts: ReadonlyMap<string, number>, areas: ReadonlyMap<string, number>, o: MosaicOptions): Map<string, number> {
-  const want = new Map<string, number>();
-  let total = 0;
+  const out = new Map<string, number>();
+  const cap = new Map<string, number>();
+  const weight = new Map<string, number>();
   for (const [code, n] of counts) {
-    const k = Math.max(1, Math.min(n, Math.floor((areas.get(code) ?? 0) / o.minCellArea)));
-    want.set(code, k);
-    total += k;
+    const area = areas.get(code) ?? 0;
+    cap.set(code, Math.max(1, Math.min(n, Math.floor(area / o.minCellArea))));
+    weight.set(code, Math.sqrt(n * Math.max(area, o.minCellArea)));
+    out.set(code, 1);
   }
-  if (total <= o.maxCells) return want;
-  const scale = o.maxCells / total;
-  for (const [code, k] of want) want.set(code, Math.max(1, Math.floor(k * scale)));
-  return want;
+  let left = o.maxCells - out.size;
+  let open = [...counts.keys()].filter((c) => cap.get(c)! > 1);
+  while (left > 0 && open.length > 0) {
+    const sum = open.reduce((a, c) => a + weight.get(c)!, 0);
+    let used = 0;
+    const next: string[] = [];
+    for (const c of open) {
+      const k = Math.min(Math.max(1, Math.floor((left * weight.get(c)!) / sum)), cap.get(c)! - out.get(c)!, left - used);
+      out.set(c, out.get(c)! + k);
+      used += k;
+      if (out.get(c)! < cap.get(c)!) next.push(c);
+    }
+    if (used === 0) break;
+    left -= used;
+    open = next;
+  }
+  return out;
+}
+
+export interface MosaicFocus {
+  lat: number;
+  lng: number;
+  radius: number; // degrees of arc in view around the point
+  zoom: number; // how many times more cells per area than the whole-globe view
+}
+
+function arcDegrees(a: { lat: number; lng: number }, b: { lat: number; lng: number }): number {
+  const r = Math.PI / 180;
+  const c = Math.sin(a.lat * r) * Math.sin(b.lat * r) + Math.cos(a.lat * r) * Math.cos(b.lat * r) * Math.cos((a.lng - b.lng) * r);
+  return Math.acos(Math.min(1, Math.max(-1, c))) / r;
+}
+
+// Countries in view get more cells, up to all their games, so zooming in shows every game.
+export function focusBudget(
+  budget: Map<string, number>,
+  counts: ReadonlyMap<string, number>,
+  regions: ReadonlyMap<string, CountryRegion>,
+  focus: MosaicFocus | null,
+): Map<string, number> {
+  if (!focus || focus.zoom <= 1) return budget;
+  const near = [...budget.keys()].filter((c) => {
+    const r = regions.get(c);
+    return r && arcDegrees(r.center, focus) < focus.radius + r.radius;
+  });
+  let zoom = focus.zoom;
+  for (let k = 0; k < 20; k++) {
+    let total = 0;
+    for (const [c, n] of budget) total += near.includes(c) ? Math.min(counts.get(c)!, Math.ceil(n * zoom)) : n;
+    if (total <= Math.max(MAX_DETAIL_CELLS, [...budget.values()].reduce((a, b) => a + b, 0)) || zoom <= 1) break;
+    zoom = Math.max(1, zoom * 0.8);
+  }
+  const out = new Map(budget);
+  for (const c of near) out.set(c, Math.min(counts.get(c)!, Math.ceil(budget.get(c)! * zoom)));
+  return out;
 }
 
 function splitTriangle(t: number[], out: number[]): void {
@@ -229,6 +291,7 @@ export interface CellPiece {
 
 export interface CountryMosaic {
   key: string;
+  sites: string[]; // memory keys of the sites this mosaic used
   pieces: CellPiece[];
   position: number[];
   uv: number[];
@@ -275,8 +338,30 @@ export function metroGroups(games: readonly MosaicGame[], country: CountryRegion
     if (hit) hit.list.push(g);
     else groups.push({ anchor: p, list: [g] });
   }
-  return groups.map((x) => x.list);
+  // A town with one or two games next to a big metro joins it; alone it would hold a cell far bigger than its share.
+  const order = new Map(games.map((g, i) => [g.id, i]));
+  const big = groups.filter((x) => x.anchor !== null && x.list.length > SMALL_TOWN);
+  const kept = groups.filter((x) => {
+    if (x.anchor === null || x.list.length > SMALL_TOWN) return true;
+    let best: (typeof groups)[number] | null = null;
+    let bestD = reach * SMALL_TOWN_REACH;
+    for (const y of big) {
+      const d = Math.hypot(y.anchor![0] - x.anchor[0], y.anchor![1] - x.anchor[1]);
+      if (d <= bestD) {
+        best = y;
+        bestD = d;
+      }
+    }
+    if (!best) return true;
+    best.list.push(...x.list);
+    return false;
+  });
+  for (const x of kept) x.list.sort((a, b) => order.get(a.id)! - order.get(b.id)!);
+  return kept.map((x) => x.list);
 }
+
+const SMALL_TOWN = 2;
+const SMALL_TOWN_REACH = 4;
 
 function regionOf(cell: ClippedCell): Region {
   return { outers: cell.pieces.map((p) => p.outer), holes: cell.pieces.flatMap((p) => p.holes) };
@@ -284,25 +369,40 @@ function regionOf(cell: ClippedCell): Region {
 
 // Two levels: the country is split between cities (area by the cities' total popularity, sites at the cities),
 // then each city's part is split between its games, which may move freely inside it.
-export function buildCountryMosaic(games: readonly MosaicGame[], country: CountryRegion, o: MosaicOptions): CountryMosaic {
+// memory keeps where every site ended last time, so the next build (another year, more games when zoomed in)
+// starts from there: cells stay where they were and the fit needs few iterations.
+export function buildCountryMosaic(
+  games: readonly MosaicGame[],
+  country: CountryRegion,
+  o: MosaicOptions,
+  memory: Map<string, Site> = new Map(),
+): CountryMosaic {
   const key = games.map((g) => g.id).join(',');
-  const out: CountryMosaic = { key, pieces: [], position: [], uv: [], cell: [], lines: [], cells: [] };
+  const out: CountryMosaic = { key, sites: [], pieces: [], position: [], uv: [], cell: [], lines: [], cells: [] };
   if (games.length === 0) return out;
   const proj = country.projection;
   const weight = (g: MosaicGame) => Math.max(1, g.popularity) ** POPULARITY_EXPONENT;
   const cities = metroGroups(games, country);
   const homes = placeSites(cities.map((list) => list[0]!), country);
+  const metroKey = (list: MosaicGame[]) => `m${country.code}:${list[0]!.id}`;
   const top = fitPowerDiagram(homes, cities.map((list) => list.reduce((a, g) => a + weight(g), 0)), country.region, {
-    iterations: cities.length === 1 ? 0 : o.iterations,
+    iterations: cities.length === 1 ? 0 : (o.topIterations ?? o.iterations),
     tether: o.tether,
+    start: cities.map((list) => memory.get(metroKey(list))),
+  });
+  cities.forEach((list, i) => {
+    memory.set(metroKey(list), top.fitted[i]!);
+    out.sites.push(metroKey(list));
   });
   const flat: number[] = [];
 
-  const emitLines = (convex: Pt[], region: Region) => {
+  const emitLines = (convex: Pt[], region: Region, index: RegionIndex) => {
     for (let k = 0; k < convex.length; k++) {
       const p = convex[k]!;
       const q = convex[(k + 1) % convex.length]!;
-      for (const [s, e] of segmentInside(p, q, region)) {
+      const box: [number, number, number, number] = [Math.min(p[0], q[0]), Math.min(p[1], q[1]), Math.max(p[0], q[0]), Math.max(p[1], q[1])];
+      const parts: [Pt, Pt][] = index.containsBox(box) ? [[p, q]] : segmentInside(p, q, region);
+      for (const [s, e] of parts) {
         const len = Math.hypot(e[0] - s[0], e[1] - s[1]);
         const steps = Math.max(1, Math.ceil(len / MAX_EDGE));
         for (let t = 0; t < steps; t++) {
@@ -355,7 +455,7 @@ export function buildCountryMosaic(games: readonly MosaicGame[], country: Countr
   top.cells.forEach((cityCell, ci) => {
     const list = cities[ci]!;
     if (cityCell.pieces.length === 0) return;
-    emitLines(cityCell.convex, country.region);
+    emitLines(cityCell.convex, country.region, top.index);
     if (list.length === 1) {
       emitCell(list[0]!, cityCell);
       return;
@@ -365,31 +465,61 @@ export function buildCountryMosaic(games: readonly MosaicGame[], country: Countr
     const spots = spreadPoints(region, list.length, list[0]!.id).sort(
       (p, q) => Math.hypot(p[0] - home[0], p[1] - home[1]) - Math.hypot(q[0] - home[0], q[1] - home[1]),
     );
-    const inner = spots;
-    const fit = fitPowerDiagram(inner, list.map(weight), region, { iterations: o.iterations, tether: 0 });
+    const fit = fitPowerDiagram(spots, list.map(weight), region, {
+      iterations: o.iterations,
+      tether: 0,
+      start: list.map((g) => memory.get(`g${g.id}`)),
+    });
+    list.forEach((g, k) => {
+      memory.set(`g${g.id}`, fit.fitted[k]!);
+      out.sites.push(`g${g.id}`);
+    });
     fit.cells.forEach((c, k) => {
       emitCell(list[k]!, c);
-      emitLines(c.convex, region);
+      emitLines(c.convex, region, fit.index);
     });
   });
   return out;
 }
 
+export interface BuildResult {
+  mesh: MosaicMesh;
+  countries: Map<string, CountryMosaic>;
+}
+
+// A layout is where every site of one year's mosaic sits: memory key -> [x, y, weight, area it was fitted for].
+export type Layout = Map<string, [number, number, number, number]>;
+
+const CACHE_LIMIT = 600;
+
 export class MosaicBuilder {
   private readonly cache = new Map<string, CountryMosaic>();
-  private readonly current = new Map<string, CountryMosaic>();
-
-  piecesOf(code: string): CellPiece[] | null {
-    return this.current.get(code)?.pieces ?? null;
-  }
+  private readonly memory = new Map<string, Site>();
 
   constructor(
     private readonly regions: Map<string, CountryRegion>,
     private readonly options: MosaicOptions = DEFAULT_OPTIONS,
   ) {}
 
-  // games must come in popularity order, most popular first
-  build(games: readonly MosaicGame[]): MosaicMesh {
+  // Puts the sites of a precomputed layout into memory; countries then build without fitting.
+  useLayout(layout: Layout): void {
+    for (const [k, [x, y, weight, want]] of layout) this.memory.set(k, { x, y, weight, want });
+  }
+
+  layoutOf(countries: Map<string, CountryMosaic>): Layout {
+    const out: Layout = new Map();
+    for (const m of countries.values()) {
+      for (const k of m.sites) {
+        const s = this.memory.get(k);
+        if (s) out.set(k, [s.x, s.y, s.weight, s.want ?? 0]);
+      }
+    }
+    return out;
+  }
+
+  // games must come in popularity order, most popular first. With fitted = true, countries outside the focus
+  // take their sites from memory as they are (a loaded layout) instead of fitting them again.
+  build(games: readonly MosaicGame[], focus: MosaicFocus | null = null, fitted = false): BuildResult {
     const byCountry = new Map<string, MosaicGame[]>();
     for (const g of games) {
       if (!this.regions.has(g.country)) continue;
@@ -399,21 +529,27 @@ export class MosaicBuilder {
     }
     const counts = new Map([...byCountry].map(([c, l]) => [c, l.length]));
     const areas = new Map([...this.regions].map(([c, r]) => [c, r.area]));
-    const budget = cellBudget(counts, areas, this.options);
+    const base = cellBudget(counts, areas, this.options);
+    const budget = focusBudget(base, counts, this.regions, focus);
     const parts: CountryMosaic[] = [];
-    this.current.clear();
-    const next = new Map<string, CountryMosaic>();
+    const countries = new Map<string, CountryMosaic>();
     for (const [code, list] of byCountry) {
-      const chosen = list.slice(0, budget.get(code) ?? 1);
+      const n = budget.get(code) ?? 1;
+      const chosen = list.slice(0, n);
       const key = `${code}:${chosen.map((g) => g.id).join(',')}`;
       let m = this.cache.get(key);
-      if (!m) m = buildCountryMosaic(chosen, this.regions.get(code)!, this.options);
-      next.set(key, m);
-      this.current.set(code, m);
+      if (m) this.cache.delete(key);
+      else {
+        const extra = n > (base.get(code) ?? 1);
+        const iterations = extra ? this.options.detailIterations : fitted ? 0 : this.options.iterations;
+        const topIterations = extra ? this.options.iterations : iterations;
+        m = buildCountryMosaic(chosen, this.regions.get(code)!, { ...this.options, iterations, topIterations }, this.memory);
+      }
+      this.cache.set(key, m);
+      countries.set(code, m);
       parts.push(m);
     }
-    this.cache.clear();
-    for (const [k, v] of next) this.cache.set(k, v);
+    while (this.cache.size > CACHE_LIMIT) this.cache.delete(this.cache.keys().next().value!);
 
     let nPos = 0;
     let nLines = 0;
@@ -442,6 +578,6 @@ export class MosaicBuilder {
       oc += p.cell.length;
       ol += p.lines.length;
     }
-    return { position, uv, cell, lines, cells };
+    return { mesh: { position, uv, cell, lines, cells }, countries };
   }
 }

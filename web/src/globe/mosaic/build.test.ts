@@ -75,12 +75,48 @@ describe('MosaicBuilder', () => {
   it('builds every country, offsets cell ids and reuses unchanged countries', () => {
     const b = new MosaicBuilder(regions);
     const games = [game(1, 50, 35, 135), game(2, 40, 47, 3, { country: 'FR' }), game(3, 30, 36, 138), game(4, 1, 0, 0, { country: 'ZZ' })];
-    const m = b.build(games);
+    const m = b.build(games).mesh;
     expect(m.cells.map((c) => c.gameId).sort()).toEqual([1, 2, 3]);
     const maxCell = Math.max(...m.cell);
     expect(maxCell).toBe(2);
-    const again = b.build(games);
+    const again = b.build(games).mesh;
     expect(again.position.length).toBe(m.position.length);
+  });
+});
+
+describe('layouts', () => {
+  it('rebuilds a year from its saved layout without fitting, cell for cell', () => {
+    const games = [game(1, 50, 35.7, 139.7), game(2, 40, 34.7, 135.5), game(3, 30, 35.7, 139.7), game(4, 5, 33.6, 130.4)];
+    const a = new MosaicBuilder(regions);
+    const first = a.build(games);
+    const layout = a.layoutOf(first.countries);
+    expect(layout.size).toBeGreaterThan(0);
+    const b = new MosaicBuilder(regions);
+    b.useLayout(layout);
+    const again = b.build(games, null, true).mesh;
+    expect(again.cells.map((c) => c.gameId)).toEqual(first.mesh.cells.map((c) => c.gameId));
+    again.cells.forEach((c, i) => expect(c.area).toBeCloseTo(first.mesh.cells[i]!.area, 3));
+  });
+
+  it('round-trips through the binary file', async () => {
+    const { encodeLayouts, decodeLayouts } = await import('./layouts');
+    const games = [{ ...game(1, 50, 35.7, 139.7), year: 2000 }, { ...game(2, 40, 34.7, 135.5), year: 2001 }];
+    const l1 = new Map<string, [number, number, number, number]>([['g1', [1, 2, 3, 1]], ['mJP:1', [4, 5, 6, 1]]]);
+    const l2 = new Map<string, [number, number, number, number]>([['g1', [1, 2, 3, 1]], ['g2', [7, 8, 9, 2]], ['mJP:1', [4, 5, 6.5, 1]]]);
+    const out = decodeLayouts(encodeLayouts(games, [[2000, l1], [2001, l2]]), games)!;
+    expect(out.get(2000)!.get('mJP:1')).toEqual([4, 5, 6, 1]);
+    expect(out.get(2001)!.get('mJP:1')).toEqual([4, 5, 6.5, 1]);
+    expect(out.get(2001)!.get('g2')).toEqual([7, 8, 9, 2]);
+    expect(decodeLayouts(encodeLayouts(games, [[2000, l1]]), games.slice(1))).toBeNull();
+  });
+});
+
+describe('cellBudget shares', () => {
+  it('gives a dense small country more cells than its area alone would', () => {
+    const b = cellBudget(new Map([['S', 1000], ['L', 1000]]), new Map([['S', 10], ['L', 1000]]), { ...DEFAULT_OPTIONS, minCellArea: 0.01, maxCells: 200 });
+    expect(b.get('S')!).toBeGreaterThan(15);
+    expect(b.get('L')!).toBeGreaterThan(b.get('S')!);
+    expect(b.get('S')! + b.get('L')!).toBeLessThanOrEqual(200);
   });
 });
 
