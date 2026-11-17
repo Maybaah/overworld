@@ -102,12 +102,18 @@ function closeless(ring: number[][], proj: Projection): Ring {
   return out;
 }
 
+// Some codes have several shapes (Australia and the Ashmore and Cartier Islands are both 036), so they are merged.
 export function countryRegions(shapes: readonly CountryShape[]): Map<string, CountryRegion> {
-  const out = new Map<string, CountryRegion>();
+  const byCode = new Map<string, number[][][][]>();
   for (const s of shapes) {
     const code = alpha2OfNumeric(s.id);
     if (!code) continue;
-    const polys = rings(s);
+    const list = byCode.get(code);
+    if (list) list.push(...rings(s));
+    else byCode.set(code, rings(s));
+  }
+  const out = new Map<string, CountryRegion>();
+  for (const [code, polys] of byCode) {
     if (polys.length === 0) continue;
     const center = sphericalCenter(polys);
     const projection = azimuthalEqualArea(center.lat, center.lng);

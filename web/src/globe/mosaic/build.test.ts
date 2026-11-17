@@ -30,6 +30,12 @@ describe('countryRegions', () => {
     expect(jp.area).toBeGreaterThan(80);
     expect(jp.area).toBeLessThan(85);
   });
+
+  it('merges shapes that share a code instead of keeping the last one', () => {
+    const au = countryRegions([box('036', 120, -35, 20, 20), box('036', 123, -12, 0.2, 0.2)]).get('AU')!;
+    expect(au.region.outers).toHaveLength(2);
+    expect(au.area).toBeGreaterThan(300);
+  });
 });
 
 describe('placeSites', () => {
