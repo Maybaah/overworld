@@ -2,7 +2,7 @@
 
 Verdict: PASS
 
-38983 games, 20813 companies, 97648 roles
+38990 games, 22124 companies, 116230 roles
 
 ## Checks
 
@@ -27,25 +27,25 @@ Verdict: PASS
 
 | Role | Count |
 | --- | ---: |
-| lead_developer | 38983 |
-| co_developer | 3771 |
-| port | 2398 |
-| publisher | 50547 |
+| lead_developer | 38990 |
+| co_developer | 6595 |
+| port | 2729 |
+| publisher | 66073 |
 | localization | 1 |
 | qa | 0 |
 | art | 1 |
 | audio | 1 |
-| support | 1946 |
+| support | 1840 |
 
 ## Companies by location precision
 
 | Precision | Companies | Share |
 | --- | ---: | ---: |
-| city | 3496 | 16.8% |
-| country | 8178 | 39.3% |
-| none | 9139 | 43.9% |
+| city | 3496 | 15.8% |
+| country | 8179 | 37% |
+| none | 10449 | 47.2% |
 
-Games whose lead studio has only a country-level location: 13071 of 38983 (33.5%)
+Games whose lead studio has only a country-level location: 13075 of 38990 (33.5%)
 
 ## Lead basis
 
@@ -57,63 +57,64 @@ Games whose lead studio has only a country-level location: 13071 of 38983 (33.5%
 | curated | 12 |
 | igdb_developer_heuristic | 253 |
 | wikidata_developer | 492 |
+| mobygames_developer | 7 |
 
-## Flagged companies (no location): 9139
+## Flagged companies (no location): 10449
 
 Top 50 by game count
 
 | Id | Name | Games |
 | ---: | --- | ---: |
+| 20000002 | Electronic Arts, Inc. | 165 |
+| 20002901 | Tec Toy Indústria de Brinquedos S.A. | 165 |
+| 20007989 | Namco Bandai Games America Inc. | 158 |
+| 20000012 | SEGA Enterprises Ltd. | 146 |
+| 20004480 | Noviy Disk | 136 |
+| 77767 | Koch Media GmbH (Austria) | 115 |
+| 20013596 | Microsoft Corporation | 104 |
+| 20000024 | Electronic Arts Canada | 99 |
+| 77268 | Mastertronic Games | 87 |
+| 20001942 | Nintendo EAD | 80 |
 | 20611 | Kagura Games | 73 |
+| 20005023 | Focus Home Interactive SAS | 71 |
+| 20002334 | Sony Interactive Entertainment America LLC | 58 |
+| 20000587 | U.S. Gold Ltd. | 55 |
+| 20001518 | Ubi Soft Entertainment Software | 55 |
+| 20000544 | Ocean Software Ltd. | 53 |
+| 20003576 | Ubisoft Entertainment Inc. / Ubisoft Divertissements Inc. | 53 |
 | 8031 | Back To Basics Gaming | 51 |
-| 11975 | WhisperGames | 42 |
+| 11975 | WhisperGames | 49 |
+| 20009625 | Playtronic Industrial Ltda. | 46 |
+| 11359 | Namco Bandai Games Europe S.A.S. | 44 |
+| 20010420 | Bandai Namco Entertainment Europe S.A.S. | 44 |
+| 20000034 | Atari Europe S.A.S.U. | 43 |
+| 20004785 | Novitas Vertriebs GmbH | 43 |
+| 20006131 | Empire Interactive Europe Ltd. | 43 |
+| 20031950 | MacPlay Digital, LLC | 41 |
 | 17208 | Ripknot Systems | 39 |
+| 20024437 | Nintendo EPD | 38 |
+| 20006375 | Cenega Poland Sp. z o.o. | 35 |
 | 25230 | St. GIGA | 33 |
+| 20001925 | Traveller's Tales (UK) Ltd. | 33 |
 | 18911 | Laush Studio | 32 |
+| 20001277 | Sony Interactive Entertainment Europe Ltd. | 32 |
 | 7432 | Retroism | 31 |
 | 9786 | 22nd Century Toys | 31 |
 | 10535 | Acclaim | 31 |
+| 20007988 | Namco Bandai Games Inc. | 31 |
+| 461 | Fox Interactive | 30 |
+| 833 | Ignition Entertainment | 30 |
+| 19866 | Maple Whispering Limited | 30 |
+| 20000858 | Take-Two Interactive Software, Inc. | 29 |
 | 21233 | Anatoliy Loginovskikh | 28 |
 | 38591 | Pingle Game Studio | 28 |
-| 20001942 | Nintendo EAD | 27 |
-| 461 | Fox Interactive | 26 |
-| 19866 | Maple Whispering Limited | 26 |
+| 20000009 | Mindscape SA | 28 |
+| 20014119 | Headup Games GmbH & Co. KG | 27 |
 | 67297 | SA Industry | 26 |
-| 833 | Ignition Entertainment | 24 |
-| 30868 | Laush Dmitriy Sergeevich | 24 |
-| 36900 | DreadXP | 23 |
-| 20003576 | Ubisoft Entertainment Inc. / Ubisoft Divertissements Inc. | 21 |
-| 20661 | Crunchyroll Games | 20 |
-| 57593 | OTAKU Plan | 20 |
-| 3301 | Atari Europe | 19 |
-| 13144 | Blender Games | 19 |
-| 13387 | Racing Bros | 19 |
-| 32350 | Hyundai | 19 |
-| 10836 | Green Man Gaming Publishing | 18 |
-| 22489 | Hosted Games | 18 |
-| 51808 | 100 Cozy Games | 18 |
-| 46928 | Very Very Little Studio | 17 |
-| 60466 | Conglomerate 5 | 17 |
-| 10060 | Zonitron Productions | 16 |
-| 26837 | Walter Machado | 16 |
-| 32363 | ak tronic | 16 |
-| 2017 | MonkeyPaw Games | 15 |
-| 9323 | Pilgrim Adventures | 15 |
-| 12340 | Ocean Media | 15 |
-| 43414 | 616 GAMES | 15 |
-| 2519 | Sears | 14 |
-| 12539 | 101XP | 14 |
-| 22097 | ANPA.US | 14 |
-| 23426 | Randumb Studios | 14 |
-| 35964 | Pixel Games UK | 14 |
-| 3704 | NEC Home Electronics | 13 |
-| 12393 | Siactro | 13 |
-| 13104 | Ving Co., Ltd. | 13 |
-| 18130 | Surefire.Games | 13 |
-| 21381 | Numskull Games | 13 |
-| 26201 | Yooreka Studio | 13 |
-| 39157 | Ravenage Games | 13 |
-| 45959 | Devcats | 13 |
+| 20001472 | Disney Interactive Studios, Inc. | 26 |
+| 20002927 | Atari Corporation | 26 |
+| 20005033 | Snowball.ru | 25 |
+| 20017674 | Nordic Games GmbH | 25 |
 
 ## Insights
 
@@ -121,15 +122,15 @@ Top 50 by game count
 
 | Country | Games led |
 | --- | ---: |
-| United States (US) | 7438 |
-| Japan (JP) | 6849 |
-| United Kingdom (GB) | 3098 |
+| United States (US) | 7441 |
+| Japan (JP) | 6850 |
+| United Kingdom (GB) | 3099 |
 | Canada (CA) | 1478 |
 | France (FR) | 1211 |
 | Germany (DE) | 1061 |
 | Poland (PL) | 916 |
 | Russia (RU) | 840 |
-| Sweden (SE) | 698 |
+| Sweden (SE) | 699 |
 | Australia (AU) | 587 |
 
 ### Top 10 countries by games per million people (at least 5 games led)
@@ -137,11 +138,11 @@ Top 50 by game count
 | Country | Games led | Per million |
 | --- | ---: | ---: |
 | Finland (FI) | 394 | 69.7 |
-| Sweden (SE) | 698 | 65.79 |
+| Sweden (SE) | 699 | 65.88 |
 | Cyprus (CY) | 75 | 55.76 |
-| Japan (JP) | 6849 | 55.32 |
+| Japan (JP) | 6850 | 55.33 |
 | Iceland (IS) | 17 | 46.67 |
-| United Kingdom (GB) | 3098 | 46.01 |
+| United Kingdom (GB) | 3099 | 46.03 |
 | Canada (CA) | 1478 | 39.95 |
 | Denmark (DK) | 180 | 30.91 |
 | Poland (PL) | 916 | 24.39 |
@@ -174,17 +175,17 @@ Games with several IGDB developers where nothing told them apart (first 30 by po
 | Game | Chosen lead | Other developers |
 | --- | --- | --- |
 | NieR:Automata | PlatinumGames | Square Enix Business Division 6 |
-| Escape the Backrooms | Fancy Games | Blackbird Interactive |
+| Escape the Backrooms | Fancy Games | Blackbird Interactive, Scaretech Studios LLC |
 | Brotato | Blobfish | Erabit Studios |
 | Yakuza 0 | Ryu Ga Gotoku Studio | Sega Games |
 | Far Cry | Crytek Frankfurt | Crytek |
 | Final Fantasy XV | Square Enix Business Division 2 | Luminous Productions |
 | Ark: Survival of the Fittest | Studio Wildcard | Instinct Games, Virtual Basement LLC, Efecto Studios |
-| House Flipper | Empyrean | Frozen District, Ultimate Games |
+| House Flipper | Empyrean | Red Dot Games, Frozen District, Ultimate Games |
 | Deceit | Automaton | World Makers |
-| Final Fantasy XIV Online | Square Enix Product Development Division 3 | Square Enix Creative Business Unit III, Square Enix Business Division 5, Square Enix Creative Studio 3 |
-| Content Warning | Zorro | Wilnyl, Philip, thePetHen, Skog |
-| Kingdom: Classic | Noio | Licorice |
+| Final Fantasy XIV Online | Square Enix Product Development Division 3 | Square Enix, Square Enix Creative Business Unit III, Square Enix Business Division 5, Square Enix Creative Studio 3 |
+| Content Warning | Zorro | Landfall Games, Wilnyl, Philip, thePetHen, Skog |
+| Kingdom: Classic | Noio | Licorice, Licorice ehf. |
 | Devour | Joe Fender | Straight Back Games |
 | Silent Hill 3 | Team Silent | Konami Computer Entertainment Tokyo |
 | Ryse: Son of Rome | Crytek Frankfurt | Crytek |
@@ -192,17 +193,17 @@ Games with several IGDB developers where nothing told them apart (first 30 by po
 | Barotrauma | FakeFish | Undertow Games |
 | Darksiders II: Deathinitive Edition | Vigil Games | THQ Nordic, Gunfire Games |
 | Code Vein | Shift | Bandai Namco Studios |
-| Mario Kart 7 | Nintendo EAD Software Development Group No.1 | Nintendo |
+| Mario Kart 7 | Nintendo EAD Software Development Group No.1 | Nintendo, Nintendo EAD |
 | TBH: Task Bar Hero | Nugem Studio | Tesseract Studio |
 | Resident Evil: Revelations | Capcom | Tose |
 | Super Smash Bros. for Nintendo 3DS | Bandai Namco Games | Sora |
 | Streets of Rage 2 | Ancient | H.I.C., Shout! Designworks, MNM Software |
-| Disney's Aladdin | Virgin Games USA | Virgin Interactive Entertainment (Europe) Ltd. |
-| Assassin's Creed III: Liberation | Ubisoft Sofia | Ubisoft Milan |
+| Disney's Aladdin | Virgin Games USA | Virgin Interactive Entertainment (Europe) Ltd., Virgin Games |
+| Assassin's Creed III: Liberation | Ubisoft Sofia | Ubisoft Milan, Ubisoft Eood |
 | Super Mario Party | NDCube | Nintendo |
 | Kingdom: New Lands | Licorice | Noio |
 | Call to Arms: Gates of Hell - Ostfront | Barbedwire Studios | Digitalmindsoft |
-| Super Mario Maker | Nintendo EAD Software Development Group No.4 | Nintendo |
+| Super Mario Maker | Nintendo EAD Software Development Group No.4 | Nintendo, Nintendo EAD |
 
 ## Lead studios without a city
 

@@ -61,11 +61,6 @@
       "reason": "no developer in IGDB and no Wikidata or MobyGames developer matches a known company"
     },
     {
-      "id": 6859,
-      "name": "Organ Trail: Director's Cut",
-      "reason": "no developer in IGDB and no Wikidata or MobyGames developer matches a known company"
-    },
-    {
       "id": 25733,
       "name": "The Lords of Midnight",
       "reason": "no developer in IGDB and no Wikidata or MobyGames developer matches a known company"
@@ -116,18 +111,8 @@
       "reason": "no developer in IGDB and no Wikidata or MobyGames developer matches a known company"
     },
     {
-      "id": 7596,
-      "name": "Eufloria",
-      "reason": "no developer in IGDB and no Wikidata or MobyGames developer matches a known company"
-    },
-    {
       "id": 21864,
       "name": "Paranautical Activity: Deluxe Atonement Edition",
-      "reason": "no developer in IGDB and no Wikidata or MobyGames developer matches a known company"
-    },
-    {
-      "id": 111529,
-      "name": "Boomerang Fu",
       "reason": "no developer in IGDB and no Wikidata or MobyGames developer matches a known company"
     },
     {
@@ -286,11 +271,6 @@
       "reason": "no developer in IGDB and no Wikidata or MobyGames developer matches a known company"
     },
     {
-      "id": 32021,
-      "name": "Dungeon Punks",
-      "reason": "no developer in IGDB and no Wikidata or MobyGames developer matches a known company"
-    },
-    {
       "id": 35230,
       "name": "Ruzh Delta Z",
       "reason": "no developer in IGDB and no Wikidata or MobyGames developer matches a known company"
@@ -413,11 +393,6 @@
     {
       "id": 266573,
       "name": "Path of Kung Fu",
-      "reason": "no developer in IGDB and no Wikidata or MobyGames developer matches a known company"
-    },
-    {
-      "id": 8599,
-      "name": "Gunman Clive",
       "reason": "no developer in IGDB and no Wikidata or MobyGames developer matches a known company"
     },
     {
@@ -878,11 +853,6 @@
     {
       "id": 36273,
       "name": "Namariel Legends: Iron Lord - Premium Edition",
-      "reason": "no developer in IGDB and no Wikidata or MobyGames developer matches a known company"
-    },
-    {
-      "id": 6684,
-      "name": "Fantasy Zone",
       "reason": "no developer in IGDB and no Wikidata or MobyGames developer matches a known company"
     },
     {
@@ -1913,11 +1883,6 @@
     {
       "id": 32486,
       "name": "Smithy",
-      "reason": "no developer in IGDB and no Wikidata or MobyGames developer matches a known company"
-    },
-    {
-      "id": 19167,
-      "name": "Asemblance",
       "reason": "no developer in IGDB and no Wikidata or MobyGames developer matches a known company"
     },
     {
@@ -8868,7 +8833,7 @@
     "igdb_developer_confirmed_by_wikidata": 1597,
     "igdb_first_developer": 1201,
     "wikidata_developer": 492,
-    "mobygames_developer": 0
+    "mobygames_developer": 7
   },
   "wikidataMatchCounts": {
     "external_id": 1424,
@@ -8877,8 +8842,8 @@
   },
   "companiesByPrecision": {
     "city": 3496,
-    "country": 8178,
-    "none": 9139
+    "country": 8179,
+    "none": 10449
   },
   "rejectedWikidataMatches": [
     {
@@ -9573,11 +9538,6 @@
       "gameCount": 4
     },
     {
-      "companyId": 3581,
-      "name": "Demonware",
-      "gameCount": 3
-    },
-    {
       "companyId": 3634,
       "name": "Sperasoft",
       "gameCount": 3
@@ -9628,18 +9588,8 @@
       "gameCount": 2
     },
     {
-      "companyId": 3537,
-      "name": "Studio Gobo",
-      "gameCount": 2
-    },
-    {
       "companyId": 4448,
       "name": "WB Games New York",
-      "gameCount": 2
-    },
-    {
-      "companyId": 5579,
-      "name": "Cerny Games",
       "gameCount": 2
     },
     {
@@ -9665,11 +9615,6 @@
     {
       "companyId": 12822,
       "name": "SEGA AM4",
-      "gameCount": 2
-    },
-    {
-      "companyId": 13271,
-      "name": "Mandel ArtPlains",
       "gameCount": 2
     },
     {
@@ -9700,16 +9645,6 @@
     {
       "companyId": 38990,
       "name": "Ubisoft Winnipeg",
-      "gameCount": 2
-    },
-    {
-      "companyId": 42779,
-      "name": "Sugar & Rockets",
-      "gameCount": 2
-    },
-    {
-      "companyId": 45638,
-      "name": "Ripple Effect",
       "gameCount": 2
     },
     {
@@ -9988,11 +9923,6 @@
       "gameCount": 1
     },
     {
-      "companyId": 6434,
-      "name": "Radioactive Software",
-      "gameCount": 1
-    },
-    {
       "companyId": 6465,
       "name": "87eleven",
       "gameCount": 1
@@ -10095,16 +10025,6 @@
     {
       "companyId": 11669,
       "name": "Monster Studios",
-      "gameCount": 1
-    },
-    {
-      "companyId": 11746,
-      "name": "Hamumu Software",
-      "gameCount": 1
-    },
-    {
-      "companyId": 11856,
-      "name": "WB Games San Francisco",
       "gameCount": 1
     },
     {
@@ -10668,11 +10588,6 @@
       "gameCount": 1
     },
     {
-      "companyId": 29744,
-      "name": "Virtuos Games",
-      "gameCount": 1
-    },
-    {
       "companyId": 29776,
       "name": "IMBA Interactive",
       "gameCount": 1
@@ -10763,11 +10678,6 @@
       "gameCount": 1
     },
     {
-      "companyId": 35173,
-      "name": "Kyx Studio",
-      "gameCount": 1
-    },
-    {
       "companyId": 35182,
       "name": "cantina.exe",
       "gameCount": 1
@@ -10813,11 +10723,6 @@
       "gameCount": 1
     },
     {
-      "companyId": 36256,
-      "name": "Mike Studios",
-      "gameCount": 1
-    },
-    {
       "companyId": 36607,
       "name": "Shipwright Studios",
       "gameCount": 1
@@ -10825,11 +10730,6 @@
     {
       "companyId": 36870,
       "name": "Visual DART Co., Ltd",
-      "gameCount": 1
-    },
-    {
-      "companyId": 36932,
-      "name": "Third Subdivision Studios",
       "gameCount": 1
     },
     {
@@ -10885,11 +10785,6 @@
     {
       "companyId": 41000,
       "name": "EA Gothenburg",
-      "gameCount": 1
-    },
-    {
-      "companyId": 41664,
-      "name": "Black Drakkar Games",
       "gameCount": 1
     },
     {
@@ -11053,11 +10948,6 @@
       "gameCount": 1
     },
     {
-      "companyId": 54336,
-      "name": "RIKANIMATION",
-      "gameCount": 1
-    },
-    {
       "companyId": 54627,
       "name": "Paon DP",
       "gameCount": 1
@@ -11148,11 +11038,6 @@
       "gameCount": 1
     },
     {
-      "companyId": 60832,
-      "name": "Ubisoft Craiova",
-      "gameCount": 1
-    },
-    {
       "companyId": 63288,
       "name": "DICE New York",
       "gameCount": 1
@@ -11213,11 +11098,6 @@
       "gameCount": 1
     },
     {
-      "companyId": 75659,
-      "name": "Supamonks",
-      "gameCount": 1
-    },
-    {
       "companyId": 77720,
       "name": "The Neocron Team",
       "gameCount": 1
@@ -11229,7 +11109,7 @@
     }
   ],
   "unusedLocationCorrections": [],
-  "countryFromGames": 1776,
+  "countryFromGames": 1777,
   "cityFromParent": [
     {
       "companyId": 93,
