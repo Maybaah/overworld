@@ -96,9 +96,10 @@ export function ShareButton({ url, title, card, fileName, label = 'Share' }: Pro
         aria-expanded={open}
         aria-controls={popId}
         aria-haspopup="true"
+        aria-label={label}
         onClick={() => setOpen((o) => !o)}
       >
-        {label}
+        Share
       </button>
       {open && (
         <span id={popId} className="ow-share-pop" role="group" aria-label="Share options">

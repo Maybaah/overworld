@@ -2,7 +2,7 @@
 
 Verdict: PASS
 
-35255 games, 19182 companies, 89451 roles
+38983 games, 20813 companies, 97648 roles
 
 ## Checks
 
@@ -27,93 +27,93 @@ Verdict: PASS
 
 | Role | Count |
 | --- | ---: |
-| lead_developer | 35255 |
-| co_developer | 3591 |
-| port | 2332 |
-| publisher | 46373 |
+| lead_developer | 38983 |
+| co_developer | 3771 |
+| port | 2398 |
+| publisher | 50547 |
 | localization | 1 |
 | qa | 0 |
 | art | 1 |
 | audio | 1 |
-| support | 1897 |
+| support | 1946 |
 
 ## Companies by location precision
 
 | Precision | Companies | Share |
 | --- | ---: | ---: |
-| city | 3407 | 17.8% |
-| country | 7673 | 40% |
-| none | 8102 | 42.2% |
+| city | 3496 | 16.8% |
+| country | 8178 | 39.3% |
+| none | 9139 | 43.9% |
 
-Games whose lead studio has only a country-level location: 11707 of 35255 (33.2%)
+Games whose lead studio has only a country-level location: 13071 of 38983 (33.5%)
 
 ## Lead basis
 
 | Basis | Games |
 | --- | ---: |
-| igdb_single_developer | 31967 |
-| igdb_developer_confirmed_by_wikidata | 1550 |
-| igdb_first_developer | 1101 |
+| igdb_single_developer | 35428 |
+| igdb_developer_confirmed_by_wikidata | 1597 |
+| igdb_first_developer | 1201 |
 | curated | 12 |
-| igdb_developer_heuristic | 243 |
-| wikidata_developer | 382 |
+| igdb_developer_heuristic | 253 |
+| wikidata_developer | 492 |
 
-## Flagged companies (no location): 8102
+## Flagged companies (no location): 9139
 
 Top 50 by game count
 
 | Id | Name | Games |
 | ---: | --- | ---: |
-| 20611 | Kagura Games | 72 |
-| 8031 | Back To Basics Gaming | 42 |
-| 11975 | WhisperGames | 40 |
-| 17208 | Ripknot Systems | 38 |
+| 20611 | Kagura Games | 73 |
+| 8031 | Back To Basics Gaming | 51 |
+| 11975 | WhisperGames | 42 |
+| 17208 | Ripknot Systems | 39 |
 | 25230 | St. GIGA | 33 |
+| 18911 | Laush Studio | 32 |
+| 7432 | Retroism | 31 |
 | 9786 | 22nd Century Toys | 31 |
-| 10535 | Acclaim | 30 |
-| 38591 | Pingle Game Studio | 27 |
+| 10535 | Acclaim | 31 |
+| 21233 | Anatoliy Loginovskikh | 28 |
+| 38591 | Pingle Game Studio | 28 |
 | 20001942 | Nintendo EAD | 27 |
 | 461 | Fox Interactive | 26 |
 | 19866 | Maple Whispering Limited | 26 |
-| 21233 | Anatoliy Loginovskikh | 26 |
-| 7432 | Retroism | 22 |
-| 36900 | DreadXP | 22 |
-| 833 | Ignition Entertainment | 21 |
+| 67297 | SA Industry | 26 |
+| 833 | Ignition Entertainment | 24 |
+| 30868 | Laush Dmitriy Sergeevich | 24 |
+| 36900 | DreadXP | 23 |
 | 20003576 | Ubisoft Entertainment Inc. / Ubisoft Divertissements Inc. | 21 |
+| 20661 | Crunchyroll Games | 20 |
 | 57593 | OTAKU Plan | 20 |
 | 3301 | Atari Europe | 19 |
+| 13144 | Blender Games | 19 |
+| 13387 | Racing Bros | 19 |
 | 32350 | Hyundai | 19 |
-| 20661 | Crunchyroll Games | 18 |
+| 10836 | Green Man Gaming Publishing | 18 |
 | 22489 | Hosted Games | 18 |
 | 51808 | 100 Cozy Games | 18 |
 | 46928 | Very Very Little Studio | 17 |
+| 60466 | Conglomerate 5 | 17 |
+| 10060 | Zonitron Productions | 16 |
 | 26837 | Walter Machado | 16 |
 | 32363 | ak tronic | 16 |
 | 2017 | MonkeyPaw Games | 15 |
+| 9323 | Pilgrim Adventures | 15 |
+| 12340 | Ocean Media | 15 |
 | 43414 | 616 GAMES | 15 |
-| 67297 | SA Industry | 15 |
 | 2519 | Sears | 14 |
-| 13387 | Racing Bros | 14 |
+| 12539 | 101XP | 14 |
+| 22097 | ANPA.US | 14 |
 | 23426 | Randumb Studios | 14 |
+| 35964 | Pixel Games UK | 14 |
 | 3704 | NEC Home Electronics | 13 |
-| 10836 | Green Man Gaming Publishing | 13 |
 | 12393 | Siactro | 13 |
-| 12539 | 101XP | 13 |
 | 13104 | Ving Co., Ltd. | 13 |
+| 18130 | Surefire.Games | 13 |
+| 21381 | Numskull Games | 13 |
 | 26201 | Yooreka Studio | 13 |
-| 35964 | Pixel Games UK | 13 |
+| 39157 | Ravenage Games | 13 |
 | 45959 | Devcats | 13 |
-| 51104 | Travellin Cats | 13 |
-| 91 | Playmates Interactive Entertainment | 12 |
-| 1901 | Reef Entertainment | 12 |
-| 13915 | Purple Hills | 12 |
-| 16890 | Perp Games | 12 |
-| 18130 | Surefire.Games | 12 |
-| 77268 | Mastertronic Games | 12 |
-| 8278 | Cartoon Network Games | 11 |
-| 9323 | Pilgrim Adventures | 11 |
-| 18806 | upjers | 11 |
-| 30730 | Sigyaad Team | 11 |
 
 ## Insights
 
@@ -121,31 +121,31 @@ Top 50 by game count
 
 | Country | Games led |
 | --- | ---: |
-| United States (US) | 6910 |
-| Japan (JP) | 6647 |
-| United Kingdom (GB) | 2881 |
-| Canada (CA) | 1365 |
-| France (FR) | 1111 |
-| Germany (DE) | 937 |
-| Poland (PL) | 825 |
-| Russia (RU) | 681 |
-| Sweden (SE) | 654 |
-| Australia (AU) | 516 |
+| United States (US) | 7438 |
+| Japan (JP) | 6849 |
+| United Kingdom (GB) | 3098 |
+| Canada (CA) | 1478 |
+| France (FR) | 1211 |
+| Germany (DE) | 1061 |
+| Poland (PL) | 916 |
+| Russia (RU) | 840 |
+| Sweden (SE) | 698 |
+| Australia (AU) | 587 |
 
 ### Top 10 countries by games per million people (at least 5 games led)
 
 | Country | Games led | Per million |
 | --- | ---: | ---: |
-| Finland (FI) | 356 | 62.98 |
-| Sweden (SE) | 654 | 61.64 |
-| Japan (JP) | 6647 | 53.69 |
-| Cyprus (CY) | 69 | 51.3 |
-| United Kingdom (GB) | 2881 | 42.79 |
-| Iceland (IS) | 15 | 41.18 |
-| Canada (CA) | 1365 | 36.9 |
-| Denmark (DK) | 166 | 28.51 |
-| Poland (PL) | 825 | 21.96 |
-| Estonia (EE) | 30 | 21.9 |
+| Finland (FI) | 394 | 69.7 |
+| Sweden (SE) | 698 | 65.79 |
+| Cyprus (CY) | 75 | 55.76 |
+| Japan (JP) | 6849 | 55.32 |
+| Iceland (IS) | 17 | 46.67 |
+| United Kingdom (GB) | 3098 | 46.01 |
+| Canada (CA) | 1478 | 39.95 |
+| Denmark (DK) | 180 | 30.91 |
+| Poland (PL) | 916 | 24.39 |
+| Estonia (EE) | 32 | 23.36 |
 
 ### Top 10 localization flows (lead studio country to localizer country)
 
@@ -179,19 +179,20 @@ Games with several IGDB developers where nothing told them apart (first 30 by po
 | Yakuza 0 | Ryu Ga Gotoku Studio | Sega Games |
 | Far Cry | Crytek Frankfurt | Crytek |
 | Final Fantasy XV | Square Enix Business Division 2 | Luminous Productions |
+| Ark: Survival of the Fittest | Studio Wildcard | Instinct Games, Virtual Basement LLC, Efecto Studios |
 | House Flipper | Empyrean | Frozen District, Ultimate Games |
 | Deceit | Automaton | World Makers |
 | Final Fantasy XIV Online | Square Enix Product Development Division 3 | Square Enix Creative Business Unit III, Square Enix Business Division 5, Square Enix Creative Studio 3 |
 | Content Warning | Zorro | Wilnyl, Philip, thePetHen, Skog |
+| Kingdom: Classic | Noio | Licorice |
 | Devour | Joe Fender | Straight Back Games |
 | Silent Hill 3 | Team Silent | Konami Computer Entertainment Tokyo |
 | Ryse: Son of Rome | Crytek Frankfurt | Crytek |
 | Super Mario 3D World | Nintendo Entertainment Analysis & Development | Nintendo, Nintendo EAD |
 | Barotrauma | FakeFish | Undertow Games |
+| Darksiders II: Deathinitive Edition | Vigil Games | THQ Nordic, Gunfire Games |
 | Code Vein | Shift | Bandai Namco Studios |
 | Mario Kart 7 | Nintendo EAD Software Development Group No.1 | Nintendo |
-| Kingdom: Classic | Noio | Licorice |
-| Darksiders II: Deathinitive Edition | Vigil Games | THQ Nordic, Gunfire Games |
 | TBH: Task Bar Hero | Nugem Studio | Tesseract Studio |
 | Resident Evil: Revelations | Capcom | Tose |
 | Super Smash Bros. for Nintendo 3DS | Bandai Namco Games | Sora |
@@ -199,10 +200,9 @@ Games with several IGDB developers where nothing told them apart (first 30 by po
 | Disney's Aladdin | Virgin Games USA | Virgin Interactive Entertainment (Europe) Ltd. |
 | Assassin's Creed III: Liberation | Ubisoft Sofia | Ubisoft Milan |
 | Super Mario Party | NDCube | Nintendo |
+| Kingdom: New Lands | Licorice | Noio |
 | Call to Arms: Gates of Hell - Ostfront | Barbedwire Studios | Digitalmindsoft |
 | Super Mario Maker | Nintendo EAD Software Development Group No.4 | Nintendo |
-| Ōkami HD | Clover Studio | Capcom |
-| Magical Girl Witch Trials | Acacia | Re,AER |
 
 ## Lead studios without a city
 
@@ -210,33 +210,33 @@ Top 30 by games led
 
 | Id | Name | Precision | Country | Games led |
 | ---: | --- | --- | --- | ---: |
-| 17208 | Ripknot Systems | none |  | 38 |
-| 159 | Konami Computer Entertainment Tokyo | country | JP | 30 |
-| 9150 | MicroProse Software, Inc. | country | US | 29 |
+| 17208 | Ripknot Systems | none |  | 39 |
+| 9150 | MicroProse Software, Inc. | country | US | 35 |
+| 9509 | Warfare Studios | country | BR | 32 |
+| 21681 | EnsenaSoft | country | MX | 32 |
+| 159 | Konami Computer Entertainment Tokyo | country | JP | 31 |
+| 15663 | Nikita "Ghost_RUS" | country | RU | 31 |
+| 3118 | MumboJumbo | country | US | 30 |
+| 14914 | Chilla's Art | country | JP | 29 |
 | 1831 | Compile | country | JP | 28 |
-| 14914 | Chilla's Art | country | JP | 28 |
-| 21681 | EnsenaSoft | country | MX | 28 |
-| 21233 | Anatoliy Loginovskikh | none |  | 26 |
-| 11203 | Quiet River | country | RU | 25 |
+| 21233 | Anatoliy Loginovskikh | none |  | 28 |
+| 11203 | Quiet River | country | RU | 26 |
+| 14313 | RewindApp | country | RU | 26 |
+| 13358 | FIVE-BN GAMES | country | UA | 24 |
+| 30868 | Laush Dmitriy Sergeevich | none |  | 24 |
+| 213 | Infogrames | country | FR | 23 |
+| 528 | SSI (Strategic Simulations, Inc.) | country | US | 22 |
 | 2521 | Mattel Electronics | country | US | 22 |
-| 3118 | MumboJumbo | country | US | 22 |
-| 213 | Infogrames | country | FR | 20 |
+| 12568 | Frontwing | country | JP | 21 |
+| 16347 | Choice of Games | country | US | 21 |
+| 17560 | Creobit | country | RU | 21 |
 | 5187 | 07th Expansion | country | JP | 19 |
-| 12568 | Frontwing | country | JP | 18 |
-| 13358 | FIVE-BN GAMES | country | UA | 18 |
+| 13144 | Blender Games | none |  | 19 |
+| 13387 | Racing Bros | none |  | 19 |
+| 40913 | Volens Nolens Games | country | RU | 19 |
+| 144 | GSC Game World | country | CZ | 18 |
+| 2252 | Compile Heart | country | JP | 18 |
+| 10955 | Sometimes You | country | RU | 18 |
 | 24182 | Mateusz Skutnik | country | PL | 18 |
-| 144 | GSC Game World | country | CZ | 17 |
+| 903 | Interplay Productions | country | US | 17 |
 | 46928 | Very Very Little Studio | none |  | 17 |
-| 903 | Interplay Productions | country | US | 16 |
-| 16347 | Choice of Games | country | US | 16 |
-| 18998 | Puppet Combo | country | US | 16 |
-| 26837 | Walter Machado | none |  | 16 |
-| 543 | Rage Software | country | GB | 15 |
-| 2252 | Compile Heart | country | JP | 15 |
-| 32412 | Euphoric Brothers | country | CA | 15 |
-| 43414 | 616 GAMES | none |  | 15 |
-| 51808 | 100 Cozy Games | none |  | 15 |
-| 528 | SSI (Strategic Simulations, Inc.) | country | US | 14 |
-| 9509 | Warfare Studios | country | BR | 14 |
-| 13387 | Racing Bros | none |  | 14 |
-| 15249 | Ebi-Hime | country | GB | 14 |

@@ -306,7 +306,8 @@
   font-size: 18px;
   text-wrap: balance;
   line-height: 1.25;
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
+  hyphens: auto;
 }
 
 .ow-subtitle {
