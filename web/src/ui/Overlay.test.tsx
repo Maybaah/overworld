@@ -45,7 +45,7 @@ describe('Overlay', () => {
     render(<Overlay />);
     expect(screen.getByText('Overworld')).toBeInTheDocument();
     expect(searchBox()).toBeInTheDocument();
-    expect(legend()).toBeInTheDocument();
+    expect(legend()).toBeNull();
     expect(slider()).toBeInTheDocument();
     expect(screen.queryByText(/Cover art via/)).toBeNull();
     expect(card()).toBeNull();
@@ -100,22 +100,22 @@ describe('Overlay', () => {
       expect(screen.queryByText(/Cover art via/)).toBeNull();
     });
 
-    it('myglobe: panel, legend, card and slider but no search', () => {
+    it('myglobe: panel, card and slider but no search or legend', () => {
       seedStore({ mode: 'myglobe', selectedGameId: 100, selectedGameDetail: detailFor(100) });
       render(<Overlay />);
       expect(screen.getByTestId('myglobe-panel')).toBeInTheDocument();
-      expect(legend()).toBeInTheDocument();
+      expect(legend()).toBeNull();
       expect(card()).toBeInTheDocument();
       expect(slider()).toBeInTheDocument();
       expect(searchBox()).toBeNull();
       expect(screen.queryByTestId('guess-panel')).toBeNull();
     });
 
-    it('insights: panel, legend and card, no search or slider', () => {
+    it('insights: panel and card, no search, slider or legend', () => {
       seedStore({ mode: 'insights', selectedGameId: 100, selectedGameDetail: detailFor(100) });
       render(<Overlay />);
       expect(screen.getByTestId('insights-panel')).toBeInTheDocument();
-      expect(legend()).toBeInTheDocument();
+      expect(legend()).toBeNull();
       expect(card()).toBeInTheDocument();
       expect(slider()).toBeNull();
       expect(searchBox()).toBeNull();

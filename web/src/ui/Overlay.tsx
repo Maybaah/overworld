@@ -10,7 +10,6 @@ import { useStore } from '../data/store';
 import { Search } from './Search';
 import { GameCard } from './GameCard';
 import { PlacePanel } from './PlacePanel';
-import { Legend } from './Legend';
 import { YearSlider } from './YearSlider';
 import { Attribution } from './Attribution';
 import { ModeNav } from './ModeNav';
@@ -93,7 +92,6 @@ export function Overlay() {
         {!collapseLeft && explore && <PlacePanel />}
         {!collapseLeft && mode === 'myglobe' && <MyGlobePanel />}
         {!collapseLeft && mode === 'insights' && <InsightsPanel />}
-        {(explore || gameId !== null) && mode !== 'guess' && <Legend />}
       </div>
       <div className="ow-right">
         {collapseRight && (
