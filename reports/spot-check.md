@@ -4,7 +4,7 @@
 
 ## Tom Clancy's Ghost Recon: Breakpoint (2019)
 
-- Game id: 118218, popularity rank 1223 of 38990, popularity 1832000
+- Game id: 118218, popularity rank 1223 of 39002, popularity 1832000
 - IGDB: https://www.igdb.com/games/tom-clancys-ghost-recon-breakpoint
 - Lead studio: Ubisoft Paris (company 841)
   - Location: Paris, France; 48.856666666, 2.352222222; precision city
@@ -25,7 +25,7 @@
 
 ## NBA 2K26 (2025)
 
-- Game id: 353901, popularity rank 1955 of 38990, popularity 1050560
+- Game id: 353901, popularity rank 1956 of 39002, popularity 1050560
 - IGDB: https://www.igdb.com/games/nba-2k26
 - Lead studio: Visual Concepts (company 694)
   - Location: Novato, United States; 38.1075, -122.569722222; precision city
@@ -37,260 +37,253 @@
 | Visual Concepts | lead_developer |  | https://www.igdb.com/games/nba-2k26 |
 | 2K | publisher |  | https://www.igdb.com/games/nba-2k26 |
 
-## Kingdom Rush Origins (2014)
+## Loading Screen Simulator (2015)
 
-- Game id: 41496, popularity rank 4927 of 38990, popularity 380509
-- IGDB: https://www.igdb.com/games/kingdom-rush-origins
-- Lead studio: Ironhide Game Studio (company 2761)
-  - Location: Montevideo, Uruguay; -34.905916666, -56.191311111; precision city
-  - Location source: https://www.wikidata.org/wiki/Q16011797
+- Game id: 43136, popularity rank 4929 of 39002, popularity 380509
+- IGDB: https://www.igdb.com/games/loading-screen-simulator
+- Lead studio: Cake Eater Games (company 72188)
+  - Location: Russia; 60, 100; precision country
+  - Location source: https://www.igdb.com/companies/cake-eater-games
 - Lead chosen by: igdb_single_developer
 
 | Company | Role | Platform | Source |
 | --- | --- | --- | --- |
-| Ironhide Game Studio | lead_developer |  | https://www.igdb.com/games/kingdom-rush-origins |
-| Ironhide Game Studio | publisher |  | https://www.igdb.com/games/kingdom-rush-origins |
+| Cake Eater Games | lead_developer |  | https://www.igdb.com/games/loading-screen-simulator |
+| CakeEaterGames | co_developer |  | https://www.mobygames.com/game/92611/loading-screen-simulator/ |
+| CakeEaterGames | publisher |  | https://www.mobygames.com/game/92611/loading-screen-simulator/ |
 
-## Haven Park (2021)
+## Tribe Nine (2025)
 
-- Game id: 146631, popularity rank 7762 of 38990, popularity 208520
-- IGDB: https://www.igdb.com/games/haven-park
-- Lead studio: Bubblebird Studio (company 48364)
-  - Location: Luxembourg; 49.75, 6.16666666; precision country
-  - Location source: https://www.igdb.com/companies/bubblebird-studio
-- Lead chosen by: igdb_developer_confirmed_by_wikidata
-
-| Company | Role | Platform | Source |
-| --- | --- | --- | --- |
-| Bubblebird Studio | lead_developer |  | https://www.igdb.com/games/haven-park |
-| Fabien Weibel | co_developer |  | https://www.igdb.com/games/haven-park |
-| BubbleStudio | co_developer |  | https://www.mobygames.com/game/168408/haven-park/ |
-| Mooneye Studios | publisher |  | https://www.igdb.com/games/haven-park |
-| Fabien Weibel | publisher |  | https://www.igdb.com/games/haven-park |
-| Bubblebird Studio | publisher |  | https://www.igdb.com/games/haven-park |
-| Mooneye UG | publisher |  | https://www.mobygames.com/game/168408/haven-park/ |
-
-## Batman: Return to Arkham - Arkham City (2016)
-
-- Game id: 203435, popularity rank 9686 of 38990, popularity 152204
-- IGDB: https://www.igdb.com/games/batman-return-to-arkham-arkham-city
-- Lead studio: Rocksteady Studios (company 164)
-  - Location: London, United Kingdom; 51.507222222, -0.1275; precision city
-  - Location source: https://www.wikidata.org/wiki/Q2307159
-- Lead chosen by: igdb_single_developer
-
-| Company | Role | Platform | Source |
-| --- | --- | --- | --- |
-| Rocksteady Studios | lead_developer |  | https://www.igdb.com/games/batman-return-to-arkham-arkham-city |
-| Warner Bros. Games | publisher |  | https://www.igdb.com/games/batman-return-to-arkham-arkham-city |
-
-## Ride 5 (2023)
-
-- Game id: 245715, popularity rank 10296 of 38990, popularity 137600
-- IGDB: https://www.igdb.com/games/ride-5--1
-- Lead studio: Milestone (company 592)
-  - Location: Milan, Italy; 45.466944444, 9.19; precision city
-  - Location source: https://www.wikidata.org/wiki/Q1134915
-- Lead chosen by: igdb_single_developer
-
-| Company | Role | Platform | Source |
-| --- | --- | --- | --- |
-| Milestone | lead_developer |  | https://www.igdb.com/games/ride-5--1 |
-| Milestone | publisher |  | https://www.igdb.com/games/ride-5--1 |
-
-## Picross DS (2007)
-
-- Game id: 10617, popularity rank 12892 of 38990, popularity 95127
-- IGDB: https://www.igdb.com/games/picross-ds
-- Lead studio: Jupiter Corporation (company 800)
-  - Location: Kyoto, Japan; 35.011611111, 135.768111111; precision city
-  - Location source: https://www.wikidata.org/wiki/Q2613004
-- Lead chosen by: igdb_single_developer
-
-| Company | Role | Platform | Source |
-| --- | --- | --- | --- |
-| Jupiter Corporation | lead_developer |  | https://www.igdb.com/games/picross-ds |
-| Nintendo | publisher |  | https://www.igdb.com/games/picross-ds |
-| Nintendo of America | publisher |  | https://www.mobygames.com/game/26428/picross-ds/ |
-| Nintendo of Europe | publisher |  | https://www.mobygames.com/game/26428/picross-ds/ |
-
-## My Name is Mayo 2 (2020)
-
-- Game id: 141693, popularity rank 15052 of 38990, popularity 74160
-- IGDB: https://www.igdb.com/games/my-name-is-mayo-2
-- Lead studio: Green Lava Studios (company 8610)
-  - Location: Costa Rica; 10, -84; precision country
-  - Location source: https://www.wikidata.org/wiki/Q33546415
-- Lead chosen by: igdb_single_developer
-
-| Company | Role | Platform | Source |
-| --- | --- | --- | --- |
-| Green Lava Studios | lead_developer |  | https://www.igdb.com/games/my-name-is-mayo-2 |
-| Green Lava Studios | publisher |  | https://www.igdb.com/games/my-name-is-mayo-2 |
-
-## Avalanche (1978)
-
-- Game id: 46840, popularity rank 16426 of 38990, popularity 63418
-- IGDB: https://www.igdb.com/games/avalanche
-- Lead studio: Atari (company 82)
-  - Location: Sunnyvale, United States; 37.368888888, -122.036944444; precision city
-  - Location source: https://www.wikidata.org/wiki/Q13409231
-- Lead chosen by: igdb_single_developer
-
-| Company | Role | Platform | Source |
-| --- | --- | --- | --- |
-| Atari | lead_developer |  | https://www.igdb.com/games/avalanche |
-| Atari | publisher |  | https://www.igdb.com/games/avalanche |
-
-## Signal Ops (2013)
-
-- Game id: 16734, popularity rank 19485 of 38990, popularity 44932
-- IGDB: https://www.igdb.com/games/signal-ops
-- Lead studio: Space Bullet Dynamics Corporation (company 17985)
-  - Location: Canada; 60, -95; precision country
-  - Location source: https://www.igdb.com/companies/space-bullet-dynamics-corporation
-- Lead chosen by: igdb_single_developer
-
-| Company | Role | Platform | Source |
-| --- | --- | --- | --- |
-| Space Bullet Dynamics Corporation | lead_developer |  | https://www.igdb.com/games/signal-ops |
-| Space Bullet Dynamics Corporation | publisher |  | https://www.igdb.com/games/signal-ops |
-
-## Clem (2024)
-
-- Game id: 203449, popularity rank 20383 of 38990, popularity 44393
-- IGDB: https://www.igdb.com/games/clem
-- Lead studio: Mango Protocol (company 12580)
-  - Location: Barcelona, Spain; 41.3825, 2.176944444; precision city
-  - Location source: https://www.wikidata.org/wiki/Q30639520
-- Lead chosen by: igdb_single_developer
-
-| Company | Role | Platform | Source |
-| --- | --- | --- | --- |
-| Mango Protocol | lead_developer |  | https://www.igdb.com/games/clem |
-| Iceberg Interactive | publisher |  | https://www.igdb.com/games/clem |
-
-## Trivia Vault: Celebrity Trivia (2018)
-
-- Game id: 96522, popularity rank 22398 of 38990, popularity 37952
-- IGDB: https://www.igdb.com/games/trivia-vault-celebrity-trivia
-- Lead studio: Ripknot Systems (company 17208)
-  - Location: unknown; no coordinates; precision none
-  - Location source: none
-- Lead chosen by: igdb_single_developer
-
-| Company | Role | Platform | Source |
-| --- | --- | --- | --- |
-| Ripknot Systems | lead_developer |  | https://www.igdb.com/games/trivia-vault-celebrity-trivia |
-| Ripknot Systems | publisher |  | https://www.igdb.com/games/trivia-vault-celebrity-trivia |
-
-## Sonic Utopia (year unknown)
-
-- Game id: 25262, popularity rank 23665 of 38990, popularity 31709
-- IGDB: https://www.igdb.com/games/sonic-utopia
-- Lead studio: The Great Lange (company 34169)
-  - Location: unknown; no coordinates; precision none
-  - Location source: none
-- Lead chosen by: igdb_single_developer
-
-| Company | Role | Platform | Source |
-| --- | --- | --- | --- |
-| The Great Lange | lead_developer |  | https://www.igdb.com/games/sonic-utopia |
-| The Great Lange | publisher |  | https://www.igdb.com/games/sonic-utopia |
-| PicsAndPixels | support |  | https://www.igdb.com/games/sonic-utopia |
-| Marasaki Fox | support |  | https://www.igdb.com/games/sonic-utopia |
-| Tpot | support |  | https://www.igdb.com/games/sonic-utopia |
-
-## Millenium: Return To Earth (1989)
-
-- Game id: 12922, popularity rank 26131 of 38990, popularity 25367
-- IGDB: https://www.igdb.com/games/millenium-return-to-earth
-- Lead studio: Software Studios (company 7055)
-  - Location: United Kingdom; 54, -2; precision country
-  - Location source: https://www.igdb.com/companies/software-studios
-- Lead chosen by: igdb_single_developer
-
-| Company | Role | Platform | Source |
-| --- | --- | --- | --- |
-| Software Studios | lead_developer |  | https://www.igdb.com/games/millenium-return-to-earth |
-| Paragon Software Corporation | publisher |  | https://www.igdb.com/games/millenium-return-to-earth |
-| Empire Software | publisher |  | https://www.igdb.com/games/millenium-return-to-earth |
-| Electric Dreams Software | publisher |  | https://www.igdb.com/games/millenium-return-to-earth |
-
-## Omega Crafter (2025)
-
-- Game id: 236174, popularity rank 27776 of 38990, popularity 25367
-- IGDB: https://www.igdb.com/games/omega-crafter
-- Lead studio: Preferred Networks (company 51234)
-  - Location: Tokyo, Japan; 35.686472, 139.764086; precision city
-  - Location source: https://www.wikidata.org/wiki/Q53309069
-- Lead chosen by: igdb_single_developer
-
-| Company | Role | Platform | Source |
-| --- | --- | --- | --- |
-| Preferred Networks | lead_developer |  | https://www.igdb.com/games/omega-crafter |
-| Preferred Networks | publisher |  | https://www.igdb.com/games/omega-crafter |
-
-## Banishing Racer (1991)
-
-- Game id: 7763, popularity rank 29544 of 38990, popularity 19025
-- IGDB: https://www.igdb.com/games/banishing-racer
-- Lead studio: Jaleco (company 303)
+- Game id: 130317, popularity rank 7764 of 39002, popularity 208680
+- IGDB: https://www.igdb.com/games/tribe-nine
+- Lead studio: Akatsuki Inc. (company 16441)
   - Location: Tokyo, Japan; 35.689444444, 139.691666666; precision city
-  - Location source: https://www.wikidata.org/wiki/Q1344080
+  - Location source: https://www.wikidata.org/wiki/Q59186636
 - Lead chosen by: igdb_single_developer
 
 | Company | Role | Platform | Source |
 | --- | --- | --- | --- |
-| Jaleco | lead_developer |  | https://www.igdb.com/games/banishing-racer |
-| Jaleco | publisher |  | https://www.igdb.com/games/banishing-racer |
+| Akatsuki Inc. | lead_developer |  | https://www.igdb.com/games/tribe-nine |
+| Akatsuki Inc. | publisher |  | https://www.igdb.com/games/tribe-nine |
 
-## Popgoes (2016)
+## Eiyuden Chronicle: Hundred Heroes (2024)
 
-- Game id: 186033, popularity rank 32146 of 38990, popularity 19025
-- IGDB: https://www.igdb.com/games/popgoes
-- Lead studio: Kane Carter (company 27248)
-  - Location: United Kingdom; 54, -2; precision country
-  - Location source: https://www.igdb.com/companies/kane-carter
+- Game id: 137451, popularity rank 9689 of 39002, popularity 152204
+- IGDB: https://www.igdb.com/games/eiyuden-chronicle-hundred-heroes
+- Lead studio: Rabbit & Bear Studios (company 35000)
+  - Location: Japan; 36, 138; precision country
+  - Location source: https://www.wikidata.org/wiki/Q99432233
 - Lead chosen by: igdb_single_developer
 
 | Company | Role | Platform | Source |
 | --- | --- | --- | --- |
-| Kane Carter | lead_developer |  | https://www.igdb.com/games/popgoes |
-| Kane Carter | publisher |  | https://www.igdb.com/games/popgoes |
+| Rabbit & Bear Studios | lead_developer |  | https://www.igdb.com/games/eiyuden-chronicle-hundred-heroes |
+| 505 Games | publisher |  | https://www.igdb.com/games/eiyuden-chronicle-hundred-heroes |
 
-## Mind Maze (2017)
+## Rad Rodgers (2018)
 
-- Game id: 40761, popularity rank 33273 of 38990, popularity 17013
-- IGDB: https://www.igdb.com/games/mind-maze
-- Lead studio: Satur Entertainment (company 25141)
+- Game id: 90322, popularity rank 10299 of 39002, popularity 138287
+- IGDB: https://www.igdb.com/games/rad-rodgers
+- Lead studio: Slipgate Studios (company 13312)
+  - Location: Aalborg, Denmark; 57.05, 9.916666666; precision city
+  - Location source: https://www.wikidata.org/wiki/Q16986584
+- Lead chosen by: igdb_single_developer
+
+| Company | Role | Platform | Source |
+| --- | --- | --- | --- |
+| Slipgate Studios | lead_developer |  | https://www.igdb.com/games/rad-rodgers |
+| 3D Realms | publisher |  | https://www.igdb.com/games/rad-rodgers |
+| THQ Nordic | publisher |  | https://www.igdb.com/games/rad-rodgers |
+
+## QuizUp (2013)
+
+- Game id: 9487, popularity rank 12896 of 39002, popularity 95127
+- IGDB: https://www.igdb.com/games/quizup
+- Lead studio: Plain Vanilla Games (company 5085)
+  - Location: Iceland; 65, -18; precision country
+  - Location source: https://www.igdb.com/companies/plain-vanilla-games
+- Lead chosen by: igdb_single_developer
+
+| Company | Role | Platform | Source |
+| --- | --- | --- | --- |
+| Plain Vanilla Games | lead_developer |  | https://www.igdb.com/games/quizup |
+| Glu Mobile | publisher |  | https://www.igdb.com/games/quizup |
+
+## Crystal Catacombs (2015)
+
+- Game id: 17893, popularity rank 15056 of 39002, popularity 74160
+- IGDB: https://www.igdb.com/games/crystal-catacombs
+- Lead studio: Crescent Moon Games (company 1493)
+  - Location: New York City, United States; 40.712777777, -74.006111111; precision city
+  - Location source: https://www.wikidata.org/wiki/Q105364475
+- Lead chosen by: igdb_single_developer
+
+| Company | Role | Platform | Source |
+| --- | --- | --- | --- |
+| Crescent Moon Games | lead_developer |  | https://www.igdb.com/games/crystal-catacombs |
+| Levels or Lives | publisher |  | https://www.igdb.com/games/crystal-catacombs |
+| Super Fun Games | publisher |  | https://www.igdb.com/games/crystal-catacombs |
+
+## Ghost House (1986)
+
+- Game id: 45649, popularity rank 16431 of 39002, popularity 63418
+- IGDB: https://www.igdb.com/games/ghost-house
+- Lead studio: Sega Enterprises, Ltd. (company 4981)
+  - Location: Tokyo, Japan; 35.6895, 139.69171; precision city
+  - Location source: https://en.wikipedia.org/wiki/Sega
+- Lead chosen by: igdb_single_developer
+
+| Company | Role | Platform | Source |
+| --- | --- | --- | --- |
+| Sega Enterprises, Ltd. | lead_developer |  | https://www.igdb.com/games/ghost-house |
+| Sega Enterprises, Ltd. | publisher |  | https://www.igdb.com/games/ghost-house |
+
+## Incantation (2024)
+
+- Game id: 278670, popularity rank 19491 of 39002, popularity 45080
+- IGDB: https://www.igdb.com/games/incantation--1
+- Lead studio: SOFTSTAR Entertainment (company 15996)
+  - Location: Taipei, Taiwan; 25.0125, 121.465; precision city
+  - Location source: https://www.wikidata.org/wiki/Q10934832
+- Lead chosen by: igdb_single_developer
+
+| Company | Role | Platform | Source |
+| --- | --- | --- | --- |
+| SOFTSTAR Entertainment | lead_developer |  | https://www.igdb.com/games/incantation--1 |
+| Eastasiasoft | publisher |  | https://www.igdb.com/games/incantation--1 |
+| SOFTSTAR Entertainment | publisher |  | https://www.igdb.com/games/incantation--1 |
+
+## Marvel: Ultimate Alliance 2 (2009)
+
+- Game id: 200963, popularity rank 20389 of 39002, popularity 44393
+- IGDB: https://www.igdb.com/games/marvel-ultimate-alliance-2--1
+- Lead studio: n-Space (company 319)
+  - Location: Orlando, United States; 28.533611111, -81.386666666; precision city
+  - Location source: https://www.wikidata.org/wiki/Q610952
+- Lead chosen by: igdb_single_developer
+
+| Company | Role | Platform | Source |
+| --- | --- | --- | --- |
+| n-Space | lead_developer |  | https://www.igdb.com/games/marvel-ultimate-alliance-2--1 |
+| Activision | publisher |  | https://www.igdb.com/games/marvel-ultimate-alliance-2--1 |
+
+## Dale Hardshovel HD (2015)
+
+- Game id: 35229, popularity rank 22405 of 39002, popularity 37952
+- IGDB: https://www.igdb.com/games/dale-hardshovel-hd
+- Lead studio: phime studio (company 16473)
+  - Location: Zrenjanin, Serbia; 45.377777777, 20.386111111; precision city
+  - Location source: https://www.wikidata.org/wiki/Q54834702
+- Lead chosen by: igdb_single_developer
+
+| Company | Role | Platform | Source |
+| --- | --- | --- | --- |
+| phime studio | lead_developer |  | https://www.igdb.com/games/dale-hardshovel-hd |
+| phime studio | publisher |  | https://www.igdb.com/games/dale-hardshovel-hd |
+
+## Garage: Bad Dream Adventure (1999)
+
+- Game id: 24947, popularity rank 23672 of 39002, popularity 31709
+- IGDB: https://www.igdb.com/games/garage-bad-dream-adventure
+- Lead studio: Kinotrope (company 11279)
+  - Location: Tokyo, Japan; 35.689444444, 139.691666666; precision city
+  - Location source: https://www.wikidata.org/wiki/Q17211790
+- Lead chosen by: igdb_single_developer
+
+| Company | Role | Platform | Source |
+| --- | --- | --- | --- |
+| Kinotrope | lead_developer |  | https://www.igdb.com/games/garage-bad-dream-adventure |
+| Toshiba-EMI | publisher |  | https://www.igdb.com/games/garage-bad-dream-adventure |
+
+## Unreal (1990)
+
+- Game id: 12806, popularity rank 26139 of 39002, popularity 25367
+- IGDB: https://www.igdb.com/games/unreal--1
+- Lead studio: Ordilogic System (company 14963)
+  - Location: France; 46, 2; precision country
+  - Location source: https://www.wikidata.org/wiki/Q3551934
+- Lead chosen by: igdb_single_developer
+
+| Company | Role | Platform | Source |
+| --- | --- | --- | --- |
+| Ordilogic System | lead_developer |  | https://www.igdb.com/games/unreal--1 |
+| Ubi Soft Entertainment | publisher |  | https://www.igdb.com/games/unreal--1 |
+| Art & Magic | support |  | https://www.igdb.com/games/unreal--1 |
+| Maniacs of Noise | support |  | https://www.igdb.com/games/unreal--1 |
+
+## Shopping Cart Hero (2009)
+
+- Game id: 234985, popularity rank 27784 of 39002, popularity 25367
+- IGDB: https://www.igdb.com/games/shopping-cart-hero
+- Lead studio: MonkeyWantBanana (company 77155)
   - Location: unknown; no coordinates; precision none
   - Location source: none
 - Lead chosen by: igdb_single_developer
 
 | Company | Role | Platform | Source |
 | --- | --- | --- | --- |
-| Satur Entertainment | lead_developer |  | https://www.igdb.com/games/mind-maze |
-| Sometimes You | publisher |  | https://www.igdb.com/games/mind-maze |
-| Satur Entertainment | publisher |  | https://www.igdb.com/games/mind-maze |
+| MonkeyWantBanana | lead_developer |  | https://www.igdb.com/games/shopping-cart-hero |
+| MonkeyWantBanana | publisher |  | https://www.igdb.com/games/shopping-cart-hero |
 
-## War Machines (2016)
+## The Terminator (1990)
 
-- Game id: 86933, popularity rank 35861 of 38990, popularity 8800
-- IGDB: https://www.igdb.com/games/war-machines--1
-- Lead studio: Fun Games For Free (company 15166)
-  - Location: Brazil; -10, -55; precision country
-  - Location source: https://www.igdb.com/companies/fun-games-for-free
+- Game id: 7688, popularity rank 29553 of 39002, popularity 19025
+- IGDB: https://www.igdb.com/games/the-terminator--1
+- Lead studio: Bethesda Softworks (company 16565)
+  - Location: Rockville, United States; 39.084, -77.15276; precision city
+  - Location source: https://www.wikidata.org/wiki/Q684425
 - Lead chosen by: igdb_single_developer
 
 | Company | Role | Platform | Source |
 | --- | --- | --- | --- |
-| Fun Games For Free | lead_developer |  | https://www.igdb.com/games/war-machines--1 |
-| Fun Games For Free | publisher |  | https://www.igdb.com/games/war-machines--1 |
+| Bethesda Softworks | lead_developer |  | https://www.igdb.com/games/the-terminator--1 |
+| Bethesda Softworks | publisher |  | https://www.igdb.com/games/the-terminator--1 |
+
+## Teen Titans One-on-One (2003)
+
+- Game id: 185799, popularity rank 32155 of 39002, popularity 19025
+- IGDB: https://www.igdb.com/games/teen-titans-one-on-one
+- Lead studio: Cartoon Network (company 10592)
+  - Location: New York City, United States; 40.712777777, -74.006111111; precision city
+  - Location source: https://www.wikidata.org/wiki/Q708290
+- Lead chosen by: igdb_single_developer
+
+| Company | Role | Platform | Source |
+| --- | --- | --- | --- |
+| Cartoon Network | lead_developer |  | https://www.igdb.com/games/teen-titans-one-on-one |
+| Cartoon Network | publisher |  | https://www.igdb.com/games/teen-titans-one-on-one |
+
+## Talent Not Included (2016)
+
+- Game id: 32469, popularity rank 33283 of 39002, popularity 17013
+- IGDB: https://www.igdb.com/games/talent-not-included
+- Lead studio: Frima Studio (company 6970)
+  - Location: Québec, Canada; 46.816111, -71.224167; precision city
+  - Location source: https://www.wikidata.org/wiki/Q3087859
+- Lead chosen by: igdb_single_developer
+
+| Company | Role | Platform | Source |
+| --- | --- | --- | --- |
+| Frima Studio | lead_developer |  | https://www.igdb.com/games/talent-not-included |
+| Frima Studio | publisher |  | https://www.igdb.com/games/talent-not-included |
+
+## Eggstreme Farming (2026)
+
+- Game id: 416949, popularity rank 35871 of 39002, popularity 8840
+- IGDB: https://www.igdb.com/games/eggstreme-farming
+- Lead studio: Sagitta Studios (company 52733)
+  - Location: unknown; no coordinates; precision none
+  - Location source: none
+- Lead chosen by: igdb_single_developer
+
+| Company | Role | Platform | Source |
+| --- | --- | --- | --- |
+| Sagitta Studios | lead_developer |  | https://www.igdb.com/games/eggstreme-farming |
+| Sagitta Studios | publisher |  | https://www.igdb.com/games/eggstreme-farming |
 
 ## Wuxia archive: Crisis escape (2018)
 
-- Game id: 109330, popularity rank 38536 of 38990, popularity 5320
+- Game id: 109330, popularity rank 38548 of 39002, popularity 5320
 - IGDB: https://www.igdb.com/games/wuxia-archive-crisis-escape
 - Lead studio: Ryu Productions Co., Ltd (company 18295)
   - Location: unknown; no coordinates; precision none

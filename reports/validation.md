@@ -2,7 +2,7 @@
 
 Verdict: PASS
 
-38990 games, 22124 companies, 116230 roles
+39002 games, 22151 companies, 114410 roles
 
 ## Checks
 
@@ -27,25 +27,25 @@ Verdict: PASS
 
 | Role | Count |
 | --- | ---: |
-| lead_developer | 38990 |
-| co_developer | 6595 |
-| port | 2729 |
-| publisher | 66073 |
+| lead_developer | 39002 |
+| co_developer | 6332 |
+| port | 2697 |
+| publisher | 64527 |
 | localization | 1 |
 | qa | 0 |
 | art | 1 |
 | audio | 1 |
-| support | 1840 |
+| support | 1849 |
 
 ## Companies by location precision
 
 | Precision | Companies | Share |
 | --- | ---: | ---: |
 | city | 3496 | 15.8% |
-| country | 8179 | 37% |
-| none | 10449 | 47.2% |
+| country | 8181 | 36.9% |
+| none | 10474 | 47.3% |
 
-Games whose lead studio has only a country-level location: 13075 of 38990 (33.5%)
+Games whose lead studio has only a country-level location: 13078 of 39002 (33.5%)
 
 ## Lead basis
 
@@ -57,64 +57,64 @@ Games whose lead studio has only a country-level location: 13075 of 38990 (33.5%
 | curated | 12 |
 | igdb_developer_heuristic | 253 |
 | wikidata_developer | 492 |
-| mobygames_developer | 7 |
+| mobygames_developer | 19 |
 
-## Flagged companies (no location): 10449
+## Flagged companies (no location): 10474
 
 Top 50 by game count
 
 | Id | Name | Games |
 | ---: | --- | ---: |
-| 20000002 | Electronic Arts, Inc. | 165 |
-| 20002901 | Tec Toy Indústria de Brinquedos S.A. | 165 |
-| 20007989 | Namco Bandai Games America Inc. | 158 |
-| 20000012 | SEGA Enterprises Ltd. | 146 |
-| 20004480 | Noviy Disk | 136 |
-| 77767 | Koch Media GmbH (Austria) | 115 |
-| 20013596 | Microsoft Corporation | 104 |
-| 20000024 | Electronic Arts Canada | 99 |
-| 77268 | Mastertronic Games | 87 |
-| 20001942 | Nintendo EAD | 80 |
+| 20002901 | Tec Toy Indústria de Brinquedos S.A. | 127 |
+| 20007989 | Namco Bandai Games America Inc. | 124 |
+| 20000012 | SEGA Enterprises Ltd. | 112 |
+| 77767 | Koch Media GmbH (Austria) | 109 |
+| 20004480 | Noviy Disk | 106 |
+| 20000002 | Electronic Arts, Inc. | 103 |
+| 20013596 | Microsoft Corporation | 90 |
+| 77268 | Mastertronic Games | 77 |
 | 20611 | Kagura Games | 73 |
+| 20000024 | Electronic Arts Canada | 72 |
 | 20005023 | Focus Home Interactive SAS | 71 |
-| 20002334 | Sony Interactive Entertainment America LLC | 58 |
-| 20000587 | U.S. Gold Ltd. | 55 |
-| 20001518 | Ubi Soft Entertainment Software | 55 |
-| 20000544 | Ocean Software Ltd. | 53 |
-| 20003576 | Ubisoft Entertainment Inc. / Ubisoft Divertissements Inc. | 53 |
-| 8031 | Back To Basics Gaming | 51 |
-| 11975 | WhisperGames | 49 |
-| 20009625 | Playtronic Industrial Ltda. | 46 |
-| 11359 | Namco Bandai Games Europe S.A.S. | 44 |
-| 20010420 | Bandai Namco Entertainment Europe S.A.S. | 44 |
-| 20000034 | Atari Europe S.A.S.U. | 43 |
-| 20004785 | Novitas Vertriebs GmbH | 43 |
-| 20006131 | Empire Interactive Europe Ltd. | 43 |
-| 20031950 | MacPlay Digital, LLC | 41 |
+| 20001942 | Nintendo EAD | 70 |
+| 20019807 | Kingstill International Software Services Ltd. | 62 |
+| 8031 | Back To Basics Gaming | 52 |
+| 11975 | WhisperGames | 50 |
+| 20002334 | Sony Interactive Entertainment America LLC | 46 |
+| 20014119 | Headup Games GmbH & Co. KG | 45 |
+| 20003576 | Ubisoft Entertainment Inc. / Ubisoft Divertissements Inc. | 44 |
+| 20031950 | MacPlay Digital, LLC | 44 |
+| 20000587 | U.S. Gold Ltd. | 43 |
+| 20000544 | Ocean Software Ltd. | 41 |
+| 20010420 | Bandai Namco Entertainment Europe S.A.S. | 41 |
 | 17208 | Ripknot Systems | 39 |
-| 20024437 | Nintendo EPD | 38 |
-| 20006375 | Cenega Poland Sp. z o.o. | 35 |
+| 20001518 | Ubi Soft Entertainment Software | 38 |
+| 20009625 | Playtronic Industrial Ltda. | 37 |
+| 20003445 | 1C Publishing EU s.r.o. | 35 |
+| 20004785 | Novitas Vertriebs GmbH | 35 |
+| 11359 | Namco Bandai Games Europe S.A.S. | 34 |
 | 25230 | St. GIGA | 33 |
-| 20001925 | Traveller's Tales (UK) Ltd. | 33 |
 | 18911 | Laush Studio | 32 |
+| 19866 | Maple Whispering Limited | 32 |
 | 20001277 | Sony Interactive Entertainment Europe Ltd. | 32 |
+| 20001925 | Traveller's Tales (UK) Ltd. | 32 |
 | 7432 | Retroism | 31 |
 | 9786 | 22nd Century Toys | 31 |
 | 10535 | Acclaim | 31 |
-| 20007988 | Namco Bandai Games Inc. | 31 |
-| 461 | Fox Interactive | 30 |
-| 833 | Ignition Entertainment | 30 |
-| 19866 | Maple Whispering Limited | 30 |
-| 20000858 | Take-Two Interactive Software, Inc. | 29 |
+| 20000034 | Atari Europe S.A.S.U. | 31 |
+| 20024437 | Nintendo EPD | 31 |
+| 20006375 | Cenega Poland Sp. z o.o. | 29 |
+| 461 | Fox Interactive | 28 |
+| 833 | Ignition Entertainment | 28 |
 | 21233 | Anatoliy Loginovskikh | 28 |
 | 38591 | Pingle Game Studio | 28 |
-| 20000009 | Mindscape SA | 28 |
-| 20014119 | Headup Games GmbH & Co. KG | 27 |
+| 20020843 | Forever Entertainment S. A. | 28 |
+| 20021605 | Digerati Distribution & Marketing LLC | 28 |
 | 67297 | SA Industry | 26 |
-| 20001472 | Disney Interactive Studios, Inc. | 26 |
-| 20002927 | Atari Corporation | 26 |
-| 20005033 | Snowball.ru | 25 |
+| 20000858 | Take-Two Interactive Software, Inc. | 26 |
+| 20006131 | Empire Interactive Europe Ltd. | 26 |
 | 20017674 | Nordic Games GmbH | 25 |
+| 30868 | Laush Dmitriy Sergeevich | 24 |
 
 ## Insights
 
@@ -122,11 +122,11 @@ Top 50 by game count
 
 | Country | Games led |
 | --- | ---: |
-| United States (US) | 7441 |
-| Japan (JP) | 6850 |
+| United States (US) | 7442 |
+| Japan (JP) | 6849 |
 | United Kingdom (GB) | 3099 |
-| Canada (CA) | 1478 |
-| France (FR) | 1211 |
+| Canada (CA) | 1479 |
+| France (FR) | 1212 |
 | Germany (DE) | 1061 |
 | Poland (PL) | 916 |
 | Russia (RU) | 840 |
@@ -140,10 +140,10 @@ Top 50 by game count
 | Finland (FI) | 394 | 69.7 |
 | Sweden (SE) | 699 | 65.88 |
 | Cyprus (CY) | 75 | 55.76 |
-| Japan (JP) | 6850 | 55.33 |
+| Japan (JP) | 6849 | 55.32 |
 | Iceland (IS) | 17 | 46.67 |
 | United Kingdom (GB) | 3099 | 46.03 |
-| Canada (CA) | 1478 | 39.95 |
+| Canada (CA) | 1479 | 39.98 |
 | Denmark (DK) | 180 | 30.91 |
 | Poland (PL) | 916 | 24.39 |
 | Estonia (EE) | 32 | 23.36 |

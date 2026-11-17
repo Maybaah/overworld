@@ -11,11 +11,6 @@
       "reason": "no developer in IGDB and no Wikidata or MobyGames developer matches a known company"
     },
     {
-      "id": 37424,
-      "name": "MX Bikes",
-      "reason": "no developer in IGDB and no Wikidata or MobyGames developer matches a known company"
-    },
-    {
       "id": 203852,
       "name": "Legend of Mortal",
       "reason": "no developer in IGDB and no Wikidata or MobyGames developer matches a known company"
@@ -113,11 +108,6 @@
     {
       "id": 21864,
       "name": "Paranautical Activity: Deluxe Atonement Edition",
-      "reason": "no developer in IGDB and no Wikidata or MobyGames developer matches a known company"
-    },
-    {
-      "id": 31311,
-      "name": "Monsti",
       "reason": "no developer in IGDB and no Wikidata or MobyGames developer matches a known company"
     },
     {
@@ -261,11 +251,6 @@
       "reason": "no developer in IGDB and no Wikidata or MobyGames developer matches a known company"
     },
     {
-      "id": 26875,
-      "name": "Hot Tin Roof: The Cat That Wore a Fedora",
-      "reason": "no developer in IGDB and no Wikidata or MobyGames developer matches a known company"
-    },
-    {
       "id": 35618,
       "name": "Pixel Puzzles 2: Space",
       "reason": "no developer in IGDB and no Wikidata or MobyGames developer matches a known company"
@@ -283,11 +268,6 @@
     {
       "id": 18348,
       "name": "Age of War",
-      "reason": "no developer in IGDB and no Wikidata or MobyGames developer matches a known company"
-    },
-    {
-      "id": 28724,
-      "name": "Memoir '44 Online",
       "reason": "no developer in IGDB and no Wikidata or MobyGames developer matches a known company"
     },
     {
@@ -351,11 +331,6 @@
       "reason": "no developer in IGDB and no Wikidata or MobyGames developer matches a known company"
     },
     {
-      "id": 32510,
-      "name": "Cthulhu Realms",
-      "reason": "no developer in IGDB and no Wikidata or MobyGames developer matches a known company"
-    },
-    {
       "id": 33055,
       "name": "Varenje",
       "reason": "no developer in IGDB and no Wikidata or MobyGames developer matches a known company"
@@ -378,11 +353,6 @@
     {
       "id": 34480,
       "name": "The Final Take",
-      "reason": "no developer in IGDB and no Wikidata or MobyGames developer matches a known company"
-    },
-    {
-      "id": 34484,
-      "name": "Verge: Lost Chapter",
       "reason": "no developer in IGDB and no Wikidata or MobyGames developer matches a known company"
     },
     {
@@ -413,11 +383,6 @@
     {
       "id": 31659,
       "name": "Drive Megapolis",
-      "reason": "no developer in IGDB and no Wikidata or MobyGames developer matches a known company"
-    },
-    {
-      "id": 32303,
-      "name": "Laraan",
       "reason": "no developer in IGDB and no Wikidata or MobyGames developer matches a known company"
     },
     {
@@ -481,11 +446,6 @@
       "reason": "no developer in IGDB and no Wikidata or MobyGames developer matches a known company"
     },
     {
-      "id": 36350,
-      "name": "Volt",
-      "reason": "no developer in IGDB and no Wikidata or MobyGames developer matches a known company"
-    },
-    {
       "id": 10313,
       "name": "Farming World",
       "reason": "no developer in IGDB and no Wikidata or MobyGames developer matches a known company"
@@ -493,16 +453,6 @@
     {
       "id": 103275,
       "name": "NBA Live 19",
-      "reason": "no developer in IGDB and no Wikidata or MobyGames developer matches a known company"
-    },
-    {
-      "id": 35980,
-      "name": "Razenroth",
-      "reason": "no developer in IGDB and no Wikidata or MobyGames developer matches a known company"
-    },
-    {
-      "id": 30030,
-      "name": "Cinderella Phenomenon",
       "reason": "no developer in IGDB and no Wikidata or MobyGames developer matches a known company"
     },
     {
@@ -523,16 +473,6 @@
     {
       "id": 219144,
       "name": "Weird RPG",
-      "reason": "no developer in IGDB and no Wikidata or MobyGames developer matches a known company"
-    },
-    {
-      "id": 35162,
-      "name": "Shot in the Dark",
-      "reason": "no developer in IGDB and no Wikidata or MobyGames developer matches a known company"
-    },
-    {
-      "id": 36553,
-      "name": "Medieval Kingdom Wars",
       "reason": "no developer in IGDB and no Wikidata or MobyGames developer matches a known company"
     },
     {
@@ -563,11 +503,6 @@
     {
       "id": 124287,
       "name": "Broken Delusion",
-      "reason": "no developer in IGDB and no Wikidata or MobyGames developer matches a known company"
-    },
-    {
-      "id": 35430,
-      "name": "Heaven Forest Nights",
       "reason": "no developer in IGDB and no Wikidata or MobyGames developer matches a known company"
     },
     {
@@ -613,11 +548,6 @@
     {
       "id": 31366,
       "name": "8Infinity",
-      "reason": "no developer in IGDB and no Wikidata or MobyGames developer matches a known company"
-    },
-    {
-      "id": 10131,
-      "name": "City of Steam: Arkadia",
       "reason": "no developer in IGDB and no Wikidata or MobyGames developer matches a known company"
     },
     {
@@ -853,6 +783,11 @@
     {
       "id": 36273,
       "name": "Namariel Legends: Iron Lord - Premium Edition",
+      "reason": "no developer in IGDB and no Wikidata or MobyGames developer matches a known company"
+    },
+    {
+      "id": 6684,
+      "name": "Fantasy Zone",
       "reason": "no developer in IGDB and no Wikidata or MobyGames developer matches a known company"
     },
     {
@@ -1883,6 +1818,11 @@
     {
       "id": 32486,
       "name": "Smithy",
+      "reason": "no developer in IGDB and no Wikidata or MobyGames developer matches a known company"
+    },
+    {
+      "id": 19167,
+      "name": "Asemblance",
       "reason": "no developer in IGDB and no Wikidata or MobyGames developer matches a known company"
     },
     {
@@ -8833,17 +8773,17 @@
     "igdb_developer_confirmed_by_wikidata": 1597,
     "igdb_first_developer": 1201,
     "wikidata_developer": 492,
-    "mobygames_developer": 7
+    "mobygames_developer": 19
   },
   "wikidataMatchCounts": {
     "external_id": 1424,
     "via_game": 3857,
-    "name": 898
+    "name": 899
   },
   "companiesByPrecision": {
     "city": 3496,
-    "country": 8179,
-    "none": 10449
+    "country": 8181,
+    "none": 10474
   },
   "rejectedWikidataMatches": [
     {
@@ -9618,6 +9558,11 @@
       "gameCount": 2
     },
     {
+      "companyId": 13271,
+      "name": "Mandel ArtPlains",
+      "gameCount": 2
+    },
+    {
       "companyId": 17345,
       "name": "Ritualen",
       "gameCount": 2
@@ -9655,16 +9600,6 @@
     {
       "companyId": 48678,
       "name": "Bleeding Moon Studio",
-      "gameCount": 2
-    },
-    {
-      "companyId": 49566,
-      "name": "Lasengle",
-      "gameCount": 2
-    },
-    {
-      "companyId": 52624,
-      "name": "Eerie Forest Studio",
       "gameCount": 2
     },
     {
@@ -9923,6 +9858,11 @@
       "gameCount": 1
     },
     {
+      "companyId": 6434,
+      "name": "Radioactive Software",
+      "gameCount": 1
+    },
+    {
       "companyId": 6465,
       "name": "87eleven",
       "gameCount": 1
@@ -10003,11 +9943,6 @@
       "gameCount": 1
     },
     {
-      "companyId": 10182,
-      "name": "Castro Brothers",
-      "gameCount": 1
-    },
-    {
       "companyId": 10234,
       "name": "Blink Studios",
       "gameCount": 1
@@ -10025,6 +9960,16 @@
     {
       "companyId": 11669,
       "name": "Monster Studios",
+      "gameCount": 1
+    },
+    {
+      "companyId": 11746,
+      "name": "Hamumu Software",
+      "gameCount": 1
+    },
+    {
+      "companyId": 11856,
+      "name": "WB Games San Francisco",
       "gameCount": 1
     },
     {
@@ -10923,16 +10868,6 @@
       "gameCount": 1
     },
     {
-      "companyId": 51678,
-      "name": "Lone Elk Creative",
-      "gameCount": 1
-    },
-    {
-      "companyId": 52558,
-      "name": "Chinzilla",
-      "gameCount": 1
-    },
-    {
       "companyId": 52704,
       "name": "Yun",
       "gameCount": 1
@@ -11035,6 +10970,11 @@
     {
       "companyId": 57402,
       "name": "Cinergi Pictures",
+      "gameCount": 1
+    },
+    {
+      "companyId": 60832,
+      "name": "Ubisoft Craiova",
       "gameCount": 1
     },
     {
