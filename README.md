@@ -119,6 +119,7 @@ Keys live only in `.env`, which is git-ignored.
 | `npm test` | all tests; `test:pipeline` and `test:web` run one side |
 | `npm run typecheck` | TypeScript, pipeline and app |
 | `npm run build` | production build into `web/dist/`, with `/admin.html` and share pages |
+| `npm run deploy` | build and deploy to Cloudflare (`wrangler.toml`) |
 | `npm run pipeline` | fetch, merge, write and validate the data |
 | `npm run sprites`, `npm run layouts` | cover sprite sheets and yearly mosaic layouts, after the pipeline |
 | `npm run supabase -- migrate` | apply the usage stats schema to your Supabase project |
@@ -140,7 +141,7 @@ docs/             architecture, self-hosting, privacy, API research
 
 ## Self-hosting
 
-A fork runs as a static site with no backend. My globe needs the Worker with a Steam key; usage stats need a free Supabase project. Nothing is recorded until you set one up. Step by step: [docs/SELF-HOSTING.md](docs/SELF-HOSTING.md).
+The whole site deploys as one Cloudflare Worker on the free plan with `npm run deploy`: static files plus the two `/api` routes. My globe needs a Steam key; usage stats need a free Supabase project, and nothing is recorded until you set one up. From clone to a live site on your domain, step by step: [docs/SELF-HOSTING.md](docs/SELF-HOSTING.md).
 
 ## Data and credits
 

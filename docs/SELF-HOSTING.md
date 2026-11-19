@@ -1,91 +1,166 @@
-# Self-hosting
+# Running Overworld in production
 
-Overworld is a static site plus one small Cloudflare Worker. Everything except My globe and usage stats works as plain static files.
+This takes a fork from `git clone` to a live site on your own domain. The site is static files plus one small Cloudflare Worker, deployed together with one command. Usage stats are optional and need a free Supabase project.
 
-| Piece | Needs | Without it |
+| Step | Time | Needed for |
 | --- | --- | --- |
-| The globe, search, Insights | static hosting | – |
-| My globe | the Worker with `STEAM_API_KEY` | the lookup shows "not configured" |
-| Usage stats and `/admin.html` | a Supabase project and the Worker | nothing is recorded; the admin page offers sample data |
+| [1. Accounts and keys](#1-accounts-and-keys) | 20 min | everything |
+| [2. Build the data](#2-build-the-data) | a few hours the first time, mostly waiting | real games on the globe |
+| [3. Configure the build](#3-configure-the-build) | 5 min | links, previews, stats |
+| [4. Deploy to Cloudflare](#4-deploy-to-cloudflare) | 10 min | the live site, My globe |
+| [5. Usage stats](#5-usage-stats-optional) | 15 min | `/admin.html` (optional) |
+| [6. Check the live site](#6-check-the-live-site) | 5 min | |
+| [7. Updating](#7-updating) | | later releases |
 
-## 1. Build the site
+Only want to look around? `npm install && npm run fixture && npm run dev` runs everything locally on sample data, with no accounts.
+
+## 1. Accounts and keys
+
+Put the keys in `.env` at the repository root (copy `.env.example`). It is git-ignored.
+
+| Account | Cost | Gives you | Goes in |
+| --- | --- | --- | --- |
+| [Twitch developer](https://dev.twitch.tv/console/apps): register an application, any OAuth redirect such as `http://localhost` | free | IGDB access, required | `.env`: `TWITCH_CLIENT_ID`, `TWITCH_CLIENT_SECRET` |
+| [RAWG](https://rawg.io/apidocs) | free | console and older games | `.env`: `RAWG_API_KEY` |
+| [MobyGames](https://www.mobygames.com/info/api/) | free Hobbyist key | extra credits; optional | `.env`: `MOBYGAMES_API_KEY` |
+| [Steam Web API](https://steamcommunity.com/dev/apikey): asks for your site's domain | free | My globe | a Worker secret, step 4 |
+| [Cloudflare](https://dash.cloudflare.com/sign-up) | free plan is enough | hosting and the Worker | step 4 |
+| [Supabase](https://supabase.com) | free plan is enough | usage stats; optional | step 5 |
+
+Also set `WIKIDATA_USER_AGENT_CONTACT` in `.env` to a URL or email: Wikidata asks every client for a contact.
+
+## 2. Build the data
 
 ```bash
 npm install
-npm run pipeline        # or `npm run fixture` for sample data
-npm run build
+npm run pipeline
+npm run sprites
+npm run layouts
 ```
 
-`web/dist/` is the whole site, including `admin.html`. Build-time variables go in `web/.env.local` (or the CI environment):
+- `npm run pipeline` fetches from every source, merges and validates. The first run takes hours, mostly MobyGames, which allows 720 requests an hour (about 14 hours for its 10,000 games). Leave `MOBYGAMES_API_KEY` empty to skip it; the globe works without it.
+- Every response is cached in `pipeline/.cache/`, so an interrupted run picks up where it stopped. Run the same command again.
+- `npm run sprites` packs small covers into sheets; `npm run layouts` fits the mosaic for every year. Both read `web/public/data/` and take a few minutes.
+- `reports/validation.md` lists what the data is missing. Look at it once.
 
-| Variable | What it is |
-| --- | --- |
-| `VITE_BASE` | path the site is served from, for example `/overworld/` (default `/`) |
-| `SITE_URL` | absolute site URL, for share-page previews |
-| `VITE_STEAM_PROXY_URL` | origin of the Worker when it is not on the site's own origin |
-| `VITE_EVENTS_URL` | where the app sends usage events, for example `/api/e`; unset means no events are sent |
-| `VITE_TELEMETRY_HOSTS` | comma-separated hosts allowed to send events, for example `overworld.example,www.overworld.example`; other hosts (previews, forks) send nothing |
-| `VITE_SUPABASE_URL` | the Supabase project URL, for the admin page's sign-in |
-| `VITE_SUPABASE_PUBLISHABLE_KEY` | the project's publishable (anon) key. Never a secret or service-role key: every `VITE_` value ships to the browser |
-
-## 2. The Worker
-
-`web/server/worker.ts` serves two routes:
-
-- `GET /api/steam/owned`: the Steam relay ([web/server/README.md](../web/server/README.md)).
-- `POST /api/e`: the usage events relay. It adds the visitor's country from Cloudflare's `cf-ipcountry` header, never the IP, and forwards the batch to the `log_events` function.
-
-With Wrangler, a minimal `wrangler.toml`:
-
-```toml
-name = "overworld-api"
-main = "web/server/worker.ts"
-compatibility_date = "2026-11-01"
-```
-
-Then set its values and route `/api/*` on your domain to it:
+Check it locally before going further:
 
 ```bash
-npx wrangler secret put STEAM_API_KEY
-npx wrangler secret put SUPABASE_URL
-npx wrangler secret put SUPABASE_PUBLISHABLE_KEY
-npx wrangler secret put TELEMETRY_HOSTS      # optional: the same list as VITE_TELEMETRY_HOSTS
+npm run dev:real
 ```
 
-With `TELEMETRY_HOSTS` set, the relay drops requests whose `Origin` is not on the list.
+## 3. Configure the build
 
-## 3. Supabase (usage stats)
+Create `web/.env.production.local` (git-ignored). Vite and the share-page step both read it.
 
-1. Create a project at <https://supabase.com>. The free tier is enough.
-2. Apply the schema. Either paste `supabase/migrations/0001_telemetry.sql` into the SQL editor and run it, or run the script with a personal access token:
+```ini
+# The address the site will live at, no trailing slash. Link previews need it.
+SITE_URL=https://overworld.example
+
+# Usage events. Leave all four out to send nothing.
+VITE_EVENTS_URL=/api/e
+VITE_TELEMETRY_HOSTS=overworld.example,www.overworld.example
+VITE_SUPABASE_URL=https://<project-ref>.supabase.co
+VITE_SUPABASE_PUBLISHABLE_KEY=<publishable key>
+```
+
+| Variable | When to set it |
+| --- | --- |
+| `SITE_URL` | always; without it link previews on social sites have no image or title |
+| `VITE_BASE` | only if the site is served from a sub-path, such as `/overworld/` |
+| `VITE_EVENTS_URL`, `VITE_TELEMETRY_HOSTS` | with usage stats (step 5). Other hosts, such as preview deploys, then send nothing |
+| `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY` | with usage stats, for the admin page's sign-in. Use the publishable (anon) key, never a secret or service-role key: every `VITE_` value is visible to anyone |
+| `VITE_STEAM_PROXY_URL` | only if the Worker runs on another origin than the site |
+
+## 4. Deploy to Cloudflare
+
+`wrangler.toml` at the repository root deploys `web/dist/` as static assets and `web/server/worker.ts` for `/api/*`, as one Worker.
+
+1. Sign in once:
 
    ```bash
-   SUPABASE_PROJECT_REF=<ref> SUPABASE_ACCESS_TOKEN=<token> node scripts/supabase.mjs migrate
+   npx wrangler login
    ```
 
-   Migrations are idempotent; running them again changes nothing.
-3. Add yourself as an admin. Addresses are kept out of the repository on purpose:
+2. Change `name` in `wrangler.toml` if you want another Worker name.
+3. Deploy:
 
    ```bash
-   SUPABASE_PROJECT_REF=<ref> SUPABASE_ACCESS_TOKEN=<token> node scripts/supabase.mjs add-admin you@example.com
+   npm run deploy
    ```
 
-4. Create the same address as a user: **Authentication → Users → Add user → Send invitation**. The admin page never creates accounts, so a stranger who finds `/admin.html` cannot sign up.
-5. Under **Authentication → URL Configuration**, set the site URL and add `https://<your site>/admin.html` to the redirect URLs.
-6. Build with `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY`, `VITE_EVENTS_URL=/api/e` and `VITE_TELEMETRY_HOSTS`, deploy, and open `/admin.html`.
+   This builds the site (with the share pages) and uploads it. The output ends with a `*.workers.dev` address: the site is live there.
+4. Add the Steam key, so My globe works:
 
-### How the data is kept
+   ```bash
+   npx wrangler secret put STEAM_API_KEY
+   ```
 
-- `log_events` validates every field against an allow-list, caps a tab at 2,000 events and 120 a minute, and the whole site at 20,000 a minute.
-- Maintenance runs inside `log_events` at most every 10 minutes and on every admin request; no cron job is needed. It rolls closed hours of events and tabs idle for 30 minutes into `event_hours`, then deletes raw rows older than 48 hours.
-- `admin_stats` reads `event_hours` plus the raw rows not rolled up yet, and refuses anyone whose signed-in email is not in `overworld_private.admins`.
+5. Use your own domain: Cloudflare dashboard → **Workers & Pages** → the Worker → **Settings → Domains & Routes → Add → Custom domain**. The domain must be on Cloudflare DNS. Then set `SITE_URL` and `VITE_TELEMETRY_HOSTS` to it and deploy again.
 
-What is recorded, and what never is: [PRIVACY.md](PRIVACY.md).
+Free plan limits: 20,000 files per deploy (a full build has about 10,300, most of them share pages), 25 MiB per file, 100,000 Worker requests a day. Static files do not count toward the request limit; only `/api/*` calls do.
 
-## 4. Trying the admin page without a backend
+## 5. Usage stats (optional)
 
-`/admin.html?mock=1` shows the page with generated sample data, in development and in any build.
+1. Create a project at <https://supabase.com>. Note its **project ref** (in the URL) and, under **Project Settings → API keys**, the **publishable** key.
+2. Apply the schema. Either paste `supabase/migrations/0001_telemetry.sql` into the SQL editor and run it, or use a [personal access token](https://supabase.com/dashboard/account/tokens):
 
-## 5. The weekly data refresh
+   ```bash
+   SUPABASE_PROJECT_REF=<ref> SUPABASE_ACCESS_TOKEN=<token> npm run supabase -- migrate
+   ```
 
-`.github/workflows/refresh-data.yml` rebuilds the data weekly when the repository has the API keys as secrets and the variable `REFRESH_ENABLED=true`.
+3. Put yourself on the admin list. Addresses never go into the repository:
+
+   ```bash
+   SUPABASE_PROJECT_REF=<ref> SUPABASE_ACCESS_TOKEN=<token> npm run supabase -- add-admin you@example.com
+   ```
+
+   On Windows PowerShell, set the two values first with `$env:SUPABASE_PROJECT_REF="<ref>"` and `$env:SUPABASE_ACCESS_TOKEN="<token>"`, or put them in `.env`.
+4. Create the same address as a user: **Authentication → Users → Add user → Send invitation**. The admin page never creates accounts, so a stranger who finds it cannot sign up.
+5. **Authentication → URL Configuration**: set the site URL to your domain and add `https://<your domain>/admin.html` and `https://<your domain>/admin` to the redirect URLs.
+6. Give the Worker the relay settings:
+
+   ```bash
+   npx wrangler secret put SUPABASE_URL
+   npx wrangler secret put SUPABASE_PUBLISHABLE_KEY
+   npx wrangler secret put TELEMETRY_HOSTS
+   ```
+
+   `TELEMETRY_HOSTS` is the same comma-separated list as `VITE_TELEMETRY_HOSTS`; the relay drops events from any other origin.
+7. Add the four `VITE_` values from step 3 and run `npm run deploy` again.
+
+How the data is kept, what is recorded and what never is: [PRIVACY.md](PRIVACY.md). In short, `log_events` checks every field against an allow-list and rate-limits every tab and the whole site; tabs and events are rolled into hourly counts and deleted after 48 hours; no cron job is needed.
+
+A free Supabase project is paused after a week with no requests. Live traffic keeps it awake; if the site is quiet, unpause it from the dashboard.
+
+## 6. Check the live site
+
+| Open | Expect |
+| --- | --- |
+| `/` | the globe fills with covers within a few seconds |
+| `/?game=1942` | The Witcher 3 opens with arcs to its other companies |
+| `/g/1942/` | redirects to the game; its source has `og:` tags with your domain |
+| My globe → **Try a sample library** | the globe filters to 60 games |
+| My globe with a public Steam profile | a breakdown by country; "not configured" means `STEAM_API_KEY` is missing |
+| `/admin.html?mock=1` | the stats page with sample numbers |
+| `/admin.html` | the sign-in form; "No backend configured" means the `VITE_SUPABASE_` values were missing at build time |
+
+To see events arrive: open the site in a normal window (not with `?noanalytics=1`, and with Do Not Track off), click around, wait a few seconds, then sign in to `/admin.html` and pick **24 hours**. If nothing shows, `npx wrangler tail` shows the Worker's requests to `/api/e`.
+
+## 7. Updating
+
+- **Code:** `git pull`, then `npm run deploy`.
+- **Data:** `npm run pipeline -- --refresh`, `npm run sprites`, `npm run layouts`, then `npm run deploy`. Without `--refresh` the pipeline reuses its cache and only reruns what changed.
+- **Schema:** `npm run supabase -- migrate`. Migrations are idempotent.
+- `.github/workflows/refresh-data.yml` is a weekly rebuild for GitHub Pages and stays off until the repository variable `REFRESH_ENABLED` is `true`. It does not deploy to Cloudflare, and a full refresh does not fit in its one-hour limit without a cache, so refresh by hand as above.
+
+## If something is wrong
+
+| Symptom | Cause |
+| --- | --- |
+| Grey countries, no covers | `npm run sprites` or `npm run layouts` was not run after the pipeline, or the deploy was built before them |
+| An error instead of the globe | `web/public/data/` was empty when the site was built. Run step 2, then deploy again |
+| Link previews show no image | `SITE_URL` was not set at build time |
+| My globe says "not configured" | `npx wrangler secret put STEAM_API_KEY` |
+| Admin sign-in link says expired | some mail scanners open links first; send a new one, or add a second admin address |
+| Admin says "Not an admin" | the signed-in address is not in `overworld_private.admins`; run `add-admin` with exactly that address |
