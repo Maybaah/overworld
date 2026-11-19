@@ -11,6 +11,7 @@ import { SharedSummary } from '../share/SharedCards';
 import { myGlobeCardSpec } from '../share/card';
 import { readSharedSummary } from '../share/shared';
 import { pageLink } from '../share/urlState';
+import { track } from '../telemetry/telemetry';
 import './myglobe.css';
 
 export { summaryToShareParams, shareParamsToSummary } from './share';
@@ -159,12 +160,14 @@ export function MyGlobePanel() {
       filtered.current = false;
     }
     setCopied(null);
+    track('myglobe', { result: sample ? 'sample' : 'ok', games: origins.gameIds.size });
     setView({ status: 'result', origins, sample });
   };
 
   const fail = (failure: Failure) => {
     setGameFilter(null);
     filtered.current = false;
+    track('myglobe', { result: failure.code });
     setView({ status: 'error', failure });
   };
 
@@ -393,6 +396,7 @@ export function MyGlobePanel() {
                   title="Where my games come from"
                   card={myGlobeCardSpec(summarizeOrigins(origins), topCovers(origins, indexes))}
                   fileName="overworld-my-globe"
+                  kind="myglobe"
                 />
                 <span className="ow-muted ow-small" role="status">
                   {copied === 'done' ? 'Copied.' : copied === 'failed' ? 'Could not copy. Select the text and copy it.' : ''}

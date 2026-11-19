@@ -90,6 +90,7 @@ export function GameCard() {
           card={gameCardSpec(game, lead, detail, indexes.companyById)}
           fileName={`overworld-${game.slug}`}
           label="Share game"
+          kind="game"
         />
         <CloseButton label="Close game" onClick={() => void selectGame(null)} />
       </div>

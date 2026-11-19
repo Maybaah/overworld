@@ -2,6 +2,7 @@ import { useId, useMemo, useState, type KeyboardEvent } from 'react';
 import { useStore } from '../data/store';
 import { searchGames } from '../data/search';
 import { countryName } from './format';
+import { track } from '../telemetry/telemetry';
 
 const MAX_RESULTS = 8;
 
@@ -22,6 +23,7 @@ export function Search() {
   const optionId = (i: number) => `${base}-opt-${i}`;
 
   function pick(id: number) {
+    track('search', { game: id, title: indexes?.gameById.get(id)?.name });
     void selectGame(id);
     setQuery('');
     setOpen(false);

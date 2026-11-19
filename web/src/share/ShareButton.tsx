@@ -1,4 +1,5 @@
 import { useEffect, useId, useRef, useState } from 'react';
+import { track } from '../telemetry/telemetry';
 import { cardToBlob, type CardSpec } from './card';
 import './share.css';
 
@@ -8,6 +9,7 @@ interface Props {
   card: CardSpec;
   fileName?: string;
   label?: string;
+  kind: 'game' | 'myglobe' | 'guess';
 }
 
 function slug(text: string): string {
@@ -15,7 +17,7 @@ function slug(text: string): string {
   return s === '' ? 'overworld' : s.slice(0, 60);
 }
 
-export function ShareButton({ url, title, card, fileName, label = 'Share' }: Props) {
+export function ShareButton({ url, title, card, fileName, label = 'Share', kind }: Props) {
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState('');
   const [busy, setBusy] = useState(false);
@@ -42,6 +44,7 @@ export function ShareButton({ url, title, card, fileName, label = 'Share' }: Pro
   const copy = async () => {
     try {
       await navigator.clipboard.writeText(url);
+      track('share', { action: 'copy_link', kind });
       setMessage('Link copied');
     } catch {
       setMessage('Could not copy the link');
@@ -61,6 +64,7 @@ export function ShareButton({ url, title, card, fileName, label = 'Share' }: Pro
       a.click();
       a.remove();
       setTimeout(() => URL.revokeObjectURL(href), 1000);
+      track('share', { action: 'download', kind });
       setMessage('Image downloaded');
     } catch {
       setMessage('Could not create the image');
@@ -81,6 +85,7 @@ export function ShareButton({ url, title, card, fileName, label = 'Share' }: Pro
     }
     try {
       await navigator.share(files ? { title, url, files } : { title, url });
+      track('share', { action: 'native', kind });
     } catch (err) {
       if (!(err instanceof DOMException && err.name === 'AbortError')) setMessage('Could not share');
     }

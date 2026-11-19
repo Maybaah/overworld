@@ -4,6 +4,7 @@ import { FlowsTab } from './FlowsTab';
 import { GenresTab } from './GenresTab';
 import { PerCapitaTab } from './PerCapitaTab';
 import { PublishersTab } from './PublishersTab';
+import { track } from '../telemetry/telemetry';
 import './insights.css';
 
 const TABS = [
@@ -16,6 +17,10 @@ const TABS = [
 export function InsightsPanel() {
   const [active, setActive] = useState(0);
   const refs = useRef<(HTMLButtonElement | null)[]>([]);
+
+  useEffect(() => {
+    track('insights_tab', { tab: TABS[active]!.id });
+  }, [active]);
 
   useEffect(
     () => () => {

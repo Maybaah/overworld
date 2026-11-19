@@ -39,7 +39,7 @@ afterEach(() => {
 async function open() {
   const user = userEvent.setup();
   Object.defineProperty(navigator, 'clipboard', { value: { writeText }, configurable: true });
-  render(<ShareButton url={LINK} title="Game One" card={card} />);
+  render(<ShareButton url={LINK} title="Game One" card={card} kind="game" />);
   await user.click(screen.getByRole('button', { name: 'Share' }));
   return user;
 }

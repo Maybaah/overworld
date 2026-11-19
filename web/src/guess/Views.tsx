@@ -234,7 +234,7 @@ function ShareResultButton({ state }: { state: GameState }) {
   } catch {
     return null;
   }
-  return <ShareButton url={pageLink('guess', params)} title="My Overworld guess result" card={guessCardSpec(result)} fileName="overworld-guess" />;
+  return <ShareButton url={pageLink('guess', params)} title="My Overworld guess result" card={guessCardSpec(result)} fileName="overworld-guess" kind="guess" />;
 }
 
 export function EndScreen({
