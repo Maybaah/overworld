@@ -45,7 +45,7 @@ export interface MosaicOptions {
   tether: number;
 }
 
-export const DEFAULT_OPTIONS: MosaicOptions = { maxCells: 3000, minCellArea: 0.05, iterations: 40, detailIterations: 5, tether: 0.15 };
+export const DEFAULT_OPTIONS: MosaicOptions = { maxCells: 1500, minCellArea: 0.05, iterations: 40, detailIterations: 5, tether: 0.15 };
 const MAX_DETAIL_CELLS = 16000;
 
 export interface MosaicCell {
