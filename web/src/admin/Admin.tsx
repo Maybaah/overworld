@@ -267,10 +267,9 @@ function StatsView({ stats }: { stats: AdminStats }) {
   const reach = (top['reach.type'] ?? []).filter(([k]) => k !== 'error');
 
   const kpis = [
-    { label: 'Tabs', value: tabs, note: `${stats.bucket === 'hour' ? 'hourly' : 'daily'} below` },
+    { label: 'Tabs', value: tabs, note: RANGE_LABEL[stats.range].toLowerCase() },
     { label: 'Game opens', value: t('game_open'), note: `${per('game_open')} per tab` },
     { label: 'Searches', value: t('search'), note: `${per('search')} per tab` },
-    { label: 'Places opened', value: t('place_open'), note: `${per('place_open')} per tab` },
     { label: 'Shares', value: t('share'), note: `${per('share')} per tab` },
     { label: 'My globe lookups', value: t('myglobe'), note: `${per('myglobe')} per tab` },
     { label: 'Errors', value: t('error'), note: tabs > 0 ? `${((t('error') / tabs) * 100).toFixed(1)}% of tabs` : '–' },

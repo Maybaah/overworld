@@ -92,6 +92,9 @@ code {
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
   background: var(--bg-surface);
+  max-width: 100%;
+  overflow-x: auto;
+  scrollbar-width: none;
 }
 
 .adm-seg-btn,
@@ -104,6 +107,7 @@ code {
   border-radius: var(--radius-sm);
   padding: 4px 10px;
   cursor: pointer;
+  white-space: nowrap;
   transition: color var(--dur-fast) var(--ease), background var(--dur-fast) var(--ease);
 }
 
@@ -209,7 +213,7 @@ code {
 
 .adm-kpis {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  grid-template-columns: repeat(6, minmax(0, 1fr));
   gap: 8px;
 }
 
@@ -252,6 +256,7 @@ code {
 
 .adm-chart svg {
   display: block;
+  touch-action: pan-y;
   width: 100%;
   height: auto;
   border-radius: var(--radius-sm);
@@ -276,10 +281,6 @@ code {
 
 .adm-bar.is-hover {
   fill: var(--adm-bar-hover);
-}
-
-.adm-hit {
-  fill: transparent;
 }
 
 .adm-tip {
@@ -408,6 +409,12 @@ code {
   font-size: 12px;
 }
 
+@media (max-width: 900px) {
+  .adm-kpis {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
 @media (max-width: 640px) {
   .adm {
     padding: 16px 16px 40px;
@@ -418,7 +425,7 @@ code {
   }
 
   .adm-kpis {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 

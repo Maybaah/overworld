@@ -1,8 +1,7 @@
-import { useState, type KeyboardEvent } from 'react';
+import { useEffect, useRef, useState, type KeyboardEvent, type PointerEvent } from 'react';
 import { formatCount } from '../ui/format';
 import type { Ranked } from './api';
 
-const W = 960;
 const H = 220;
 const M = { top: 12, right: 12, bottom: 26, left: 44 };
 
@@ -23,7 +22,20 @@ export function bucketLabel(t: number, bucket: 'hour' | 'day', long = false): st
 
 export function ActivityChart({ points, bucket, label }: { points: [number, number][]; bucket: 'hour' | 'day'; label: string }) {
   const [hover, setHover] = useState<number | null>(null);
+  const [W, setW] = useState(960);
+  const box = useRef<HTMLDivElement>(null);
   const n = points.length;
+
+  useEffect(() => {
+    const el = box.current;
+    if (!el || typeof ResizeObserver === 'undefined') return;
+    const ro = new ResizeObserver(([entry]) => {
+      const w = Math.round(entry?.contentRect.width ?? 0);
+      if (w > 0) setW(w);
+    });
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
   const max = niceMax(Math.max(0, ...points.map((p) => p[1])));
   const iw = W - M.left - M.right;
   const ih = H - M.top - M.bottom;
@@ -32,7 +44,11 @@ export function ActivityChart({ points, bucket, label }: { points: [number, numb
   const bw = Math.max(1, slot - gap);
   const y = (v: number) => M.top + ih - (v / max) * ih;
   const ticks = [0, max / 2, max];
-  const labelEvery = Math.max(1, Math.ceil(n / 8));
+  const byDay = bucket === 'hour' && n > 48;
+  const labelEvery = Math.max(1, Math.ceil(n / Math.max(2, Math.floor(W / 110))));
+  const dayEvery = Math.max(1, Math.ceil(70 / (slot * 24)));
+  const showLabel = (t: number, i: number) =>
+    byDay ? new Date(t).getHours() === 0 && Math.round(i / 24) % dayEvery === 0 : i % labelEvery === 0;
 
   const onKey = (e: KeyboardEvent<SVGSVGElement>) => {
     if (n === 0) return;
@@ -43,18 +59,26 @@ export function ActivityChart({ points, bucket, label }: { points: [number, numb
     e.preventDefault();
   };
 
+  const onPointer = (e: PointerEvent<SVGSVGElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * W - M.left;
+    setHover(n > 0 && x >= 0 && x < iw ? Math.min(n - 1, Math.floor(x / slot)) : null);
+  };
+
   const hp = hover !== null ? points[hover] : undefined;
   const tipLeft = hover !== null ? ((M.left + slot * hover + slot / 2) / W) * 100 : 0;
 
   return (
-    <div className="adm-chart">
+    <div className="adm-chart" ref={box}>
       <svg
         viewBox={`0 0 ${W} ${H}`}
         role="img"
         aria-label={`${label} per ${bucket}`}
         tabIndex={0}
         onKeyDown={onKey}
-        onMouseLeave={() => setHover(null)}
+        onPointerMove={onPointer}
+        onPointerDown={onPointer}
+        onPointerLeave={() => setHover(null)}
         onBlur={() => setHover(null)}
       >
         {ticks.map((t) => (
@@ -71,17 +95,9 @@ export function ActivityChart({ points, bucket, label }: { points: [number, numb
           return (
             <g key={t}>
               {v > 0 && <path className={`adm-bar${hover === i ? ' is-hover' : ''}`} d={barPath(x, M.top + ih, bw, h)} />}
-              <rect
-                className="adm-hit"
-                x={M.left + slot * i}
-                y={M.top}
-                width={slot}
-                height={ih}
-                onMouseEnter={() => setHover(i)}
-              />
-              {i % labelEvery === 0 && (
-                <text className="adm-axis" x={x + bw / 2} y={H - 8} textAnchor="middle">
-                  {bucketLabel(t, bucket)}
+              {showLabel(t, i) && (
+                <text className="adm-axis" x={byDay ? x : x + bw / 2} y={H - 8} textAnchor={byDay ? 'start' : 'middle'}>
+                  {bucketLabel(t, byDay ? 'day' : bucket)}
                 </text>
               )}
             </g>
