@@ -32,12 +32,9 @@ jobs:
         with:
           node-version: 22
           cache: npm
-          cache-dependency-path: |
-            package-lock.json
-            web/package-lock.json
+          cache-dependency-path: package-lock.json
 
       - run: npm ci
-      - run: npm ci --prefix web
 
       - name: Run pipeline (fetch, merge, validate)
         env:
@@ -61,14 +58,13 @@ jobs:
           path: reports/
 
       - run: npm test
-      - run: npm test --prefix web
 
       - name: Build site
         env:
           VITE_BASE: /${{ github.event.repository.name }}/
           VITE_DATA_BASE: /${{ github.event.repository.name }}/data
           SITE_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}
-        run: npm run build --prefix web
+        run: npm run build
 
       - uses: actions/upload-pages-artifact@v3
         with:

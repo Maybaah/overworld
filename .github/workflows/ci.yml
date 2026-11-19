@@ -23,24 +23,21 @@ jobs:
         with:
           node-version: 22
           cache: npm
-          cache-dependency-path: |
-            package-lock.json
-            web/package-lock.json
+          cache-dependency-path: package-lock.json
 
       - run: npm ci
-      - run: npm ci --prefix web
 
-      - name: Typecheck pipeline
-        run: npx tsc --noEmit
+      - name: Typecheck
+        run: npm run typecheck
 
       - name: Pipeline tests
-        run: npm test
+        run: npm run test:pipeline
 
       - name: Sample data
         run: npm run fixture
 
       - name: App tests
-        run: npm test --prefix web
+        run: npm run test:web
 
       - name: Build app
-        run: npm run build --prefix web
+        run: npm run build

@@ -4,9 +4,8 @@
 
 ## How it was checked
 
-- [ ] `npx tsc --noEmit`
+- [ ] `npm run typecheck`
 - [ ] `npm test`
-- [ ] `npm test --prefix web`
-- [ ] `npm run build --prefix web`
+- [ ] `npm run build`
 
 For data corrections: every new entry has an evidence link that states the fact.

@@ -55,23 +55,21 @@ Keep each file sorted by its id field. Run `npm run pipeline -- --only=merge,val
 
 ```bash
 npm install
-npm install --prefix web
 npm run fixture
-npm run dev --prefix web
+npm run dev
 ```
 
-This runs the app on sample data with no API keys. See the README for real data.
+This runs the app on sample data with no API keys. See the README for real data, and [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for how the code is laid out.
 
 ### Before you open a pull request
 
 ```bash
-npx tsc --noEmit
+npm run typecheck
 npm test
-npm test --prefix web
-npm run build --prefix web
+npm run build
 ```
 
-All four must pass. CI runs the same.
+All three must pass. CI runs the same.
 
 ### Ground rules
 

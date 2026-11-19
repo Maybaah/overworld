@@ -12,9 +12,8 @@ Overworld is a static site plus one small Cloudflare Worker. Everything except M
 
 ```bash
 npm install
-npm install --prefix web
 npm run pipeline        # or `npm run fixture` for sample data
-npm run build --prefix web
+npm run build
 ```
 
 `web/dist/` is the whole site, including `admin.html`. Build-time variables go in `web/.env.local` (or the CI environment):

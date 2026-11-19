@@ -47,14 +47,13 @@ Requirements: Node 22 or newer.
 
 ```bash
 npm install
-npm install --prefix web
 ```
 
 ### Run with sample data (no API keys)
 
 ```bash
 npm run fixture
-npm run dev --prefix web
+npm run dev
 ```
 
 The sample set has 10,000 obviously fake games in real cities, and the app labels it as sample data.
@@ -66,7 +65,7 @@ The sample set has 10,000 obviously fake games in real cities, and the app label
 
 ```bash
 npm run pipeline
-npm run dev:real --prefix web
+npm run dev:real
 ```
 
 `npm run pipeline` fetches from the sources (cached in `pipeline/.cache/`), merges, writes `web/public/data/` and validates it. Add `-- --refresh` to fetch again, `-- --limit=500` for a smaller set, `-- --only=merge,validate` to rerun single stages.
@@ -89,9 +88,11 @@ Keys live only in `.env`, which is git-ignored. The Steam key is used by a small
 | `npm run pipeline` | fetch, merge, write data, validate |
 | `npm run validate` | check `web/public/data/` and write `reports/validation.md` |
 | `npm run fixture` | write sample data to `web/public/data-fixture/` |
-| `npm test` | pipeline tests |
-| `npm test --prefix web` | app tests |
-| `npm run build --prefix web` | production build |
+| `npm run dev` | the app on sample data, at http://localhost:5173 |
+| `npm run dev:real` | the app on real data from `web/public/data/` |
+| `npm test` | all tests (`test:pipeline` and `test:web` run one side) |
+| `npm run typecheck` | TypeScript check of the pipeline and the app |
+| `npm run build` | production build into `web/dist/` |
 | `node scripts/measure.mjs --data=real` (in `web/`) | frame-rate and behavior check in a real Chrome |
 | `node scripts/supabase.mjs migrate` | apply `supabase/migrations/` to your Supabase project |
 | `node scripts/supabase.mjs add-admin <email>` | let an address read `/admin.html` |
