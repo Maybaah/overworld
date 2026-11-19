@@ -638,6 +638,15 @@
   background: var(--bg-elevated);
 }
 
+.ow-nav .ow-icon-btn[aria-pressed='false'] {
+  color: var(--text-secondary);
+}
+
+.ow-nav .ow-icon-btn[aria-pressed='true'] {
+  background: var(--bg-elevated);
+  border-color: var(--border-focus);
+}
+
 .ow-attribution {
   position: absolute;
   right: 16px;

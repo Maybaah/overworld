@@ -617,6 +617,7 @@ ${where}`;
     else if (opened.selectedPlace) fly(placeTarget(indexes, layout, companyIndex, opened.selectedPlace));
     const unsubscribe = useStore.subscribe((s, prev) => {
       if (s.timeline !== prev.timeline || s.gameFilter !== prev.gameFilter || s.year !== prev.year) requestMosaic(s);
+      if (s.zoomDetail !== prev.zoomDetail) mosaicSettled = false;
       if (s.pointsVisible !== prev.pointsVisible || s.countryShade !== prev.countryShade) mosaic.setVisible(mosaicShown(s));
       if (s.selectedGameId !== prev.selectedGameId) mosaic.setSelected(s.selectedGameId);
       if (s.timeline !== prev.timeline || s.gameFilter !== prev.gameFilter) {
@@ -686,7 +687,7 @@ ${where}`;
         mosaicPickedAt = now;
         mosaic.cameraMoved();
         const cam = camera as THREE.PerspectiveCamera;
-        const next = focusOf(globe.pointOfView(), cam.fov, cam.aspect);
+        const next = useStore.getState().zoomDetail ? focusOf(globe.pointOfView(), cam.fov, cam.aspect) : null;
         if (focusChanged(mosaicFocus, next)) {
           mosaicFocus = next;
           requestMosaic(useStore.getState());

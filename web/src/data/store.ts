@@ -69,7 +69,9 @@ export interface AppState {
   selectedGameDetail: GameDetail | null;
   detailError: string | null;
   selectedPlace: SelectedPlace | null;
+  zoomDetail: boolean;
   init: () => Promise<void>;
+  setZoomDetail: (on: boolean) => void;
   setYear: (year: number) => void;
   setPlaying: (playing: boolean) => void;
   setGlobeReady: () => void;
@@ -87,6 +89,15 @@ export interface AppState {
 }
 
 const MIN_YEAR = 1970;
+const ZOOM_DETAIL_KEY = 'overworld.zoomDetail';
+
+function savedZoomDetail(): boolean {
+  try {
+    return localStorage.getItem(ZOOM_DETAIL_KEY) === '1';
+  } catch {
+    return false;
+  }
+}
 
 function timelineFor(indexes: Indexes, filter: Set<number> | null): Timeline {
   const games = filter ? indexes.games.filter((g) => filter.has(g.id)) : indexes.games;
@@ -117,6 +128,7 @@ export const useStore = create<AppState>((set, get) => ({
   selectedGameDetail: null,
   detailError: null,
   selectedPlace: null,
+  zoomDetail: savedZoomDetail(),
 
   async init() {
     set({ status: 'loading', error: null });
@@ -136,6 +148,13 @@ export const useStore = create<AppState>((set, get) => ({
 
   setPlaying(playing) {
     set({ playing });
+  },
+
+  setZoomDetail(zoomDetail) {
+    try {
+      localStorage.setItem(ZOOM_DETAIL_KEY, zoomDetail ? '1' : '0');
+    } catch {}
+    set({ zoomDetail });
   },
 
   setGlobeReady() {
