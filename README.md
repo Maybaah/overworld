@@ -1,135 +1,164 @@
 # Overworld
 
-A 3D globe that shows where video games were made.
+**A 3D globe of where video games are made.**
 
-Every game sits at its lead developer studio. Open a game and arcs go out to every other company that worked on it, colored by role: co-development, port, publisher, localization, QA, outsourced art and audio. A game made by several studios in several countries is the main thing the globe is built to show.
+Every country is filled with the covers of the games made there, about 30,000 of them. Open a game and arcs fly from its lead studio to every company that worked on it, colored by role: co-development, ports, publishing, localization, QA, art and audio. Drag the year slider and watch the industry grow from 1970 to today.
 
-The globe is a satellite map with country and city names. Each place shows the cover of the most popular game made there, and the covers change as you move the year slider.
-
-![Europe at city level: satellite map with city names and game covers](docs/screenshots/real-c-orbit-city-europe.png)
-
-![A game opened: its cover at the lead studio and arcs to every company that worked on it](docs/screenshots/real-f-game-arcs.png)
+![The globe over the North Atlantic: Europe and North America filled with a mosaic of game covers, country names on top, a year slider at the bottom](docs/readme/globe.webp)
 
 ## What it does
 
-- **Explore** – places grouped by country, city and studio as you zoom, each shown by a game cover; search; a card per game with every company, its role and a link to the source record; a year slider from 1970 to now.
-- **My globe** – enter a public Steam profile (or try a sample library) and see where your games come from, e.g. "42% of your games come from the United States".
-- **Insights** – games per capita by country, genres by region, indie and major-publisher output over time, and where outside work flows between countries.
-- **Sharing** – a share button with a card image; every game has its own link-preview page.
+- **Explore.** Each country is a mosaic of its games, sized by how many people played them. Zoom in and the cells split until every game has its own. Click a country, a city or a studio for its list, or search any title.
+- **A card per game.** The lead studio and where it is, every other company with its role and city, the estimated number of players, and a link to each source record.
+- **My globe.** Enter a public Steam profile and see where your library was made: "43% of your games come from the United States". A sample library works without one.
+- **Insights.** Games per million people by country, genres by region, indie and major publishers over time, and where outside work flows between countries.
+- **Sharing.** Every view has a link. The 10,000 most played games get their own link-preview pages, and any card can be saved or shared as an image.
 
-Status: the data pipeline, Explore, My globe, Insights and sharing are built, tested and reviewed in a real browser. A guess-the-location game is built but not released yet (it opens only with `?mode=guess`). Localization, QA and art/audio links are nearly empty until a source that records them is added. See [PROGRESS.md](PROGRESS.md) for the current state and the decisions behind it, and `reports/` for the validation and performance reports.
+![Assassin's Creed Valhalla opened: arcs from Ubisoft Montreal to Ubisoft studios in Quebec, Bordeaux, Kyiv, Bucharest, Sofia and more, with the game card listing every company by role](docs/readme/game-arcs.webp)
 
-## How the data is made
+<p align="center">
+  <img src="docs/readme/insights.webp" width="49%" alt="Insights: games led per million people, with Andorra, Finland and Sweden on top and Europe shaded on the globe">
+  <img src="docs/readme/myglobe.webp" width="49%" alt="My globe with a sample library: 43% of the games come from the United States, then the United Kingdom, Canada and Sweden">
+</p>
+
+## How it works
+
+### One pipeline, many sources
 
 ```
-IGDB  ──►  games, companies, roles (developer / publisher / port / support)
-Wikidata ─►  studio headquarters and coordinates, country of origin
-hand-kept corrections (each with an evidence link)
-        │
-        ▼
-   merge ──► validate ──► static JSON in web/public/data/
+SteamSpy, Steam ──► who played what (owner bands, review counts)
+RAWG            ──► console and older games
+IGDB            ──► games, companies, roles, covers
+Wikidata        ──► studio headquarters and coordinates, populations
+MobyGames       ──► extra credits for the most played games
+pipeline/data/  ──► hand-kept corrections, each with an evidence link
+                          │
+                 merge ──► validate ──► static JSON in web/public/data/
 ```
 
-- About 10,000 of the most-rated games on IGDB and every company credited on them.
-- Each record keeps the name and id of the source it came from, so any point on the globe can be traced back.
-- Each game records how its lead studio was chosen, and each company records how its location was found. Weak cases (several developers with nothing to tell them apart, a country but no city) are marked as such in the app and listed in the reports.
-- Generated data is not committed. Run the pipeline to produce it, or use the sample data.
+The game set is every IGDB main game, remake or remaster with at least 5,000 estimated players: 39,289 games and 22,349 companies. Players come from the strongest signal a game has: Steam reviews, IGDB "Played" marks, RAWG adds or IGDB ratings, each calibrated against Steam. Countries with few studios also get their best known games, plus a hand-checked list for countries IGDB has no studios for, so 162 countries are on the map.
+
+### Every point can be traced
+
+Each game records how its lead studio was chosen, and each studio how its location was found: a hand correction, a Wikidata headquarters statement, its parent's city, or only a country. The game card shows this, so a weak guess looks like one. Every record keeps the name and id of the source it came from.
+
+### A mosaic of 30,000 covers
+
+Each country is cut into cells with a power diagram (a weighted Voronoi treemap) in an equal-area projection: first between its metro areas, then between their games, with each cell's area following popularity. The whole globe starts at 3,000 cells; zooming in adds cells for the countries in view until every game has one. Fitting runs in a worker, every year is fitted once at build time, and small covers ship as sprite sheets so the mosaic appears whole instead of tile by tile.
+
+<p align="center">
+  <img src="docs/readme/place-japan.webp" width="66%" alt="Zoomed in on Japan: the country split into hundreds of small cover cells, with Tokyo, Osaka and Kyoto at the top of the city list">
+  <img src="docs/readme/phone.webp" width="22%" alt="The Witcher 3 open on a phone: the game card shows CD Projekt RED in Warsaw, Saber Interactive for the port and WB Games among the publishers">
+</p>
+
+### Static files and one small Worker
+
+The site is plain static files. A Cloudflare Worker does two things only: it keeps the Steam key off the browser for My globe, and it relays anonymous usage events. Without it, everything but those two still works.
 
 Known limits:
 
-- A studio is placed where it is based now (or was last based), not where it was when a particular game was made.
-- IGDB has no separate flags for localization, QA, art or audio work, so those roles are sparse.
-- About a fifth of the companies have no known location. They are listed in `reports/validation.md` and not drawn.
+- A studio sits where it is based now, not where it was when each game was made.
+- IGDB has no flags for localization, QA, art or audio work, so those arcs are sparse.
+- About 8,800 games are not drawn because no source knows their lead studio's country.
 
-## Quick start
+More in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
-Requirements: Node 22 or newer.
+## Privacy
+
+The public site counts anonymous usage: games opened, searches, shares, load time and errors. No cookies, no IP addresses, no search text, no Steam profiles. Raw events are deleted after 48 hours, leaving hourly counts. Open any page with `?noanalytics=1` and nothing is sent; Do Not Track and Global Privacy Control are respected.
+
+The counts are shown on `/admin.html` to the addresses on its admin list. The full list of what is recorded is in [docs/PRIVACY.md](docs/PRIVACY.md).
+
+<p align="center">
+  <img src="docs/readme/admin.webp" width="80%" alt="The admin page with sample data: totals for tabs, game opens, searches, shares, My globe lookups and errors, an hourly chart for the week, and ranked lists">
+</p>
+
+## Run it locally
+
+Node 22 or newer.
 
 ```bash
+git clone https://github.com/Maybaah/overworld.git
+cd overworld
 npm install
-```
-
-### Run with sample data (no API keys)
-
-```bash
 npm run fixture
 npm run dev
 ```
 
-The sample set has 10,000 obviously fake games in real cities, and the app labels it as sample data.
+That is the app at `http://localhost:5173` on 10,000 obviously fake games, with no API keys. `/admin.html?mock=1` shows the admin page with sample numbers.
 
-### Run with real data
+### With real data
 
-1. Copy `.env.example` to `.env` and fill in the keys (see below).
-2. Build the data and start the app:
+Copy `.env.example` to `.env`, fill in the keys, then build the data:
 
 ```bash
 npm run pipeline
+npm run sprites
+npm run layouts
 npm run dev:real
 ```
 
-`npm run pipeline` fetches from the sources (cached in `pipeline/.cache/`), merges, writes `web/public/data/` and validates it. Add `-- --refresh` to fetch again, `-- --limit=500` for a smaller set, `-- --only=merge,validate` to rerun single stages.
-
-### API keys
+The pipeline caches every response in `pipeline/.cache/` and skips stages that already ran. `-- --refresh` fetches again; `-- --only=merge,validate` reruns single stages.
 
 | Key | Needed for | Where to get it |
 | --- | --- | --- |
-| `TWITCH_CLIENT_ID`, `TWITCH_CLIENT_SECRET` | IGDB (required for real data) | Register an application at <https://dev.twitch.tv/console/apps> |
+| `TWITCH_CLIENT_ID`, `TWITCH_CLIENT_SECRET` | IGDB, required | <https://dev.twitch.tv/console/apps> |
+| `RAWG_API_KEY` | console and older games | <https://rawg.io/apidocs> |
+| `MOBYGAMES_API_KEY` | extra credits, optional | <https://www.mobygames.com/info/api/> |
 | `STEAM_API_KEY` | My globe | <https://steamcommunity.com/dev/apikey> |
-| `MOBYGAMES_API_KEY` | optional extra credits | <https://www.mobygames.com/info/api/> |
-| `WIKIDATA_USER_AGENT_CONTACT` | a contact string for Wikidata requests | a URL or email of your choice |
+| `WIKIDATA_USER_AGENT_CONTACT` | a contact for Wikidata's API policy | a URL or email of your choice |
 
-Keys live only in `.env`, which is git-ignored. The Steam key is used by a small relay on the server side (`web/server/`) and never reaches the browser.
+Keys live only in `.env`, which is git-ignored.
 
-## Commands
+### Commands
 
 | Command | What it does |
 | --- | --- |
-| `npm run pipeline` | fetch, merge, write data, validate |
-| `npm run validate` | check `web/public/data/` and write `reports/validation.md` |
-| `npm run fixture` | write sample data to `web/public/data-fixture/` |
-| `npm run dev` | the app on sample data, at http://localhost:5173 |
+| `npm run dev` | the app on sample data |
 | `npm run dev:real` | the app on real data from `web/public/data/` |
-| `npm test` | all tests (`test:pipeline` and `test:web` run one side) |
-| `npm run typecheck` | TypeScript check of the pipeline and the app |
-| `npm run build` | production build into `web/dist/` |
-| `node scripts/measure.mjs --data=real` (in `web/`) | frame-rate and behavior check in a real Chrome |
-| `node scripts/supabase.mjs migrate` | apply `supabase/migrations/` to your Supabase project |
-| `node scripts/supabase.mjs add-admin <email>` | let an address read `/admin.html` |
+| `npm test` | all tests; `test:pipeline` and `test:web` run one side |
+| `npm run typecheck` | TypeScript, pipeline and app |
+| `npm run build` | production build into `web/dist/`, with `/admin.html` and share pages |
+| `npm run pipeline` | fetch, merge, write and validate the data |
+| `npm run sprites`, `npm run layouts` | cover sprite sheets and yearly mosaic layouts, after the pipeline |
+| `npm run supabase -- migrate` | apply the usage stats schema to your Supabase project |
 
-## Layout
+<details>
+<summary><b>Project layout</b></summary>
 
 ```
-shared/model.ts   data contract between the pipeline and the app
+shared/model.ts   the data contract between the pipeline and the app
 pipeline/         fetch stages, merge, validation, hand-kept corrections
-web/              the app (React + three.js), the Worker, build scripts, /admin.html
-supabase/         usage stats schema
+web/src/          data layer, globe, panels, modes, sharing, telemetry, admin page
+web/server/       the Cloudflare Worker: Steam relay and events relay
+web/scripts/      build steps: sprites, mosaic layouts, share pages
+supabase/         usage stats schema and its tests
 docs/             architecture, self-hosting, privacy, API research
 ```
 
-How the pieces fit, module by module: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
+</details>
 
-## Usage stats and the admin page
+## Self-hosting
 
-The public site counts anonymous usage (game opens, searches, shares, load time, errors) and shows it on `/admin.html` to the addresses on its admin list. No cookies, no IP addresses, raw events deleted after 48 hours: [docs/PRIVACY.md](docs/PRIVACY.md). Open any page with `?noanalytics=1` to send nothing.
+A fork runs as a static site with no backend. My globe needs the Worker with a Steam key; usage stats need a free Supabase project. Nothing is recorded until you set one up. Step by step: [docs/SELF-HOSTING.md](docs/SELF-HOSTING.md).
 
-A fork records nothing until its owner sets up their own Supabase project: [docs/SELF-HOSTING.md](docs/SELF-HOSTING.md). To see the admin page without a backend, open `/admin.html?mock=1`.
+## Data and credits
 
-## Data sources and attribution
+| Source | Used for |
+| --- | --- |
+| [IGDB](https://www.igdb.com) | games, companies, roles, covers and screenshots, under the IGDB API terms |
+| [Wikidata](https://www.wikidata.org) | headquarters, coordinates and populations (CC0) |
+| [MobyGames](https://www.mobygames.com) | extra developer and publisher credits |
+| [RAWG](https://rawg.io) | player signals for console and older games; each game card links its RAWG page |
+| [SteamSpy](https://steamspy.com) and the Steam Web API | player estimates, and the libraries in My globe |
+| [GeoNames](https://www.geonames.org) | city coordinates for corrections (CC BY 4.0), through `all-the-cities` |
+| [Natural Earth](https://www.naturalearthdata.com) | country shapes, through `world-atlas` |
+| Geist and Geist Mono | fonts by Vercel (SIL OFL 1.1) |
 
-- Game, company and role data: [IGDB](https://www.igdb.com), used under the IGDB API terms. Cover art and screenshots are served by IGDB.
-- Headquarters, coordinates and population: [Wikidata](https://www.wikidata.org), CC0.
-- City names and coordinates for corrections: [GeoNames](https://www.geonames.org), CC BY 4.0, through the `all-the-cities` package.
-- Country shapes: [Natural Earth](https://www.naturalearthdata.com) through `world-atlas`.
-- Satellite imagery: Sentinel-2 cloudless – <https://s2maps.eu> by EOX IT Services GmbH (Contains modified Copernicus Sentinel data 2016 & 2017), CC BY 4.0.
-- Game library data in My globe: Steam Web API. Overworld is not affiliated with Valve or Steam.
+Overworld is not affiliated with or endorsed by IGDB, Twitch, Wikidata, MobyGames, RAWG, Valve or any game company. Game titles and artwork belong to their owners.
 
-Overworld is not affiliated with or endorsed by IGDB, Twitch, Wikidata, MobyGames, Valve or any game company. Game titles and artwork belong to their owners.
+## Contributing and license
 
-## Contributing
+Corrections to studio locations and lead studios are the most useful contribution and need no code: [CONTRIBUTING.md](CONTRIBUTING.md) shows the format. Report security issues privately, as [SECURITY.md](SECURITY.md) describes.
 
-Corrections to studio locations and lead studios are especially welcome, and need no code. See [CONTRIBUTING.md](CONTRIBUTING.md).
-
-## License
-
-Code: [MIT](LICENSE). The data produced by the pipeline comes from the sources above and stays under their terms.
+Code under the [MIT License](LICENSE). The data the pipeline produces comes from the sources above and keeps their terms.
