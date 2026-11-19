@@ -102,7 +102,7 @@ Free plan limits: 20,000 files per deploy (a full build has about 10,300, most o
 
 ## 5. Usage stats (optional)
 
-1. Create a project at <https://supabase.com>. Note its **project ref** (in the URL) and, under **Project Settings → API keys**, the **publishable** key.
+1. Create a project at <https://supabase.com>. Note its **project ref** (in the URL) and, under **Project Settings → API keys**, the **publishable** key (for the admin page) and a **secret** key (for the Worker only).
 2. Apply the schema. Either paste `supabase/migrations/0001_telemetry.sql` into the SQL editor and run it, or use a [personal access token](https://supabase.com/dashboard/account/tokens):
 
    ```bash
@@ -122,11 +122,11 @@ Free plan limits: 20,000 files per deploy (a full build has about 10,300, most o
 
    ```bash
    npx wrangler secret put SUPABASE_URL
-   npx wrangler secret put SUPABASE_PUBLISHABLE_KEY
+   npx wrangler secret put SUPABASE_SECRET_KEY
    npx wrangler secret put TELEMETRY_HOSTS
    ```
 
-   `TELEMETRY_HOSTS` is the same comma-separated list as `VITE_TELEMETRY_HOSTS`; the relay drops events from any other origin.
+   `SUPABASE_SECRET_KEY` is the secret key from step 1. Only the Worker may write events: the publishable key in the browser cannot call `log_events`, so nobody can skip the relay. `TELEMETRY_HOSTS` is the same comma-separated list as `VITE_TELEMETRY_HOSTS`; the relay drops events from any other origin.
 7. Add the four `VITE_` values from step 3 and run `npm run deploy` again.
 
 How the data is kept, what is recorded and what never is: [PRIVACY.md](PRIVACY.md). In short, `log_events` checks every field against an allow-list and rate-limits every tab and the whole site; tabs and events are rolled into hourly counts and deleted after 48 hours; no cron job is needed.
