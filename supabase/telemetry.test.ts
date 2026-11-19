@@ -12,6 +12,7 @@ const migrations = readdirSync(dir)
 const SUPABASE_STUBS = `
   create role anon;
   create role authenticated;
+  create role service_role;
   create schema auth;
   create function auth.role() returns text language sql stable as $$ select nullif(current_setting('test.role', true), '') $$;
   create function auth.jwt() returns jsonb language sql stable as $$ select coalesce(nullif(current_setting('test.jwt', true), ''), '{}')::jsonb $$;
@@ -83,6 +84,20 @@ describe('log_events', () => {
     await expect(log({ sid: 'short', events: [{ type: 'mode', p: { mode: 'explore' } }] })).rejects.toThrow(/invalid session/);
     await expect(log({ sid: SID, events: 'nope' })).rejects.toThrow(/invalid events/);
     await expect(log({ sid: SID, events: Array.from({ length: 51 }, () => ({ type: 'ready', p: { ms: 1 } })) })).rejects.toThrow(/too many/);
+  });
+
+  it('can be called by the relay only, not with the public key', async () => {
+    const batch = JSON.stringify({ sid: SID, events: [{ type: 'mode', p: { mode: 'explore' } }] });
+    for (const role of ['anon', 'authenticated']) {
+      await db.exec(`set role ${role}`);
+      await expect(db.query('select public.log_events($1::jsonb)', [batch])).rejects.toThrow(/permission denied/);
+      await db.exec('reset role');
+    }
+    await db.exec('set role service_role');
+    await db.query('select public.log_events($1::jsonb)', [batch]);
+    await db.exec('reset role');
+    const [{ n }] = await rows<{ n: number }>('select count(*)::int as n from public.events');
+    expect(n).toBe(1);
   });
 
   it('caps a tab at 120 events a minute', async () => {

@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { handleEventsRequest, relayBody } from './eventsRelay';
 
 const SID = 'sid_aaaaaaaaaaaaaaaa';
-const ENV = { SUPABASE_URL: 'https://db.example/', SUPABASE_PUBLISHABLE_KEY: 'pk_test' };
+const ENV = { SUPABASE_URL: 'https://db.example/', SUPABASE_SECRET_KEY: 'sb_secret_test' };
 
 function post(body: string, headers: Record<string, string> = {}): Request {
   return new Request('https://overworld.example/api/e', { method: 'POST', body, headers });
@@ -25,14 +25,20 @@ describe('relayBody', () => {
 describe('handleEventsRequest', () => {
   const body = JSON.stringify({ sid: SID, events: [{ type: 'mode', p: { mode: 'explore' } }] });
 
-  it('forwards a valid batch to the log_events RPC with the publishable key', async () => {
+  it('forwards a valid batch to the log_events RPC with the secret key', async () => {
     const fetcher = vi.fn().mockResolvedValue(new Response(null, { status: 204 }));
     const res = await handleEventsRequest(post(body, { 'cf-ipcountry': 'JP' }), ENV, fetcher);
     expect(res.status).toBe(204);
     const [url, init] = fetcher.mock.calls[0]!;
     expect(url).toBe('https://db.example/rest/v1/rpc/log_events');
-    expect(init.headers.apikey).toBe('pk_test');
+    expect(init.headers).toEqual({ apikey: 'sb_secret_test', 'content-type': 'application/json' });
     expect(JSON.parse(init.body).batch.ctx).toEqual({ country: 'jp' });
+  });
+
+  it('sends a legacy service-role JWT as the bearer too', async () => {
+    const fetcher = vi.fn().mockResolvedValue(new Response(null, { status: 204 }));
+    await handleEventsRequest(post(body), { ...ENV, SUPABASE_SECRET_KEY: 'eyJ.legacy.jwt' }, fetcher);
+    expect(fetcher.mock.calls[0]![1].headers.authorization).toBe('Bearer eyJ.legacy.jwt');
   });
 
   it('does nothing when Supabase is not configured or the origin is not listed', async () => {

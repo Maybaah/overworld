@@ -1,6 +1,6 @@
 export interface EventsEnv {
   SUPABASE_URL?: string;
-  SUPABASE_PUBLISHABLE_KEY?: string;
+  SUPABASE_SECRET_KEY?: string;
   TELEMETRY_HOSTS?: string;
 }
 
@@ -44,7 +44,7 @@ export async function handleEventsRequest(request: Request, env: EventsEnv, fetc
   if (request.method !== 'POST') return new Response(null, { status: 405, headers: { allow: 'POST' } });
   const done = (status = 204) => new Response(null, { status, headers: { 'cache-control': 'no-store' } });
   const url = env.SUPABASE_URL?.trim().replace(/\/+$/, '');
-  const key = env.SUPABASE_PUBLISHABLE_KEY?.trim();
+  const key = env.SUPABASE_SECRET_KEY?.trim();
   if (!url || !key || !hostAllowed(request, env.TELEMETRY_HOSTS)) return done();
   if (Number(request.headers.get('content-length') ?? 0) > MAX_BYTES) return done(413);
   const raw = await request.text().catch(() => '');
@@ -54,7 +54,9 @@ export async function handleEventsRequest(request: Request, env: EventsEnv, fetc
   try {
     await fetcher(`${url}/rest/v1/rpc/log_events`, {
       method: 'POST',
-      headers: { apikey: key, authorization: `Bearer ${key}`, 'content-type': 'application/json' },
+      headers: key.startsWith('sb_')
+        ? { apikey: key, 'content-type': 'application/json' }
+        : { apikey: key, authorization: `Bearer ${key}`, 'content-type': 'application/json' },
       body,
       signal: AbortSignal.timeout(4000),
     });
