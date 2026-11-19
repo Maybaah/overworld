@@ -100,18 +100,14 @@ Keys live only in `.env`, which is git-ignored. The Steam key is used by a small
 ## Layout
 
 ```
-shared/model.ts      data contract used by the pipeline and the app
-pipeline/src/        fetch stages, merge, validation
-pipeline/data/       hand-kept corrections (locations, lead studios, specialties)
-web/src/             the app: data layer, globe, panels, guess, My globe, insights
-web/src/admin/       the /admin.html usage stats page
-web/src/telemetry/   anonymous usage events sent by the app
-web/server/          Cloudflare Worker: Steam relay and usage events relay
-supabase/            database schema for usage stats, with tests
-scripts/             Supabase helper
-reports/             validation, review and performance reports
-docs/                API research notes and screenshots
+shared/model.ts   data contract between the pipeline and the app
+pipeline/         fetch stages, merge, validation, hand-kept corrections
+web/              the app (React + three.js), the Worker, build scripts, /admin.html
+supabase/         usage stats schema
+docs/             architecture, self-hosting, privacy, API research
 ```
+
+How the pieces fit, module by module: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
 ## Usage stats and the admin page
 
