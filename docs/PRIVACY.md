@@ -9,6 +9,7 @@ Overworld counts how the site is used so its maintainers can see what people ope
 - No search text. A search is recorded only when a result is picked, as that game's id and title.
 - No Steam profile. My globe records only whether the lookup worked (or why not) and how many games it matched.
 - No full referrer: only its host, for example `reddit.com`.
+- No request logs. Stored invocation logs are off in `wrangler.toml`, so Cloudflare keeps no record of the addresses or Steam profile links that reach `/api/*`.
 
 ## What is recorded
 
@@ -35,7 +36,7 @@ Raw events and tabs are deleted after 48 hours. Only hourly counts remain after 
 
 ## Who can read it
 
-Only the email addresses on the admin list, signed in on `/admin.html`. Every table has row-level security on and all privileges revoked; the public key can call `log_events` and nothing else.
+Only the email addresses on the admin list, signed in on `/admin.html`. Every table has row-level security on and all privileges revoked; the public key cannot read or write anything. Only the Worker, with a secret key, can call `log_events`.
 
 ## Turning it off
 
