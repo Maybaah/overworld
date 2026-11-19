@@ -34,7 +34,7 @@ web/src/share/          share links, share cards, URL state
 web/src/telemetry/      anonymous usage events
 web/src/admin/          /admin.html stats page
 web/server/             Cloudflare Worker: Steam relay and events relay
-web/scripts/            build-time steps: sprites, mosaic layouts, share pages, OG image, frame-rate check
+web/scripts/            build-time steps: sprites, mosaic layouts, share and search pages, OG image, frame-rate check
 supabase/               usage stats schema and its tests
 scripts/                Supabase helper
 ```
@@ -123,6 +123,14 @@ The part with the most moving pieces:
 3. It runs in a worker (`mosaic/mosaic.worker.ts`, messages in `mosaic/protocol.ts`). The worker keeps only the latest request and prefetches the next year.
 4. `npm run layouts` fits every year once into `mosaic-layouts.bin` (format in `mosaic/layouts.ts`), so moving the year slider only cuts cells.
 5. `mosaicLayer.ts` draws it. Small covers come from sprite sheets packed by `npm run sprites`; sharper tiers load into atlases (`coverAtlas.ts`) only when a cell is big enough on screen. Games without a cover get a title card (`titleCovers.ts`).
+
+## Pages built from the data
+
+`npm run build` ends with `web/scripts/build-share-pages.mjs`, which writes plain HTML next to the app:
+
+- `g/<id>/` for the 10,000 most played games: link-preview tags, then a redirect into the app.
+- `countries/` and `countries/<name>/`, and `studios/<name>/` for every studio that led at least three games (`seo-pages.mjs`). These are real pages for search engines and people without the globe: games, studios, cities and facts, each linking into the app with `?game=` or `?place=`.
+- `sitemap.xml` listing the home page and those pages, and `robots.txt`, which keeps the admin page out. The home page also gets its canonical and preview-image tags here, since they need the absolute `SITE_URL`.
 
 ## Server
 

@@ -98,7 +98,7 @@ VITE_SUPABASE_PUBLISHABLE_KEY=<publishable key>
 
 5. Use your own domain: Cloudflare dashboard → **Workers & Pages** → the Worker → **Settings → Domains & Routes → Add → Custom domain**. The domain must be on Cloudflare DNS. Then set `SITE_URL` and `VITE_TELEMETRY_HOSTS` to it and deploy again.
 
-Free plan limits: 20,000 files per deploy (a full build has about 10,300, most of them share pages), 25 MiB per file, 100,000 Worker requests a day. Static files do not count toward the request limit; only `/api/*` calls do.
+Free plan limits: 20,000 files per deploy (a full build has about 13,600: 10,000 game share pages and 3,400 country and studio pages), 25 MiB per file, 100,000 Worker requests a day. Static files do not count toward the request limit; only `/api/*` calls do.
 
 ## 5. Usage stats (optional)
 
@@ -144,6 +144,7 @@ A free Supabase project is paused after a week with no requests. Live traffic ke
 | `/` | the globe fills with covers within a few seconds |
 | `/?game=1942` | The Witcher 3 opens with arcs to its other companies |
 | `/g/1942/` | redirects to the game; its source has `og:` tags with your domain |
+| `/countries/poland/`, `/studios/cd-projekt-red/` | plain pages with the country's or studio's games, linked from `/sitemap.xml` |
 | My globe → **Try a sample library** | the globe filters to 60 games |
 | My globe with a public Steam profile | a breakdown by country; "not configured" means `STEAM_API_KEY` is missing |
 | `/admin.html?mock=1` | the stats page with sample numbers |
