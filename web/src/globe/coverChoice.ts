@@ -15,8 +15,6 @@ export function effectiveYear(year: number | null, minYear: number, maxYear: num
   return Math.min(Math.max(year, minYear), maxYear);
 }
 
-// Games come in popularity order, so a place's top game at year Y is its first game with year <= Y.
-// Walking that order, each game older than every game before it starts a new period: those are the change points.
 export function buildChangePoints(
   games: readonly GameLike[],
   placeOfCompany: (companyId: number) => number,

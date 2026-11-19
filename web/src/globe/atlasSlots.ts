@@ -1,6 +1,6 @@
 export interface AtlasLayout {
-  size: number; // width
-  height?: number; // defaults to size
+  size: number;
+  height?: number;
   slotW: number;
   slotH: number;
   imageW: number;

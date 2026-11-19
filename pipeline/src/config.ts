@@ -6,20 +6,20 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '.
 
 export interface PipelineConfig {
   root: string;
-  stageDir: string; // intermediate stage files (git-ignored)
-  httpCacheDir: string; // raw HTTP response cache (git-ignored)
-  outDir: string; // web/public/data
-  reportDir: string; // reports/
-  curatedDir: string; // pipeline/data, hand-maintained inputs
+  stageDir: string;
+  httpCacheDir: string;
+  outDir: string;
+  reportDir: string;
+  curatedDir: string;
   twitchClientId: string | null;
   twitchClientSecret: string | null;
   mobygamesApiKey: string | null;
   rawgApiKey: string | null;
   wikidataUserAgent: string;
   gameLimit: number;
-  mobyLimit: number; // MobyGames is rate limited to 720 requests an hour, so it covers only the most played games
-  refresh: boolean; // ignore existing stage files and fetch again
-  only: string[] | null; // run only these stages
+  mobyLimit: number;
+  refresh: boolean;
+  only: string[] | null;
 }
 
 function flag(argv: string[], name: string): string | null {

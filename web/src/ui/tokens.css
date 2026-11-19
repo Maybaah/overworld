@@ -1,5 +1,3 @@
-/* Maybaah design system (maybaah.github.io site.css): zinc ramp, white hairlines, Geist, one easing curve.
-   Overworld keeps its role colors for data; the chrome stays neutral so the cover mosaic carries the color. */
 :root {
   --bg: #09090b;
   --bg-surface: #18181b;

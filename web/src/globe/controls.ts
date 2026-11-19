@@ -1,5 +1,3 @@
-// Direct-manipulation globe controls: the surface follows the pointer while dragging and keeps spinning a little
-// after release; the wheel and pinch ease the altitude on a log scale. The globe's orbit controls stay disabled.
 export interface Pov {
   lat: number;
   lng: number;
@@ -23,7 +21,6 @@ const MAX_DEG_PER_PX = 0.45;
 const KEY_PAN_PX = 140;
 const KEY_ZOOM = 0.45;
 
-// Buttons outside the globe (zoom in/out, back to the start view) talk to the controls through this.
 export type NavCommand = { kind: 'zoom'; amount: number } | { kind: 'home' };
 export const navBus = new EventTarget();
 export function sendNav(cmd: NavCommand): void {
@@ -32,7 +29,6 @@ export function sendNav(cmd: NavCommand): void {
 
 const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v));
 
-// Degrees of arc per screen pixel at the centre of the view.
 export function degreesPerPixel(altitude: number, fovDeg: number, heightPx: number): number {
   const rad = (2 * altitude * Math.tan((fovDeg * Math.PI) / 360)) / Math.max(1, heightPx);
   return Math.min(MAX_DEG_PER_PX, (rad * 180) / Math.PI);
@@ -46,12 +42,11 @@ export interface Step {
 }
 
 export interface Motion {
-  spinLat: number; // degrees per second
+  spinLat: number;
   spinLng: number;
-  zoomTarget: number | null; // log altitude
+  zoomTarget: number | null;
 }
 
-// Advances the point of view by dt seconds; returns null when nothing moved.
 export function advance(pov: Pov, input: Step, motion: Motion, dt: number, fovDeg: number, heightPx: number): Pov | null {
   let { lat, lng, altitude } = pov;
   let moved = false;
@@ -194,7 +189,6 @@ export class GlobeControls {
     };
   }
 
-  // A scripted flight takes over: drop any spin, zoom easing and the idle rotation.
   stop(): void {
     this.auto = false;
     this.motion.spinLat = 0;
@@ -205,13 +199,11 @@ export class GlobeControls {
     this.input.zoom = 0;
   }
 
-  // Eased zoom by a log step (negative = closer).
   zoomBy(amount: number): void {
     this.input.zoom += amount;
     this.touched();
   }
 
-  // A push that glides the view by about this many screen pixels and slows to a stop.
   panBy(dxPx: number, dyPx: number): void {
     const pov = this.target.pointOfView();
     const k = degreesPerPixel(pov.altitude, this.fov, this.height);
@@ -250,7 +242,6 @@ export class GlobeControls {
   }
 }
 
-// Where a screen point meets the globe, by ray and sphere instead of raycasting the globe mesh.
 export function screenToGeo(
   camera: { position: { x: number; y: number; z: number }; projectionMatrixInverse: ArrayLike<number> | { elements: ArrayLike<number> }; matrixWorld: { elements: ArrayLike<number> } },
   x: number,

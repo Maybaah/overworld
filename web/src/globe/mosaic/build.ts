@@ -33,15 +33,15 @@ export interface MosaicGame {
   lat: number;
   lng: number;
   country: string;
-  exact: boolean; // city-level location
+  exact: boolean;
 }
 
 export interface MosaicOptions {
   maxCells: number;
-  minCellArea: number; // square degrees of arc
+  minCellArea: number;
   iterations: number;
-  detailIterations: number; // for countries given extra cells when zoomed in; their old sites start in place
-  topIterations?: number; // for splitting the country between metro areas; defaults to iterations
+  detailIterations: number;
+  topIterations?: number;
   tether: number;
 }
 
@@ -54,7 +54,7 @@ export interface MosaicCell {
   lat: number;
   lng: number;
   area: number;
-  imageH: number; // height of the cover as laid over the cell, degrees of arc
+  imageH: number;
 }
 
 export interface MosaicMesh {
@@ -71,7 +71,7 @@ export interface CountryRegion {
   region: Region;
   area: number;
   center: { lat: number; lng: number };
-  radius: number; // degrees of arc from the centre to the farthest corner of the projected box
+  radius: number;
 }
 
 function rings(shape: CountryShape): number[][][][] {
@@ -108,7 +108,6 @@ function closeless(ring: number[][], proj: Projection): Ring {
   return out;
 }
 
-// Some codes have several shapes (Australia and the Ashmore and Cartier Islands are both 036), so they are merged.
 export function countryRegions(shapes: readonly CountryShape[]): Map<string, CountryRegion> {
   const byCode = new Map<string, number[][][][]>();
   for (const s of shapes) {
@@ -171,7 +170,6 @@ export function placeSites(games: readonly MosaicGame[], country: CountryRegion)
   });
 }
 
-// The nearest point inside the region found by walking out in rings, so coastal cities stay on land.
 export function insideNear(p: Pt, region: Region, step: number, seed: number): Pt {
   if (pointInRegion(p, region)) return p;
   for (let ring = 1; ring <= 60; ring++) {
@@ -186,8 +184,6 @@ export function insideNear(p: Pt, region: Region, step: number, seed: number): P
   return interiorPoint(seed, region);
 }
 
-// Cells are shared by the geometric mean of a country's game count and its area, so dense small countries
-// (Japan, Korea) and big sparse ones (Canada, Russia) both get a fair number; every country gets at least one.
 export function cellBudget(counts: ReadonlyMap<string, number>, areas: ReadonlyMap<string, number>, o: MosaicOptions): Map<string, number> {
   const out = new Map<string, number>();
   const cap = new Map<string, number>();
@@ -220,8 +216,8 @@ export function cellBudget(counts: ReadonlyMap<string, number>, areas: ReadonlyM
 export interface MosaicFocus {
   lat: number;
   lng: number;
-  radius: number; // degrees of arc in view around the point
-  zoom: number; // how many times more cells per area than the whole-globe view
+  radius: number;
+  zoom: number;
 }
 
 function arcDegrees(a: { lat: number; lng: number }, b: { lat: number; lng: number }): number {
@@ -230,7 +226,6 @@ function arcDegrees(a: { lat: number; lng: number }, b: { lat: number; lng: numb
   return Math.acos(Math.min(1, Math.max(-1, c))) / r;
 }
 
-// Countries in view get more cells, up to all their games, so zooming in shows every game.
 export function focusBudget(
   budget: Map<string, number>,
   counts: ReadonlyMap<string, number>,
@@ -291,16 +286,15 @@ export interface CellPiece {
 
 export interface CountryMosaic {
   key: string;
-  sites: string[]; // memory keys of the sites this mosaic used
+  sites: string[];
   pieces: CellPiece[];
   position: number[];
   uv: number[];
-  cell: number[]; // local cell index
+  cell: number[];
   lines: number[];
   cells: MosaicCell[];
 }
 
-// Evenly spread points inside a region: a jittered grid over its box, keeping the cells that fall inside.
 export function spreadPoints(region: Region, k: number, seed: number): Pt[] {
   const b = bbox(region.outers.flat());
   const area = Math.max(1e-9, regionArea(region));
@@ -327,8 +321,6 @@ export function spreadPoints(region: Region, k: number, seed: number): Pt[] {
   return Array.from({ length: k }, (_, i) => interiorPoint(seed + i, region));
 }
 
-// Groups games by metro area: a game joins the first group whose anchor city is within reach, in popularity order,
-// so the anchor of each group is the city of its most popular game. Games placed only by country form one group.
 export function metroGroups(games: readonly MosaicGame[], country: CountryRegion): MosaicGame[][] {
   const reach = Math.min(3, Math.max(0.5, 0.08 * Math.sqrt(country.area)));
   const groups: { anchor: Pt | null; list: MosaicGame[] }[] = [];
@@ -338,7 +330,6 @@ export function metroGroups(games: readonly MosaicGame[], country: CountryRegion
     if (hit) hit.list.push(g);
     else groups.push({ anchor: p, list: [g] });
   }
-  // A town with one or two games next to a big metro joins it; alone it would hold a cell far bigger than its share.
   const order = new Map(games.map((g, i) => [g.id, i]));
   const big = groups.filter((x) => x.anchor !== null && x.list.length > SMALL_TOWN);
   const kept = groups.filter((x) => {
@@ -367,8 +358,6 @@ function regionOf(cell: ClippedCell): Region {
   return { outers: cell.pieces.map((p) => p.outer), holes: cell.pieces.flatMap((p) => p.holes) };
 }
 
-// Two levels: the country is split between cities (area by the cities' total popularity, sites at the cities),
-// then each city's part is split between its games, which may move freely inside it.
 const landIndexes = new WeakMap<CountryRegion, RegionIndex>();
 function landIndex(country: CountryRegion): RegionIndex {
   let index = landIndexes.get(country);
@@ -376,8 +365,6 @@ function landIndex(country: CountryRegion): RegionIndex {
   return index;
 }
 
-// memory keeps where every site ended last time, so the next build (another year, more games when zoomed in)
-// starts from there: cells stay where they were and the fit needs few iterations.
 export function buildCountryMosaic(
   games: readonly MosaicGame[],
   country: CountryRegion,
@@ -499,7 +486,6 @@ export interface BuildResult {
   countries: Map<string, CountryMosaic>;
 }
 
-// A layout is where every site of one year's mosaic sits: memory key -> [x, y, weight, area it was fitted for].
 export type Layout = Map<string, [number, number, number, number]>;
 
 const CACHE_LIMIT = 600;
@@ -513,7 +499,6 @@ export class MosaicBuilder {
     private readonly options: MosaicOptions = DEFAULT_OPTIONS,
   ) {}
 
-  // Puts the sites of a precomputed layout into memory; countries then build without fitting.
   useLayout(layout: Layout): void {
     for (const [k, [x, y, weight, want]] of layout) this.memory.set(k, { x, y, weight, want });
   }
@@ -529,8 +514,6 @@ export class MosaicBuilder {
     return out;
   }
 
-  // games must come in popularity order, most popular first. With fitted = true, countries outside the focus
-  // take their sites from memory as they are (a loaded layout) instead of fitting them again.
   build(games: readonly MosaicGame[], focus: MosaicFocus | null = null, fitted = false): BuildResult {
     const byCountry = new Map<string, MosaicGame[]>();
     for (const g of games) {

@@ -1,14 +1,7 @@
-// Estimates how many people played a game from whatever signals exist for it, all on one scale.
-// Steam is the anchor: SteamSpy owner bands and review counts (about 40 buyers per review, the Boxleiter rule).
-// IGDB "Played" shares, RAWG "added" counts and IGDB rating counts are relative signals; each gets a factor
-// calibrated as the median ratio to the Steam estimate over games that have both.
-
 export const REVIEW_MULTIPLIER = 40;
 export const PLAYER_FLOOR = 5_000;
 const CALIBRATION_MIN_STEAM = 20_000;
 const CALIBRATION_MIN_PAIRS = 30;
-// IGDB "Played" is a share of all marks; its smallest step is one IGDB user. One or two marks are noise,
-// so a share counts only from this many users up.
 export const MIN_IGDB_USERS = 3;
 
 export type AudienceBasis = 'steam' | 'igdb_played' | 'rawg_added' | 'igdb_ratings';
@@ -25,7 +18,7 @@ export interface Calibration {
   igdbPlayed: number | null;
   rawgAdded: number | null;
   ratingCount: number | null;
-  minIgdbPlayed: number; // share of MIN_IGDB_USERS users
+  minIgdbPlayed: number;
   pairs: Record<'igdbPlayed' | 'rawgAdded' | 'ratingCount', number>;
 }
 
@@ -65,8 +58,6 @@ export function calibrate(games: Iterable<AudienceSignals>): Calibration {
   };
 }
 
-// The strongest signal wins: each one sees only part of the audience (Steam only PC, IGDB only its own users),
-// and a game linked to a tiny Steam app (a demo, a delisted edition) must not lose its console audience.
 export function estimatePlayers(s: AudienceSignals, c: Calibration): { players: number; basis: AudienceBasis } | null {
   const options: [number, AudienceBasis][] = [];
   const steam = steamEstimate(s);

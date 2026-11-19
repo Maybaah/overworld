@@ -9,7 +9,7 @@ import { readJsonIfExists, writeJson } from '../stageio';
 const API = 'https://api.mobygames.com/v2/games';
 const INCLUDE = 'game_id,title,moby_url,platforms,developers,publishers';
 const MIN_INTERVAL_MS = 5_200;
-const STEAM_BATCH = 5; // API rejects more than 5 Steam ids per request
+const STEAM_BATCH = 5;
 const TITLE_PAGES = 3;
 const PAGE_SIZE = 100;
 const YEAR_TOLERANCE = 1;

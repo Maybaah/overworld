@@ -3,7 +3,6 @@ export type Ring = Pt[];
 
 const DEG = Math.PI / 180;
 
-// Lambert azimuthal equal-area around (lat0, lng0), in degrees of arc on the unit sphere.
 export interface Projection {
   forward(lat: number, lng: number): Pt;
   inverse(x: number, y: number): { lat: number; lng: number };
@@ -68,7 +67,6 @@ export function ringCentroid(ring: readonly Pt[]): Pt {
   return [cx / (3 * a), cy / (3 * a)];
 }
 
-// Keeps the part of a convex or concave polygon where a*x + b*y <= c.
 export function clipHalfPlane(poly: readonly Pt[], a: number, b: number, c: number): Pt[] {
   const out: Pt[] = [];
   const n = poly.length;
@@ -87,14 +85,12 @@ export function clipHalfPlane(poly: readonly Pt[], a: number, b: number, c: numb
   return out;
 }
 
-// Sutherland–Hodgman: clips any polygon by a convex counter-clockwise polygon.
 export function clipByConvex(subject: readonly Pt[], convex: readonly Pt[]): Pt[] {
   let out: Pt[] = subject.slice();
   const n = convex.length;
   for (let i = 0; i < n && out.length > 0; i++) {
     const p = convex[i]!;
     const q = convex[(i + 1) % n]!;
-    // inside is to the left of p->q: (q-p) x (x-p) >= 0  <=>  a*x + b*y <= c
     const a = q[1] - p[1];
     const b = -(q[0] - p[0]);
     const c = a * p[0] + b * p[1];
@@ -107,7 +103,7 @@ export interface Site {
   x: number;
   y: number;
   weight: number;
-  want?: number; // the area the site was fitted for; a warm start scales its weight to the new area
+  want?: number;
 }
 
 export function powerCell(sites: readonly Site[], i: number, bounds: readonly Pt[]): Pt[] {
@@ -125,7 +121,7 @@ export function powerCell(sites: readonly Site[], i: number, bounds: readonly Pt
 }
 
 export interface Region {
-  outers: Ring[]; // counter-clockwise
+  outers: Ring[];
   holes: Ring[];
 }
 
@@ -205,7 +201,6 @@ export function pointInRegion(p: Pt, region: Region): boolean {
   return !region.holes.some((h) => pointInRing(p, h));
 }
 
-// Parts of segment a-b that lie inside the region.
 export function segmentInside(a: Pt, b: Pt, region: Region): [Pt, Pt][] {
   const ts = [0, 1];
   const dx = b[0] - a[0];
@@ -287,7 +282,6 @@ export function simplifyRegion(region: Region, tol: number): Region {
 
 const GRID = 48;
 
-// Answers "is this convex cell entirely inside the region" without clipping, using a coarse grid.
 export class RegionIndex {
   readonly boxes: [number, number, number, number][];
   private readonly box: [number, number, number, number];
@@ -319,7 +313,6 @@ export class RegionIndex {
         }
       }
     }
-    // Scanlines through the cell centres: even-odd crossings over all rings give the inside spans.
     const rings = [...region.outers, ...region.holes];
     const xs: number[] = [];
     for (let y = 0; y < GRID; y++) {
@@ -398,7 +391,6 @@ class SiteGrid {
     sites.forEach((s, i) => this.buckets[this.cy(s.y) * this.cols + this.cx(s.x)]!.push(i));
   }
 
-  // Visits sites ring by ring around (x, y); stop() gets a lower bound on the distance of everything not yet visited.
   visit(x: number, y: number, fn: (j: number) => void, stop: (minDist: number) => boolean): void {
     const gx = this.cx(x);
     const gy = this.cy(y);
@@ -463,19 +455,16 @@ export interface FitResult {
   cells: ClippedCell[];
   sites: Pt[];
   fitted: Site[];
-  index: RegionIndex; // of the full outline
-  error: number; // share of the area given to the wrong cells
+  index: RegionIndex;
+  error: number;
 }
 
 export interface FitOptions {
   iterations: number;
-  tether: number; // 0 = sites move freely to their cell centre, 1 = sites stay at home
-  start: readonly (Site | null | undefined)[]; // where a site ended in an earlier fit, to start from there
+  tether: number;
+  start: readonly (Site | null | undefined)[];
 }
 
-// Voronoi treemap: a power diagram whose sites start at their home points, drift towards their cell centres
-// while a tether pulls them back home, and whose weights are tuned until each cell's area approaches its target.
-// The fit runs on a simplified outline; the returned cells are clipped by the full one.
 export function fitPowerDiagram(
   points: readonly Pt[],
   targets: readonly number[],

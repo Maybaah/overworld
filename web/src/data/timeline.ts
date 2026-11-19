@@ -20,7 +20,6 @@ export interface Timeline {
   seriesOf(level: PlaceLevel, key: PlaceKey): Uint32Array;
 }
 
-// Layout is year-major (data[yearIndex * keys.length + row]) so one year of a level is a contiguous slice.
 function makeLevel(keys: PlaceKey[], years: number): LevelData {
   const rowOf = new Map<PlaceKey, number>();
   keys.forEach((k, i) => rowOf.set(k, i));

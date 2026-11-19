@@ -5,9 +5,8 @@ import type { CityRecord } from '../cities';
 import { normalizeCompanyName, sameCompanyLoosely } from '../names';
 import { normalizeTitle } from './mobygames';
 
-// One hand-checked game from a country IGDB has no studios for (pipeline/data/country-games.json).
 export interface CountryGame {
-  country: string; // ISO alpha-2
+  country: string;
   game: string;
   year: number | null;
   developer: string;
@@ -15,11 +14,10 @@ export interface CountryGame {
   evidenceUrl: string;
   igdbGameId?: number | null;
   igdbSlug?: string | null;
-  notOnIgdb?: boolean; // skip the IGDB search: its namesake there is another game
+  notOnIgdb?: boolean;
   storeUrl?: string | null;
 }
 
-// Games and studios IGDB does not have get ids far above IGDB's, stable for the same title or studio.
 export const CURATED_ID_BASE = 1_900_000_000;
 
 function stableId(key: string, offset: number): number {
@@ -77,7 +75,6 @@ export function yearOf(g: RawIgdbGame): number | null {
   return g.firstReleaseDate ? new Date(g.firstReleaseDate * 1000).getUTCFullYear() : null;
 }
 
-// The search hit with the same title, released within a year of the listed year; the earliest if several.
 export function pickSearchHit(entry: CountryGame, hits: RawIgdbGame[]): RawIgdbGame | null {
   const want = normalizeTitle(entry.game);
   const same = hits.filter((g) => normalizeTitle(g.name) === want);
@@ -87,8 +84,6 @@ export function pickSearchHit(entry: CountryGame, hits: RawIgdbGame[]): RawIgdbG
 
 const fold = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim();
 
-// The most populous town of that name in the country; null when the city is unknown or not found,
-// and the studio then sits at country level.
 export function placeOf(entry: CountryGame, cities: readonly CityRecord[]): { city: string; lat: number; lng: number } | null {
   if (!entry.city) return null;
   const name = fold(entry.city);
@@ -98,7 +93,6 @@ export function placeOf(entry: CountryGame, cities: readonly CityRecord[]): { ci
   return hit ? { city: hit.name, lat: hit.lat, lng: hit.lng } : null;
 }
 
-// The game's developer that matches the listed studio, or its only developer.
 export function developerOf(entry: CountryGame, game: RawIgdbGame, names: ReadonlyMap<number, string>): number | null {
   const devs = game.involvedCompanies.filter((c) => c.developer).map((c) => c.company);
   const named = devs.find((id) => {

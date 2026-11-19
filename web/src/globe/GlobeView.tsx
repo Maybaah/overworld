@@ -65,12 +65,10 @@ declare global {
   }
 }
 
-// Zoomed in past the starting view, countries in view get more mosaic cells, up to every game they have.
 const FOCUS_BASE_ALTITUDE = 2.1;
 
 function focusOf(pov: { lat: number; lng: number; altitude: number }, fov: number, aspect: number): MosaicFocus | null {
   const alt = Math.max(0.01, pov.altitude);
-  // Cells grow on screen as the camera comes closer, so they get more numerous slower than the view shrinks.
   const raw = (FOCUS_BASE_ALTITUDE / alt) ** 1.2;
   if (raw < 1.5) return null;
   const zoom = 2 ** Math.round(Math.log2(raw));
@@ -80,7 +78,6 @@ function focusOf(pov: { lat: number; lng: number; altitude: number }, fov: numbe
   return { lat: Math.round(pov.lat / grid) * grid, lng: Math.round(pov.lng / grid) * grid, radius, zoom };
 }
 
-// A new zoom step, or panning more than half a view away, changes which countries get extra cells.
 function focusChanged(a: MosaicFocus | null, b: MosaicFocus | null): boolean {
   if (!a || !b) return a !== b;
   if (a.zoom !== b.zoom) return true;
@@ -145,10 +142,8 @@ const tooltipStyle = {
 // The globe never needs to come closer than a few units, so a far near plane buys depth precision:
 // the mosaic sits a hair above the land fill and flickered against it with the default near plane.
 const CAMERA_NEAR = 2;
-// Beyond this the extra pixels cost more GPU time than they add sharpness.
 const MAX_PIXEL_RATIO = 2;
 
-// Over the North Atlantic, so North America, Europe and Africa are all in view at load.
 const START_VIEW = { lat: 36, lng: -32, altitude: 2.1 };
 
 export function GlobeView() {
@@ -290,7 +285,6 @@ export function GlobeView() {
     dirtyRef.current = true;
   }, []);
 
-  // The fill uses the same detailed outlines as the mosaic and the borders, loaded once, so coasts match.
   useEffect(() => {
     let live = true;
     void loadDetailedCountryShapes().then((s) => {
@@ -683,7 +677,6 @@ ${where}`;
         mosaicSettled = false;
         onZoom(globe.pointOfView());
       }
-      // Covers coming into view load while the globe still turns; the settled pass also re-picks sharp ones.
       if (!mosaicSettled && now - mosaicPickedAt > MOVING_PICK_MS) {
         mosaicPickedAt = now;
         mosaic.cameraMoved();

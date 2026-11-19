@@ -26,7 +26,6 @@ function prepare(games: GameSummary[]): Prepared {
   return p;
 }
 
-// Ranks: 0 name prefix, 1 name substring, 2/3 same but ignoring spaces ("pacman" finds "Pac-Man").
 export function searchGames(games: GameSummary[], query: string, limit = 20): GameSummary[] {
   const q = normalize(query);
   if (q === '' || limit <= 0) return [];

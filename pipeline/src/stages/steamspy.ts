@@ -5,11 +5,9 @@ import { STAGE_FILES, type RawSteamApp } from '../raw';
 import { readJsonIfExists, writeJson } from '../stageio';
 
 const API = 'https://steamspy.com/api.php';
-// SteamSpy allows one "all" request per minute.
 const MIN_INTERVAL_MS = 61_000;
 export const OWNERS_FLOOR = 20_000;
 export const REVIEWS_FLOOR = 125;
-// Below the 20,000-owner band a page is still read while it holds this many apps with enough reviews.
 const MIN_QUALIFYING_PER_PAGE = 10;
 const MAX_PAGES = 400;
 
@@ -27,7 +25,6 @@ interface SpyRow {
   owners?: string;
 }
 
-// "20,000 .. 50,000" -> [20000, 50000]
 export function parseOwners(band: string | undefined): [number, number] {
   const nums = (band ?? '').split('..').map((s) => Number(s.replace(/[^0-9]/g, '')));
   return [Number.isFinite(nums[0]) ? nums[0]! : 0, Number.isFinite(nums[1]) ? nums[1]! : 0];

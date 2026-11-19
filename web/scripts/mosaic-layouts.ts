@@ -1,6 +1,3 @@
-// Fits the mosaic for every year once, each year starting from the year before so cells stay put,
-// and writes the sites to mosaic-layouts.bin; the globe then only cuts cells when the year changes.
-// Run after the data pipeline: npx tsx scripts/mosaic-layouts.ts [--data=public/data]
 import { readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';

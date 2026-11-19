@@ -8,7 +8,6 @@ const ALL_MODES: { id: AppMode; label: string }[] = [
   { id: 'insights', label: 'Insights' },
 ];
 
-// Guess mode is built but not released: it only shows in the nav when a link opened it.
 const UNLISTED: AppMode[] = ['guess'];
 
 export function ModeNav() {
@@ -19,7 +18,6 @@ export function ModeNav() {
   const active = MODES.findIndex((m) => m.id === mode);
   const [pill, setPill] = useState<{ x: number; w: number } | null>(null);
 
-  // The highlight slides from the old mode to the new one instead of jumping.
   useLayoutEffect(() => {
     const el = refs.current[active];
     setPill(el ? { x: el.offsetLeft, w: el.offsetWidth } : null);

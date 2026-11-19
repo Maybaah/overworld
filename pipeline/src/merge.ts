@@ -67,7 +67,7 @@ export interface MergeInput {
   resolveCity: (label: string, lat: number, lng: number) => string;
   resolveCountry: (lat: number, lng: number) => string | null;
   gameLimit: number;
-  rawgUsed?: boolean; // RAWG adds took part in choosing the games; its terms ask for a link wherever its data is used
+  rawgUsed?: boolean;
   now: Date;
 }
 
@@ -120,7 +120,6 @@ export interface MergeResult {
 
 export const MOBY_ONLY_COMPANY_OFFSET = 20_000_000;
 
-// Estimated players when the audience pass ran, else IGDB's rating count; one scale per run either way.
 export function popularityOf(g: RawIgdbGame): number {
   return g.players ?? g.totalRatingCount;
 }

@@ -20,9 +20,7 @@ const COMPANY_BATCH = 500;
 const MAX_SCREENSHOTS = 5;
 const GAME_TYPE_IDS = [0, 8, 9];
 const STEAM_SOURCE_ID = 1;
-// Adult games stay off the globe: their covers would fill the mosaic.
 const EROTIC_THEME = 42;
-// In the audience pass the rating pass reads every game with at least this many IGDB ratings.
 const RATING_FLOOR = 25;
 const PLAYED_TYPE = 4;
 const ID_BATCH = 500;
@@ -257,7 +255,6 @@ export async function igdbClient(
     return parsed.filter(isRow);
   }
 
-
   return { http, post, postRows, parseRows };
 }
 
@@ -328,7 +325,6 @@ export async function runIgdbStage(
     games = await audiencePass(steamApps);
   }
 
-  // Review counts from Steam's store API, 200 apps per request; kept in a stage file so a rerun skips it.
   async function steamReviews(appids: number[]): Promise<Map<number, number>> {
     const file = path.join(config.stageDir, STAGE_FILES.steamReviews);
     const cached = config.refresh ? null : await readJsonIfExists<Record<string, number>>(file);
@@ -356,7 +352,6 @@ export async function runIgdbStage(
     return out;
   }
 
-  // Adds every game that Steam or IGDB "Played" says enough people played, then estimates players for all.
   async function audiencePass(apps: RawSteamApp[]): Promise<RawIgdbGame[]> {
     const signals = new Map<number, AudienceSignals>();
     const sig = (id: number) => {
@@ -381,7 +376,6 @@ export async function runIgdbStage(
       if (n % 20 === 0) log(`IGDB played shares: ${signals.size}`);
     }
 
-    // Every Steam app IGDB links to a game that could be on the globe.
     const gamesByApp = new Map<number, number[]>();
     let lastLink = 0;
     for (let n = 0; ; n++) {
@@ -417,7 +411,6 @@ export async function runIgdbStage(
 
     const rawg = await readJsonIfExists<RawRawgGame[]>(path.join(config.stageDir, STAGE_FILES.rawg));
     if (rawg && rawg.length > 0) {
-      // RAWG has no IGDB ids, so its games are matched by title and year to the games already in the pool.
       const titles = new Map<string, { id: number; year: number | null }[]>();
       const addTitle = (id: number, name: string, year: number | null) => {
         const key = normalizeTitle(name);

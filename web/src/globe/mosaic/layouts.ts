@@ -3,11 +3,6 @@ import type { Layout } from './build';
 import type { WorkerGame } from './protocol';
 import { titleKey } from '../titleCovers';
 
-// Precomputed mosaic layouts for every year (web/scripts/mosaic-layouts.ts), so the year slider only has to
-// cut cells instead of fitting them. Binary, little endian:
-// magic, game count, game id hash, year count, then per year: year, record count, records of
-// (id: game id, or minus the anchor game id for a metro area; x, y, weight, fitted area as float32).
-// Each year stores only the sites that changed since the year before.
 const MAGIC = 0x324f534d;
 const RECORD = 20;
 
@@ -72,7 +67,6 @@ export function encodeLayouts(games: readonly WorkerGame[], years: [number, Layo
   return view.buffer;
 }
 
-// Returns null when the file was made for other data.
 export function decodeLayouts(buf: ArrayBuffer, games: readonly WorkerGame[]): Map<number, Layout> | null {
   const view = new DataView(buf);
   if (buf.byteLength < 16 || view.getUint32(0, true) !== MAGIC) return null;

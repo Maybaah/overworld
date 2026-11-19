@@ -6,7 +6,6 @@ import './loader.css';
 const FADE_MS = 450;
 const GIVE_UP_MS = 20000;
 
-// Covers the globe until its first mosaic and cover sheets are in, so the globe appears whole at once.
 export function Loader() {
   const status = useStore((s) => s.status);
   const error = useStore((s) => s.error);

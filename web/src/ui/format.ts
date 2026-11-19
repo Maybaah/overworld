@@ -61,7 +61,6 @@ export const PLAYERS_BASIS_TEXT: Record<PlayersBasis, string> = {
   igdb_ratings: 'estimate from IGDB ratings',
 };
 
-// 6300 -> "6.3K", 1240000 -> "1.2M"
 export function formatPlayers(n: number): string {
   if (n >= 1e9) return `${(n / 1e9).toFixed(n >= 1e10 ? 0 : 1)}B`;
   if (n >= 1e6) return `${(n / 1e6).toFixed(n >= 1e7 ? 0 : 1)}M`;

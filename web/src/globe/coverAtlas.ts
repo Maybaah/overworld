@@ -18,7 +18,6 @@ interface Ready {
 }
 
 export class CoverAtlas {
-  // A 1x1 stand-in until the first cover arrives, so tiers that are never needed take no GPU memory.
   texture: THREE.DataTexture;
   private allocated = false;
   private readonly slots: SlotCache<string>;
@@ -137,7 +136,6 @@ export class CoverAtlas {
       this.loadedTotal++;
       changed = true;
     }
-    // Mip levels of a big atlas are costly to rebuild, so uploads in a burst share one rebuild.
     if (changed) this.mipsDirty = true;
     const now = performance.now();
     if (this.mipsDirty && this.mipmaps && now - this.mipsAt >= MIPS_EVERY_MS) {

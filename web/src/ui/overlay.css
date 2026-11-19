@@ -653,7 +653,6 @@
   margin-bottom: 4px;
 }
 
-/* Motion: one entrance for the chrome, cards slide in with a short blur, the tooltip grows from the pointer. */
 @keyframes ow-up {
   from {
     opacity: 0;

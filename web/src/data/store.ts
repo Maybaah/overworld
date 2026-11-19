@@ -62,8 +62,8 @@ export interface AppState {
   cameraRequest: CameraRequest | null;
   year: number;
   playing: boolean;
-  globeReady: boolean; // the first mosaic and its covers are on the globe
-  shownYear: number | null; // the year the globe shows now; trails year while it rebuilds
+  globeReady: boolean;
+  shownYear: number | null;
   enabledRoles: Set<RoleType>;
   selectedGameId: number | null;
   selectedGameDetail: GameDetail | null;

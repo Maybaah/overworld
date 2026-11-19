@@ -50,7 +50,6 @@ export function YearSlider() {
       }
       elapsed += TICK_MS;
       if (elapsed < step) return;
-      // Wait for the globe to show this year before moving on, so no year is skipped.
       if (shownYear !== null && shownYear !== current && elapsed < MAX_WAIT_MS) return;
       elapsed = 0;
       setYear(current + 1);

@@ -7,7 +7,6 @@ import { GLOBE_RADIUS } from './outline';
 import { SpriteSheets, SPRITE_LAYOUT } from './mosaic/sprites';
 import { dataBase } from '../data/loader';
 
-// Sharpness tiers: a cell moves to the next tier once its cover spans more screen pixels than the current tier has.
 interface Tier {
   layout: AtlasLayout;
   size: 'cover_small' | 'cover_big' | 'cover_big_2x' | '1080p';
@@ -22,7 +21,6 @@ const TIERS: Tier[] = [
 ];
 const TABLE_W = 2048;
 const STICKY = 2.5;
-// One texel per tier, plus one for the prebuilt sprite sheets.
 const STRIDE = TIERS.length + 1;
 const SPRITE = TIERS.length;
 const BASE_COLOR = new THREE.Color('#52525b');
@@ -110,17 +108,15 @@ export interface MosaicStats {
   frameMs: number;
   lowLoaded: number;
   highLoaded: number;
-  showing: number; // cells that show a cover, from any source
+  showing: number;
 }
 
-// Before a new mosaic fades in, its covers on screen get this long to arrive.
 const COVER_WAIT_MS = 1500;
 const FADE_MS = 380;
 const TABLE_EVERY_MS = 90;
 const READY_SHARE = 0.92;
 const EMPTY = new Float32Array(0);
 
-// One mosaic on the globe: its mesh, seams and cell table. A new mosaic fades in over the old one.
 class View {
   readonly mesh: THREE.Mesh;
   readonly lines: THREE.LineSegments;
@@ -160,7 +156,6 @@ class View {
     this.setAlpha(1, false);
   }
 
-  // An incoming view draws above the current one, blended, until it is fully in.
   setAlpha(a: number, front: boolean): void {
     const fading = a < 1;
     this.material.uniforms.uAlpha!.value = a;
@@ -208,7 +203,6 @@ export class MosaicLayer {
   private pixelRatio = 1;
   private seq = 0;
   private firstMesh!: () => void;
-  // Resolves once the first mosaic is on the globe and the cover sprite sheets are in.
   readonly ready: Promise<void>;
   private visibleLow: string[] | null = null;
   private incomingVisible: string[] | null = null;
@@ -273,12 +267,10 @@ export class MosaicLayer {
     this.post({ type: 'init', games, layoutsUrl: `${dataBase()}/mosaic-layouts.bin` });
   }
 
-  // The worker keeps only the latest request, so requests can come as fast as the slider moves.
   request(year: number, maxYear: number, filter: ReadonlySet<number> | null, focus: MosaicFocus | null): void {
     this.post({ type: 'build', seq: ++this.seq, year, maxYear, filter: filter ? [...filter] : null, focus });
   }
 
-  // The year of the mosaic on the globe now.
   get year(): number | null {
     return this.current?.year ?? null;
   }
@@ -331,7 +323,6 @@ export class MosaicLayer {
     };
   }
 
-  // Covers are re-picked once the camera has settled, not while it moves.
   cameraMoved(): void {
     this.needHigh = true;
   }
@@ -443,7 +434,6 @@ export class MosaicLayer {
     this.fadeFrom = null;
   }
 
-  // The new view waits until most of its covers on screen are in (or a short timeout), then fades in.
   private stepFade(now: number): void {
     const v = this.incoming;
     if (!v) return;
@@ -465,8 +455,6 @@ export class MosaicLayer {
     return have >= keys.length * READY_SHARE;
   }
 
-  // Covers in the prebuilt sprite sheets never need the small on-demand atlas.
-  // Covers on screen come first, so zoomed-in detail cells get theirs before off-screen ones.
   private wantLow(): void {
     const order = this.visibleLow ?? this.lowOrder;
     this.atlases[0]!.want(order.filter((c) => !this.sprites.has(c)).slice(0, TIERS[0]!.capacity));
@@ -510,8 +498,6 @@ export class MosaicLayer {
     v.table.needsUpdate = true;
   }
 
-  // Pixels the cover spans on screen, from its laid-out height, the distance and how much the cell faces the camera.
-  // Returns the covers on screen (biggest first) and, for each tier above the first, the covers that need it.
   private pickSharp(v: View, camera: THREE.PerspectiveCamera, heightPx: number): { low: string[]; sharp: string[][]; visible: string[] } {
     const focal = (heightPx * this.pixelRatio) / (2 * Math.tan((camera.fov * Math.PI) / 360));
     const cam = camera.position;

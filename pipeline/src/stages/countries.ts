@@ -11,17 +11,15 @@ import { companiesQuery, CURRENT_FIELDS, gameFields, gamesByIdQuery, igdbClient,
 const PAGE = 500;
 export const COUNTRY_FLOOR = 10;
 
-// Studios of a country, with the games they developed; one sweep over every IGDB company that has both.
 function companyPage(lastId: number): string {
   return `fields country,developed; where country != null & developed != null & id > ${lastId}; sort id asc; limit ${PAGE};`;
 }
 
 export interface FloorCandidate {
   game: RawIgdbGame;
-  developerCountries: number[]; // countries of its developers that have one
+  developerCountries: number[];
 }
 
-// Games are ranked by IGDB ratings, then by having a cover, then newest first.
 export function pickFloor(candidates: FloorCandidate[], country: number, need: number): RawIgdbGame[] {
   return candidates
     .filter((c) => c.developerCountries.length > 0 && c.developerCountries.every((k) => k === country))
@@ -36,8 +34,6 @@ export function pickFloor(candidates: FloorCandidate[], country: number, need: n
     .map((c) => c.game);
 }
 
-// Adds each country's best known games, even below the player floor, until it has COUNTRY_FLOOR games
-// whose developers all come from it, so every country with game studios shows up on the globe.
 export async function runCountriesStage(
   config: PipelineConfig,
   deps: { fetchImpl?: typeof fetch; sleep?: (ms: number) => Promise<void>; log?: (msg: string) => void } = {},
@@ -45,7 +41,6 @@ export async function runCountriesStage(
   const log = deps.log ?? ((msg: string) => console.log(msg));
   const gamesFile = path.join(config.stageDir, STAGE_FILES.igdbGames);
   const companiesFile = path.join(config.stageDir, STAGE_FILES.igdbCompanies);
-  // Games and studios from the hand list are rebuilt on every run, so edits to the list take effect.
   const games = (await readJson<RawIgdbGame[]>(gamesFile)).filter((g) => !g.curated);
   const companies = (await readJson<RawIgdbCompany[]>(companiesFile)).filter((c) => !c.curated);
   const { postRows } = await igdbClient(config, deps, log);
@@ -108,8 +103,6 @@ export async function runCountriesStage(
     }
   }
 
-  // Hand-checked games for countries IGDB has no studios for. A game missing from IGDB, or one IGDB lists
-  // without a matching developer, gets its game or studio record from the list itself, marked as curated.
   const curated = (await readJsonIfExists<CountryGame[]>(path.join(config.curatedDir, 'country-games.json'))) ?? [];
   const byId = new Map([...games, ...added].map((g) => [g.id, g]));
   const matched: { entry: CountryGame; game: RawIgdbGame }[] = [];
@@ -168,7 +161,6 @@ export async function runCountriesStage(
       listed.set(company.id, company);
       companyById.set(company.id, company);
     }
-    // The listed studio leads even when IGDB names other developers too.
     leads.push({ igdbGameId: game.id, game: game.name, igdbCompanyId: company.id, company: company.name, evidenceUrl: entry.evidenceUrl });
     const fix = correctionFor(entry, company.id, company.name, cities);
     if (fix) corrections.push(fix);

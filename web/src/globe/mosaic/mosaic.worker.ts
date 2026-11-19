@@ -68,7 +68,6 @@ function respond(msg: BuildRequest, result: BuildResult, ms: number): void {
   self.postMessage(res, [mesh.position.buffer, mesh.uv.buffer, mesh.cell.buffer, mesh.lines.buffer]);
 }
 
-// Zooming far in adds cells in steps (x4, x8, ...) so the first extra covers show quickly.
 function focusSteps(focus: MosaicFocus | null): (MosaicFocus | null)[] {
   if (!focus || focus.zoom <= FIRST_STEP) return [focus];
   const out: MosaicFocus[] = [];
@@ -80,7 +79,6 @@ function focusSteps(focus: MosaicFocus | null): (MosaicFocus | null)[] {
 const FIRST_STEP = 4;
 let steps: { msg: BuildRequest; focus: MosaicFocus | null }[] = [];
 
-// Builds the latest request step by step; when idle, builds the next year in the direction the slider last moved.
 function pump(): void {
   if (running) return;
   running = true;

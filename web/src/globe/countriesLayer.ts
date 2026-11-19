@@ -48,7 +48,6 @@ export class CountriesLayer {
     scene.add(this.mesh, this.lines);
   }
 
-  // Borders can come from a more detailed map than the fill, so they line up with the mosaic's edges.
   setBorders(shapes: readonly CountryShape[]): void {
     this.borderShapes = shapes;
     this.setLines(shapes);

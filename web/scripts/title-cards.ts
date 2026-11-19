@@ -1,4 +1,3 @@
-// A cover-shaped card with the game's title, for games that have no cover anywhere we can load.
 const PALETTE = ['#1f3a5f', '#3d2c5c', '#4a2f2a', '#1f4a3d', '#4a4320', '#2f3b4a', '#4a2340', '#23404a'];
 export const CARD_W = 264;
 export const CARD_H = 374;
@@ -11,7 +10,6 @@ function hash(s: string): number {
 
 const escape = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
-// Greedy word wrap; a word longer than a line is cut.
 export function wrap(text: string, perLine: number, maxLines: number): string[] {
   const lines: string[] = [];
   let line = '';

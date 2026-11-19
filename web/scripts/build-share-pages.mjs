@@ -232,7 +232,6 @@ export async function buildSharePages({ distDir, env = process.env, log = consol
     written += 1;
     bytes += Buffer.byteLength(html);
   };
-  // games.json is in popularity order; pages beyond the limit would only add hundreds of megabytes.
   for (const game of games.slice(0, SHARE_PAGE_LIMIT)) {
     const html = renderGamePage({ game, lead: companyById.get(game.leadCompanyId), detail: details.get(game.id) ?? null, companyById }, site);
     await put(`g/${game.id}/index.html`, html);

@@ -1,6 +1,5 @@
 import * as THREE from 'three';
 
-// Small covers packed at build time (web/scripts/cover-sprites.ts). A 2px copied border keeps mip levels clean.
 export const SPRITE_LAYOUT = { size: 2048, slotW: 44, slotH: 60, imageW: 40, imageH: 56 } as const;
 
 export interface SpriteIndex {
@@ -14,11 +13,9 @@ export function spriteRect(page: number, slot: number): [number, number, number,
   const cols = Math.floor(size / slotW);
   const x = (slot % cols) * slotW + (slotW - imageW) / 2;
   const y = Math.floor(slot / cols) * slotH + (slotH - imageH) / 2;
-  // The page index rides in the integer part of the x coordinates; the shader splits it off.
   return [page + (x + 0.5) / size, (y + 0.5) / size, page + (x + imageW - 0.5) / size, (y + imageH - 0.5) / size];
 }
 
-// Loads every sprite page into one texture array, most popular page first.
 export class SpriteSheets {
   // A 1x1 placeholder until the index says how many pages there are; texture storage cannot grow later.
   texture: THREE.DataArrayTexture = new THREE.DataArrayTexture(new Uint8Array(4), 1, 1, 1);

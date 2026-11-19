@@ -1,6 +1,3 @@
-// Packs the small cover of every game that can appear in the mosaic, in any year, into a few sprite sheets,
-// so the globe shows the whole mosaic at once instead of covers popping in one by one.
-// Run after the data pipeline: npx tsx scripts/cover-sprites.ts [--data=public/data]
 import { existsSync } from 'node:fs';
 import { mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
@@ -47,7 +44,6 @@ for (let y = FIRST_YEAR; y <= lastYear; y++) {
   const budget = cellBudget(new Map([...byCountry].map(([c, l]) => [c, l.length])), areas, DEFAULT_OPTIONS);
   for (const [c, list] of byCountry) for (const g of list.slice(0, budget.get(c) ?? 1)) wanted.add(g.id);
 }
-// Games without a cover get a title card: a tile in the sheets and a full-size image in covers/title/.
 const covers = games.filter((g) => wanted.has(g.id)).map((g) => g.cover ?? titleKey(g.id));
 const cardOf = new Map(games.filter((g) => !g.cover).map((g) => [titleKey(g.id), g]));
 const regionName = new Intl.DisplayNames(['en'], { type: 'region' });
