@@ -4,10 +4,10 @@ import { meta, seedStore } from './testUtils';
 import { Attribution } from './Attribution';
 
 describe('Attribution', () => {
-  it('shows nothing for real data', () => {
+  it('links the country and studio pages for real data', () => {
     seedStore();
-    const { container } = render(<Attribution />);
-    expect(container).toBeEmptyDOMElement();
+    render(<Attribution />);
+    expect(screen.getByRole('link', { name: 'Countries and studios' })).toHaveAttribute('href', '/countries/');
   });
 
   it('flags sample data', () => {

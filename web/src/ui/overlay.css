@@ -656,6 +656,15 @@
   font-size: 12px;
 }
 
+.ow-browse {
+  color: var(--text-secondary);
+  text-decoration: none;
+}
+
+.ow-browse:hover {
+  color: var(--text);
+}
+
 .ow-fixture-note {
   color: var(--accent);
   font-weight: 500;
@@ -810,5 +819,9 @@
     right: 8px;
     bottom: 8px;
     max-width: none;
+  }
+
+  .ow-attribution.ow-attribution-link {
+    left: auto;
   }
 }
