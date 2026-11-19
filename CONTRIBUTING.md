@@ -59,7 +59,7 @@ npm run fixture
 npm run dev
 ```
 
-This runs the app on sample data with no API keys. See the README for real data, and [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for how the code is laid out.
+This runs the app on sample data with no API keys. [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md) covers real data, keys and every command, and [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) how the code is laid out.
 
 ### Before you open a pull request
 
