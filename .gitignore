@@ -12,3 +12,5 @@ web/public/data/
 
 # Output of web/scripts/measure.mjs
 docs/screenshots/
+
+.env.*.local

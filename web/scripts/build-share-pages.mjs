@@ -243,6 +243,8 @@ export async function buildSharePages({ distDir, env = process.env, log = consol
 
 const entry = process.argv[1] ? pathToFileURL(path.resolve(process.argv[1])).href : '';
 if (import.meta.url === entry) {
-  const distDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', 'dist');
-  await buildSharePages({ distDir });
+  const webDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+  const { loadEnv } = await import('vite');
+  const env = { ...loadEnv(process.env.MODE ?? 'production', webDir, ''), ...process.env };
+  await buildSharePages({ distDir: path.join(webDir, 'dist'), env });
 }

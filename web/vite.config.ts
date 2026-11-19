@@ -1,4 +1,5 @@
 import { execSync } from 'node:child_process';
+import { rmSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { defineConfig, type Plugin } from 'vitest/config';
 import react from '@vitejs/plugin-react';
@@ -25,9 +26,25 @@ function appVersion(): Plugin {
 const repoRoot = fileURLToPath(new URL('..', import.meta.url));
 const shared = fileURLToPath(new URL('../shared/model.ts', import.meta.url));
 
+function dropSampleData(): Plugin {
+  let outDir = '';
+  let dataBase = '';
+  return {
+    name: 'overworld-drop-sample-data',
+    apply: 'build',
+    configResolved(config) {
+      dataBase = String(config.env.VITE_DATA_BASE ?? '');
+      outDir = config.build.outDir.startsWith('/') || /^[A-Za-z]:/.test(config.build.outDir) ? config.build.outDir : `${config.root}/${config.build.outDir}`;
+    },
+    closeBundle() {
+      if (!dataBase.includes('data-fixture')) rmSync(`${outDir}/data-fixture`, { recursive: true, force: true });
+    },
+  };
+}
+
 export default defineConfig({
   base: process.env.VITE_BASE ?? '/',
-  plugins: [react(), steamProxyPlugin({ envDir: repoRoot }), appVersion()],
+  plugins: [react(), steamProxyPlugin({ envDir: repoRoot }), appVersion(), dropSampleData()],
   resolve: { alias: { '@shared': shared } },
   server: { fs: { allow: ['..'] } },
   // The mosaic worker loads country outlines as a separate chunk, which only ES-module workers allow.
