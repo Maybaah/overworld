@@ -93,6 +93,8 @@ Keys live only in `.env`, which is git-ignored. The Steam key is used by a small
 | `npm test --prefix web` | app tests |
 | `npm run build --prefix web` | production build |
 | `node scripts/measure.mjs --data=real` (in `web/`) | frame-rate and behavior check in a real Chrome |
+| `node scripts/supabase.mjs migrate` | apply `supabase/migrations/` to your Supabase project |
+| `node scripts/supabase.mjs add-admin <email>` | let an address read `/admin.html` |
 
 ## Layout
 
@@ -101,10 +103,20 @@ shared/model.ts      data contract used by the pipeline and the app
 pipeline/src/        fetch stages, merge, validation
 pipeline/data/       hand-kept corrections (locations, lead studios, specialties)
 web/src/             the app: data layer, globe, panels, guess, My globe, insights
-web/server/          Steam relay (dev middleware and a Cloudflare Worker entry)
+web/src/admin/       the /admin.html usage stats page
+web/src/telemetry/   anonymous usage events sent by the app
+web/server/          Cloudflare Worker: Steam relay and usage events relay
+supabase/            database schema for usage stats, with tests
+scripts/             Supabase helper
 reports/             validation, review and performance reports
 docs/                API research notes and screenshots
 ```
+
+## Usage stats and the admin page
+
+The public site counts anonymous usage (game opens, searches, shares, load time, errors) and shows it on `/admin.html` to the addresses on its admin list. No cookies, no IP addresses, raw events deleted after 48 hours: [docs/PRIVACY.md](docs/PRIVACY.md). Open any page with `?noanalytics=1` to send nothing.
+
+A fork records nothing until its owner sets up their own Supabase project: [docs/SELF-HOSTING.md](docs/SELF-HOSTING.md). To see the admin page without a backend, open `/admin.html?mock=1`.
 
 ## Data sources and attribution
 
