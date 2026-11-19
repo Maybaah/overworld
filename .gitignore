@@ -9,3 +9,6 @@ coverage/
 .vite/
 web/public/data-fixture/
 web/public/data/
+
+# Output of web/scripts/measure.mjs
+docs/screenshots/
