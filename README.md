@@ -161,4 +161,4 @@ Overworld is not affiliated with or endorsed by IGDB, Twitch, Wikidata, MobyGame
 
 Corrections to studio locations and lead studios are the most useful contribution and need no code: [CONTRIBUTING.md](CONTRIBUTING.md) shows the format. Report security issues privately, as [SECURITY.md](SECURITY.md) describes.
 
-Code under the [MIT License](LICENSE). The data the pipeline produces comes from the sources above and keeps their terms.
+Code under the [MIT License](LICENSE), © 2026 Artem Kovtoniuk and Overworld contributors. Libraries, fonts, map data and game data keep their own terms: [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
