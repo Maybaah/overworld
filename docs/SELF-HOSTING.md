@@ -131,6 +131,10 @@ Free plan limits: 20,000 files per deploy (a full build has about 10,300, most o
 
 How the data is kept, what is recorded and what never is: [PRIVACY.md](PRIVACY.md). In short, `log_events` checks every field against an allow-list and rate-limits every tab and the whole site; tabs and events are rolled into hourly counts and deleted after 48 hours; no cron job is needed.
 
+<p align="center">
+  <img src="readme/admin.webp" width="80%" alt="The admin page with sample data: totals for tabs, game opens, searches, shares, My globe lookups and errors, an hourly chart for the week, and ranked lists">
+</p>
+
 A free Supabase project is paused after a week with no requests. Live traffic keeps it awake; if the site is quiet, unpause it from the dashboard.
 
 ## 6. Check the live site
