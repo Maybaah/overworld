@@ -95,7 +95,7 @@ Found a studio in the wrong city, or a game credited to the wrong studio? That i
 
 ## Thanks
 
-Overworld started after I saw [Satellites](https://github.com/dev-Armaan/satellites) by [dev-Armaan](https://github.com/dev-Armaan), a globe of everything in orbit. I wanted the same feeling for games: one globe, and every dot something you can click and trace back to where it came from.
+Overworld started after I saw [Satellites](https://github.com/dev-Armaan/satellites) by [dev-Armaan](https://github.com/dev-Armaan), a 3D globe of satellites in orbit. I wanted the same feeling for games: one globe, and every dot something you can click and trace back to where it came from.
 
 ## License
 
