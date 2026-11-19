@@ -15,7 +15,7 @@ Keeps `STEAM_API_KEY` off the browser. One route: `GET /api/steam/owned?profile=
 
 ### Deploying the Worker
 
-Deploying is your decision. With Wrangler, point `main` at `web/server/worker.ts`, add the secret with `wrangler secret put STEAM_API_KEY`, and route `/api/steam/*` to it.
+`wrangler.toml` at the repository root deploys this Worker together with the built site: `npm run deploy`, then `npx wrangler secret put STEAM_API_KEY`. Step by step in `docs/SELF-HOSTING.md`.
 
 If the static site is hosted on a different origin from the Worker, build it with `VITE_STEAM_PROXY_URL` set to the Worker's origin (no trailing slash), and set `ALLOWED_ORIGIN` on the Worker to the site's origin.
 
