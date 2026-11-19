@@ -1,165 +1,103 @@
+<div align="center">
+
+<a href="https://overworld.maybaah.com"><img src="web/public/favicon.svg" width="72" height="72" alt="Overworld logo: a globe with a yellow dot"></a>
+
 # Overworld
 
 **A 3D globe of where video games are made.**
 
-Every country is filled with the covers of the games made there, about 30,000 of them. Open a game and arcs fly from its lead studio to every company that worked on it, colored by role: co-development, ports, publishing, localization, QA, art and audio. Drag the year slider and watch the industry grow from 1970 to today.
+Thirty thousand games, mapped to the studios that made them.
 
-![The globe over the North Atlantic: Europe and North America filled with a mosaic of game covers, country names on top, a year slider at the bottom](docs/readme/globe.webp)
+[![Open the globe](https://img.shields.io/badge/open_the_globe-overworld.maybaah.com-56B4E9?style=for-the-badge)](https://overworld.maybaah.com)
 
-## What it does
+[![CI](https://github.com/Maybaah/overworld/actions/workflows/ci.yml/badge.svg)](https://github.com/Maybaah/overworld/actions/workflows/ci.yml) [![License: MIT](https://img.shields.io/badge/license-MIT-F0E442)](LICENSE) ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white) ![React](https://img.shields.io/badge/React-20232A?logo=react&logoColor=61DAFB) ![three.js](https://img.shields.io/badge/three.js-000000?logo=threedotjs&logoColor=white) ![Cloudflare Workers](https://img.shields.io/badge/Cloudflare_Workers-F38020?logo=cloudflare&logoColor=white)
 
-- **Explore.** Each country is a mosaic of its games, sized by how many people played them. Turn on zoom detail (the grid button) and zooming in splits the cells until every game has its own. Click a country, a city or a studio for its list, or search any title.
-- **A card per game.** The lead studio and where it is, every other company with its role and city, the estimated number of players, and a link to each source record.
-- **My globe.** Enter a public Steam profile and see where your library was made: "43% of your games come from the United States". A sample library works without one.
-- **Insights.** Games per million people by country, genres by region, indie and major publishers over time, and where outside work flows between countries.
-- **Sharing.** Every view has a link. The 10,000 most played games get their own link-preview pages, and any card can be saved or shared as an image.
+[Features](#features) · [How it works](#how-it-works) · [Data](#where-the-data-comes-from) · [Contributing](#contributing) · [Run it yourself](docs/DEVELOPMENT.md)
 
-![Assassin's Creed Valhalla opened: arcs from Ubisoft Montreal to Ubisoft studios in Quebec, Bordeaux, Kyiv, Bucharest, Sofia and more, with the game card listing every company by role](docs/readme/game-arcs.webp)
+<br>
 
-<p align="center">
-  <img src="docs/readme/insights.webp" width="49%" alt="Insights: games led per million people, with Andorra, Finland and Sweden on top and Europe shaded on the globe">
-  <img src="docs/readme/myglobe.webp" width="49%" alt="My globe with a sample library: 43% of the games come from the United States, then the United Kingdom, Canada and Sweden">
-</p>
+<a href="https://overworld.maybaah.com"><img src="docs/readme/globe.webp" alt="The globe over the North Atlantic: Europe and North America filled with a mosaic of game covers, country names on top, a year slider at the bottom"></a>
+
+</div>
+
+## Features
+
+- 🌍 **Explore.** Every country is a mosaic of the games made there, each cover sized by how many people played it. Click a country, a city or a studio for its list, or search any title.
+- 🛰️ **Follow a game.** Open one and arcs fly from its lead studio to every company that worked on it: co-development, ports, publishing, localization, QA, art and audio.
+- ⏳ **Travel in time.** Drag the year slider and watch the industry grow from 1970 to today.
+- 🎮 **My globe.** Enter a public Steam profile and see where your library was made, such as *"43% of your games come from the United States"*. A sample library works without one.
+- 📊 **Insights.** Games per million people by country, genres by region, indie and major publishers over time, and where outside work flows between countries.
+- 🔗 **Share anything.** Every view has its own link, and any game card can be saved or shared as an image.
+
+<table>
+  <tr>
+    <td width="50%"><img src="docs/readme/game-arcs.webp" alt="Assassin's Creed Valhalla opened: arcs from Ubisoft Montreal to Ubisoft studios in Quebec, Bordeaux, Kyiv, Bucharest, Sofia and more, with the game card listing every company by role"></td>
+    <td width="50%"><img src="docs/readme/place-japan.webp" alt="Zoomed in on Japan: the country split into hundreds of small cover cells, with Tokyo, Osaka and Kyoto at the top of the city list"></td>
+  </tr>
+  <tr>
+    <td align="center"><sub><b>A game and every studio behind it</b></sub></td>
+    <td align="center"><sub><b>A country, its cities and its games</b></sub></td>
+  </tr>
+  <tr>
+    <td><img src="docs/readme/insights.webp" alt="Insights: games led per million people, with Andorra, Finland and Sweden on top and Europe shaded on the globe"></td>
+    <td><img src="docs/readme/myglobe.webp" alt="My globe with a sample library: 43% of the games come from the United States, then the United Kingdom, Canada and Sweden"></td>
+  </tr>
+  <tr>
+    <td align="center"><sub><b>Insights by country and region</b></sub></td>
+    <td align="center"><sub><b>Where your Steam library was made</b></sub></td>
+  </tr>
+</table>
 
 ## How it works
 
-### One pipeline, many sources
+**One dataset from many sources.** A pipeline pulls games, companies and their roles from IGDB, player numbers from Steam, RAWG and IGDB, studio headquarters from Wikidata and extra credits from MobyGames, then merges them into static files. The set is every main game, remake or remaster with at least 5,000 estimated players: about 39,000 games, 22,000 companies and 162 countries.
 
-```
-SteamSpy, Steam ──► who played what (owner bands, review counts)
-RAWG            ──► console and older games
-IGDB            ──► games, companies, roles, covers
-Wikidata        ──► studio headquarters and coordinates, populations
-MobyGames       ──► extra credits for the most played games
-pipeline/data/  ──► hand-kept corrections, each with an evidence link
-                          │
-                 merge ──► validate ──► static JSON in web/public/data/
-```
+**Every point can be traced.** Each game records how its lead studio was chosen, and each studio how its location was found: a hand correction, a Wikidata headquarters, its parent company's city, or only a country. The game card shows this, so a weak guess looks like one.
 
-The game set is every IGDB main game, remake or remaster with at least 5,000 estimated players: 39,289 games and 22,349 companies. Players come from the strongest signal a game has: Steam reviews, IGDB "Played" marks, RAWG adds or IGDB ratings, each calibrated against Steam. Countries with few studios also get their best known games, plus a hand-checked list for countries IGDB has no studios for, so 162 countries are on the map.
-
-### Every point can be traced
-
-Each game records how its lead studio was chosen, and each studio how its location was found: a hand correction, a Wikidata headquarters statement, its parent's city, or only a country. The game card shows this, so a weak guess looks like one. Every record keeps the name and id of the source it came from.
-
-### A mosaic of 30,000 covers
-
-Each country is cut into cells with a power diagram (a weighted Voronoi treemap) in an equal-area projection: first between its metro areas, then between their games, with each cell's area following popularity. The whole globe has 1,500 cells; with zoom detail on, zooming in adds cells for the countries in view until every game has one. Fitting runs in a worker, every year is fitted once at build time, and small covers ship as sprite sheets so the mosaic appears whole instead of tile by tile.
+**A mosaic, not a map pin.** Each country is cut into cells with a weighted Voronoi treemap, and every cell's area follows a game's popularity. Turn on zoom detail and the cells keep splitting as you zoom in, until every game has its own.
 
 <p align="center">
-  <img src="docs/readme/place-japan.webp" width="66%" alt="Zoomed in on Japan: the country split into hundreds of small cover cells, with Tokyo, Osaka and Kyoto at the top of the city list">
-  <img src="docs/readme/phone.webp" width="22%" alt="The Witcher 3 open on a phone: the game card shows CD Projekt RED in Warsaw, Saber Interactive for the port and WB Games among the publishers">
+  <img src="docs/readme/phone.webp" width="240" alt="The Witcher 3 open on a phone: the game card shows CD Projekt RED in Warsaw, Saber Interactive for the port and WB Games among the publishers">
 </p>
 
-### Static files and one small Worker
+**Known limits.** A studio sits where it is based now, not where it was when each game was made. IGDB rarely records localization, QA, art or audio work, so those arcs are sparse. About 8,800 games are not drawn because no source knows where their lead studio is.
 
-The site is plain static files. A Cloudflare Worker does two things only: it keeps the Steam key off the browser for My globe, and it relays anonymous usage events. Without it, everything but those two still works.
+The full tour of the code is in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
-Known limits:
-
-- A studio sits where it is based now, not where it was when each game was made.
-- IGDB has no flags for localization, QA, art or audio work, so those arcs are sparse.
-- About 8,800 games are not drawn because no source knows their lead studio's country.
-
-More in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
-
-## Privacy
-
-The public site counts anonymous usage: games opened, searches, shares, load time and errors. No cookies, no IP addresses, no search text, no Steam profiles. Raw events are deleted after 48 hours, leaving hourly counts. Open any page with `?noanalytics=1` and nothing is sent; Do Not Track and Global Privacy Control are respected.
-
-The counts are shown on `/admin.html` to the addresses on its admin list. The full list of what is recorded is in [docs/PRIVACY.md](docs/PRIVACY.md).
-
-<p align="center">
-  <img src="docs/readme/admin.webp" width="80%" alt="The admin page with sample data: totals for tabs, game opens, searches, shares, My globe lookups and errors, an hourly chart for the week, and ranked lists">
-</p>
-
-## Run it locally
-
-Node 22 or newer.
-
-```bash
-git clone https://github.com/Maybaah/overworld.git
-cd overworld
-npm install
-npm run fixture
-npm run dev
-```
-
-That is the app at `http://localhost:5173` on 10,000 obviously fake games, with no API keys. `/admin.html?mock=1` shows the admin page with sample numbers.
-
-### With real data
-
-Copy `.env.example` to `.env`, fill in the keys, then build the data:
-
-```bash
-npm run pipeline
-npm run sprites
-npm run layouts
-npm run dev:real
-```
-
-The pipeline caches every response in `pipeline/.cache/` and skips stages that already ran. `-- --refresh` fetches again; `-- --only=merge,validate` reruns single stages.
-
-| Key | Needed for | Where to get it |
-| --- | --- | --- |
-| `TWITCH_CLIENT_ID`, `TWITCH_CLIENT_SECRET` | IGDB, required | <https://dev.twitch.tv/console/apps> |
-| `RAWG_API_KEY` | console and older games | <https://rawg.io/apidocs> |
-| `MOBYGAMES_API_KEY` | extra credits, optional | <https://www.mobygames.com/info/api/> |
-| `STEAM_API_KEY` | My globe | <https://steamcommunity.com/dev/apikey> |
-| `WIKIDATA_USER_AGENT_CONTACT` | a contact for Wikidata's API policy | a URL or email of your choice |
-
-Keys live only in `.env`, which is git-ignored.
-
-### Commands
-
-| Command | What it does |
-| --- | --- |
-| `npm run dev` | the app on sample data |
-| `npm run dev:real` | the app on real data from `web/public/data/` |
-| `npm test` | all tests; `test:pipeline` and `test:web` run one side |
-| `npm run typecheck` | TypeScript, pipeline and app |
-| `npm run build` | production build into `web/dist/`, with `/admin.html` and share pages |
-| `npm run deploy` | build and deploy to Cloudflare (`wrangler.toml`) |
-| `npm run pipeline` | fetch, merge, write and validate the data |
-| `npm run sprites`, `npm run layouts` | cover sprite sheets and yearly mosaic layouts, after the pipeline |
-| `npm run supabase -- migrate` | apply the usage stats schema to your Supabase project |
-
-<details>
-<summary><b>Project layout</b></summary>
-
-```
-shared/model.ts   the data contract between the pipeline and the app
-pipeline/         fetch stages, merge, validation, hand-kept corrections
-web/src/          data layer, globe, panels, modes, sharing, telemetry, admin page
-web/server/       the Cloudflare Worker: Steam relay and events relay
-web/scripts/      build steps: sprites, mosaic layouts, share pages
-supabase/         usage stats schema and its tests
-docs/             architecture, self-hosting, privacy, API research
-```
-
-</details>
-
-## Self-hosting
-
-The whole site deploys as one Cloudflare Worker on the free plan with `npm run deploy`: static files plus the two `/api` routes. My globe needs a Steam key; usage stats need a free Supabase project, and nothing is recorded until you set one up. From clone to a live site on your domain, step by step: [docs/SELF-HOSTING.md](docs/SELF-HOSTING.md).
-
-## Data and credits
+## Where the data comes from
 
 | Source | Used for |
 | --- | --- |
-| [IGDB](https://www.igdb.com) | games, companies, roles, covers and screenshots, under the IGDB API terms |
-| [Wikidata](https://www.wikidata.org) | headquarters, coordinates and populations (CC0) |
+| [IGDB](https://www.igdb.com) | games, companies, roles, covers |
+| [Wikidata](https://www.wikidata.org) | studio headquarters, coordinates, populations |
+| [SteamSpy](https://steamspy.com) and Steam | player estimates and the libraries in My globe |
+| [RAWG](https://rawg.io) | console and older games; each game card links its RAWG page |
 | [MobyGames](https://www.mobygames.com) | extra developer and publisher credits |
-| [RAWG](https://rawg.io) | player signals for console and older games; each game card links its RAWG page |
-| [SteamSpy](https://steamspy.com) and the Steam Web API | player estimates, and the libraries in My globe |
-| [GeoNames](https://www.geonames.org) | city coordinates for corrections (CC BY 4.0), through `all-the-cities` |
-| [Natural Earth](https://www.naturalearthdata.com) | country shapes, through `world-atlas` |
-| Geist and Geist Mono | fonts by Vercel (SIL OFL 1.1) |
+| [Natural Earth](https://www.naturalearthdata.com), [GeoNames](https://www.geonames.org) | country shapes and city coordinates |
 
-Overworld is not affiliated with or endorsed by IGDB, Twitch, Wikidata, MobyGames, RAWG, Valve or any game company. Game titles and artwork belong to their owners.
+Overworld is not affiliated with or endorsed by any of these sources, Valve or any game company. Game titles and artwork belong to their owners. Full credits and licenses: [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
-## Contributing and license
+## Privacy
 
-Corrections to studio locations and lead studios are the most useful contribution and need no code: [CONTRIBUTING.md](CONTRIBUTING.md) shows the format. Report security issues privately, as [SECURITY.md](SECURITY.md) describes.
+No accounts, no cookies, no ads. The site counts anonymous usage, such as which games are opened, so it can get better; it never records IP addresses, search text or Steam profiles. Do Not Track is respected, and `?noanalytics=1` turns counting off. Details: [docs/PRIVACY.md](docs/PRIVACY.md).
 
-Code under the [MIT License](LICENSE), © 2026 Artem Kovtoniuk and Overworld contributors. Libraries, fonts, map data and game data keep their own terms: [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+## Contributing
+
+Found a studio in the wrong city, or a game credited to the wrong studio? That is the most useful fix, and it needs no code: [CONTRIBUTING.md](CONTRIBUTING.md) shows the format, with a source link for every change.
+
+| I want to… | Read |
+| --- | --- |
+| fix a location or a lead studio | [CONTRIBUTING.md](CONTRIBUTING.md) |
+| run the code on my machine | [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md) |
+| understand how it is built | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) |
+| host my own copy | [docs/SELF-HOSTING.md](docs/SELF-HOSTING.md) |
+| report a security problem | [SECURITY.md](SECURITY.md) |
+
+## License
+
+Code under the [MIT License](LICENSE), © 2026 Artem Kovtoniuk and Overworld contributors. Libraries, fonts, map data and game data keep their own terms.
+
+<div align="center">
+<br>
+<a href="https://overworld.maybaah.com"><b>overworld.maybaah.com</b></a>
+</div>
