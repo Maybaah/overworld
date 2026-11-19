@@ -119,7 +119,7 @@ One zustand store, `web/src/data/store.ts`. Panels call its actions (`selectGame
 The part with the most moving pieces:
 
 1. `mosaic/build.ts` splits each country between its metro areas, then each metro area between its games, as a power diagram (a weighted Voronoi treemap, `mosaic/geometry.ts`) in an equal-area projection. Cell area follows popularity.
-2. The whole-globe view has about 3,000 cells shared by √(games × area). Zooming in adds cells for the countries in view, in steps, up to every game.
+2. The whole-globe view has about 1,500 cells shared by √(games × area). With zoom detail on (`zoomDetail` in the store, off by default, kept in localStorage), zooming in adds cells for the countries in view, in steps, up to every game.
 3. It runs in a worker (`mosaic/mosaic.worker.ts`, messages in `mosaic/protocol.ts`). The worker keeps only the latest request and prefetches the next year.
 4. `npm run layouts` fits every year once into `mosaic-layouts.bin` (format in `mosaic/layouts.ts`), so moving the year slider only cuts cells.
 5. `mosaicLayer.ts` draws it. Small covers come from sprite sheets packed by `npm run sprites`; sharper tiers load into atlases (`coverAtlas.ts`) only when a cell is big enough on screen. Games without a cover get a title card (`titleCovers.ts`).

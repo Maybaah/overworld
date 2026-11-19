@@ -8,7 +8,7 @@ Every country is filled with the covers of the games made there, about 30,000 of
 
 ## What it does
 
-- **Explore.** Each country is a mosaic of its games, sized by how many people played them. Zoom in and the cells split until every game has its own. Click a country, a city or a studio for its list, or search any title.
+- **Explore.** Each country is a mosaic of its games, sized by how many people played them. Turn on zoom detail (the grid button) and zooming in splits the cells until every game has its own. Click a country, a city or a studio for its list, or search any title.
 - **A card per game.** The lead studio and where it is, every other company with its role and city, the estimated number of players, and a link to each source record.
 - **My globe.** Enter a public Steam profile and see where your library was made: "43% of your games come from the United States". A sample library works without one.
 - **Insights.** Games per million people by country, genres by region, indie and major publishers over time, and where outside work flows between countries.
@@ -44,7 +44,7 @@ Each game records how its lead studio was chosen, and each studio how its locati
 
 ### A mosaic of 30,000 covers
 
-Each country is cut into cells with a power diagram (a weighted Voronoi treemap) in an equal-area projection: first between its metro areas, then between their games, with each cell's area following popularity. The whole globe starts at 3,000 cells; zooming in adds cells for the countries in view until every game has one. Fitting runs in a worker, every year is fitted once at build time, and small covers ship as sprite sheets so the mosaic appears whole instead of tile by tile.
+Each country is cut into cells with a power diagram (a weighted Voronoi treemap) in an equal-area projection: first between its metro areas, then between their games, with each cell's area following popularity. The whole globe has 1,500 cells; with zoom detail on, zooming in adds cells for the countries in view until every game has one. Fitting runs in a worker, every year is fitted once at build time, and small covers ship as sprite sheets so the mosaic appears whole instead of tile by tile.
 
 <p align="center">
   <img src="docs/readme/place-japan.webp" width="66%" alt="Zoomed in on Japan: the country split into hundreds of small cover cells, with Tokyo, Osaka and Kyoto at the top of the city list">
