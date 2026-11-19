@@ -22,12 +22,12 @@ Thirty thousand games, mapped to the studios that made them.
 
 ## Features
 
-- 🌍 **Explore.** Every country is a mosaic of the games made there, each cover sized by how many people played it. Click a country, a city or a studio for its list, or search any title.
-- 🛰️ **Follow a game.** Open one and arcs fly from its lead studio to every company that worked on it: co-development, ports, publishing, localization, QA, art and audio.
-- ⏳ **Travel in time.** Drag the year slider and watch the industry grow from 1970 to today.
-- 🎮 **My globe.** Enter a public Steam profile and see where your library was made, such as *"43% of your games come from the United States"*. A sample library works without one.
-- 📊 **Insights.** Games per million people by country, genres by region, indie and major publishers over time, and where outside work flows between countries.
-- 🔗 **Share anything.** Every view has its own link, and any game card can be saved or shared as an image.
+- **Explore.** Every country is a mosaic of the games made there, each cover sized by how many people played it. Click a country, a city or a studio for its list, or search any title.
+- **Follow a game.** Open one and arcs fly from its lead studio to every company that worked on it: co-development, ports, publishing, localization, QA, art and audio.
+- **Travel in time.** Drag the year slider and watch the industry grow from 1970 to today.
+- **My globe.** Enter a public Steam profile and see where your library was made, such as "43% of your games come from the United States". A sample library works without one.
+- **Insights.** Games per million people by country, genres by region, indie and major publishers over time, and where outside work flows between countries.
+- **Share.** Every view has its own link, and any game card can be saved or shared as an image.
 
 <table>
   <tr>
@@ -92,6 +92,10 @@ Found a studio in the wrong city, or a game credited to the wrong studio? That i
 | understand how it is built | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) |
 | host my own copy | [docs/SELF-HOSTING.md](docs/SELF-HOSTING.md) |
 | report a security problem | [SECURITY.md](SECURITY.md) |
+
+## Thanks
+
+Overworld started after I saw [Satellites](https://github.com/dev-Armaan/satellites) by [dev-Armaan](https://github.com/dev-Armaan), a globe of everything in orbit. I wanted the same feeling for games: one globe, and every dot something you can click and trace back to where it came from.
 
 ## License
 
