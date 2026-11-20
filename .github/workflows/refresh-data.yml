@@ -42,7 +42,10 @@ jobs:
           TWITCH_CLIENT_SECRET: ${{ secrets.TWITCH_CLIENT_SECRET }}
           MOBYGAMES_API_KEY: ${{ secrets.MOBYGAMES_API_KEY }}
           WIKIDATA_USER_AGENT_CONTACT: ${{ vars.WIKIDATA_USER_AGENT_CONTACT || format('https://github.com/{0}', github.repository) }}
-        run: npm run pipeline -- --refresh --limit=${{ inputs.limit || '10000' }}
+          LIMIT: ${{ inputs.limit || '10000' }}
+        run: |
+          [[ "$LIMIT" =~ ^[0-9]+$ ]] || { echo "limit must be a number"; exit 1; }
+          npm run pipeline -- --refresh --limit="$LIMIT"
 
       - name: Pack cover sprite sheets
         run: npm run sprites
