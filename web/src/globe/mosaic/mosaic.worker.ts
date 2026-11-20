@@ -68,15 +68,6 @@ function respond(msg: BuildRequest, result: BuildResult, ms: number, last: boole
   self.postMessage(res, [mesh.position.buffer, mesh.uv.buffer, mesh.cell.buffer, mesh.lines.buffer]);
 }
 
-function focusSteps(focus: MosaicFocus | null): (MosaicFocus | null)[] {
-  if (!focus || focus.zoom <= FIRST_STEP) return [focus];
-  const out: MosaicFocus[] = [];
-  for (let z = FIRST_STEP; z < focus.zoom; z *= 2) out.push({ ...focus, zoom: z });
-  out.push(focus);
-  return out;
-}
-
-const FIRST_STEP = 4;
 let steps: { msg: BuildRequest; focus: MosaicFocus | null }[] = [];
 
 function pump(): void {
@@ -89,7 +80,7 @@ function pump(): void {
       queued = null;
       if (lastYear !== null && msg.year !== lastYear) direction = Math.sign(msg.year - lastYear);
       lastYear = msg.year;
-      steps = focusSteps(msg.focus).map((focus) => ({ msg, focus }));
+      steps = [{ msg, focus: msg.focus }];
     }
     const step = steps.shift();
     if (!step) return;
