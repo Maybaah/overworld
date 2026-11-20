@@ -32,6 +32,7 @@ export class CoverAtlas {
   private loadedTotal = 0;
   private mipsDirty = false;
   private mipsAt = -Infinity;
+  private evictedKeys: string[] = [];
 
   constructor(
     private readonly renderer: THREE.WebGLRenderer,
@@ -123,12 +124,16 @@ export class CoverAtlas {
     if (this.uploads.length > 0) this.allocate();
     for (let n = 0; n < UPLOADS_PER_FRAME && this.uploads.length > 0; n++) {
       const { key, bitmap } = this.uploads.shift()!;
-      const got = this.slots.acquire(key, (k) => this.pinned.has(k));
+      const wanted = this.pinned.has(key);
+      const got = this.slots.acquire(key, (k) => !wanted || this.pinned.has(k));
       if (!got) {
         bitmap.close();
         continue;
       }
-      if (got.evicted !== null) this.readyAt.delete(got.evicted);
+      if (got.evicted !== null) {
+        this.readyAt.delete(got.evicted);
+        this.evictedKeys.push(got.evicted);
+      }
       const o = slotOrigin(got.slot, this.layout);
       this.upload(bitmap, o.x, o.y);
       bitmap.close();
@@ -148,6 +153,12 @@ export class CoverAtlas {
       gl.generateMipmap(gl.TEXTURE_2D);
     }
     return changed;
+  }
+
+  takeEvicted(): string[] {
+    const out = this.evictedKeys;
+    this.evictedKeys = [];
+    return out;
   }
 
   // Straight texSubImage2D: three's copyTextureToTexture reads pixel-store state back from the GPU on every copy,

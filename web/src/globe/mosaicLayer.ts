@@ -20,9 +20,11 @@ const TIERS: Tier[] = [
   { layout: { size: 3072, height: 2176, slotW: 768, slotH: 1088, imageW: 762, imageH: 1080 }, size: '1080p', capacity: 8, inFlight: 2 },
 ];
 const TABLE_W = 2048;
-const STICKY = 2.5;
-const STRIDE = TIERS.length + 1;
+const STRIDE = TIERS.length + 2;
 const SPRITE = TIERS.length;
+const READY = TIERS.length + 1;
+const KEEP_PX = SPRITE_LAYOUT.imageH;
+const SHARP_FADE_S = 0.3;
 const BASE_COLOR = new THREE.Color('#52525b');
 
 const VERTEX = `
@@ -34,6 +36,7 @@ flat varying vec4 vT1;
 flat varying vec4 vT2;
 flat varying vec4 vT3;
 flat varying vec4 vS;
+flat varying vec4 vR;
 flat varying float vCell;
 ivec2 at(int k) { return ivec2(k % ${TABLE_W}, k / ${TABLE_W}); }
 void main() {
@@ -43,6 +46,7 @@ void main() {
   vT2 = texelFetch(uTable, at(c + 2), 0);
   vT3 = texelFetch(uTable, at(c + 3), 0);
   vS = texelFetch(uTable, at(c + ${SPRITE}), 0);
+  vR = texelFetch(uTable, at(c + ${READY}), 0);
   vCell = aCell;
   vUv = uv;
   gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
@@ -61,6 +65,7 @@ uniform float uHover;
 uniform float uSelected;
 uniform float uDim;
 uniform float uAlpha;
+uniform float uNow;
 uniform vec2 uT0Size;
 varying vec2 vUv;
 flat varying vec4 vT0;
@@ -68,30 +73,74 @@ flat varying vec4 vT1;
 flat varying vec4 vT2;
 flat varying vec4 vT3;
 flat varying vec4 vS;
+flat varying vec4 vR;
 flat varying float vCell;
 float hash(float n) { return fract(sin(n * 12.9898) * 43758.5453); }
 vec2 inRect(vec4 r, vec2 uv) { return vec2(mix(r.x, r.z, uv.x), mix(r.y, r.w, 1.0 - uv.y)); }
-void main() {
-  vec2 uv = clamp(vUv, 0.0, 1.0);
-  vec3 col;
-  if (vT3.x >= 0.0) col = textureLod(uT3, inRect(vT3, uv), 0.0).rgb;
-  else if (vT2.x >= 0.0) col = textureLod(uT2, inRect(vT2, uv), 0.0).rgb;
-  else if (vT1.x >= 0.0) col = textureLod(uT1, inRect(vT1, uv), 0.0).rgb;
-  else if (vS.x >= 0.0) {
+float fadeIn(float t) { return t < 0.0 ? 1.0 : clamp((uNow - t) / ${SHARP_FADE_S.toFixed(2)}, 0.0, 1.0); }
+// The sharp atlases have no mipmaps, so a cover drawn smaller than its slot averages a grid of taps
+// across the pixel's footprint instead of shimmering while the globe turns.
+vec3 sharpTap(sampler2D tex, vec4 r, vec2 uv, vec2 du, vec2 dv) {
+  vec2 st = inRect(r, uv);
+  vec2 span = vec2(r.z - r.x, r.y - r.w);
+  vec2 size = vec2(textureSize(tex, 0));
+  vec2 dx = span * du;
+  vec2 dy = span * dv;
+  float texels = max(length(dx * size), length(dy * size));
+  int n = int(clamp(ceil(texels * 0.5), 1.0, 4.0));
+  if (n == 1) return textureLod(tex, st, 0.0).rgb;
+  vec2 lo = min(r.xy, r.zw);
+  vec2 hi = max(r.xy, r.zw);
+  float inv = 1.0 / float(n);
+  vec3 c = vec3(0.0);
+  for (int i = 0; i < 4; i++) {
+    if (i >= n) break;
+    for (int j = 0; j < 4; j++) {
+      if (j >= n) break;
+      vec2 o = (vec2(float(i), float(j)) + 0.5) * inv - 0.5;
+      c += textureLod(tex, clamp(st + o.x * dx + o.y * dy, lo, hi), 0.0).rgb;
+    }
+  }
+  return c * inv * inv;
+}
+vec3 lowColor(vec2 uv) {
+  if (vS.x >= 0.0) {
     float layer = floor(vS.x);
     vec2 st = inRect(vec4(vS.x - layer, vS.y, vS.z - layer, vS.w), uv);
     vec2 px = st * uSpriteSize;
     float lod = clamp(log2(max(length(dFdx(px)), length(dFdy(px)))), 0.0, 3.0);
-    col = textureLod(uSprite, vec3(st, layer), lod).rgb;
+    return textureLod(uSprite, vec3(st, layer), lod).rgb;
   }
-  else if (vT0.x >= 0.0) {
+  if (vT0.x >= 0.0) {
     // Small covers are minified when zoomed out, so they sample their mip chain to stay calm instead of sparkling.
     vec2 st = inRect(vT0, uv);
     vec2 px = st * uT0Size;
     float lod = clamp(log2(max(length(dFdx(px)), length(dFdy(px)))), 0.0, 3.0);
-    col = textureLod(uT0, st, lod).rgb;
+    return textureLod(uT0, st, lod).rgb;
   }
-  else col = uBase * (0.75 + 0.5 * hash(vCell + 1.0));
+  return uBase * (0.75 + 0.5 * hash(vCell + 1.0));
+}
+void main() {
+  vec2 du = dFdx(vUv);
+  vec2 dv = dFdy(vUv);
+  vec2 uv = clamp(vUv, 0.0, 1.0);
+  float a1 = vT1.x >= 0.0 ? fadeIn(vR.y) : 0.0;
+  float a2 = vT2.x >= 0.0 ? fadeIn(vR.z) : 0.0;
+  float a3 = vT3.x >= 0.0 ? fadeIn(vR.w) : 0.0;
+  vec3 col;
+  if (a3 >= 1.0) col = sharpTap(uT3, vT3, uv, du, dv);
+  else {
+    if (a2 >= 1.0) col = sharpTap(uT2, vT2, uv, du, dv);
+    else {
+      if (a1 >= 1.0) col = sharpTap(uT1, vT1, uv, du, dv);
+      else {
+        col = lowColor(uv);
+        if (a1 > 0.0) col = mix(col, sharpTap(uT1, vT1, uv, du, dv), a1);
+      }
+      if (a2 > 0.0) col = mix(col, sharpTap(uT2, vT2, uv, du, dv), a2);
+    }
+    if (a3 > 0.0) col = mix(col, sharpTap(uT3, vT3, uv, du, dv), a3);
+  }
   float hover = 1.0 - step(0.5, abs(vCell - uHover));
   float selected = 1.0 - step(0.5, abs(vCell - uSelected));
   float dim = uSelected >= 0.0 ? mix(uDim, 1.0, selected) : 0.9;
@@ -109,6 +158,8 @@ export interface MosaicStats {
   lowLoaded: number;
   highLoaded: number;
   showing: number;
+  downgrades: number;
+  evictedOnScreen: number;
 }
 
 const COVER_WAIT_MS = 1500;
@@ -125,6 +176,8 @@ class View {
   readonly table: THREE.DataTexture;
   readonly cellByGame: Map<number, number>;
   readonly spriteUv: (Float32Array | null)[];
+  readonly level: Int8Array;
+  readonly shownAt: Float32Array;
   showing = 0;
 
   constructor(
@@ -137,6 +190,8 @@ class View {
     for (const k of ['uT0', 'uT1', 'uT2', 'uT3', 'uSprite'] as const) this.material.uniforms[k]!.value = base.uniforms[k]!.value;
     this.cellByGame = new Map(cells.map((c, i) => [c.gameId, i]));
     this.spriteUv = new Array<Float32Array | null>(cells.length).fill(null);
+    this.level = new Int8Array(cells.length).fill(-1);
+    this.shownAt = new Float32Array(cells.length * TIERS.length).fill(NaN);
     const rows = Math.max(1, Math.ceil((STRIDE * cells.length) / TABLE_W));
     this.table = new THREE.DataTexture(new Float32Array(TABLE_W * rows * 4).fill(-1), TABLE_W, rows, THREE.RGBAFormat, THREE.FloatType);
     this.table.minFilter = THREE.NearestFilter;
@@ -214,11 +269,15 @@ export class MosaicLayer {
   private tableDirty = false;
   private tableAt = 0;
   private onChange: () => void = () => {};
+  private onScreen = new Set<string>();
+  private downgrades = 0;
+  private evictedOnScreen = 0;
+  private filledAt = -Infinity;
 
   constructor(
     private readonly scene: THREE.Object3D,
     renderer: THREE.WebGLRenderer,
-    clock: () => number,
+    private readonly clock: () => number,
   ) {
     this.atlases = TIERS.map((t, k) => new CoverAtlas(renderer, clock, t.layout, (id) => coverUrl(id, t.size), t.inFlight, k === 0));
     this.pixelRatio = renderer.getPixelRatio();
@@ -236,6 +295,7 @@ export class MosaicLayer {
         uSelected: { value: -1 },
         uDim: { value: 0.55 },
         uAlpha: { value: 1 },
+        uNow: { value: 0 },
         uSprite: { value: null },
         uSpriteSize: { value: SPRITE_LAYOUT.size },
         uT0Size: { value: new THREE.Vector2(TIERS[0]!.layout.size, TIERS[0]!.layout.height ?? TIERS[0]!.layout.size) },
@@ -320,6 +380,8 @@ export class MosaicLayer {
       lowLoaded: this.atlases[0]!.loadedCount(),
       highLoaded: this.atlases.slice(1).reduce((a, t) => a + t.loadedCount(), 0),
       showing: v?.showing ?? 0,
+      downgrades: this.downgrades,
+      evictedOnScreen: this.evictedOnScreen,
     };
   }
 
@@ -342,15 +404,27 @@ export class MosaicLayer {
       this.needHigh = false;
       const { low, sharp, visible } = this.pickSharp(target, camera, heightPx);
       this.visibleLow = low;
+      this.onScreen = new Set(visible);
       if (target === this.incoming) this.incomingVisible = visible;
       this.wantLow();
       sharp.forEach((keys, k) => this.atlases[k + 1]!.want(keys));
     }
     let changed = false;
-    for (const a of this.atlases) changed = a.frame() || changed;
+    let evicted = false;
+    for (const a of this.atlases) {
+      changed = a.frame() || changed;
+      for (const key of a.takeEvicted()) {
+        evicted = true;
+        if (this.onScreen.has(key)) this.evictedOnScreen++;
+      }
+    }
     if (changed) this.syncAtlasTextures();
     if (changed) this.tableDirty = true;
-    if (this.tableDirty && now - this.tableAt >= TABLE_EVERY_MS) this.fillTables(false);
+    // A reused slot already holds the new cover, so the old cell must stop pointing at it this frame.
+    if (evicted) this.fillTables(true);
+    else if (this.tableDirty && now - this.tableAt >= TABLE_EVERY_MS) this.fillTables(false);
+    const t = this.clock();
+    for (const v of this.views()) v.material.uniforms.uNow!.value = t;
     this.stepFade(now);
     return changed;
   }
@@ -464,10 +538,12 @@ export class MosaicLayer {
     if (!force && !this.tableDirty) return;
     this.tableDirty = false;
     this.tableAt = performance.now();
-    for (const v of this.views()) this.fillTable(v);
+    const shownBefore = this.filledAt;
+    this.filledAt = this.clock();
+    for (const v of this.views()) this.fillTable(v, shownBefore);
   }
 
-  private fillTable(v: View): void {
+  private fillTable(v: View, shownBefore: number): void {
     const data = v.table.image.data as Float32Array;
     data.fill(-1);
     let showing = 0;
@@ -476,12 +552,17 @@ export class MosaicLayer {
       const cover = cells[i]!.cover;
       if (!cover) continue;
       let any = false;
+      let level = -1;
       for (let k = 0; k < this.atlases.length; k++) {
         const r = this.atlases[k]!.uv(cover);
+        const s = TIERS.length * i + k;
         if (r) {
           data.set(r, 4 * (STRIDE * i + k));
+          if (Number.isNaN(v.shownAt[s])) v.shownAt[s] = (this.atlases[k]!.readyTime(cover) ?? -1) > shownBefore ? this.filledAt : -1;
+          data[4 * (STRIDE * i + READY) + k] = v.shownAt[s]!;
           any = true;
-        }
+          level = Math.max(level, k);
+        } else v.shownAt[s] = NaN;
       }
       let sp = v.spriteUv[i];
       if (sp === null || sp === undefined) {
@@ -493,6 +574,8 @@ export class MosaicLayer {
         any = true;
       }
       if (any) showing++;
+      if (level < v.level[i]! && this.onScreen.has(cover)) this.downgrades++;
+      v.level[i] = level;
     }
     v.showing = showing;
     v.table.needsUpdate = true;
@@ -526,16 +609,20 @@ export class MosaicLayer {
     const seen = new Set(visible);
     const low = [...visible, ...this.lowOrder.filter((k) => !seen.has(k))];
     scored.sort((x, y) => y[0] - x[0]);
-    // A cover already loaded in a tier keeps its place against bigger newcomers, so tiles do not
-    // drop back to a blurrier version and pop again.
+    // A sharp cover keeps its slot while it is on screen and not tiny, and only gives it up once it
+    // leaves the view, so a turning globe never drops a visible tile back to a blurrier version.
+    const sharpestLoaded = (key: string): number => {
+      for (let k = this.atlases.length - 1; k > 0; k--) if (this.atlases[k]!.uv(key)) return k;
+      return 0;
+    };
     const sharp = TIERS.slice(1).map((t, k) => {
-      const atlas = this.atlases[k + 1]!;
-      return scored
-        .filter(([px]) => px > TIERS[k]!.layout.imageH)
-        .map(([px, key]) => [atlas.uv(key) ? px * STICKY : px, key] as [number, string])
-        .sort((x, y) => y[0] - x[0])
-        .slice(0, t.capacity)
+      const tier = k + 1;
+      const kept = onScreen.filter(([px, key]) => px >= KEEP_PX && sharpestLoaded(key) === tier).map(([, key]) => key);
+      const keptSet = new Set(kept);
+      const fresh = scored
+        .filter(([px, key]) => px > TIERS[k]!.layout.imageH && !keptSet.has(key) && sharpestLoaded(key) < tier)
         .map(([, key]) => key);
+      return [...kept, ...fresh].slice(0, t.capacity);
     });
     return { low, sharp, visible };
   }
