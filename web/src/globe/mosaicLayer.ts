@@ -330,9 +330,9 @@ export class MosaicLayer {
     this.post({ type: 'init', games, layoutsUrl: `${dataBase()}/mosaic-layouts.bin` });
   }
 
-  request(year: number, maxYear: number, filter: ReadonlySet<number> | null, focus: MosaicFocus | null): void {
+  request(year: number, maxYear: number, filter: ReadonlySet<number> | null, focus: MosaicFocus | null, pinned: number | null = null): void {
     this.lastBuild = ++this.seq;
-    this.post({ type: 'build', seq: this.lastBuild, year, maxYear, filter: filter ? [...filter] : null, focus });
+    this.post({ type: 'build', seq: this.lastBuild, year, maxYear, filter: filter ? [...filter] : null, focus, pinned });
   }
 
   get busy(): boolean {

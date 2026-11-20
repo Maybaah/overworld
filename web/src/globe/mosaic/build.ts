@@ -518,7 +518,7 @@ export class MosaicBuilder {
     return out;
   }
 
-  build(games: readonly MosaicGame[], focus: MosaicFocus | null = null, fitted = false): BuildResult {
+  build(games: readonly MosaicGame[], focus: MosaicFocus | null = null, fitted = false, pinned: number | null = null): BuildResult {
     const byCountry = new Map<string, MosaicGame[]>();
     for (const g of games) {
       if (!this.regions.has(g.country)) continue;
@@ -535,12 +535,15 @@ export class MosaicBuilder {
     for (const [code, list] of byCountry) {
       const n = budget.get(code) ?? 1;
       const chosen = list.sort((a, b) => b.popularity - a.popularity || a.id - b.id).slice(0, n);
+      const pin = pinned === null ? -1 : list.findIndex((g) => g.id === pinned);
+      const forced = pin >= n;
+      if (forced) chosen.push(list[pin]!);
       const key = `${code}:${chosen.map((g) => g.id).join(',')}`;
       let m = this.cache.get(key);
       if (m) this.cache.delete(key);
       else {
         const extra = n > (base.get(code) ?? 1);
-        const iterations = extra ? this.options.detailIterations : fitted ? 0 : this.options.iterations;
+        const iterations = extra || forced ? this.options.detailIterations : fitted ? 0 : this.options.iterations;
         m = buildCountryMosaic(chosen, this.regions.get(code)!, { ...this.options, iterations }, this.memory);
       }
       this.cache.set(key, m);

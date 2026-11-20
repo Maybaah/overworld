@@ -11,6 +11,7 @@ export interface BuildRequest {
   maxYear: number;
   filter: number[] | null;
   focus: MosaicFocus | null;
+  pinned: number | null;
 }
 
 export type MosaicRequest =

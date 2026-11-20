@@ -90,7 +90,6 @@ const PICK_RADIUS = GLOBE_RADIUS * (1 + MOSAIC_ALTITUDE);
 const CARD_SHARE = 0.45;
 const SEEK_START_ALTITUDE = 0.7;
 const SEEK_MIN_ALTITUDE = 0.035;
-const SEEK_TRIES = 8;
 
 function cardAltitude(cell: MosaicCell, fov: number): number {
   const degreesPerAltitude = 2 * Math.tan((fov * Math.PI) / 360) * (180 / Math.PI);
@@ -449,15 +448,15 @@ export function GlobeView() {
     void mosaic.ready.then(() => useStore.getState().setGlobeReady());
     const mosaicShown = (s: { pointsVisible: boolean; countryShade: unknown }) => s.pointsVisible && s.countryShade === null;
     let mosaicFocus: MosaicFocus | null = null;
-    const requestMosaic = (s: { year: number; gameFilter: Set<number> | null; timeline: { maxYear: number } | null }) => {
-      if (s.timeline) mosaic.request(s.year, s.timeline.maxYear, s.gameFilter, mosaicFocus);
+    const requestMosaic = (s: { year: number; gameFilter: Set<number> | null; timeline: { maxYear: number } | null; selectedGameId: number | null }) => {
+      if (s.timeline) mosaic.request(s.year, s.timeline.maxYear, s.gameFilter, mosaicFocus, s.selectedGameId);
     };
     requestMosaic(initial);
     mosaic.setVisible(mosaicShown(initial));
     mosaic.setSelected(initial.selectedGameId);
     let mosaicHover: number | null = null;
     let clickedGame: number | null = null;
-    let seeking: { id: number; country: string; tries: number; target: Target | null } | null = null;
+    let seeking: { id: number; target: Target | null } | null = null;
     let mosaicPicking = false;
     let mosaicMovedAt = -Infinity;
     let mosaicSettled = true;
@@ -642,7 +641,7 @@ ${where}`;
         if (t) fly({ ...t, altitude: Math.min(globe.pointOfView().altitude, SEEK_START_ALTITUDE) });
         return;
       }
-      seeking = { id, country: lead.country!, tries: 0, target: null };
+      seeking = { id, target: null };
       stepSeek();
     };
     const stepSeek = () => {
@@ -658,26 +657,18 @@ ${where}`;
         fly(target);
         return;
       }
-      if (seeking.tries >= SEEK_TRIES) {
-        seeking = null;
-        return;
-      }
-      const c = indexes.countries.find((x) => x.code === seeking!.country);
-      if (!c) {
-        seeking = null;
-        return;
-      }
-      const altitude = seeking.tries === 0 ? Math.min(globe.pointOfView().altitude, SEEK_START_ALTITUDE) : Math.max(SEEK_MIN_ALTITUDE, globe.pointOfView().altitude / 2);
-      seeking.tries++;
-      seeking.target = null;
-      fly({ lat: c.lat, lng: c.lng, altitude });
+      if (mosaic.busy) return;
+      const id = seeking.id;
+      seeking = null;
+      const t = gameTarget(indexes, layout, companyIndex, id);
+      if (t) fly({ ...t, altitude: Math.min(globe.pointOfView().altitude, SEEK_START_ALTITUDE) });
     };
     let lastCameraSeq = initial.cameraRequest?.seq ?? 0;
     const opened = useStore.getState();
     if (opened.selectedGameId !== null) seekCard(opened.selectedGameId);
     else if (opened.selectedPlace) fly(placeTarget(indexes, layout, companyIndex, opened.selectedPlace));
     const unsubscribe = useStore.subscribe((s, prev) => {
-      if (s.timeline !== prev.timeline || s.gameFilter !== prev.gameFilter || s.year !== prev.year) requestMosaic(s);
+      if (s.timeline !== prev.timeline || s.gameFilter !== prev.gameFilter || s.year !== prev.year || s.selectedGameId !== prev.selectedGameId) requestMosaic(s);
       if (s.zoomDetail !== prev.zoomDetail) mosaicSettled = false;
       if (s.pointsVisible !== prev.pointsVisible || s.countryShade !== prev.countryShade) mosaic.setVisible(mosaicShown(s));
       if (s.selectedGameId !== prev.selectedGameId) mosaic.setSelected(s.selectedGameId);
@@ -756,7 +747,7 @@ ${where}`;
           requestMosaic(useStore.getState());
         }
       }
-      if (seeking && mosaicSettled && now - mosaicMovedAt > 400 && (!mosaic.busy || mosaic.cellOf(seeking.id))) stepSeek();
+      if (seeking && (seeking.target === null || (mosaicSettled && now - mosaicMovedAt > 400)) && (!mosaic.busy || mosaic.cellOf(seeking.id))) stepSeek();
       if (mosaic.year !== useStore.getState().shownYear) useStore.getState().setShownYear(mosaic.year);
       mosaic.frame(camera as THREE.PerspectiveCamera, canvas.clientHeight);
       vp.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse);

@@ -49,16 +49,16 @@ function pick(lat: number, lng: number): number | null {
   return null;
 }
 
-function keyOf(year: number, focus: MosaicFocus | null): string {
-  return `${year}|${focus ? `${focus.lat.toFixed(1)},${focus.lng.toFixed(1)},${focus.radius.toFixed(1)},${focus.zoom}` : ''}`;
+function keyOf(year: number, focus: MosaicFocus | null, pinned: number | null): string {
+  return `${year}|${pinned ?? ''}|${focus ? `${focus.lat.toFixed(1)},${focus.lng.toFixed(1)},${focus.radius.toFixed(1)},${focus.zoom}` : ''}`;
 }
 
-function build(year: number, maxYear: number, filter: number[] | null, focus: MosaicFocus | null): BuildResult {
+function build(year: number, maxYear: number, filter: number[] | null, focus: MosaicFocus | null, pinned: number | null): BuildResult {
   const set = filter ? new Set(filter) : null;
   const chosen = set ? gamesUpTo(games, year, maxYear).filter((g) => set.has(g.id)) : gamesUpTo(games, year, maxYear);
   const layout = set ? undefined : layouts?.get(Math.min(year, maxYear));
   if (layout) builder!.useLayout(layout);
-  return builder!.build(chosen, focus, !!layout);
+  return builder!.build(chosen, focus, !!layout, pinned);
 }
 
 function respond(msg: BuildRequest, result: BuildResult, ms: number, last: boolean): void {
@@ -94,11 +94,11 @@ function pump(): void {
     const step = steps.shift();
     if (!step) return;
     const { msg: m, focus } = step;
-    const key = keyOf(m.year, focus);
+    const key = keyOf(m.year, focus, m.pinned);
     const t0 = performance.now();
     const ready = m.filter ? null : prefetched.get(key);
     prefetched.clear();
-    respond(m, ready ?? build(m.year, m.maxYear, m.filter, focus), performance.now() - t0, steps.length === 0 && queued === null);
+    respond(m, ready ?? build(m.year, m.maxYear, m.filter, focus, m.pinned), performance.now() - t0, steps.length === 0 && queued === null);
     if (steps.length > 0) pump();
     else if (!m.filter && direction !== 0) {
       const next = m.year + direction;
@@ -110,7 +110,7 @@ function pump(): void {
 function prefetchLater(msg: BuildRequest): void {
   setTimeout(() => {
     if (queued || running) return;
-    prefetched.set(keyOf(msg.year, msg.focus), build(msg.year, msg.maxYear, null, msg.focus));
+    prefetched.set(keyOf(msg.year, msg.focus, msg.pinned), build(msg.year, msg.maxYear, null, msg.focus, msg.pinned));
   }, 0);
 }
 

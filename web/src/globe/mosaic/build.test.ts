@@ -87,6 +87,18 @@ describe('MosaicBuilder', () => {
   });
 });
 
+describe('pinned game', () => {
+  it('adds a selected game the budget would leave out', () => {
+    const many = Array.from({ length: 40 }, (_, i) => game(i + 1, 1000 - i, 35, 135));
+    const b = new MosaicBuilder(regions, { ...DEFAULT_OPTIONS, maxCells: 5 });
+    const plain = b.build(many).mesh.cells.map((c) => c.gameId);
+    expect(plain).not.toContain(40);
+    const pinned = b.build(many, null, false, 40).mesh.cells.map((c) => c.gameId);
+    expect(pinned).toContain(40);
+    expect(pinned).toHaveLength(plain.length + 1);
+  });
+});
+
 describe('layouts', () => {
   it('rebuilds a year from its saved layout without fitting, cell for cell', () => {
     const games = [game(1, 50, 35.7, 139.7), game(2, 40, 34.7, 135.5), game(3, 30, 35.7, 139.7), game(4, 5, 33.6, 130.4)];
