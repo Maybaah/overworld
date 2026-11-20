@@ -64,6 +64,29 @@ describe('GameCard', () => {
     expect(lead).toHaveTextContent('Location is city-level.');
   });
 
+  it('lists key people by role with Wikidata links, and hides the block without them', () => {
+    seedStore({
+      selectedGameId: 100,
+      selectedGameDetail: {
+        ...detailFor(100),
+        people: [
+          { name: 'Ann Lee', role: 'director', wikidata: 'Q2' },
+          { name: 'Bo Kim', role: 'composer', wikidata: 'Q3' },
+          { name: 'Cy Park', role: 'composer', wikidata: 'Q4' },
+        ],
+      },
+    });
+    const { unmount } = render(<GameCard />);
+    const block = screen.getByRole('region', { name: 'Key people' });
+    expect(block).toHaveTextContent('Director');
+    expect(block).toHaveTextContent('Composers');
+    expect(within(block).getByRole('link', { name: 'Ann Lee' })).toHaveAttribute('href', 'https://www.wikidata.org/wiki/Q2');
+    unmount();
+    open();
+    render(<GameCard />);
+    expect(screen.queryByRole('region', { name: 'Key people' })).toBeNull();
+  });
+
   it('describes country-level and unknown locations', () => {
     open(103);
     const { unmount } = render(<GameCard />);

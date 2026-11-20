@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { ROLE_TYPES } from '@shared';
-import type { GameCompanyRole, RoleType } from '@shared';
+import type { GameCompanyRole, KeyPerson, PersonRole, RoleType } from '@shared';
 import { useStore } from '../data/store';
 import { ROLE_META } from '../data/roles';
 import { CloseButton, LinkButton, SourceLink, Swatch } from './parts';
@@ -8,6 +8,45 @@ import { LEAD_BASIS_TEXT, placeLabel, precisionText, formatPlayers, PLAYERS_BASI
 import { ShareButton } from '../share/ShareButton';
 import { gameCardSpec } from '../share/card';
 import { gameLink, SHARE_PAGE_LIMIT } from '../share/urlState';
+
+const PERSON_LABEL: Record<PersonRole, [string, string]> = {
+  creator: ['Creator', 'Creators'],
+  director: ['Director', 'Directors'],
+  producer: ['Producer', 'Producers'],
+  designer: ['Designer', 'Designers'],
+  writer: ['Writer', 'Writers'],
+  artist: ['Art director', 'Art directors'],
+  programmer: ['Programmer', 'Programmers'],
+  composer: ['Composer', 'Composers'],
+  sound: ['Sound designer', 'Sound designers'],
+};
+
+function KeyPeople({ people }: { people: KeyPerson[] }) {
+  const byRole = new Map<PersonRole, KeyPerson[]>();
+  for (const p of people) byRole.set(p.role, [...(byRole.get(p.role) ?? []), p]);
+  return (
+    <section className="ow-people" aria-label="Key people">
+      <h3 className="ow-subtitle">Key people</h3>
+      <dl>
+        {[...byRole].map(([role, list]) => (
+          <div key={role} className="ow-people-row">
+            <dt className="ow-muted ow-small">{PERSON_LABEL[role][list.length === 1 ? 0 : 1]}</dt>
+            <dd>
+              {list.map((p, i) => (
+                <span key={p.wikidata}>
+                  {i > 0 && ', '}
+                  <a className="ow-source" href={`https://www.wikidata.org/wiki/${p.wikidata}`} target="_blank" rel="noopener noreferrer">
+                    {p.name}
+                  </a>
+                </span>
+              ))}
+            </dd>
+          </div>
+        ))}
+      </dl>
+    </section>
+  );
+}
 
 const COVER_URL = 'https://images.igdb.com/igdb/image/upload/t_cover_big/';
 
@@ -111,6 +150,8 @@ export function GameCard() {
           )}
           {detail && <p className="ow-muted ow-small">{LEAD_BASIS_TEXT[detail.leadBasis]}</p>}
         </section>
+
+        {detail?.people && detail.people.length > 0 && <KeyPeople people={detail.people} />}
 
         {!detail && !detailError && (
           <p className="ow-muted" role="status">

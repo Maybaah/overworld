@@ -442,6 +442,25 @@
   margin-top: 4px;
 }
 
+.ow-people dl {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 0;
+}
+
+.ow-people-row {
+  display: grid;
+  grid-template-columns: 112px 1fr;
+  gap: 8px;
+  align-items: baseline;
+}
+
+.ow-people dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
 .ow-list {
   display: flex;
   flex-direction: column;
