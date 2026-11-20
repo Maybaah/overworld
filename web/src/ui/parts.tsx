@@ -60,7 +60,7 @@ export function LimitedList<T>({
 
 export function SourceLink({ source, label }: { source: SourceRef; label?: string }) {
   const text = label ?? SOURCE_LABEL[source.source];
-  if (!source.url) return <span className="ow-muted ow-source">{text}</span>;
+  if (!source.url || !/^https?:\/\//i.test(source.url)) return <span className="ow-muted ow-source">{text}</span>;
   return (
     <a className="ow-source" href={source.url} target="_blank" rel="noopener noreferrer">
       {text}
