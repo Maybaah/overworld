@@ -665,6 +665,20 @@
   color: var(--text);
 }
 
+.ow-attribution-link {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+}
+
+.ow-credit {
+  color: var(--text-secondary);
+}
+
+.ow-credit a {
+  color: var(--text);
+}
+
 .ow-fixture-note {
   color: var(--accent);
   font-weight: 500;
@@ -808,7 +822,7 @@
   .ow-slider {
     left: 8px;
     right: 8px;
-    bottom: 56px;
+    bottom: 64px;
     width: auto;
     transform: none;
     animation-name: ow-up;
@@ -823,5 +837,15 @@
 
   .ow-attribution.ow-attribution-link {
     left: auto;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+    padding: 6px 12px;
+  }
+
+  .ow-nav {
+    left: 8px;
+    bottom: 8px;
+    flex-direction: row;
   }
 }
