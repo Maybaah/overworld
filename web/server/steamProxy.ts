@@ -16,6 +16,7 @@ const CACHE_MS = 10 * 60 * 1000;
 const RATE_WINDOW_MS = 60 * 1000;
 const RATE_LIMIT = 20;
 const MAX_TRACKED = 5000;
+const MAX_CACHED = 2000;
 
 interface OwnedResult {
   steamId: string;
@@ -36,6 +37,12 @@ export function resetSteamProxyState(): void {
   ownedCache.clear();
   vanityCache.clear();
   hits.clear();
+}
+
+function remember<V>(map: Map<string, V>, key: string, value: V): void {
+  map.delete(key);
+  map.set(key, value);
+  while (map.size > MAX_CACHED) map.delete(map.keys().next().value!);
 }
 
 function clientAddress(request: Request): string {
@@ -75,7 +82,7 @@ function corsHeaders(request: Request, env: SteamEnv): Record<string, string> {
 function respond(status: number, body: unknown, extra: Record<string, string> = {}): Response {
   return new Response(JSON.stringify(body), {
     status,
-    headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store', ...extra },
+    headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store', 'x-content-type-options': 'nosniff', ...extra },
   });
 }
 
@@ -108,11 +115,11 @@ async function resolveVanity(name: string, key: string, fetchImpl: typeof fetch,
   const r = isRecord(body) ? body.response : undefined;
   if (!isRecord(r)) throw new UpstreamError('unavailable');
   if (r.success === 42) {
-    vanityCache.set(cacheKey, { at: now, id: null });
+    remember(vanityCache, cacheKey, { at: now, id: null });
     return null;
   }
   if (r.success === 1 && typeof r.steamid === 'string' && /^7656119\d{10}$/.test(r.steamid)) {
-    vanityCache.set(cacheKey, { at: now, id: r.steamid });
+    remember(vanityCache, cacheKey, { at: now, id: r.steamid });
     return r.steamid;
   }
   throw new UpstreamError('unavailable');
@@ -185,7 +192,7 @@ export async function handleSteamRequest(request: Request, env: SteamEnv, deps: 
 
     const owned = await fetchOwned(steamId, key, fetchImpl);
     if (owned === null) return respond(403, { error: 'private_profile' }, cors);
-    ownedCache.set(steamId, { at: now, value: owned });
+    remember(ownedCache, steamId, { at: now, value: owned });
     return respond(200, owned, cors);
   } catch (err) {
     if (err instanceof UpstreamError && err.kind === 'rate_limited') {

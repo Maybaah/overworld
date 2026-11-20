@@ -182,6 +182,19 @@ describe('handleSteamRequest', () => {
     expect(f).toHaveBeenCalledTimes(2);
   });
 
+  it('keeps at most 2000 profiles in the cache, dropping the oldest', async () => {
+    const f = fakeFetch(ownedOk);
+    const id = (n: number) => `765611980${String(n).padStart(8, '0')}`;
+    for (let n = 0; n <= 2000; n++) {
+      await handleSteamRequest(req(id(n), { headers: { 'x-forwarded-for': `9.9.${n >> 8}.${n & 255}` } }), env, { fetchImpl: f });
+    }
+    expect(f).toHaveBeenCalledTimes(2001);
+    await handleSteamRequest(req(id(2000)), env, { fetchImpl: f });
+    expect(f).toHaveBeenCalledTimes(2001);
+    await handleSteamRequest(req(id(0)), env, { fetchImpl: f });
+    expect(f).toHaveBeenCalledTimes(2002);
+  });
+
   it('does not cache failures', async () => {
     const f = fakeFetch(() => json({}, 500));
     await handleSteamRequest(req(ID), env, { fetchImpl: f });
