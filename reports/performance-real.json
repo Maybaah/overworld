@@ -57,7 +57,7 @@
       "over20Pct": 0,
       "pass": true,
       "extra": null,
-      "screenshot": "C:\\Users\\artem\\Desktop\\Projects\\Overworld\\docs\\screenshots\\real-a-idle-country.png"
+      "screenshot": "docs/screenshots/real-a-idle-country.png"
     },
     {
       "id": "b-orbit-country",
@@ -79,7 +79,7 @@
       "over20Pct": 2.4,
       "pass": true,
       "extra": null,
-      "screenshot": "C:\\Users\\artem\\Desktop\\Projects\\Overworld\\docs\\screenshots\\real-b-orbit-country.png"
+      "screenshot": "docs/screenshots/real-b-orbit-country.png"
     },
     {
       "id": "c-orbit-city-europe",
@@ -101,7 +101,7 @@
       "over20Pct": 0,
       "pass": true,
       "extra": null,
-      "screenshot": "C:\\Users\\artem\\Desktop\\Projects\\Overworld\\docs\\screenshots\\real-c-orbit-city-europe.png"
+      "screenshot": "docs/screenshots/real-c-orbit-city-europe.png"
     },
     {
       "id": "d-orbit-company-dense-city",
@@ -123,7 +123,7 @@
       "over20Pct": 0,
       "pass": true,
       "extra": null,
-      "screenshot": "C:\\Users\\artem\\Desktop\\Projects\\Overworld\\docs\\screenshots\\real-d-orbit-company-dense-city.png"
+      "screenshot": "docs/screenshots/real-d-orbit-company-dense-city.png"
     },
     {
       "id": "e1-year-play-country",
@@ -145,7 +145,7 @@
       "over20Pct": 0,
       "pass": true,
       "extra": true,
-      "screenshot": "C:\\Users\\artem\\Desktop\\Projects\\Overworld\\docs\\screenshots\\real-e1-year-play-country.png"
+      "screenshot": "docs/screenshots/real-e1-year-play-country.png"
     },
     {
       "id": "e2-year-play-company",
@@ -167,7 +167,7 @@
       "over20Pct": 0,
       "pass": true,
       "extra": true,
-      "screenshot": "C:\\Users\\artem\\Desktop\\Projects\\Overworld\\docs\\screenshots\\real-e2-year-play-company.png"
+      "screenshot": "docs/screenshots/real-e2-year-play-company.png"
     },
     {
       "id": "f-game-arcs",
@@ -189,7 +189,7 @@
       "over20Pct": 0,
       "pass": true,
       "extra": null,
-      "screenshot": "C:\\Users\\artem\\Desktop\\Projects\\Overworld\\docs\\screenshots\\real-f-game-arcs.png",
+      "screenshot": "docs/screenshots/real-f-game-arcs.png",
       "game": {
         "id": 133004,
         "name": "Assassin's Creed Valhalla",
@@ -230,7 +230,7 @@
         "worstFrameMs": 12,
         "slowFrameMs": []
       },
-      "screenshot": "C:\\Users\\artem\\Desktop\\Projects\\Overworld\\docs\\screenshots\\real-g-game-filter-toggle.png",
+      "screenshot": "docs/screenshots/real-g-game-filter-toggle.png",
       "toggleLabels": [
         "Other support",
         "Publisher"

@@ -2,7 +2,7 @@ import { spawn, spawnSync } from 'node:child_process';
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync, existsSync } from 'node:fs';
 import { createServer } from 'node:net';
 import { tmpdir } from 'node:os';
-import { dirname, join, resolve } from 'node:path';
+import { dirname, join, relative, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import puppeteer from 'puppeteer-core';
 
@@ -535,7 +535,7 @@ async function main() {
       const levelOk = level === expectLevel;
       const pass = !!s && levelOk && !software && s.avgFps >= PASS_AVG_FPS && s.p95Ms <= PASS_P95_MS;
       const screenshot = await shot(id);
-      const rec = { id, title, expectedLevel: expectLevel, level, levelOk, points, covers, appFps, ...s, pass, extra, screenshot };
+      const rec = { id, title, expectedLevel: expectLevel, level, levelOk, points, covers, appFps, ...s, pass, extra, screenshot: relative(repoDir, screenshot).split(sep).join('/') };
       scenarios.push(rec);
       const ms = await page.evaluate(() => window.__overworld.mosaic?.() ?? null);
       if (ms) log(`  mosaic: ${ms.cells} cells, build ${Math.round(ms.buildMs)} ms, max apply ${Math.round(ms.applyMs)} ms, max frame work ${Math.round(ms.frameMs)} ms, covers ${ms.lowLoaded} small ${ms.highLoaded} large`);
