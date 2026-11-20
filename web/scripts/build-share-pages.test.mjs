@@ -117,6 +117,7 @@ describe('renderGamePage', () => {
       { name: 'Ann <Lee>', role: 'director', wikidata: 'Q2' },
       { name: 'Bo Kim', role: 'composer', wikidata: 'Q3' },
       { name: 'Cy Park', role: 'composer', wikidata: 'Q4' },
+      { name: 'Di Ro', role: 'writer', wikidata: 'Q5' },
     ];
     const page = renderGamePage(site, idx, { game, detail: { ...detail, people }, companyById: companies });
     expect(page).toContain('<h2>Key people</h2>');
@@ -124,6 +125,8 @@ describe('renderGamePage', () => {
     expect(page).toContain('<li><span>Composers</span>Bo Kim, Cy Park</li>');
     expect(page).toContain('"musicBy":[{"@type":"Person","name":"Bo Kim","sameAs":"https://www.wikidata.org/wiki/Q3"}');
     expect(page).toContain('"director":[{"@type":"Person","name":"Ann \\u003cLee>"');
+    expect(page).toContain('"author":[{"@type":"Organization","name":"Lead & Co"');
+    expect(page).toContain('{"@type":"Person","name":"Di Ro"');
     expect(html).not.toContain('Key people');
   });
 

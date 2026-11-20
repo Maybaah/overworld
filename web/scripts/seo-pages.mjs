@@ -292,7 +292,8 @@ export function renderGamePage(site, idx, { game, detail, companyById }) {
     const key = PERSON_LD[role];
     if (!key) continue;
     const persons = list.map((p) => ({ '@type': 'Person', name: p.name, sameAs: `https://www.wikidata.org/wiki/${p.wikidata}` }));
-    ld[key] = [...(ld[key] ?? []), ...persons];
+    const prev = ld[key] === undefined ? [] : Array.isArray(ld[key]) ? ld[key] : [ld[key]];
+    ld[key] = [...prev, ...persons];
   }
   if (lead?.country) ld.countryOfOrigin = { '@type': 'Country', name: countryName(lead.country) };
 
