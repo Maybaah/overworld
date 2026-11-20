@@ -167,6 +167,25 @@ function studioLink(site, idx, company) {
   return slug ? `<a href="${escapeHtml(`${site.basePath}studios/${slug}/`)}">${escapeHtml(company.name)}</a>` : escapeHtml(company.name);
 }
 
+const PERSON_LABEL = {
+  creator: ['Creator', 'Creators'],
+  director: ['Director', 'Directors'],
+  producer: ['Producer', 'Producers'],
+  designer: ['Designer', 'Designers'],
+  writer: ['Writer', 'Writers'],
+  artist: ['Art director', 'Art directors'],
+  programmer: ['Programmer', 'Programmers'],
+  composer: ['Composer', 'Composers'],
+  sound: ['Sound designer', 'Sound designers'],
+};
+const PERSON_LD = { director: 'director', producer: 'producer', composer: 'musicBy', creator: 'creator', designer: 'creator', writer: 'author' };
+
+function peopleByRole(people) {
+  const byRole = new Map();
+  for (const p of people ?? []) byRole.set(p.role, [...(byRole.get(p.role) ?? []), p]);
+  return byRole;
+}
+
 function placeOf(company) {
   if (!company || !company.country) return null;
   const country = countryName(company.country);
@@ -226,6 +245,10 @@ export function renderGamePage(site, idx, { game, detail, companyById }) {
   const globe = `${site.basePath}?game=${game.id}`;
   const canonical = absoluteUrl(site, `g/${game.id}/`);
   const countryText = (code) => escapeHtml(countryName(code));
+  const people = peopleByRole(detail?.people);
+  const peopleRows = [...people]
+    .map(([role, list]) => `<li><span>${escapeHtml((PERSON_LABEL[role] ?? [role, role])[list.length === 1 ? 0 : 1])}</span>${escapeHtml(list.map((p) => p.name).join(', '))}</li>`)
+    .join('');
 
   const facts = [
     lead ? `<div><dt>Lead studio</dt><dd>${studioLink(site, idx, lead)}</dd></div>` : '',
@@ -254,6 +277,7 @@ export function renderGamePage(site, idx, { game, detail, companyById }) {
     '</div>',
     '</div>',
     `<dl class="facts">${facts}</dl>`,
+    peopleRows ? `<h2>Key people</h2><ol class="rows people">${peopleRows}</ol>` : '',
     others.length ? `<h2>Companies that worked on ${escapeHtml(game.name)}</h2><ol class="rows">${rows}</ol>` : '',
     `<p class="more"><a class="cta" href="${escapeHtml(globe)}">See ${escapeHtml(game.name)} on the globe</a></p>`,
   ].join('\n');
@@ -264,6 +288,12 @@ export function renderGamePage(site, idx, { game, detail, companyById }) {
   if (genres.length) ld.genre = genres;
   if (platforms.length) ld.gamePlatform = platforms;
   if (lead) ld.author = { '@type': 'Organization', name: lead.name, ...(studioSlug ? { url: absoluteUrl(site, `studios/${studioSlug}/`) } : {}) };
+  for (const [role, list] of people) {
+    const key = PERSON_LD[role];
+    if (!key) continue;
+    const persons = list.map((p) => ({ '@type': 'Person', name: p.name, sameAs: `https://www.wikidata.org/wiki/${p.wikidata}` }));
+    ld[key] = [...(ld[key] ?? []), ...persons];
+  }
   if (lead?.country) ld.countryOfOrigin = { '@type': 'Country', name: countryName(lead.country) };
 
   return layout(site, {
@@ -476,6 +506,7 @@ h2{font-size:20px;margin:40px 0 12px}
 .games li div{display:flex;flex-direction:column;min-width:0}
 .games li span,.rows li span{color:var(--muted);font-size:14px}
 .rows li{justify-content:space-between}
+.rows.people li{justify-content:flex-start;gap:16px}.rows.people li span{flex:none;width:130px}
 .game-head{display:flex;gap:20px;align-items:flex-start}.game-head img{flex:none;border-radius:8px;background:var(--panel);margin-top:20px}
 @media (max-width:520px){.game-head{flex-direction:column}.game-head img{margin-top:8px}}
 .games img,.nocover{flex:none;width:45px;height:64px;border-radius:4px;background:var(--panel);object-fit:cover}

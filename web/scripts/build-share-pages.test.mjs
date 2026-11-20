@@ -112,6 +112,21 @@ describe('renderGamePage', () => {
     expect(html).toContain('<a class="cta" href="/overworld/?game=9">');
   });
 
+  it('lists key people and adds them to the structured data', () => {
+    const people = [
+      { name: 'Ann <Lee>', role: 'director', wikidata: 'Q2' },
+      { name: 'Bo Kim', role: 'composer', wikidata: 'Q3' },
+      { name: 'Cy Park', role: 'composer', wikidata: 'Q4' },
+    ];
+    const page = renderGamePage(site, idx, { game, detail: { ...detail, people }, companyById: companies });
+    expect(page).toContain('<h2>Key people</h2>');
+    expect(page).toContain('<li><span>Director</span>Ann &lt;Lee&gt;</li>');
+    expect(page).toContain('<li><span>Composers</span>Bo Kim, Cy Park</li>');
+    expect(page).toContain('"musicBy":[{"@type":"Person","name":"Bo Kim","sameAs":"https://www.wikidata.org/wiki/Q3"}');
+    expect(page).toContain('"director":[{"@type":"Person","name":"Ann \\u003cLee>"');
+    expect(html).not.toContain('Key people');
+  });
+
   it('uses root-relative URLs without SITE_URL', () => {
     const rel = renderGamePage(relative, idx, { game: { ...game, id: 3, cover: null }, detail: null, companyById: companies });
     expect(rel).toContain('<link rel="canonical" href="/overworld/g/3/">');
