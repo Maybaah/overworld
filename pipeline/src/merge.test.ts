@@ -75,6 +75,19 @@ describe('merge: lead studio (c)', () => {
     expect(rolesOf(r, 1).find((x) => x.companyId === 1)!.role).toBe('co_developer');
   });
 
+  it('adds Wikidata key people to the game detail in role order', () => {
+    const r = merge(input({
+      companies: [company(1, 'Solo')],
+      games: [game(1, [row(10, 1, { developer: true })])],
+      wikidataGames: [wdGame(1, [])],
+      wikidataPeople: [{ qid: 'Q91', people: [{ qid: 'Q3', name: 'Zed', role: 'composer' }, { qid: 'Q2', name: 'Ann', role: 'director' }] }],
+    }));
+    expect(r.details[0]!.people).toEqual([
+      { name: 'Ann', role: 'director', wikidata: 'Q2' },
+      { name: 'Zed', role: 'composer', wikidata: 'Q3' },
+    ]);
+  });
+
   it('several developers: a Wikidata item link beats a label match', () => {
     const r = merge(input({
       companies: [company(1, 'Alpha Studio'), company(2, 'Beta Works')],

@@ -8,6 +8,8 @@ import {
   type GameCompanyRole,
   type GameDetail,
   type GameSummary,
+  type KeyPerson,
+  PERSON_ROLES,
   type LeadBasis,
   type LocationBasis,
   type LocationPrecision,
@@ -22,6 +24,7 @@ import type {
   RawMobyGame,
   RawWikidataCompany,
   RawWikidataGame,
+  RawWikidataPeople,
   WikidataMatchBasis,
 } from './raw';
 import { countryCentre, numericToAlpha2, currentCountry } from './countries';
@@ -60,6 +63,7 @@ export interface MergeInput {
   genres: RawIgdbGenre[];
   wikidataGames: RawWikidataGame[];
   wikidataCompanies: RawWikidataCompany[];
+  wikidataPeople?: RawWikidataPeople[];
   moby: RawMobyGame[] | null;
   specialties: Specialty[];
   locationCorrections: LocationCorrection[];
@@ -787,7 +791,18 @@ export function merge(input: MergeInput): MergeResult {
     if (first !== undefined) ownSteamId.set(w.raw.id, first);
   });
 
-  const details: GameDetail[] = kept.map((w) => ({
+  const peopleByQid = new Map((input.wikidataPeople ?? []).map((p) => [p.qid, p.people]));
+  const peopleOf = (gameId: number): KeyPerson[] | undefined => {
+    const qid = wdGameById.get(gameId)?.qid;
+    const list = qid ? peopleByQid.get(qid) : undefined;
+    if (!list?.length) return undefined;
+    return list
+      .map((p) => ({ name: p.name, role: p.role, wikidata: p.qid }))
+      .sort((a, b) => PERSON_ROLES.indexOf(a.role) - PERSON_ROLES.indexOf(b.role) || a.name.localeCompare(b.name));
+  };
+  const details: GameDetail[] = kept.map((w) => {
+    const people = peopleOf(w.raw.id);
+    return {
     id: w.raw.id,
     leadBasis: w.basis,
     platforms: w.raw.platforms,
@@ -797,7 +812,9 @@ export function merge(input: MergeInput): MergeResult {
     sources: w.sources,
     players: w.raw.players ?? null,
     playersBasis: w.raw.playersBasis ?? null,
-  }));
+    ...(people ? { people } : {}),
+    };
+  });
 
   const rolesByType = Object.fromEntries(ROLE_TYPES.map((r) => [r, 0])) as Record<RoleType, number>;
   let roleTotal = 0;
