@@ -908,12 +908,14 @@ ${where}`;
     [],
   );
 
+  const silkView = useCallback(() => globeRef.current?.pointOfView() ?? null, []);
+
   if (!indexes || !hasTimeline) return null;
 
   const animated = !reducedMotion;
   return (
     <div style={{ position: 'fixed', inset: 0, background: COLORS.background, overflow: 'hidden' }}>
-      <SilkBackground animated={animated} />
+      <SilkBackground animated={animated} view={silkView} />
       <Globe
         ref={globeRef}
         width={w}

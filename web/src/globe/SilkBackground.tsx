@@ -2,6 +2,24 @@ import { useEffect, useRef } from 'react';
 
 const SCALE = 0.5;
 const FRAME_MS = 1000 / 30;
+const BASE_ALTITUDE = 2.1;
+const DRIFT_PER_DEGREE = 0.0036;
+
+export interface SilkView {
+  lat: number;
+  lng: number;
+  altitude: number;
+}
+
+export function silkStep(prev: SilkView, next: SilkView): [number, number] {
+  const dLng = ((((next.lng - prev.lng) % 360) + 540) % 360) - 180;
+  const k = DRIFT_PER_DEGREE * Math.sqrt(BASE_ALTITUDE / Math.max(0.02, next.altitude));
+  return [dLng * k, (next.lat - prev.lat) * k];
+}
+
+export function silkZoom(altitude: number): number {
+  return Math.min(1.1, Math.max(0.5, (altitude / BASE_ALTITUDE) ** 0.2));
+}
 
 const VERTEX = `attribute vec2 aPos;
 void main() { gl_Position = vec4(aPos, 0.0, 1.0); }`;
@@ -9,6 +27,8 @@ void main() { gl_Position = vec4(aPos, 0.0, 1.0); }`;
 const FRAGMENT = `precision mediump float;
 uniform vec2 uRes;
 uniform float uTime;
+uniform vec2 uOffset;
+uniform float uZoom;
 
 float hash(vec2 p) {
   p = fract(p * vec2(123.34, 456.21));
@@ -38,7 +58,7 @@ float fbm(vec2 p) {
 void main() {
   vec2 uv = (gl_FragCoord.xy - 0.5 * uRes) / uRes.y;
   float t = uTime * 0.025;
-  vec2 p = uv * 1.4;
+  vec2 p = uv * 1.4 * uZoom + uOffset;
   vec2 q = vec2(fbm(p + vec2(0.0, t)), fbm(p + vec2(5.2, 1.3) - t));
   vec2 r = vec2(fbm(p + 3.0 * q + vec2(1.7, 9.2) + 0.7 * t), fbm(p + 3.0 * q + vec2(8.3, 2.8) - 0.5 * t));
   float f = fbm(p + 3.0 * r);
@@ -60,7 +80,7 @@ function compile(gl: WebGLRenderingContext, type: number, source: string): WebGL
   return gl.getShaderParameter(shader, gl.COMPILE_STATUS) ? shader : null;
 }
 
-export function SilkBackground({ animated }: { animated: boolean }) {
+export function SilkBackground({ animated, view }: { animated: boolean; view: () => SilkView | null }) {
   const ref = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -84,6 +104,10 @@ export function SilkBackground({ animated }: { animated: boolean }) {
     gl.vertexAttribPointer(pos, 2, gl.FLOAT, false, 0, 0);
     const uRes = gl.getUniformLocation(program, 'uRes');
     const uTime = gl.getUniformLocation(program, 'uTime');
+    const uOffset = gl.getUniformLocation(program, 'uOffset');
+    const uZoom = gl.getUniformLocation(program, 'uZoom');
+    const offset: [number, number] = [0, 0];
+    let seen: SilkView | null = null;
 
     const start = performance.now() - Math.random() * 600_000;
     let raf = 0;
@@ -97,18 +121,36 @@ export function SilkBackground({ animated }: { animated: boolean }) {
         gl.viewport(0, 0, w, h);
       }
       gl.uniform2f(uRes, w, h);
-      gl.uniform1f(uTime, (now - start) / 1000);
+      gl.uniform1f(uTime, ((animated ? now : 0) - start) / 1000);
+      gl.uniform2f(uOffset, offset[0], offset[1]);
+      gl.uniform1f(uZoom, seen ? silkZoom(seen.altitude) : 1);
       gl.drawArrays(gl.TRIANGLES, 0, 3);
+    };
+    const follow = (): boolean => {
+      const v = view();
+      if (!v) return false;
+      if (!seen) {
+        seen = { ...v };
+        return true;
+      }
+      if (v.lat === seen.lat && v.lng === seen.lng && v.altitude === seen.altitude) return false;
+      const [dx, dy] = silkStep(seen, v);
+      offset[0] += dx;
+      offset[1] += dy;
+      seen = { ...v };
+      return true;
     };
     const loop = (now: number) => {
       raf = requestAnimationFrame(loop);
-      if (document.hidden || now - last < FRAME_MS) return;
+      if (document.hidden) return;
+      const moved = follow();
+      if (!moved && (!animated || now - last < FRAME_MS)) return;
       last = now;
       draw(now);
     };
     const onResize = () => draw(performance.now());
-    if (animated) raf = requestAnimationFrame(loop);
-    else draw(performance.now());
+    raf = requestAnimationFrame(loop);
+    draw(performance.now());
     window.addEventListener('resize', onResize);
     return () => {
       cancelAnimationFrame(raf);
@@ -118,7 +160,7 @@ export function SilkBackground({ animated }: { animated: boolean }) {
       gl.deleteShader(vs);
       gl.deleteShader(fs);
     };
-  }, [animated]);
+  }, [animated, view]);
 
   return <canvas ref={ref} aria-hidden="true" className="ow-silk" style={{ position: 'absolute', inset: 0, zIndex: -1, width: '100%', height: '100%', display: 'block' }} />;
 }
