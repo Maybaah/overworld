@@ -10,6 +10,16 @@ describe('Attribution', () => {
     expect(screen.getByRole('link', { name: 'Countries and studios' })).toHaveAttribute('href', '/countries/');
   });
 
+  it('credits the author with a link to GitHub', () => {
+    seedStore();
+    render(<Attribution />);
+    expect(screen.getByText(/Created by/)).toBeInTheDocument();
+    const link = screen.getByRole('link', { name: 'Artem Kovtoniuk' });
+    expect(link).toHaveAttribute('href', 'https://github.com/Maybaah');
+    expect(link).toHaveAttribute('target', '_blank');
+    expect(link).toHaveAttribute('rel', 'noopener noreferrer');
+  });
+
   it('flags sample data', () => {
     seedStore({ meta: { ...meta, fixture: true } });
     render(<Attribution />);

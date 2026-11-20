@@ -1,5 +1,7 @@
 import { useStore } from '../data/store';
 
+export const AUTHOR = { name: 'Artem Kovtoniuk', url: 'https://github.com/Maybaah' };
+
 export function Attribution() {
   const meta = useStore((s) => s.meta);
   if (!meta) return null;
@@ -12,6 +14,12 @@ export function Attribution() {
           Countries and studios
         </a>
       )}
+      <span className="ow-credit">
+        Created by{' '}
+        <a href={AUTHOR.url} target="_blank" rel="noopener noreferrer">
+          {AUTHOR.name}
+        </a>
+      </span>
     </footer>
   );
 }
