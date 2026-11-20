@@ -101,7 +101,7 @@ export const SHARE_PAGE_LIMIT = 10_000;
 
 export function gameLink(id: number, loc: Pick<Location, 'origin' | 'pathname'> = window.location, pages = !import.meta.env.DEV, base?: string): string {
   const root = baseUrl(loc, base);
-  return pages ? `${root}g/${id}/` : `${root}?game=${id}`;
+  return pages ? `${root}g/${id}/?share` : `${root}?game=${id}`;
 }
 
 export function pageLink(

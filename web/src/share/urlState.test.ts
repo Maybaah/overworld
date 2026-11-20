@@ -97,7 +97,7 @@ describe('links under a sub-path', () => {
   });
 
   it('builds game and page links', () => {
-    expect(gameLink(1942, loc, true, '/overworld/')).toBe('https://u.github.io/overworld/g/1942/');
+    expect(gameLink(1942, loc, true, '/overworld/')).toBe('https://u.github.io/overworld/g/1942/?share');
     expect(gameLink(1942, loc, false, '/overworld/')).toBe('https://u.github.io/overworld/?game=1942');
     const q = new URLSearchParams({ seed: 'abc123', r: '1.2.3.0' });
     expect(pageLink('guess', q, loc, true, '/')).toBe('https://u.github.io/share/guess/?seed=abc123&r=1.2.3.0&mode=guess');
