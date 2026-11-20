@@ -257,6 +257,9 @@ export class MosaicLayer {
   private lowOrder: string[] = [];
   private pixelRatio = 1;
   private seq = 0;
+  private lastBuild = 0;
+  private answered = 0;
+  private answeredLast = true;
   private firstMesh!: () => void;
   readonly ready: Promise<void>;
   private visibleLow: string[] | null = null;
@@ -328,7 +331,12 @@ export class MosaicLayer {
   }
 
   request(year: number, maxYear: number, filter: ReadonlySet<number> | null, focus: MosaicFocus | null): void {
-    this.post({ type: 'build', seq: ++this.seq, year, maxYear, filter: filter ? [...filter] : null, focus });
+    this.lastBuild = ++this.seq;
+    this.post({ type: 'build', seq: this.lastBuild, year, maxYear, filter: filter ? [...filter] : null, focus });
+  }
+
+  get busy(): boolean {
+    return this.answered < this.lastBuild || !this.answeredLast;
   }
 
   get year(): number | null {
@@ -363,7 +371,7 @@ export class MosaicLayer {
   }
 
   cellOf(gameId: number): MosaicCell | null {
-    const v = this.current;
+    const v = this.incoming ?? this.current;
     const i = v?.cellByGame.get(gameId);
     return v && i !== undefined ? v.cells[i]! : null;
   }
@@ -462,6 +470,8 @@ export class MosaicLayer {
       return;
     }
     this.buildMs = msg.ms;
+    this.answered = msg.seq;
+    this.answeredLast = msg.last;
     const t0 = performance.now();
     this.apply(msg.mesh, msg.year);
     this.firstMesh();

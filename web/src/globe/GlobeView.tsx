@@ -10,7 +10,7 @@ import {
   type CountryShape,
 } from './countries';
 import { DebugHud, type Readout } from './DebugHud';
-import { frameTarget, gameTarget, placeTarget, type Target } from './flight';
+import { gameTarget, placeTarget, type Target } from './flight';
 import { FrameStats } from './frameStats';
 import { LabelManager, type LabelFrame, type LabelItem } from './labels';
 import { MapLabels } from './mapLabels';
@@ -25,7 +25,7 @@ import { MosaicLayer } from './mosaicLayer';
 import { GlobeControls, navBus, screenToGeo, type NavCommand, type PovTarget } from './controls';
 import { GLOBE_RADIUS } from './outline';
 import { MOSAIC_ALTITUDE } from './mosaic/build';
-import type { MosaicFocus } from './mosaic/build';
+import type { MosaicCell, MosaicFocus } from './mosaic/build';
 import { mosaicInput } from './mosaic/layouts';
 import { PICK_RADIUS_PX } from './picking';
 import { isClick, pointerToCanvas } from './pointer';
@@ -87,6 +87,20 @@ function focusChanged(a: MosaicFocus | null, b: MosaicFocus | null): boolean {
 }
 
 const PICK_RADIUS = GLOBE_RADIUS * (1 + MOSAIC_ALTITUDE);
+const CARD_SHARE = 0.45;
+const SEEK_START_ALTITUDE = 0.7;
+const SEEK_MIN_ALTITUDE = 0.035;
+const SEEK_TRIES = 8;
+
+function cardAltitude(cell: MosaicCell, fov: number): number {
+  const degreesPerAltitude = 2 * Math.tan((fov * Math.PI) / 360) * (180 / Math.PI);
+  return Math.min(1.2, Math.max(SEEK_MIN_ALTITUDE, cell.imageH / (CARD_SHARE * degreesPerAltitude)));
+}
+
+function sameView(a: Target, b: Target): boolean {
+  const ratio = a.altitude / b.altitude;
+  return ratio > 0.8 && ratio < 1.25 && distanceKm(a.lat, a.lng, b.lat, b.lng) < 111 * a.altitude * 8;
+}
 
 const NO_ARCS: RoleArcs = { arcs: [], markers: [], labels: [] };
 const FLY_MS = 1200;
@@ -442,6 +456,8 @@ export function GlobeView() {
     mosaic.setVisible(mosaicShown(initial));
     mosaic.setSelected(initial.selectedGameId);
     let mosaicHover: number | null = null;
+    let clickedGame: number | null = null;
+    let seeking: { id: number; country: string; tries: number; target: Target | null } | null = null;
     let mosaicPicking = false;
     let mosaicMovedAt = -Infinity;
     let mosaicSettled = true;
@@ -574,6 +590,7 @@ ${where}`;
     const onDown = (ev: PointerEvent) => {
       const p = track(ev);
       pointer.down = ev.button === 0;
+      seeking = null;
       pointer.downX = p.x;
       pointer.downY = p.y;
       setHover(null);
@@ -588,7 +605,10 @@ ${where}`;
         const geo = screenToGeo(camera, p.nx * canvas.clientWidth, p.ny * canvas.clientHeight, canvas.clientWidth, canvas.clientHeight, PICK_RADIUS);
         if (!geo) return;
         void mosaic.pick(geo.lat, geo.lng).then((id) => {
-          if (id !== null) void useStore.getState().selectGame(id);
+          if (id !== null) {
+            clickedGame = id;
+            void useStore.getState().selectGame(id);
+          }
           else useStore.getState().reportGlobeClick(geo.lat, geo.lng);
         });
         return;
@@ -611,9 +631,50 @@ ${where}`;
       navRef.current?.stop();
       globe.pointOfView(target, FLY_MS);
     };
+    const seekCard = (id: number) => {
+      seeking = null;
+      const st = useStore.getState();
+      const game = indexes.gameById.get(id);
+      const lead = game ? indexes.companyById.get(game.leadCompanyId) : undefined;
+      const shown = game && lead?.country && (game.year ?? -Infinity) <= st.year && (!st.gameFilter || st.gameFilter.has(id));
+      if (!mosaic.visible || !shown) {
+        const t = gameTarget(indexes, layout, companyIndex, id);
+        if (t) fly({ ...t, altitude: Math.min(globe.pointOfView().altitude, SEEK_START_ALTITUDE) });
+        return;
+      }
+      seeking = { id, country: lead.country!, tries: 0, target: null };
+      stepSeek();
+    };
+    const stepSeek = () => {
+      if (!seeking) return;
+      const cell = mosaic.cellOf(seeking.id);
+      if (cell) {
+        const target = { lat: cell.lat, lng: cell.lng, altitude: cardAltitude(cell, (camera as THREE.PerspectiveCamera).fov) };
+        if (seeking.target && sameView(seeking.target, target)) {
+          if (!mosaic.busy) seeking = null;
+          return;
+        }
+        seeking.target = target;
+        fly(target);
+        return;
+      }
+      if (seeking.tries >= SEEK_TRIES) {
+        seeking = null;
+        return;
+      }
+      const c = indexes.countries.find((x) => x.code === seeking!.country);
+      if (!c) {
+        seeking = null;
+        return;
+      }
+      const altitude = seeking.tries === 0 ? Math.min(globe.pointOfView().altitude, SEEK_START_ALTITUDE) : Math.max(SEEK_MIN_ALTITUDE, globe.pointOfView().altitude / 2);
+      seeking.tries++;
+      seeking.target = null;
+      fly({ lat: c.lat, lng: c.lng, altitude });
+    };
     let lastCameraSeq = initial.cameraRequest?.seq ?? 0;
     const opened = useStore.getState();
-    if (opened.selectedGameId !== null) fly(gameTarget(indexes, layout, companyIndex, opened.selectedGameId));
+    if (opened.selectedGameId !== null) seekCard(opened.selectedGameId);
     else if (opened.selectedPlace) fly(placeTarget(indexes, layout, companyIndex, opened.selectedPlace));
     const unsubscribe = useStore.subscribe((s, prev) => {
       if (s.timeline !== prev.timeline || s.gameFilter !== prev.gameFilter || s.year !== prev.year) requestMosaic(s);
@@ -644,8 +705,10 @@ ${where}`;
       if (s.selectedPlace !== prev.selectedPlace && s.selectedPlace) {
         fly(placeTarget(indexes, layout, companyIndex, s.selectedPlace));
       }
-      if (s.selectedGameId !== prev.selectedGameId && s.selectedGameId !== null) {
-        fly(gameTarget(indexes, layout, companyIndex, s.selectedGameId));
+      if (s.selectedGameId !== prev.selectedGameId) {
+        if (s.selectedGameId === null || s.selectedGameId === clickedGame) seeking = null;
+        else seekCard(s.selectedGameId);
+        clickedGame = null;
       }
       if (s.cameraRequest && s.cameraRequest.seq !== lastCameraSeq) {
         lastCameraSeq = s.cameraRequest.seq;
@@ -693,6 +756,7 @@ ${where}`;
           requestMosaic(useStore.getState());
         }
       }
+      if (seeking && mosaicSettled && now - mosaicMovedAt > 400 && (!mosaic.busy || mosaic.cellOf(seeking.id))) stepSeek();
       if (mosaic.year !== useStore.getState().shownYear) useStore.getState().setShownYear(mosaic.year);
       mosaic.frame(camera as THREE.PerspectiveCamera, canvas.clientHeight);
       vp.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse);
@@ -841,16 +905,6 @@ ${where}`;
   useEffect(() => {
     labelsRef.current?.setItems(labelItems);
   }, [labelItems]);
-
-  useEffect(() => {
-    const globe = globeRef.current;
-    if (!ready || !globe || !detail) return;
-    const lead = arcs.markers.find((m) => m.lead);
-    if (!lead) return;
-    navRef.current?.stop();
-    globe.pointOfView(frameTarget(lead, arcs.markers.filter((m) => !m.lead)), FLY_MS);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [detail, ready]);
 
   const readout = useCallback(
     (): Readout => ({

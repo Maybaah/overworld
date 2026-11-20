@@ -19,5 +19,5 @@ export type MosaicRequest =
   | { type: 'pick'; seq: number; lat: number; lng: number };
 
 export type MosaicResponse =
-  | { type: 'mesh'; seq: number; year: number; mesh: MosaicMesh; ms: number }
+  | { type: 'mesh'; seq: number; year: number; mesh: MosaicMesh; ms: number; last: boolean }
   | { type: 'pick'; seq: number; gameId: number | null };

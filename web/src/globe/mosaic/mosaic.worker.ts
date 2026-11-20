@@ -61,10 +61,10 @@ function build(year: number, maxYear: number, filter: number[] | null, focus: Mo
   return builder!.build(chosen, focus, !!layout);
 }
 
-function respond(msg: BuildRequest, result: BuildResult, ms: number): void {
+function respond(msg: BuildRequest, result: BuildResult, ms: number, last: boolean): void {
   shown = result.countries;
   const { mesh } = result;
-  const res: MosaicResponse = { type: 'mesh', seq: msg.seq, year: msg.year, mesh, ms };
+  const res: MosaicResponse = { type: 'mesh', seq: msg.seq, year: msg.year, mesh, ms, last };
   self.postMessage(res, [mesh.position.buffer, mesh.uv.buffer, mesh.cell.buffer, mesh.lines.buffer]);
 }
 
@@ -98,7 +98,7 @@ function pump(): void {
     const t0 = performance.now();
     const ready = m.filter ? null : prefetched.get(key);
     prefetched.clear();
-    respond(m, ready ?? build(m.year, m.maxYear, m.filter, focus), performance.now() - t0);
+    respond(m, ready ?? build(m.year, m.maxYear, m.filter, focus), performance.now() - t0, steps.length === 0 && queued === null);
     if (steps.length > 0) pump();
     else if (!m.filter && direction !== 0) {
       const next = m.year + direction;
