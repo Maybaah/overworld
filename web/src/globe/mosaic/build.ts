@@ -399,7 +399,7 @@ export function buildCountryMosaic(
   country: CountryRegion,
   o: MosaicOptions,
   memory: Map<string, Site> = new Map(),
-  spots?: ReadonlyMap<number, Pt>,
+  spots?: () => ReadonlyMap<number, Pt>,
 ): CountryMosaic {
   const key = games.map((g) => g.id).join(',');
   const out: CountryMosaic = { key, sites: [], pieces: [], position: [], uv: [], cell: [], lines: [], cells: [] };
@@ -409,12 +409,12 @@ export function buildCountryMosaic(
   const onLand = (p: Pt) => land.containsBox([p[0], p[1], p[0], p[1]]) || pointInRegion(p, country.region);
   const list = [...games].sort((a, b) => b.popularity - a.popularity || a.id - b.id);
   const weights = list.map((g) => Math.max(1, g.popularity) ** POPULARITY_EXPONENT);
-  const home = spots ? list.map((g) => spots.get(g.id) ?? countryCore(country)) : spiralSpots(country, weights);
-  const fit = fitPowerDiagram(home, weights, country.region, {
-    iterations: list.length === 1 ? 0 : o.iterations,
-    tether: o.tether,
-    start: list.map((g) => memory.get(`g${g.id}`)),
-  });
+  const start = list.map((g) => memory.get(`g${g.id}`));
+  const iterations = list.length === 1 ? 0 : o.iterations;
+  const needHomes = iterations > 0 || start.some((st) => !st);
+  const known = needHomes && spots ? spots() : null;
+  const home: Pt[] = !needHomes ? start.map((st) => [st!.x, st!.y]) : known ? list.map((g) => known.get(g.id) ?? countryCore(country)) : spiralSpots(country, weights);
+  const fit = fitPowerDiagram(home, weights, country.region, { iterations, tether: o.tether, start });
   list.forEach((g, k) => {
     memory.set(`g${g.id}`, fit.fitted[k]!);
     out.sites.push(`g${g.id}`);
@@ -560,7 +560,7 @@ export class MosaicBuilder {
       else {
         const extra = n > (base.get(code) ?? 1);
         const iterations = extra || forced ? this.options.detailIterations : fitted ? 0 : this.options.iterations;
-        m = buildCountryMosaic(chosen, this.regions.get(code)!, { ...this.options, iterations }, this.memory, this.spotsOf(code, list));
+        m = buildCountryMosaic(chosen, this.regions.get(code)!, { ...this.options, iterations }, this.memory, () => this.spotsOf(code, list));
       }
       this.cache.set(key, m);
       countries.set(code, m);
