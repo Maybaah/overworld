@@ -22,7 +22,7 @@ import { CountriesLayer } from './countriesLayer';
 import { CoversLayer, type CoverEntry } from './coversLayer';
 import { MarkersLayer, type MarkerItem } from './markersLayer';
 import { MosaicLayer } from './mosaicLayer';
-import { StarryBackground } from './StarryBackground';
+import { StarsLayer } from './starsLayer';
 import { GlobeControls, navBus, screenToGeo, type NavCommand, type PovTarget } from './controls';
 import { GLOBE_RADIUS } from './outline';
 import { MOSAIC_ALTITUDE } from './mosaic/build';
@@ -419,6 +419,7 @@ export function GlobeView() {
     layer.setAltitude(globe.pointOfView().altitude);
     layerRef.current = layer;
     const markers = new MarkersLayer(globe, scene, renderer.getPixelRatio());
+    const stars = new StarsLayer(scene, renderer.getPixelRatio(), !reducedMotion);
     markers.set(markerItemsRef.current);
     markersRef.current = markers;
     const outline = new CountriesLayer(scene, COLORS.countryFill, COLORS.countryStroke, SHADE_TOP);
@@ -719,6 +720,7 @@ ${where}`;
       stats.push(now, dt);
       navRef.current?.update(Math.min(0.1, dt / 1000), (camera as THREE.PerspectiveCamera).fov, canvas.clientHeight);
       layer.frame(dt);
+      stars.frame(now / 1000);
 
       const world = camera.matrixWorld.elements;
       let moved = false;
@@ -862,6 +864,7 @@ ${where}`;
       mosaic.dispose();
       coversRef.current = null;
       markers.dispose();
+      stars.dispose();
       outline.dispose();
       labels?.dispose();
       names?.dispose();
@@ -908,19 +911,16 @@ ${where}`;
     [],
   );
 
-  const skyView = useCallback(() => globeRef.current?.pointOfView() ?? null, []);
-
   if (!indexes || !hasTimeline) return null;
 
   const animated = !reducedMotion;
   return (
     <div style={{ position: 'fixed', inset: 0, background: COLORS.background, overflow: 'hidden' }}>
-      <StarryBackground animated={animated} view={skyView} />
       <Globe
         ref={globeRef}
         width={w}
         height={h}
-        backgroundColor="rgba(0,0,0,0)"
+        backgroundColor={COLORS.background}
         globeMaterial={globeMaterial}
         globeTileEngineUrl={imagery === 'off' ? null : tileUrl}
         {...TILE_PROPS}
