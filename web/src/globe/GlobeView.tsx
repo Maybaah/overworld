@@ -57,6 +57,7 @@ declare global {
       visibleCovers(): string[];
       imagery(): string;
       mosaic(): import("./mosaicLayer").MosaicStats;
+      pov(): { lat: number; lng: number; altitude: number };
       namesPlaced(): number;
       lastLayoutMs(): number;
       setYear(y: number): void;
@@ -97,10 +98,6 @@ function cardAltitude(cell: MosaicCell, fov: number): number {
   return Math.min(1.2, Math.max(SEEK_MIN_ALTITUDE, cell.imageH / (CARD_SHARE * degreesPerAltitude)));
 }
 
-function sameView(a: Target, b: Target): boolean {
-  const ratio = a.altitude / b.altitude;
-  return ratio > 0.8 && ratio < 1.25 && distanceKm(a.lat, a.lng, b.lat, b.lng) < 111 * a.altitude * 8;
-}
 
 const NO_ARCS: RoleArcs = { arcs: [], markers: [], labels: [] };
 const FLY_MS = 1200;
@@ -458,7 +455,7 @@ export function GlobeView() {
     mosaic.setSelected(initial.selectedGameId);
     let mosaicHover: number | null = null;
     let clickedGame: number | null = null;
-    let seeking: { id: number; target: Target | null } | null = null;
+    let seeking: { id: number } | null = null;
     let mosaicPicking = false;
     let mosaicMovedAt = -Infinity;
     let mosaicSettled = true;
@@ -643,25 +640,18 @@ ${where}`;
         if (t) fly({ ...t, altitude: Math.min(globe.pointOfView().altitude, SEEK_START_ALTITUDE) });
         return;
       }
-      seeking = { id, target: null };
+      seeking = { id };
       stepSeek();
     };
     const stepSeek = () => {
-      if (!seeking) return;
-      const cell = mosaic.cellOf(seeking.id);
-      if (cell) {
-        const target = { lat: cell.lat, lng: cell.lng, altitude: cardAltitude(cell, (camera as THREE.PerspectiveCamera).fov) };
-        if (seeking.target && sameView(seeking.target, target)) {
-          if (!mosaic.busy) seeking = null;
-          return;
-        }
-        seeking.target = target;
-        fly(target);
-        return;
-      }
-      if (mosaic.busy) return;
+      if (!seeking || mosaic.busy) return;
       const id = seeking.id;
       seeking = null;
+      const cell = mosaic.cellOf(id);
+      if (cell) {
+        fly({ lat: cell.lat, lng: cell.lng, altitude: cardAltitude(cell, (camera as THREE.PerspectiveCamera).fov) });
+        return;
+      }
       const t = gameTarget(indexes, layout, companyIndex, id);
       if (t) fly({ ...t, altitude: Math.min(globe.pointOfView().altitude, SEEK_START_ALTITUDE) });
     };
@@ -670,7 +660,9 @@ ${where}`;
     if (opened.selectedGameId !== null) seekCard(opened.selectedGameId);
     else if (opened.selectedPlace) fly(placeTarget(indexes, layout, companyIndex, opened.selectedPlace));
     const unsubscribe = useStore.subscribe((s, prev) => {
-      if (s.timeline !== prev.timeline || s.gameFilter !== prev.gameFilter || s.year !== prev.year || s.selectedGameId !== prev.selectedGameId) requestMosaic(s);
+      if (s.timeline !== prev.timeline || s.gameFilter !== prev.gameFilter || s.year !== prev.year) requestMosaic(s);
+      else if (s.selectedGameId !== prev.selectedGameId && s.selectedGameId !== null && !mosaic.cellOf(s.selectedGameId)) requestMosaic(s);
+      if (s.selectedGameId === null && prev.selectedGameId !== null) mosaicSettled = false;
       if (s.zoomDetail !== prev.zoomDetail) mosaicSettled = false;
       if (s.pointsVisible !== prev.pointsVisible || s.countryShade !== prev.countryShade) mosaic.setVisible(mosaicShown(s));
       if (s.selectedGameId !== prev.selectedGameId) mosaic.setSelected(s.selectedGameId);
@@ -744,13 +736,14 @@ ${where}`;
         mosaicPickedAt = now;
         mosaic.cameraMoved();
         const cam = camera as THREE.PerspectiveCamera;
-        const next = useStore.getState().zoomDetail ? focusOf(globe.pointOfView(), cam.fov, cam.aspect) : null;
-        if (focusChanged(mosaicFocus, next)) {
+        const st = useStore.getState();
+        const next = st.zoomDetail ? focusOf(globe.pointOfView(), cam.fov, cam.aspect) : null;
+        if (st.selectedGameId === null && seeking === null && focusChanged(mosaicFocus, next)) {
           mosaicFocus = next;
           requestMosaic(useStore.getState());
         }
       }
-      if (seeking && (seeking.target === null || (mosaicSettled && now - mosaicMovedAt > 400)) && (!mosaic.busy || mosaic.cellOf(seeking.id))) stepSeek();
+      if (seeking && !mosaic.busy) stepSeek();
       if (mosaic.year !== useStore.getState().shownYear) useStore.getState().setShownYear(mosaic.year);
       mosaic.frame(camera as THREE.PerspectiveCamera, canvas.clientHeight);
       vp.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse);
@@ -821,6 +814,7 @@ ${where}`;
         pointCount: () => layer.pointCount(),
         coverCount: () => covers.coverCount(),
         mosaic: () => mosaic.stats(),
+        pov: () => globe.pointOfView(),
         coversLoaded: () => covers.loadedCovers(),
         imagesLoaded: () => covers.imagesLoaded(),
         visibleCovers: () => covers.visibleGames(),
