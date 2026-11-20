@@ -10,8 +10,9 @@ Useful things to include: what you found, how to reproduce it, and what an attac
 
 - **API keys.** Keys belong only in `.env` (git-ignored) or in CI secrets. If you find a key in the repository, its history, a log or a build output, report it privately so it can be revoked.
 - **The Steam relay** (`web/server/`). It holds the Steam Web API key and must never return it, log it, or let a caller reach other hosts through it.
-- **Usage stats** (`supabase/`, `web/server/eventsRelay.ts`, `web/src/admin/`). The public key must reach nothing but `log_events`, `admin_stats` must refuse anyone not on the admin list, and no event may carry more than the fields listed in `docs/PRIVACY.md`.
-- **Generated share pages** (`web/scripts/build-share-pages.mjs`). Game titles come from an outside source and must be escaped wherever they are written into HTML.
+- **Usage stats** (`supabase/`, `web/server/eventsRelay.ts`, `web/src/admin/`). The public key must reach no table and no function; only the Worker, with a secret key, may call `log_events`. `admin_stats` must refuse anyone not on the admin list, and no event may carry more than the fields listed in `docs/PRIVACY.md`.
+- **Generated pages** (`web/scripts/build-share-pages.mjs`, `web/scripts/seo-pages.mjs`). Game, studio and city names come from outside sources and must be escaped wherever they are written into HTML.
+- **Headers** (`web/public/_headers`). The site runs under a strict Content Security Policy: no inline scripts, and only the hosts the app needs. A change that needs to loosen it should say why.
 
 ## Supported versions
 

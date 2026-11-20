@@ -122,7 +122,7 @@ The part with the most moving pieces:
 2. The whole-globe view has about 1,500 cells shared by √(games × area). With zoom detail on (`zoomDetail` in the store, off by default, kept in localStorage), zooming in adds cells for the countries in view, in steps, up to every game.
 3. It runs in a worker (`mosaic/mosaic.worker.ts`, messages in `mosaic/protocol.ts`). The worker keeps only the latest request and prefetches the next year.
 4. `npm run layouts` fits every year once into `mosaic-layouts.bin` (format in `mosaic/layouts.ts`), so moving the year slider only cuts cells.
-5. `mosaicLayer.ts` draws it. Small covers come from sprite sheets packed by `npm run sprites`; sharper tiers load into atlases (`coverAtlas.ts`) only when a cell is big enough on screen. Games without a cover get a title card (`titleCovers.ts`).
+5. `mosaicLayer.ts` draws it. Small covers come from sprite sheets packed by `npm run sprites`; sharper tiers load into atlases (`coverAtlas.ts`) only when a cell is big enough on screen, and fade in over the blurrier one. A sharp cover keeps its slot while it stays on screen, so turning the globe never drops a visible cover back to a blurrier one. The sharp atlases have no mipmaps, so the shader averages several taps when a cover is drawn smaller than its slot. Games without a cover get a title card (`titleCovers.ts`).
 
 ## Pages built from the data
 
@@ -130,6 +130,7 @@ The part with the most moving pieces:
 
 - `g/<id>/` for the 10,000 most played games: link-preview tags, then a redirect into the app.
 - `countries/` and `countries/<name>/`, and `studios/<name>/` for every studio that led at least three games (`seo-pages.mjs`). These are real pages for search engines and people without the globe: games, studios, cities and facts, each linking into the app with `?game=` or `?place=`.
+- No page has an inline script: `go.js` does the redirects, so `web/public/_headers` can forbid inline scripts in its Content Security Policy.
 - `sitemap.xml` listing the home page and those pages, and `robots.txt`, which keeps the admin page out. The home page also gets its canonical and preview-image tags here, since they need the absolute `SITE_URL`.
 
 ## Server

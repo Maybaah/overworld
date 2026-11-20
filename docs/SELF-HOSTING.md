@@ -98,6 +98,8 @@ VITE_SUPABASE_PUBLISHABLE_KEY=<publishable key>
 
 5. Use your own domain: Cloudflare dashboard → **Workers & Pages** → the Worker → **Settings → Domains & Routes → Add → Custom domain**. The domain must be on Cloudflare DNS. Then set `SITE_URL` and `VITE_TELEMETRY_HOSTS` to it and deploy again.
 
+`web/public/_headers` sets the security headers, including a Content Security Policy that allows images from `images.igdb.com` and the admin page's calls to `*.supabase.co`. If you add another outside host, add it there too, or the browser will block it.
+
 Free plan limits: 20,000 files per deploy (a full build has about 13,600: 10,000 game share pages and 3,400 country and studio pages), 25 MiB per file, 100,000 Worker requests a day. Static files do not count toward the request limit; only `/api/*` calls do.
 
 ## 5. Usage stats (optional)
