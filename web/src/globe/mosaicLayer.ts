@@ -214,11 +214,7 @@ class View {
   setAlpha(a: number, front: boolean): void {
     const fading = a < 1;
     this.material.uniforms.uAlpha!.value = a;
-    if (this.material.transparent !== fading) {
-      this.material.transparent = fading;
-      this.material.depthWrite = !fading;
-      this.material.needsUpdate = true;
-    }
+    this.material.depthWrite = !fading;
     this.material.polygonOffsetFactor = front ? -4 : -2;
     this.material.polygonOffsetUnits = front ? -4 : -2;
     this.mesh.renderOrder = front ? 0.55 : 0.5;
@@ -303,6 +299,7 @@ export class MosaicLayer {
         uSpriteSize: { value: SPRITE_LAYOUT.size },
         uT0Size: { value: new THREE.Vector2(TIERS[0]!.layout.size, TIERS[0]!.layout.height ?? TIERS[0]!.layout.size) },
       },
+      transparent: true,
       polygonOffset: true,
       polygonOffsetFactor: -2,
       polygonOffsetUnits: -2,
