@@ -22,6 +22,7 @@ import { CountriesLayer } from './countriesLayer';
 import { CoversLayer, type CoverEntry } from './coversLayer';
 import { MarkersLayer, type MarkerItem } from './markersLayer';
 import { MosaicLayer } from './mosaicLayer';
+import { SilkBackground } from './SilkBackground';
 import { GlobeControls, navBus, screenToGeo, type NavCommand, type PovTarget } from './controls';
 import { GLOBE_RADIUS } from './outline';
 import { MOSAIC_ALTITUDE } from './mosaic/build';
@@ -912,11 +913,12 @@ ${where}`;
   const animated = !reducedMotion;
   return (
     <div style={{ position: 'fixed', inset: 0, background: COLORS.background, overflow: 'hidden' }}>
+      <SilkBackground animated={animated} />
       <Globe
         ref={globeRef}
         width={w}
         height={h}
-        backgroundColor={COLORS.background}
+        backgroundColor="rgba(0,0,0,0)"
         globeMaterial={globeMaterial}
         globeTileEngineUrl={imagery === 'off' ? null : tileUrl}
         {...TILE_PROPS}
