@@ -1,3 +1,4 @@
+import type { PersonRole } from '../../shared/model';
 export const STAGE_FILES = {
   igdbGames: 'igdb-games.json',
   igdbCompanies: 'igdb-companies.json',
@@ -6,6 +7,7 @@ export const STAGE_FILES = {
   igdbGenres: 'igdb-genres.json',
   wikidataGames: 'wikidata-games.json',
   wikidataCompanies: 'wikidata-companies.json',
+  wikidataPeople: 'wikidata-people.json',
   mobygames: 'mobygames.json',
   population: 'population.json',
   steamspy: 'steamspy.json',
@@ -94,6 +96,11 @@ export interface RawWikidataGame {
   developers: RawWikidataEntityRef[];
   publishers: RawWikidataEntityRef[];
   countryOfOrigin: string | null;
+}
+
+export interface RawWikidataPeople {
+  qid: string;
+  people: { qid: string; name: string; role: PersonRole }[];
 }
 
 export type WikidataMatchBasis = 'external_id' | 'via_game' | 'name';

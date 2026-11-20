@@ -79,6 +79,15 @@ export interface GameCompanyRole {
   source: SourceRef;
 }
 
+export const PERSON_ROLES = ['creator', 'director', 'producer', 'designer', 'writer', 'artist', 'programmer', 'composer', 'sound'] as const;
+export type PersonRole = (typeof PERSON_ROLES)[number];
+
+export interface KeyPerson {
+  name: string;
+  role: PersonRole;
+  wikidata: string;
+}
+
 export interface GameDetail {
   id: number;
   leadBasis: LeadBasis;
@@ -89,6 +98,7 @@ export interface GameDetail {
   sources: SourceRef[];
   players?: number | null;
   playersBasis?: PlayersBasis | null;
+  people?: KeyPerson[];
 }
 
 export type PlayersBasis = 'steam' | 'igdb_played' | 'rawg_added' | 'igdb_ratings';

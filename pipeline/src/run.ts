@@ -13,6 +13,7 @@ import type {
   RawMobyGame,
   RawWikidataCompany,
   RawWikidataGame,
+  RawWikidataPeople,
 } from './raw';
 import { readJson, readJsonIfExists } from './stageio';
 import { runCountriesStage } from './stages/countries';
@@ -22,9 +23,10 @@ import { runPopulationStage } from './stages/population';
 import { runSteamSpyStage } from './stages/steamspy';
 import { runRawgStage } from './stages/rawg';
 import { runWikidataStage } from './stages/wikidata';
+import { runPeopleStage } from './stages/people';
 import { parseValidateArgs, runValidation } from './validate';
 
-export const STAGE_NAMES = ['steamspy', 'rawg', 'igdb', 'countries', 'wikidata', 'population', 'mobygames', 'merge', 'validate'] as const;
+export const STAGE_NAMES = ['steamspy', 'rawg', 'igdb', 'countries', 'wikidata', 'people', 'population', 'mobygames', 'merge', 'validate'] as const;
 export type StageName = (typeof STAGE_NAMES)[number];
 
 export type StageFn = (config: PipelineConfig) => Promise<unknown> | unknown;
@@ -44,6 +46,7 @@ export async function runMergeStage(config: PipelineConfig): Promise<Record<stri
   const genres = await need<RawIgdbGenre[]>(STAGE_FILES.igdbGenres);
   const wikidataGames = (await readJsonIfExists<RawWikidataGame[]>(file(STAGE_FILES.wikidataGames))) ?? [];
   const wikidataCompanies = (await readJsonIfExists<RawWikidataCompany[]>(file(STAGE_FILES.wikidataCompanies))) ?? [];
+  const wikidataPeople = (await readJsonIfExists<RawWikidataPeople[]>(file(STAGE_FILES.wikidataPeople))) ?? [];
   const moby = await readJsonIfExists<RawMobyGame[]>(file(STAGE_FILES.mobygames));
   const rawgUsed = (await readJsonIfExists<unknown[]>(file(STAGE_FILES.rawg)))?.length ? true : false;
   const population = await readJsonIfExists<RawPopulation>(file(STAGE_FILES.population));
@@ -61,7 +64,7 @@ export async function runMergeStage(config: PipelineConfig): Promise<Record<stri
   const cityIndex = createCityIndex();
 
   const result = merge({
-    games, companies, genres, wikidataGames, wikidataCompanies, moby, specialties, locationCorrections,
+    games, companies, genres, wikidataGames, wikidataCompanies, wikidataPeople, moby, specialties, locationCorrections,
     leadOverrides,
     rawgUsed,
     resolveCity: cityIndex.resolveCity,
@@ -91,6 +94,7 @@ export const defaultStages: StageMap = {
   igdb: runIgdbStage,
   countries: (config) => runCountriesStage(config),
   wikidata: runWikidataStage,
+  people: (config) => runPeopleStage(config),
   population: runPopulationStage,
   mobygames: runMobygamesStage,
   steamspy: (config) => runSteamSpyStage(config),

@@ -36,7 +36,7 @@ function stubs(calls: string[], over: Partial<StageMap> = {}): StageMap {
     calls.push(name);
     return { games: 3 };
   };
-  return { steamspy: mk('steamspy'), rawg: mk('rawg'), igdb: mk('igdb'), countries: mk('countries'), wikidata: mk('wikidata'), population: mk('population'), mobygames: mk('mobygames'), merge: mk('merge'), validate: mk('validate'), ...over };
+  return { steamspy: mk('steamspy'), rawg: mk('rawg'), igdb: mk('igdb'), countries: mk('countries'), wikidata: mk('wikidata'), people: mk('people'), population: mk('population'), mobygames: mk('mobygames'), merge: mk('merge'), validate: mk('validate'), ...over };
 }
 
 beforeEach(() => {
@@ -53,7 +53,7 @@ describe('runPipeline', () => {
   it('runs the stages in order and logs start and end lines with counts and seconds', async () => {
     const calls: string[] = [];
     await runPipeline(config(), stubs(calls));
-    expect(calls).toEqual(['steamspy', 'rawg', 'igdb', 'countries', 'wikidata', 'population', 'mobygames', 'merge', 'validate']);
+    expect(calls).toEqual(['steamspy', 'rawg', 'igdb', 'countries', 'wikidata', 'people', 'population', 'mobygames', 'merge', 'validate']);
     expect(logs).toContain('[igdb] start');
     expect(logs.find((l) => l.startsWith('[merge] done'))).toMatch(/^\[merge\] done in \d+\.\ds \(games=3\)$/);
   });
@@ -71,7 +71,7 @@ describe('runPipeline', () => {
   it('skips MobyGames with a log line when there is no API key', async () => {
     const calls: string[] = [];
     await runPipeline(config({ mobygamesApiKey: null }), stubs(calls));
-    expect(calls).toEqual(['steamspy', 'rawg', 'igdb', 'countries', 'wikidata', 'population', 'merge', 'validate']);
+    expect(calls).toEqual(['steamspy', 'rawg', 'igdb', 'countries', 'wikidata', 'people', 'population', 'merge', 'validate']);
     expect(logs.some((l) => l.startsWith('[mobygames]') && /skipped/.test(l))).toBe(true);
   });
 
@@ -86,8 +86,8 @@ describe('runPipeline', () => {
     expect(calls).toEqual(['steamspy', 'rawg', 'igdb', 'countries']);
   });
 
-  it('exposes the five stages', () => {
-    expect([...STAGE_NAMES]).toEqual(['steamspy', 'rawg', 'igdb', 'countries', 'wikidata', 'population', 'mobygames', 'merge', 'validate']);
+  it('exposes the stages', () => {
+    expect([...STAGE_NAMES]).toEqual(['steamspy', 'rawg', 'igdb', 'countries', 'wikidata', 'people', 'population', 'mobygames', 'merge', 'validate']);
   });
 });
 
