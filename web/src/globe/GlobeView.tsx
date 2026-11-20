@@ -22,7 +22,7 @@ import { CountriesLayer } from './countriesLayer';
 import { CoversLayer, type CoverEntry } from './coversLayer';
 import { MarkersLayer, type MarkerItem } from './markersLayer';
 import { MosaicLayer } from './mosaicLayer';
-import { SilkBackground } from './SilkBackground';
+import { StarryBackground } from './StarryBackground';
 import { GlobeControls, navBus, screenToGeo, type NavCommand, type PovTarget } from './controls';
 import { GLOBE_RADIUS } from './outline';
 import { MOSAIC_ALTITUDE } from './mosaic/build';
@@ -908,14 +908,14 @@ ${where}`;
     [],
   );
 
-  const silkView = useCallback(() => globeRef.current?.pointOfView() ?? null, []);
+  const skyView = useCallback(() => globeRef.current?.pointOfView() ?? null, []);
 
   if (!indexes || !hasTimeline) return null;
 
   const animated = !reducedMotion;
   return (
     <div style={{ position: 'fixed', inset: 0, background: COLORS.background, overflow: 'hidden' }}>
-      <SilkBackground animated={animated} view={silkView} />
+      <StarryBackground animated={animated} view={skyView} />
       <Globe
         ref={globeRef}
         width={w}
