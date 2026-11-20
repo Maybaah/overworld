@@ -4,18 +4,26 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Overworld: a 3D globe of where video games are made</title>
-    <meta name="description" content="Thirty thousand video games on a 3D globe, each placed where its lead studio is. Open a game to see every company that worked on it, or explore any country, city or studio." />
+    <meta name="description" content="Nearly 40,000 video games on a 3D globe, each placed where its lead studio is. Open a game to see every company that worked on it, or explore any country, city or studio." />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Overworld" />
     <meta property="og:title" content="Overworld: a 3D globe of where video games are made" />
-    <meta property="og:description" content="Thirty thousand video games on a 3D globe, each placed where its lead studio is." />
+    <meta property="og:description" content="Nearly 40,000 video games on a 3D globe, each placed where its lead studio is." />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="theme-color" content="#07090d" />
     <meta name="app-version" content="__APP_VERSION__" />
     <link rel="icon" href="%BASE_URL%favicon.svg" type="image/svg+xml" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Overworld","applicationCategory":"ReferenceApplication","operatingSystem":"Any","browserRequirements":"Requires WebGL","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"A 3D globe of where video games are made: nearly 40,000 games placed at their lead studio, with every company that worked on each one."}</script>
+    <style>.ow-static{position:fixed;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:8px;padding:16px;background:#07090d;color:#52525b;font:13px/1.5 system-ui,sans-serif;text-align:center}.ow-static h1{margin:0;font-size:15px;font-weight:500}.ow-static p{margin:0;max-width:56ch}.ow-static a{color:#71717a}.ow-static nav{max-width:72ch}</style>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <main class="ow-static">
+        <h1>Overworld: a 3D globe of where video games are made</h1>
+        <p>Nearly 40,000 video games, each placed where its lead studio is. Open a game to see every company that worked on it, or browse <a href="%BASE_URL%countries/">video games by country</a>.</p>
+        <nav aria-label="Countries"><!--top-countries--></nav>
+      </main>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
