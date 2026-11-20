@@ -118,7 +118,7 @@ One zustand store, `web/src/data/store.ts`. Panels call its actions (`selectGame
 
 The part with the most moving pieces:
 
-1. `mosaic/build.ts` splits each country between its metro areas, then each metro area between its games, as a power diagram (a weighted Voronoi treemap, `mosaic/geometry.ts`) in an equal-area projection. Cell area follows popularity.
+1. `mosaic/build.ts` lays out every country with one template: the most played game sits at the country's core (the inland point farthest from its border), the rest spiral outward by the golden angle in order of popularity. A power diagram (a weighted Voronoi treemap, `mosaic/geometry.ts`) in an equal-area projection then fits each cell's area to popularity^0.7. The selected game is always added to its country, so search can fly to its card.
 2. The whole-globe view has about 1,500 cells shared by √(games × area). With zoom detail on (`zoomDetail` in the store, off by default, kept in localStorage), zooming in adds cells for the countries in view, in steps, up to every game.
 3. It runs in a worker (`mosaic/mosaic.worker.ts`, messages in `mosaic/protocol.ts`). The worker keeps only the latest request and prefetches the next year.
 4. `npm run layouts` fits every year once into `mosaic-layouts.bin` (format in `mosaic/layouts.ts`), so moving the year slider only cuts cells.
@@ -128,7 +128,7 @@ The part with the most moving pieces:
 
 `npm run build` ends with `web/scripts/build-share-pages.mjs`, which writes plain HTML next to the app:
 
-- `g/<id>/` for the 10,000 most played games: link-preview tags, then a redirect into the app.
+- `g/<id>/` for the 10,000 most played games: a page with the cover, lead studio, place, genres, platforms, every company with its roles, and `VideoGame` structured data. It is in the sitemap. Links shared from the app add `?share`, and only then `go.js` sends the visitor on to the globe.
 - `countries/` and `countries/<name>/`, and `studios/<name>/` for every studio that led at least three games (`seo-pages.mjs`). These are real pages for search engines and people without the globe: games, studios, cities and facts, each linking into the app with `?game=` or `?place=`.
 - No page has an inline script: `go.js` does the redirects, so `web/public/_headers` can forbid inline scripts in its Content Security Policy.
 - `sitemap.xml` listing the home page and those pages, and `robots.txt`, which keeps the admin page out. The home page also gets its canonical and preview-image tags here, since they need the absolute `SITE_URL`.

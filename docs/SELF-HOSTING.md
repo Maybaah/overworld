@@ -145,7 +145,7 @@ A free Supabase project is paused after a week with no requests. Live traffic ke
 | --- | --- |
 | `/` | the globe fills with covers within a few seconds |
 | `/?game=1942` | The Witcher 3 opens with arcs to its other companies |
-| `/g/1942/` | redirects to the game; its source has `og:` tags with your domain |
+| `/g/1942/` | a page about the game with `og:` tags on your domain; `/g/1942/?share` redirects to the game on the globe |
 | `/countries/poland/`, `/studios/cd-projekt-red/` | plain pages with the country's or studio's games, linked from `/sitemap.xml` |
 | My globe → **Try a sample library** | the globe filters to 60 games |
 | My globe with a public Steam profile | a breakdown by country; "not configured" means `STEAM_API_KEY` is missing |
