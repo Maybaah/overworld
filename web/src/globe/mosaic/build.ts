@@ -44,8 +44,8 @@ export interface MosaicOptions {
   tether: number;
 }
 
-export const DEFAULT_OPTIONS: MosaicOptions = { maxCells: 1500, minCellArea: 0.05, iterations: 40, detailIterations: 12, tether: 0.35 };
-const MAX_DETAIL_CELLS = 16000;
+export const DEFAULT_OPTIONS: MosaicOptions = { maxCells: 1500, minCellArea: 0.05, iterations: 40, detailIterations: 6, tether: 0.35 };
+const MAX_DETAIL_CELLS = 8000;
 
 export interface MosaicCell {
   gameId: number;
@@ -399,6 +399,7 @@ export function buildCountryMosaic(
   country: CountryRegion,
   o: MosaicOptions,
   memory: Map<string, Site> = new Map(),
+  spots?: ReadonlyMap<number, Pt>,
 ): CountryMosaic {
   const key = games.map((g) => g.id).join(',');
   const out: CountryMosaic = { key, sites: [], pieces: [], position: [], uv: [], cell: [], lines: [], cells: [] };
@@ -408,7 +409,8 @@ export function buildCountryMosaic(
   const onLand = (p: Pt) => land.containsBox([p[0], p[1], p[0], p[1]]) || pointInRegion(p, country.region);
   const list = [...games].sort((a, b) => b.popularity - a.popularity || a.id - b.id);
   const weights = list.map((g) => Math.max(1, g.popularity) ** POPULARITY_EXPONENT);
-  const fit = fitPowerDiagram(spiralSpots(country, weights), weights, country.region, {
+  const home = spots ? list.map((g) => spots.get(g.id) ?? countryCore(country)) : spiralSpots(country, weights);
+  const fit = fitPowerDiagram(home, weights, country.region, {
     iterations: list.length === 1 ? 0 : o.iterations,
     tether: o.tether,
     start: list.map((g) => memory.get(`g${g.id}`)),
@@ -493,15 +495,29 @@ export interface BuildResult {
 export type Layout = Map<string, [number, number, number, number]>;
 
 const CACHE_LIMIT = 600;
+const SPOT_CACHE_LIMIT = 400;
 
 export class MosaicBuilder {
   private readonly cache = new Map<string, CountryMosaic>();
   private readonly memory = new Map<string, Site>();
+  private readonly spots = new Map<string, Map<number, Pt>>();
 
   constructor(
     private readonly regions: Map<string, CountryRegion>,
     private readonly options: MosaicOptions = DEFAULT_OPTIONS,
   ) {}
+
+  private spotsOf(code: string, list: readonly MosaicGame[]): Map<number, Pt> {
+    const key = `${code}:${list.length}:${list[0]!.id}:${list[list.length - 1]!.id}`;
+    let spots = this.spots.get(key);
+    if (spots) return spots;
+    const weights = list.map((g) => Math.max(1, g.popularity) ** POPULARITY_EXPONENT);
+    const points = spiralSpots(this.regions.get(code)!, weights);
+    spots = new Map(list.map((g, i) => [g.id, points[i]!]));
+    this.spots.set(key, spots);
+    while (this.spots.size > SPOT_CACHE_LIMIT) this.spots.delete(this.spots.keys().next().value!);
+    return spots;
+  }
 
   useLayout(layout: Layout): void {
     for (const [k, [x, y, weight, want]] of layout) this.memory.set(k, { x, y, weight, want });
@@ -544,7 +560,7 @@ export class MosaicBuilder {
       else {
         const extra = n > (base.get(code) ?? 1);
         const iterations = extra || forced ? this.options.detailIterations : fitted ? 0 : this.options.iterations;
-        m = buildCountryMosaic(chosen, this.regions.get(code)!, { ...this.options, iterations }, this.memory);
+        m = buildCountryMosaic(chosen, this.regions.get(code)!, { ...this.options, iterations }, this.memory, this.spotsOf(code, list));
       }
       this.cache.set(key, m);
       countries.set(code, m);

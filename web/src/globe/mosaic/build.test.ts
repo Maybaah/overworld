@@ -99,6 +99,21 @@ describe('pinned game', () => {
   });
 });
 
+describe('detail stability', () => {
+  it('keeps the shown games near their place when zooming in adds more games', () => {
+    const many = Array.from({ length: 400 }, (_, i) => game(i + 1, Math.round(1e6 / (i + 1)), 35, 135));
+    const b = new MosaicBuilder(regions, { ...DEFAULT_OPTIONS, maxCells: 30 });
+    const before = new Map(b.build(many).mesh.cells.map((c) => [c.gameId, c]));
+    const after = b.build(many, { lat: 35, lng: 135, radius: 5, zoom: 2 }).mesh.cells;
+    expect(after.length).toBeGreaterThan(before.size);
+    const shifts = after.flatMap((c) => {
+      const was = before.get(c.gameId);
+      return was ? [Math.hypot(c.lat - was.lat, c.lng - was.lng)] : [];
+    }).sort((x, y) => x - y);
+    expect(shifts[shifts.length >> 1]!).toBeLessThan(0.6);
+  });
+});
+
 describe('layouts', () => {
   it('rebuilds a year from its saved layout without fitting, cell for cell', () => {
     const games = [game(1, 50, 35.7, 139.7), game(2, 40, 34.7, 135.5), game(3, 30, 35.7, 139.7), game(4, 5, 33.6, 130.4)];
