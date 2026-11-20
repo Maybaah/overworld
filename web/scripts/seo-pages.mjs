@@ -4,12 +4,17 @@ import path from 'node:path';
 import { absoluteUrl, countryName, escapeHtml, head } from './page-utils.mjs';
 
 export const STUDIO_MIN_LEAD = 3;
+// Keep in sync with SHARE_PAGE_LIMIT in src/share/urlState.ts.
+export const GAME_PAGE_LIMIT = 10_000;
+const SHOT = 'https://images.igdb.com/igdb/image/upload/t_720p/';
+const COVER_BIG = 'https://images.igdb.com/igdb/image/upload/t_cover_big/';
 const COVER = 'https://images.igdb.com/igdb/image/upload/t_cover_small/';
 const COVERED = 24;
 const COUNTRY_GAMES = 100;
 const COUNTRY_STUDIOS = 60;
 const COUNTRY_CITIES = 24;
 const ROLE_LABEL = {
+  lead_developer: 'lead developer',
   co_developer: 'co-development',
   port: 'port',
   publisher: 'publishing',
@@ -48,6 +53,7 @@ function cityKey(country, city) {
 }
 
 export function indexData({ games, companyById, details, stats, meta }) {
+  const pageIds = new Set(games.slice(0, GAME_PAGE_LIMIT).map((g) => g.id));
   const sorted = [...games].sort((a, b) => b.popularity - a.popularity || a.id - b.id);
   const ledBy = new Map();
   for (const g of sorted) {
@@ -99,7 +105,7 @@ export function indexData({ games, companyById, details, stats, meta }) {
     .sort((a, b) => b.games.length - a.games.length || a.name.localeCompare(b.name));
   const countrySlug = new Map(countries.map((c) => [c.code, c.slug]));
 
-  return { sorted, ledBy, worked, gameById, studios, studioSlug, countries, countrySlug, genreName };
+  return { sorted, ledBy, worked, gameById, studios, studioSlug, countries, countrySlug, genreName, pageIds };
 }
 
 function placeText(company) {
@@ -108,11 +114,11 @@ function placeText(company) {
   return company.city ? `${company.city}, ${country}` : country;
 }
 
-function gameUrl(site, id) {
-  return `${site.basePath}?game=${id}`;
+function gameUrl(site, idx, id) {
+  return idx.pageIds?.has(id) ? `${site.basePath}g/${id}/` : `${site.basePath}?game=${id}`;
 }
 
-function layout(site, { title, description, canonical, image, crumbs, main, jsonLd, globeUrl }) {
+function layout(site, { title, description, canonical, image, crumbs, main, jsonLd, globeUrl, extraHead }) {
   const crumbList = crumbs.map((c, i) => ({ '@type': 'ListItem', position: i + 1, name: c.name, item: absoluteUrl(site, c.href) }));
   const ld = [{ '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: crumbList }, ...(jsonLd ?? [])];
   const nav = crumbs
@@ -123,6 +129,7 @@ function layout(site, { title, description, canonical, image, crumbs, main, json
     '<html lang="en">',
     '<head>',
     head({ title, description, canonical, image, redirect: null }),
+    ...(extraHead ?? []),
     `<link rel="icon" href="${escapeHtml(site.basePath)}favicon.svg" type="image/svg+xml">`,
     `<link rel="stylesheet" href="${escapeHtml(site.basePath)}pages.css">`,
     `<script type="application/ld+json">${JSON.stringify(ld).replace(/</g, '\\u003c')}</script>`,
@@ -146,18 +153,135 @@ function layout(site, { title, description, canonical, image, crumbs, main, json
   ].join('\n');
 }
 
-function gameItem(site, game, line, covered) {
+function gameItem(site, idx, game, line, covered) {
   const img = covered && game.cover
     ? `<img src="${COVER}${escapeHtml(game.cover)}.jpg" width="45" height="64" loading="lazy" alt="">`
     : covered
       ? '<span class="nocover" aria-hidden="true"></span>'
       : '';
-  return `<li${covered ? ' class="covered"' : ''}>${img}<div><a href="${escapeHtml(gameUrl(site, game.id))}">${escapeHtml(game.name)}</a><span>${escapeHtml(line)}</span></div></li>`;
+  return `<li${covered ? ' class="covered"' : ''}>${img}<div><a href="${escapeHtml(gameUrl(site, idx, game.id))}">${escapeHtml(game.name)}</a><span>${escapeHtml(line)}</span></div></li>`;
 }
 
 function studioLink(site, idx, company) {
   const slug = idx.studioSlug.get(company.id);
   return slug ? `<a href="${escapeHtml(`${site.basePath}studios/${slug}/`)}">${escapeHtml(company.name)}</a>` : escapeHtml(company.name);
+}
+
+function placeOf(company) {
+  if (!company || !company.country) return null;
+  const country = countryName(company.country);
+  return company.city ? `${company.city}, ${country}` : country;
+}
+
+export function gameTitle(game, lead) {
+  const year = game.year !== null && game.year !== undefined ? ` (${game.year})` : '';
+  const place = placeOf(lead);
+  return `${game.name}${year}${place ? ` — made in ${place}` : ''}`;
+}
+
+function partners(detail, companyById, leadCompanyId) {
+  const byCompany = new Map();
+  for (const r of detail?.roles ?? []) {
+    if (r.companyId === leadCompanyId) continue;
+    const company = companyById.get(r.companyId);
+    if (!company) continue;
+    let entry = byCompany.get(r.companyId);
+    if (!entry) byCompany.set(r.companyId, (entry = { company, roles: new Set() }));
+    entry.roles.add(r.role);
+  }
+  return [...byCompany.values()];
+}
+
+export function gameDescription(lead, detail, companyById, leadCompanyId, game = null) {
+  const others = partners(detail, companyById, leadCompanyId);
+  const countries = new Set(others.map((o) => o.company.country).filter(Boolean));
+  const parts = [];
+  const place = placeOf(lead);
+  if (game && lead) parts.push(`${game.name}${game.year ? ` (${game.year})` : ''} is a video game led by ${lead.name}${place ? ` in ${place}` : ''}.`);
+  else if (lead) parts.push(`Lead studio: ${lead.name}.`);
+  if (others.length > 0) {
+    const noun = others.length === 1 ? (lead ? 'other company' : 'company') : lead ? 'other companies' : 'companies';
+    const where = countries.size > 0 ? ` in ${plural(countries.size, 'country', 'countries')}` : '';
+    parts.push(`${num(others.length)} ${noun}${where} worked on it.`);
+  }
+  return parts.length > 0 ? parts.join(' ') : 'See where this game was made on Overworld.';
+}
+
+export function gameImage(game, detail, site) {
+  const shot = detail?.screenshots?.find((s) => typeof s === 'string' && s !== '');
+  if (shot) return `${SHOT}${shot}.jpg`;
+  if (game.cover) return `${SHOT}${game.cover}.jpg`;
+  return absoluteUrl(site, 'og-default.png');
+}
+
+export function renderGamePage(site, idx, { game, detail, companyById }) {
+  const lead = companyById.get(game.leadCompanyId);
+  const place = placeOf(lead);
+  const countryHref = lead?.country && idx.countrySlug.has(lead.country) ? `countries/${idx.countrySlug.get(lead.country)}/` : null;
+  const studioSlug = lead ? idx.studioSlug.get(lead.id) : undefined;
+  const others = partners(detail, companyById, game.leadCompanyId).sort((a, b) => a.company.name.localeCompare(b.company.name));
+  const genres = (game.genres ?? []).map((id) => idx.genreName.get(String(id))).filter(Boolean);
+  const platforms = [...new Set(detail?.platforms ?? [])];
+  const description = gameDescription(lead, detail, companyById, game.leadCompanyId, game);
+  const globe = `${site.basePath}?game=${game.id}`;
+  const canonical = absoluteUrl(site, `g/${game.id}/`);
+  const countryText = (code) => escapeHtml(countryName(code));
+
+  const facts = [
+    lead ? `<div><dt>Lead studio</dt><dd>${studioLink(site, idx, lead)}</dd></div>` : '',
+    place
+      ? `<div><dt>Made in</dt><dd>${lead.city ? `${escapeHtml(lead.city)}, ` : ''}${countryHref ? `<a href="${escapeHtml(site.basePath + countryHref)}">${countryText(lead.country)}</a>` : countryText(lead.country)}</dd></div>`
+      : '',
+    game.year ? `<div><dt>Released</dt><dd>${game.year}</dd></div>` : '',
+    genres.length ? `<div><dt>Genres</dt><dd>${escapeHtml(genres.join(', '))}</dd></div>` : '',
+    platforms.length ? `<div><dt>Platforms</dt><dd>${escapeHtml(platforms.slice(0, 6).join(', '))}${platforms.length > 6 ? ' and more' : ''}</dd></div>` : '',
+  ].filter(Boolean).join('');
+
+  const rows = others
+    .map((o) => {
+      const roles = [...o.roles].map((r) => ROLE_LABEL[r] ?? r).join(', ');
+      const line = [roles, o.company.country ? countryName(o.company.country) : null].filter(Boolean).join(' · ');
+      return `<li>${studioLink(site, idx, o.company)}<span>${escapeHtml(line)}</span></li>`;
+    })
+    .join('');
+
+  const main = [
+    '<div class="game-head">',
+    game.cover ? `<img src="${COVER_BIG}${escapeHtml(game.cover)}.jpg" width="132" height="187" alt="${escapeHtml(game.name)} cover">` : '',
+    '<div>',
+    `<h1>${escapeHtml(game.name)}</h1>`,
+    `<p class="lead">${escapeHtml(description)}</p>`,
+    '</div>',
+    '</div>',
+    `<dl class="facts">${facts}</dl>`,
+    others.length ? `<h2>Companies that worked on ${escapeHtml(game.name)}</h2><ol class="rows">${rows}</ol>` : '',
+    `<p class="more"><a class="cta" href="${escapeHtml(globe)}">See ${escapeHtml(game.name)} on the globe</a></p>`,
+  ].join('\n');
+
+  const ld = { '@context': 'https://schema.org', '@type': 'VideoGame', name: game.name, url: canonical };
+  if (game.year) ld.datePublished = String(game.year);
+  if (game.cover) ld.image = `${COVER_BIG}${game.cover}.jpg`;
+  if (genres.length) ld.genre = genres;
+  if (platforms.length) ld.gamePlatform = platforms;
+  if (lead) ld.author = { '@type': 'Organization', name: lead.name, ...(studioSlug ? { url: absoluteUrl(site, `studios/${studioSlug}/`) } : {}) };
+  if (lead?.country) ld.countryOfOrigin = { '@type': 'Country', name: countryName(lead.country) };
+
+  return layout(site, {
+    title: gameTitle(game, lead),
+    description,
+    canonical,
+    image: gameImage(game, detail, site),
+    crumbs: [
+      { name: 'Overworld', href: '' },
+      ...(countryHref ? [{ name: countryName(lead.country), href: countryHref }] : []),
+      ...(studioSlug ? [{ name: lead.name, href: `studios/${studioSlug}/` }] : []),
+      { name: game.name, href: `g/${game.id}/` },
+    ],
+    main,
+    jsonLd: [ld],
+    globeUrl: globe,
+    extraHead: [`<script src="${escapeHtml(site.basePath)}go.js" data-to="${escapeHtml(globe)}" data-when="share"></script>`],
+  });
 }
 
 export function renderStudioPage(site, idx, studio, companyById) {
@@ -195,12 +319,12 @@ export function renderStudioPage(site, idx, studio, companyById) {
     `<p class="lead">${escapeHtml(description)}</p>`,
     `<dl class="facts">${facts}</dl>`,
     `<h2>Games led by ${escapeHtml(company.name)}</h2>`,
-    `<ol class="games">${games.map((g, i) => gameItem(site, g, g.year ? String(g.year) : 'Year unknown', i < COVERED)).join('')}</ol>`,
+    `<ol class="games">${games.map((g, i) => gameItem(site, idx, g, g.year ? String(g.year) : 'Year unknown', i < COVERED)).join('')}</ol>`,
     workedOn.length
       ? `<h2>Other games ${escapeHtml(company.name)} worked on</h2><ol class="games">${workedOn.map((w) => {
           const lead = companyById.get(w.game.leadCompanyId);
           const line = [w.game.year, w.roles.join(', '), lead ? `led by ${lead.name}` : null].filter(Boolean).join(' · ');
-          return gameItem(site, w.game, line, false);
+          return gameItem(site, idx, w.game, line, false);
         }).join('')}</ol>`
       : '',
     `<p class="more"><a class="cta" href="${escapeHtml(`${site.basePath}?place=company:${company.id}`)}">See ${escapeHtml(company.name)} on the globe</a></p>`,
@@ -268,7 +392,7 @@ export function renderCountryPage(site, idx, country, companyById) {
     `<ol class="games">${games.slice(0, COUNTRY_GAMES).map((g, i) => {
       const lead = companyById.get(g.leadCompanyId);
       const line = [g.year, lead ? `${lead.name}${lead.city ? `, ${lead.city}` : ''}` : null].filter(Boolean).join(' · ');
-      return gameItem(site, g, line, i < COVERED);
+      return gameItem(site, idx, g, line, i < COVERED);
     }).join('')}</ol>`,
     games.length > COUNTRY_GAMES ? `<p class="note">and ${plural(games.length - COUNTRY_GAMES, 'more game', 'more games')} on the globe.</p>` : '',
     `<h2>Studios in ${escapeHtml(name)}</h2>`,
@@ -352,6 +476,8 @@ h2{font-size:20px;margin:40px 0 12px}
 .games li div{display:flex;flex-direction:column;min-width:0}
 .games li span,.rows li span{color:var(--muted);font-size:14px}
 .rows li{justify-content:space-between}
+.game-head{display:flex;gap:20px;align-items:flex-start}.game-head img{flex:none;border-radius:8px;background:var(--panel);margin-top:20px}
+@media (max-width:520px){.game-head{flex-direction:column}.game-head img{margin-top:8px}}
 .games img,.nocover{flex:none;width:45px;height:64px;border-radius:4px;background:var(--panel);object-fit:cover}
 .chips{list-style:none;display:flex;flex-wrap:wrap;gap:8px;margin:0;padding:0}
 .chips li{background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:4px 12px;font-size:14px}.chips span{color:var(--muted)}
@@ -376,6 +502,11 @@ export function withHomeMeta(html, site) {
   return html.replace('</head>', `    ${tags}\n  </head>`);
 }
 
+export function withHomeLinks(html, site, idx, limit = 30) {
+  const links = idx.countries.slice(0, limit).map((c) => `<a href="${escapeHtml(`${site.basePath}countries/${c.slug}/`)}">${escapeHtml(c.name)}</a>`);
+  return html.replace('<!--top-countries-->', () => links.join(' · '));
+}
+
 async function readJsonIf(file) {
   return existsSync(file) ? JSON.parse(await readFile(file, 'utf8')) : null;
 }
@@ -396,12 +527,14 @@ export async function buildSeoPages({ distDir, site, games, companyById, details
   await put('countries/index.html', renderCountriesIndex(site, idx));
   for (const c of idx.countries) await put(`countries/${c.slug}/index.html`, renderCountryPage(site, idx, c, companyById));
   for (const s of idx.studios) await put(`studios/${idx.studioSlug.get(s.company.id)}/index.html`, renderStudioPage(site, idx, s, companyById));
-  const urls = ['', 'countries/', ...idx.countries.map((c) => `countries/${c.slug}/`), ...idx.studios.map((s) => `studios/${idx.studioSlug.get(s.company.id)}/`)];
+  const paged = games.slice(0, GAME_PAGE_LIMIT);
+  for (const game of paged) await put(`g/${game.id}/index.html`, renderGamePage(site, idx, { game, detail: details.get(game.id) ?? null, companyById }));
+  const urls = ['', 'countries/', ...idx.countries.map((c) => `countries/${c.slug}/`), ...idx.studios.map((s) => `studios/${idx.studioSlug.get(s.company.id)}/`), ...paged.map((g) => `g/${g.id}/`)];
   const homeFile = path.join(distDir, 'index.html');
-  if (existsSync(homeFile)) await writeFile(homeFile, withHomeMeta(await readFile(homeFile, 'utf8'), site));
+  if (existsSync(homeFile)) await writeFile(homeFile, withHomeLinks(withHomeMeta(await readFile(homeFile, 'utf8'), site), site, idx));
   await put('robots.txt', renderRobots(site));
   if (site.siteUrl) await put('sitemap.xml', renderSitemap(site, urls, meta?.generatedAt?.slice(0, 10) ?? null));
   else log('Sitemap skipped: SITE_URL is not set.');
-  log(`Search pages: ${idx.countries.length} countries, ${idx.studios.length} studios (${STUDIO_MIN_LEAD}+ games led), ${written} files`);
+  log(`Search pages: ${idx.countries.length} countries, ${idx.studios.length} studios (${STUDIO_MIN_LEAD}+ games led), ${paged.length} games, ${written} files`);
   return { written, countries: idx.countries.length, studios: idx.studios.length };
 }

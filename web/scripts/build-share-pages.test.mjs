@@ -9,6 +9,7 @@ import {
   renderGenericPage,
   resolveSite,
 } from './build-share-pages.mjs';
+import { indexData } from './seo-pages.mjs';
 
 const companies = new Map([
   [1, { id: 1, name: 'Lead & Co', country: 'PL', city: 'Warsaw' }],
@@ -89,29 +90,30 @@ describe('gameImage', () => {
 });
 
 describe('renderGamePage', () => {
-  const html = renderGamePage({ game, lead: companies.get(1), detail, companyById: companies }, site);
+  const idx = indexData({ games: [{ ...game, genres: [12], popularity: 1 }], companyById: companies, details: new Map([[9, detail]]), stats: null, meta: { genres: [{ id: 12, name: 'RPG' }] } });
+  const html = renderGamePage(site, idx, { game: { ...game, genres: [12] }, detail: { ...detail, platforms: ['PC', 'PC', 'Switch'] }, companyById: companies });
 
   it('escapes all text', () => {
     expect(html).not.toContain('<b>');
     expect(html).toContain('<title>Tom &amp; &quot;Jerry&quot; &lt;b&gt; (2015) — made in Warsaw, Poland</title>');
-    expect(html).toContain('<meta property="og:title" content="Tom &amp; &quot;Jerry&quot; &lt;b&gt; (2015) — made in Warsaw, Poland">');
-    expect(html).toContain('Lead studio: Lead &amp; Co. 4 other companies in 2 countries worked on it.');
+    expect(html).toContain('<h1>Tom &amp; &quot;Jerry&quot; &lt;b&gt;</h1>');
+    expect(html).toContain('is a video game led by Lead &amp; Co in Warsaw, Poland. 4 other companies in 2 countries worked on it.');
   });
 
-  it('has the open graph, twitter and redirect tags', () => {
-    expect(html).toContain('<meta property="og:type" content="website">');
-    expect(html).toContain('<meta property="og:site_name" content="Overworld">');
-    expect(html).toContain('<meta property="og:image" content="https://images.igdb.com/igdb/image/upload/t_720p/sc1.jpg">');
-    expect(html).toContain('<meta name="twitter:card" content="summary_large_image">');
+  it('is a real page: facts, companies with roles, structured data and no instant redirect', () => {
     expect(html).toContain('<link rel="canonical" href="https://user.github.io/overworld/g/9/">');
-    expect(html).toContain('<meta http-equiv="refresh" content="0;url=/overworld/?game=9">');
-    expect(html).toContain('<script src="/overworld/go.js" data-to="/overworld/?game=9"></script>');
-    expect(html).not.toMatch(/<script>/);
-    expect(html).toContain('<a href="/overworld/?game=9">');
+    expect(html).toContain('<meta property="og:image" content="https://images.igdb.com/igdb/image/upload/t_720p/sc1.jpg">');
+    expect(html).not.toContain('http-equiv="refresh"');
+    expect(html).toContain('<script src="/overworld/go.js" data-to="/overworld/?game=9" data-when="share"></script>');
+    expect(html).toContain('<dt>Genres</dt><dd>RPG</dd>');
+    expect(html).toContain('<dt>Platforms</dt><dd>PC, Switch</dd>');
+    expect(html).toContain('QA, localization · Japan');
+    expect(html).toContain('"@type":"VideoGame"');
+    expect(html).toContain('<a class="cta" href="/overworld/?game=9">');
   });
 
   it('uses root-relative URLs without SITE_URL', () => {
-    const rel = renderGamePage({ game: { ...game, id: 3, cover: null }, lead: undefined, detail: null, companyById: companies }, relative);
+    const rel = renderGamePage(relative, idx, { game: { ...game, id: 3, cover: null }, detail: null, companyById: companies });
     expect(rel).toContain('<link rel="canonical" href="/overworld/g/3/">');
     expect(rel).toContain('content="/overworld/og-default.png"');
   });

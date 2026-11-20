@@ -8,6 +8,7 @@ import {
   renderSitemap,
   renderStudioPage,
   slugify,
+  withHomeLinks,
   withHomeMeta,
 } from './seo-pages.mjs';
 
@@ -81,7 +82,7 @@ describe('renderStudioPage', () => {
   it('links the country page, the globe and other games', () => {
     expect(html).toContain('href="/countries/poland/"');
     expect(html).toContain('href="/?place=company:1"');
-    expect(html).toContain('href="/?game=8"');
+    expect(html).toContain('href="/g/8/"');
     expect(html).toContain('port, QA');
     expect(html).toContain('"@type":"Organization"');
   });
@@ -115,6 +116,14 @@ describe('index, sitemap and robots', () => {
     expect(renderRobots(site)).toContain('Disallow: /admin.html');
     expect(renderRobots(site)).toContain('Sitemap: https://overworld.example/sitemap.xml');
     expect(renderRobots(bare)).not.toContain('Sitemap');
+  });
+
+  it('links game pages from lists and fills the home page country links', () => {
+    const country = idx.countries.find((c) => c.code === 'PL');
+    expect(renderCountryPage(site, idx, country, companyById)).toContain('href="/g/5/"');
+    const home = withHomeLinks('<nav><!--top-countries--></nav>', site, idx);
+    expect(home).toContain('<a href="/countries/poland/">Poland</a>');
+    expect(home).not.toContain('<!--top-countries-->');
   });
 
   it('adds absolute preview tags to the home page once', () => {
