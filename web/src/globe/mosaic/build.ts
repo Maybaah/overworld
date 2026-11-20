@@ -41,11 +41,10 @@ export interface MosaicOptions {
   minCellArea: number;
   iterations: number;
   detailIterations: number;
-  topIterations?: number;
   tether: number;
 }
 
-export const DEFAULT_OPTIONS: MosaicOptions = { maxCells: 1500, minCellArea: 0.05, iterations: 40, detailIterations: 5, tether: 0.15 };
+export const DEFAULT_OPTIONS: MosaicOptions = { maxCells: 1500, minCellArea: 0.05, iterations: 40, detailIterations: 12, tether: 0.35 };
 const MAX_DETAIL_CELLS = 16000;
 
 export interface MosaicCell {
@@ -152,36 +151,6 @@ function interiorPoint(seed: number, region: Region): Pt {
     if (pointInRegion(p, region)) return p;
   }
   return [(b[0] + b[2]) / 2, (b[1] + b[3]) / 2];
-}
-
-export function placeSites(games: readonly MosaicGame[], country: CountryRegion): Pt[] {
-  const n = games.length;
-  const step = 0.35 * Math.sqrt(country.area / Math.max(1, n));
-  const used = new Map<string, number>();
-  const golden = Math.PI * (3 - Math.sqrt(5));
-  return games.map((g) => {
-    const base = g.exact ? country.projection.forward(g.lat, g.lng) : interiorPoint(g.id, country.region);
-    const key = `${base[0].toFixed(4)},${base[1].toFixed(4)}`;
-    const k = used.get(key) ?? 0;
-    used.set(key, k + 1);
-    const r = step * Math.sqrt(k);
-    const p: Pt = k === 0 ? base : [base[0] + r * Math.cos(k * golden), base[1] + r * Math.sin(k * golden)];
-    return insideNear(p, country.region, step, g.id);
-  });
-}
-
-export function insideNear(p: Pt, region: Region, step: number, seed: number): Pt {
-  if (pointInRegion(p, region)) return p;
-  for (let ring = 1; ring <= 60; ring++) {
-    const r = step * 0.5 * ring;
-    const k = 8 + ring * 2;
-    for (let a = 0; a < k; a++) {
-      const t = ((a + hash(seed + ring) ) / k) * Math.PI * 2;
-      const q: Pt = [p[0] + r * Math.cos(t), p[1] + r * Math.sin(t)];
-      if (pointInRegion(q, region)) return q;
-    }
-  }
-  return interiorPoint(seed, region);
 }
 
 export function cellBudget(counts: ReadonlyMap<string, number>, areas: ReadonlyMap<string, number>, o: MosaicOptions): Map<string, number> {
@@ -321,41 +290,101 @@ export function spreadPoints(region: Region, k: number, seed: number): Pt[] {
   return Array.from({ length: k }, (_, i) => interiorPoint(seed + i, region));
 }
 
-export function metroGroups(games: readonly MosaicGame[], country: CountryRegion): MosaicGame[][] {
-  const reach = Math.min(3, Math.max(0.5, 0.08 * Math.sqrt(country.area)));
-  const groups: { anchor: Pt | null; list: MosaicGame[] }[] = [];
-  for (const g of games) {
-    const p = g.exact ? country.projection.forward(g.lat, g.lng) : null;
-    const hit = groups.find((x) => (p === null ? x.anchor === null : x.anchor !== null && Math.hypot(x.anchor[0] - p[0], x.anchor[1] - p[1]) <= reach));
-    if (hit) hit.list.push(g);
-    else groups.push({ anchor: p, list: [g] });
-  }
-  const order = new Map(games.map((g, i) => [g.id, i]));
-  const big = groups.filter((x) => x.anchor !== null && x.list.length > SMALL_TOWN);
-  const kept = groups.filter((x) => {
-    if (x.anchor === null || x.list.length > SMALL_TOWN) return true;
-    let best: (typeof groups)[number] | null = null;
-    let bestD = reach * SMALL_TOWN_REACH;
-    for (const y of big) {
-      const d = Math.hypot(y.anchor![0] - x.anchor[0], y.anchor![1] - x.anchor[1]);
-      if (d <= bestD) {
-        best = y;
-        bestD = d;
-      }
-    }
-    if (!best) return true;
-    best.list.push(...x.list);
-    return false;
-  });
-  for (const x of kept) x.list.sort((a, b) => order.get(a.id)! - order.get(b.id)!);
-  return kept.map((x) => x.list);
+const GOLDEN = Math.PI * (3 - Math.sqrt(5));
+
+function segmentDistance(p: Pt, a: Pt, b: Pt): number {
+  const dx = b[0] - a[0];
+  const dy = b[1] - a[1];
+  const len = dx * dx + dy * dy;
+  const t = len > 0 ? Math.max(0, Math.min(1, ((p[0] - a[0]) * dx + (p[1] - a[1]) * dy) / len)) : 0;
+  return Math.hypot(p[0] - a[0] - t * dx, p[1] - a[1] - t * dy);
 }
 
-const SMALL_TOWN = 2;
-const SMALL_TOWN_REACH = 4;
+function partOf(country: CountryRegion, outer: Ring): Region {
+  const b = bbox(outer);
+  return { outers: [outer], holes: country.region.holes.filter((h) => { const hb = bbox(h); return hb[0] < b[2] && hb[2] > b[0] && hb[1] < b[3] && hb[3] > b[1]; }) };
+}
 
-function regionOf(cell: ClippedCell): Region {
-  return { outers: cell.pieces.map((p) => p.outer), holes: cell.pieces.flatMap((p) => p.holes) };
+const cores = new WeakMap<CountryRegion, Pt>();
+export function countryCore(country: CountryRegion): Pt {
+  const known = cores.get(country);
+  if (known) return known;
+  const main = country.region.outers.reduce((x, r) => (Math.abs(ringArea(r)) > Math.abs(ringArea(x)) ? r : x));
+  const part = partOf(country, main);
+  const rings = [main, ...part.holes];
+  let best: Pt = interiorPoint(1, part);
+  let bestD = -1;
+  for (const p of spreadPoints(part, 300, 1)) {
+    let d = Infinity;
+    for (const ring of rings) {
+      for (let k = 0; k < ring.length && d > bestD; k++) d = Math.min(d, segmentDistance(p, ring[k]!, ring[(k + 1) % ring.length]!));
+      if (d <= bestD) break;
+    }
+    if (d > bestD) {
+      bestD = d;
+      best = p;
+    }
+  }
+  cores.set(country, best);
+  return best;
+}
+
+interface Spot {
+  p: Pt;
+  a: number;
+}
+
+const pools = new WeakMap<CountryRegion, Spot[]>();
+function spotPool(country: CountryRegion, want: number): Spot[] {
+  const cached = pools.get(country);
+  if (cached && cached.length >= want * 0.9) return cached;
+  const size = Math.max(256, 2 ** Math.ceil(Math.log2(want)));
+  const core = countryCore(country);
+  const found: { p: Pt; d: number }[] = [];
+  country.region.outers.forEach((outer, i) => {
+    const k = Math.round((size * Math.abs(ringArea(outer))) / country.area);
+    if (k > 0) for (const p of spreadPoints(partOf(country, outer), k, 7 + i)) found.push({ p, d: Math.hypot(p[0] - core[0], p[1] - core[1]) });
+  });
+  const pool = found.sort((x, y) => x.d - y.d).map(({ p }) => ({ p, a: Math.atan2(p[1] - core[1], p[0] - core[0]) }));
+  pools.set(country, pool);
+  return pool;
+}
+
+export function spiralSpots(country: CountryRegion, weights: readonly number[]): Pt[] {
+  const core = countryCore(country);
+  if (weights.length <= 1) return weights.map(() => core);
+  const pool = spotPool(country, weights.length * 6);
+  const used = new Uint8Array(pool.length);
+  const total = weights.reduce((a, b) => a + b, 0);
+  let before = weights[0]!;
+  const out: Pt[] = [core];
+  for (let i = 1; i < weights.length; i++) {
+    const w = weights[i]!;
+    const target = Math.min(pool.length - 1, Math.floor(((before + w / 2) / total) * pool.length));
+    before += w;
+    const reach = Math.ceil(2 * Math.sqrt(target) + 6);
+    const angle = (i * GOLDEN) % (Math.PI * 2);
+    let pick = -1;
+    let score = Infinity;
+    for (let k = Math.max(0, target - reach); k <= Math.min(pool.length - 1, target + reach); k++) {
+      if (used[k]) continue;
+      let da = Math.abs(pool[k]!.a + Math.PI - angle);
+      da = Math.min(da, Math.PI * 2 - da);
+      const s = da + Math.abs(k - target) / reach;
+      if (s < score) {
+        score = s;
+        pick = k;
+      }
+    }
+    if (pick < 0) for (let r = 0; pick < 0 && r < pool.length; r++) pick = [target - r, target + r].find((k) => k >= 0 && k < pool.length && !used[k]) ?? -1;
+    if (pick < 0) {
+      out.push(interiorPoint(i, country.region));
+      continue;
+    }
+    used[pick] = 1;
+    out.push(pool[pick]!.p);
+  }
+  return out;
 }
 
 const landIndexes = new WeakMap<CountryRegion, RegionIndex>();
@@ -377,18 +406,16 @@ export function buildCountryMosaic(
   const proj = country.projection;
   const land = landIndex(country);
   const onLand = (p: Pt) => land.containsBox([p[0], p[1], p[0], p[1]]) || pointInRegion(p, country.region);
-  const weight = (g: MosaicGame) => Math.max(1, g.popularity) ** POPULARITY_EXPONENT;
-  const cities = metroGroups(games, country);
-  const homes = placeSites(cities.map((list) => list[0]!), country);
-  const metroKey = (list: MosaicGame[]) => `m${country.code}:${list[0]!.id}`;
-  const top = fitPowerDiagram(homes, cities.map((list) => list.reduce((a, g) => a + weight(g), 0)), country.region, {
-    iterations: cities.length === 1 ? 0 : (o.topIterations ?? o.iterations),
+  const list = [...games].sort((a, b) => b.popularity - a.popularity || a.id - b.id);
+  const weights = list.map((g) => Math.max(1, g.popularity) ** POPULARITY_EXPONENT);
+  const fit = fitPowerDiagram(spiralSpots(country, weights), weights, country.region, {
+    iterations: list.length === 1 ? 0 : o.iterations,
     tether: o.tether,
-    start: cities.map((list) => memory.get(metroKey(list))),
+    start: list.map((g) => memory.get(`g${g.id}`)),
   });
-  cities.forEach((list, i) => {
-    memory.set(metroKey(list), top.fitted[i]!);
-    out.sites.push(metroKey(list));
+  list.forEach((g, k) => {
+    memory.set(`g${g.id}`, fit.fitted[k]!);
+    out.sites.push(`g${g.id}`);
   });
   const flat: number[] = [];
 
@@ -451,32 +478,9 @@ export function buildCountryMosaic(
     }
   };
 
-  top.cells.forEach((cityCell, ci) => {
-    const list = cities[ci]!;
-    if (cityCell.pieces.length === 0) return;
-    emitLines(cityCell.convex, country.region, top.index);
-    if (list.length === 1) {
-      emitCell(list[0]!, cityCell);
-      return;
-    }
-    const region = regionOf(cityCell);
-    const home = top.sites[ci]!;
-    const spots = spreadPoints(region, list.length, list[0]!.id).sort(
-      (p, q) => Math.hypot(p[0] - home[0], p[1] - home[1]) - Math.hypot(q[0] - home[0], q[1] - home[1]),
-    );
-    const fit = fitPowerDiagram(spots, list.map(weight), region, {
-      iterations: o.iterations,
-      tether: 0,
-      start: list.map((g) => memory.get(`g${g.id}`)),
-    });
-    list.forEach((g, k) => {
-      memory.set(`g${g.id}`, fit.fitted[k]!);
-      out.sites.push(`g${g.id}`);
-    });
-    fit.cells.forEach((c, k) => {
-      emitCell(list[k]!, c);
-      emitLines(c.convex, region, fit.index);
-    });
+  fit.cells.forEach((c, k) => {
+    emitCell(list[k]!, c);
+    emitLines(c.convex, country.region, fit.index);
   });
   return out;
 }
@@ -530,15 +534,14 @@ export class MosaicBuilder {
     const countries = new Map<string, CountryMosaic>();
     for (const [code, list] of byCountry) {
       const n = budget.get(code) ?? 1;
-      const chosen = list.slice(0, n);
+      const chosen = list.sort((a, b) => b.popularity - a.popularity || a.id - b.id).slice(0, n);
       const key = `${code}:${chosen.map((g) => g.id).join(',')}`;
       let m = this.cache.get(key);
       if (m) this.cache.delete(key);
       else {
         const extra = n > (base.get(code) ?? 1);
         const iterations = extra ? this.options.detailIterations : fitted ? 0 : this.options.iterations;
-        const topIterations = extra ? this.options.iterations : iterations;
-        m = buildCountryMosaic(chosen, this.regions.get(code)!, { ...this.options, iterations, topIterations }, this.memory);
+        m = buildCountryMosaic(chosen, this.regions.get(code)!, { ...this.options, iterations }, this.memory);
       }
       this.cache.set(key, m);
       countries.set(code, m);

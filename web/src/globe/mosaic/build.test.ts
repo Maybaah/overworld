@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { CountryShape } from '../countries';
-import { buildCountryMosaic, cellBudget, countryRegions, DEFAULT_OPTIONS, MosaicBuilder, placeSites, type MosaicGame } from './build';
+import { buildCountryMosaic, cellBudget, countryRegions, DEFAULT_OPTIONS, MosaicBuilder, countryCore, spiralSpots, type MosaicGame } from './build';
 
 const box = (id: string, lng0: number, lat0: number, w: number, h: number): CountryShape => ({
   id,
@@ -38,12 +38,15 @@ describe('countryRegions', () => {
   });
 });
 
-describe('placeSites', () => {
-  it('spreads games that share a city instead of stacking them', () => {
+describe('spiralSpots', () => {
+  it('puts the first game at the core and the rest on distinct spots that move outward', () => {
     const jp = regions.get('JP')!;
-    const sites = placeSites([game(1, 10, 35, 135), game(2, 5, 35, 135), game(3, 1, 35, 135)], jp);
-    const keys = new Set(sites.map((s) => `${s[0].toFixed(5)},${s[1].toFixed(5)}`));
-    expect(keys.size).toBe(3);
+    const core = countryCore(jp);
+    const spots = spiralSpots(jp, [100, 50, 20, 10, 5, 2, 1, 1]);
+    expect(spots[0]).toEqual(core);
+    expect(new Set(spots.map((s) => `${s[0].toFixed(5)},${s[1].toFixed(5)}`)).size).toBe(8);
+    const d = spots.map((s) => Math.hypot(s[0] - core[0], s[1] - core[1]));
+    expect(d[7]!).toBeGreaterThan(d[1]!);
   });
 });
 
@@ -57,14 +60,14 @@ describe('cellBudget', () => {
 });
 
 describe('buildCountryMosaic', () => {
-  it('makes one cell per game, bigger for more popular games, near their city', () => {
+  it('makes one cell per game, most popular first, biggest and in the middle', () => {
     const jp = regions.get('JP')!;
-    const games = [game(1, 1000, 35.7, 139.7), game(2, 100, 34.7, 135.5), game(3, 10, 33.6, 130.4)];
+    const games = [game(3, 10, 33.6, 130.4), game(1, 1000, 35.7, 139.7), game(2, 100, 34.7, 135.5)];
     const m = buildCountryMosaic(games, jp, DEFAULT_OPTIONS);
     expect(m.cells.map((c) => c.gameId)).toEqual([1, 2, 3]);
     expect(m.cells[0]!.area).toBeGreaterThan(m.cells[1]!.area);
     expect(m.cells[1]!.area).toBeGreaterThan(m.cells[2]!.area);
-    expect(m.cells[2]!.lng).toBeLessThan(m.cells[0]!.lng);
+    expect(Math.abs(m.cells[0]!.lat - jp.center.lat) + Math.abs(m.cells[0]!.lng - jp.center.lng)).toBeLessThan(Math.abs(m.cells[2]!.lat - jp.center.lat) + Math.abs(m.cells[2]!.lng - jp.center.lng));
     expect(m.position.length % 9).toBe(0);
     expect(m.uv.length / 2).toBe(m.position.length / 3);
     expect(m.lines.length).toBeGreaterThan(0);
@@ -117,17 +120,5 @@ describe('cellBudget shares', () => {
     expect(b.get('S')!).toBeGreaterThan(15);
     expect(b.get('L')!).toBeGreaterThan(b.get('S')!);
     expect(b.get('S')! + b.get('L')!).toBeLessThanOrEqual(200);
-  });
-});
-
-describe('metroGroups', () => {
-  it('joins nearby cities to the most popular one and keeps country-level games together', async () => {
-    const { metroGroups } = await import('./build');
-    const jp = regions.get('JP')!;
-    const groups = metroGroups(
-      [game(1, 9, 35.68, 139.7), game(2, 8, 34.69, 135.5), game(3, 7, 35.44, 139.64), game(4, 6, 36, 138, { exact: false }), game(5, 5, 36, 138, { exact: false })],
-      jp,
-    );
-    expect(groups.map((g) => g.map((x) => x.id))).toEqual([[1, 3], [2], [4, 5]]);
   });
 });
