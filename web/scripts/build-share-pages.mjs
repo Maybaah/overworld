@@ -22,8 +22,8 @@ const GENERIC = {
 export const HEADER_NOTE =
   'Previews for games are generated per game. Previews for guess results and My globe summaries are generic: a static site cannot render them per result.';
 
-function scriptString(value) {
-  return JSON.stringify(value).replace(/</g, '\\u003c').replace(/>/g, '\\u003e').replace(/\u2028/g, '\\u2028').replace(/\u2029/g, '\\u2029');
+function redirectScript(site, target, keepQuery) {
+  return `<script src="${escapeHtml(site.basePath)}go.js" data-to="${escapeHtml(target)}"${keepQuery ? ' data-keep' : ''}></script>`;
 }
 
 function placeOf(company) {
@@ -84,7 +84,7 @@ export function renderGamePage({ game, lead, detail, companyById }, site) {
     }),
     '</head>',
     '<body>',
-    `<script>location.replace(${scriptString(target)});</script>`,
+    redirectScript(site, target, false),
     `<p><a href="${escapeHtml(target)}">Open ${escapeHtml(game.name)} on Overworld</a></p>`,
     '</body>',
     '</html>',
@@ -110,7 +110,7 @@ export function renderGenericPage(kind, site) {
     `<noscript><meta http-equiv="refresh" content="0;url=${escapeHtml(target)}"></noscript>`,
     '</head>',
     '<body>',
-    `<script>location.replace(${scriptString(target)} + location.search + location.hash);</script>`,
+    redirectScript(site, target, true),
     `<p><a href="${escapeHtml(target)}">Open Overworld</a></p>`,
     '</body>',
     '</html>',

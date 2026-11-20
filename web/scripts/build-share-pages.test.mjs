@@ -105,7 +105,8 @@ describe('renderGamePage', () => {
     expect(html).toContain('<meta name="twitter:card" content="summary_large_image">');
     expect(html).toContain('<link rel="canonical" href="https://user.github.io/overworld/g/9/">');
     expect(html).toContain('<meta http-equiv="refresh" content="0;url=/overworld/?game=9">');
-    expect(html).toContain('location.replace("/overworld/?game=9")');
+    expect(html).toContain('<script src="/overworld/go.js" data-to="/overworld/?game=9"></script>');
+    expect(html).not.toMatch(/<script>/);
     expect(html).toContain('<a href="/overworld/?game=9">');
   });
 
@@ -122,7 +123,7 @@ describe('renderGenericPage', () => {
       const html = renderGenericPage(kind, site);
       expect(html).toContain('<meta property="og:image" content="https://user.github.io/overworld/og-default.png">');
       expect(html).toContain(`href="https://user.github.io/overworld/share/${kind}/"`);
-      expect(html).toContain('location.replace("/overworld/" + location.search + location.hash)');
+      expect(html).toContain('<script src="/overworld/go.js" data-to="/overworld/" data-keep></script>');
     }
   });
 });
