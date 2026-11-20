@@ -50,6 +50,7 @@ scripts/                Supabase helper
 | igdb | `stages/igdb.ts` | the game set: every IGDB main game, remake or remaster with enough estimated players; companies and roles |
 | countries | `stages/countries.ts`, `stages/countryGames.ts` | each country's best games even below the player floor, plus the hand list `pipeline/data/country-games.json` |
 | wikidata | `stages/wikidata.ts` | company headquarters and coordinates |
+| people | `stages/people.ts` | key people per game from Wikidata (creator, director, producer, designer, writer, art director, programmer, composer, sound designer), shown on the game card and game pages |
 | population | `stages/population.ts` | country populations for per-capita figures |
 | mobygames | `stages/mobygames.ts` | extra developer and publisher credits for the most played games |
 | merge | `merge.ts` | the final model; pure, no network or files |
