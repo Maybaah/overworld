@@ -1,6 +1,6 @@
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import { loadEnv, type Plugin } from 'vite';
-import { handleSteamRequest } from './steamProxy';
+import { handleSteamRequest } from './steamProxy.ts';
 
 function toRequest(req: IncomingMessage): Request {
   const host = req.headers.host ?? 'localhost';

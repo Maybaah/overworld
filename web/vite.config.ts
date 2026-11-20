@@ -3,7 +3,7 @@ import { rmSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { defineConfig, type Plugin } from 'vitest/config';
 import react from '@vitejs/plugin-react';
-import { steamProxyPlugin } from './server/vitePlugin';
+import { steamProxyPlugin } from './server/vitePlugin.ts';
 
 function gitVersion(): string {
   const fromEnv = process.env.APP_VERSION ?? process.env.GITHUB_SHA;

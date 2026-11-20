@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi, type Mock } from 'vitest';
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { seedStore } from './testUtils';
@@ -12,8 +12,10 @@ vi.mock('../data/loader', async (orig) => ({
 import { loadCompanyGames } from '../data/loader';
 import { PlacePanel } from './PlacePanel';
 
-let selectGame: ReturnType<typeof vi.fn>;
-let selectPlace: ReturnType<typeof vi.fn>;
+type StoreState = ReturnType<typeof useStore.getState>;
+
+let selectGame: Mock<StoreState['selectGame']>;
+let selectPlace: Mock<StoreState['selectPlace']>;
 
 beforeEach(() => {
   seedStore();

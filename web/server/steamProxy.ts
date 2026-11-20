@@ -1,4 +1,4 @@
-import { parseSteamInput } from '../src/myglobe/steamInput';
+import { parseSteamInput } from '../src/myglobe/steamInput.ts';
 
 export interface SteamEnv {
   STEAM_API_KEY?: string;

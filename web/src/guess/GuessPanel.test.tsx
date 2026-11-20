@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom/vitest';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi, type Mock } from 'vitest';
 import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
@@ -15,10 +15,12 @@ import { GuessPanel } from './GuessPanel';
 import { buildPool, pickRounds } from './rounds';
 import { haversineKm } from './distance';
 
+type StoreState = ReturnType<typeof useStore.getState>;
+
 const { indexes } = fixtureData();
 const SEED = 'flow';
 const rounds = pickRounds(buildPool(indexes), SEED);
-let selectGame: ReturnType<typeof vi.fn>;
+let selectGame: Mock<StoreState['selectGame']>;
 
 function click(lat: number, lng: number) {
   act(() => useStore.getState().reportGlobeClick(lat, lng));
