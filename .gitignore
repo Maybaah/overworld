@@ -14,3 +14,4 @@ web/public/data/
 docs/screenshots/
 
 .env.*.local
+.wrangler/
