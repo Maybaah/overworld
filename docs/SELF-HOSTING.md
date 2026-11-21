@@ -82,7 +82,7 @@ VITE_SUPABASE_PUBLISHABLE_KEY=<publishable key>
    npx wrangler login
    ```
 
-2. Change `name` in `wrangler.toml` if you want another Worker name.
+2. Change `name` in `wrangler.toml` if you want another Worker name. `routes` points the Worker at this project's own domain and `workers_dev = false` turns off the `*.workers.dev` address: put your domain there, or delete those lines to start on `*.workers.dev`.
 3. Deploy:
 
    ```bash

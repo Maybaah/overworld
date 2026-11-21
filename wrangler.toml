@@ -1,6 +1,9 @@
 name = "overworld"
 main = "web/server/worker.ts"
 compatibility_date = "2026-11-01"
+workers_dev = false
+preview_urls = false
+routes = [{ pattern = "overworld.maybaah.com", custom_domain = true }]
 
 [assets]
 directory = "web/dist"
