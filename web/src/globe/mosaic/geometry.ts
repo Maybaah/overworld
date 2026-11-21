@@ -605,6 +605,14 @@ function powerCellGrid(sites: readonly Site[], i: number, bounds: readonly Pt[],
       const b = 2 * (t.y - s.y);
       if (a === 0 && b === 0) return;
       const c = t.x * t.x + t.y * t.y - t.weight - (s.x * s.x + s.y * s.y - s.weight);
+      let cuts = false;
+      for (const p of cell) {
+        if (a * p[0] + b * p[1] - c > 0) {
+          cuts = true;
+          break;
+        }
+      }
+      if (!cuts) return;
       cell = clipHalfPlane(cell, a, b, c);
       reach = maxDist(cell, s.x, s.y);
     },
