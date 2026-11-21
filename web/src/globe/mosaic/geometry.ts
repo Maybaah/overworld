@@ -196,7 +196,185 @@ export function pointInRing(p: Pt, ring: readonly Pt[]): boolean {
   return inside;
 }
 
+const INDEX_MIN_EDGES = 64;
+
+// Buckets every ring edge into the grid cells its bounding box touches, so a point or segment test
+// only visits the edges near it. The tests run the same arithmetic as the plain loops, so answers match.
+class EdgeGrid {
+  readonly ax: Float64Array;
+  readonly ay: Float64Array;
+  readonly bx: Float64Array;
+  readonly by: Float64Array;
+  readonly ring: Int32Array;
+  readonly outers: number;
+  private readonly rings: number;
+  private readonly x0: number;
+  private readonly y0: number;
+  private readonly x1: number;
+  private readonly y1: number;
+  private readonly cols: number;
+  private readonly rows: number;
+  private readonly sx: number;
+  private readonly sy: number;
+  private readonly start: Int32Array;
+  private readonly items: Int32Array;
+  private readonly stamp: Uint32Array;
+  private mark = 0;
+  private readonly parity: Uint8Array;
+  private readonly touched: number[] = [];
+
+  constructor(region: Region, edges: number) {
+    const all = [...region.outers, ...region.holes];
+    this.outers = region.outers.length;
+    this.rings = all.length;
+    this.ax = new Float64Array(edges);
+    this.ay = new Float64Array(edges);
+    this.bx = new Float64Array(edges);
+    this.by = new Float64Array(edges);
+    this.ring = new Int32Array(edges);
+    let x0 = Infinity;
+    let y0 = Infinity;
+    let x1 = -Infinity;
+    let y1 = -Infinity;
+    let e = 0;
+    all.forEach((r, ri) => {
+      for (let i = 0, j = r.length - 1; i < r.length; j = i++) {
+        const a = r[i]!;
+        const b = r[j]!;
+        this.ax[e] = a[0];
+        this.ay[e] = a[1];
+        this.bx[e] = b[0];
+        this.by[e] = b[1];
+        this.ring[e] = ri;
+        e++;
+        if (a[0] < x0) x0 = a[0];
+        if (a[0] > x1) x1 = a[0];
+        if (a[1] < y0) y0 = a[1];
+        if (a[1] > y1) y1 = a[1];
+      }
+    });
+    const side = Math.max(4, Math.min(256, Math.round(Math.sqrt(edges))));
+    this.x0 = x0;
+    this.y0 = y0;
+    this.x1 = x1;
+    this.y1 = y1;
+    this.cols = side;
+    this.rows = side;
+    this.sx = (x1 - x0) / side || 1;
+    this.sy = (y1 - y0) / side || 1;
+    const count = new Int32Array(side * side + 1);
+    const span = (k: number, visit: (c: number) => void) => {
+      const c0 = this.col(Math.min(this.ax[k]!, this.bx[k]!));
+      const c1 = this.col(Math.max(this.ax[k]!, this.bx[k]!));
+      const r0 = this.row(Math.min(this.ay[k]!, this.by[k]!));
+      const r1 = this.row(Math.max(this.ay[k]!, this.by[k]!));
+      for (let r = r0; r <= r1; r++) for (let c = c0; c <= c1; c++) visit(r * side + c);
+    };
+    for (let k = 0; k < edges; k++) span(k, (c) => count[c + 1]!++);
+    for (let c = 0; c < side * side; c++) count[c + 1]! += count[c]!;
+    this.start = count.slice();
+    this.items = new Int32Array(count[side * side]!);
+    const fill = count.slice();
+    for (let k = 0; k < edges; k++) span(k, (c) => (this.items[fill[c]!++] = k));
+    this.stamp = new Uint32Array(edges);
+    this.parity = new Uint8Array(this.rings);
+  }
+
+  private col(x: number): number {
+    return Math.min(this.cols - 1, Math.max(0, Math.floor((x - this.x0) / this.sx)));
+  }
+
+  private row(y: number): number {
+    return Math.min(this.rows - 1, Math.max(0, Math.floor((y - this.y0) / this.sy)));
+  }
+
+  private nextMark(): number {
+    if (++this.mark === 0xffffffff) {
+      this.stamp.fill(0);
+      this.mark = 1;
+    }
+    return this.mark;
+  }
+
+  contains(p: Pt): boolean {
+    if (p[0] < this.x0 || p[0] > this.x1 || p[1] < this.y0 || p[1] > this.y1) return false;
+    const mark = this.nextMark();
+    const row = this.row(p[1]);
+    const touched = this.touched;
+    touched.length = 0;
+    for (let c = row * this.cols + this.col(p[0]), end = (row + 1) * this.cols; c < end; c++) {
+      for (let s = this.start[c]!, e = this.start[c + 1]!; s < e; s++) {
+        const k = this.items[s]!;
+        if (this.stamp[k] === mark) continue;
+        this.stamp[k] = mark;
+        const ay = this.ay[k]!;
+        const by = this.by[k]!;
+        const ax = this.ax[k]!;
+        if (ay > p[1] !== by > p[1] && p[0] < ((this.bx[k]! - ax) * (p[1] - ay)) / (by - ay) + ax) {
+          const r = this.ring[k]!;
+          const was = this.parity[r]!;
+          if (was === 0) touched.push(r);
+          this.parity[r] = was ^ 1;
+        }
+      }
+    }
+    let inOuter = false;
+    let inHole = false;
+    for (const r of touched) {
+      if (this.parity[r]) {
+        if (r < this.outers) inOuter = true;
+        else inHole = true;
+      }
+      this.parity[r] = 0;
+    }
+    return inOuter && !inHole;
+  }
+
+  crossings(a: Pt, dx: number, dy: number, ts: number[]): void {
+    const mark = this.nextMark();
+    const c0 = this.col(Math.min(a[0], a[0] + dx));
+    const c1 = this.col(Math.max(a[0], a[0] + dx));
+    const r0 = this.row(Math.min(a[1], a[1] + dy));
+    const r1 = this.row(Math.max(a[1], a[1] + dy));
+    for (let r = r0; r <= r1; r++) {
+      for (let c = c0; c <= c1; c++) {
+        const cell = r * this.cols + c;
+        for (let s = this.start[cell]!, e = this.start[cell + 1]!; s < e; s++) {
+          const k = this.items[s]!;
+          if (this.stamp[k] === mark) continue;
+          this.stamp[k] = mark;
+          crossing(a, dx, dy, this.bx[k]!, this.by[k]!, this.ax[k]!, this.ay[k]!, ts);
+        }
+      }
+    }
+  }
+}
+
+const edgeGrids = new WeakMap<Region, EdgeGrid | null>();
+function edgeGrid(region: Region): EdgeGrid | null {
+  let grid = edgeGrids.get(region);
+  if (grid !== undefined) return grid;
+  let edges = 0;
+  for (const r of region.outers) edges += r.length;
+  for (const r of region.holes) edges += r.length;
+  grid = edges >= INDEX_MIN_EDGES ? new EdgeGrid(region, edges) : null;
+  edgeGrids.set(region, grid);
+  return grid;
+}
+
+function crossing(a: Pt, dx: number, dy: number, px: number, py: number, qx: number, qy: number, ts: number[]): void {
+  const ex = qx - px;
+  const ey = qy - py;
+  const den = dx * ey - dy * ex;
+  if (Math.abs(den) < 1e-15) return;
+  const t = ((px - a[0]) * ey - (py - a[1]) * ex) / den;
+  const u = ((px - a[0]) * dy - (py - a[1]) * dx) / den;
+  if (t > 0 && t < 1 && u >= 0 && u <= 1) ts.push(t);
+}
+
 export function pointInRegion(p: Pt, region: Region): boolean {
+  const grid = edgeGrid(region);
+  if (grid) return grid.contains(p);
   if (!region.outers.some((o) => pointInRing(p, o))) return false;
   return !region.holes.some((h) => pointInRing(p, h));
 }
@@ -205,17 +383,15 @@ export function segmentInside(a: Pt, b: Pt, region: Region): [Pt, Pt][] {
   const ts = [0, 1];
   const dx = b[0] - a[0];
   const dy = b[1] - a[1];
-  for (const ring of [...region.outers, ...region.holes]) {
-    for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
-      const p = ring[j]!;
-      const q = ring[i]!;
-      const ex = q[0] - p[0];
-      const ey = q[1] - p[1];
-      const den = dx * ey - dy * ex;
-      if (Math.abs(den) < 1e-15) continue;
-      const t = ((p[0] - a[0]) * ey - (p[1] - a[1]) * ex) / den;
-      const u = ((p[0] - a[0]) * dy - (p[1] - a[1]) * dx) / den;
-      if (t > 0 && t < 1 && u >= 0 && u <= 1) ts.push(t);
+  const grid = edgeGrid(region);
+  if (grid) grid.crossings(a, dx, dy, ts);
+  else {
+    for (const ring of [...region.outers, ...region.holes]) {
+      for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+        const p = ring[j]!;
+        const q = ring[i]!;
+        crossing(a, dx, dy, p[0], p[1], q[0], q[1], ts);
+      }
     }
   }
   ts.sort((x, y) => x - y);
@@ -465,6 +641,20 @@ export interface FitOptions {
   start: readonly (Site | null | undefined)[];
 }
 
+const regionIndexes = new WeakMap<Region, RegionIndex>();
+function regionIndex(region: Region): RegionIndex {
+  let index = regionIndexes.get(region);
+  if (!index) regionIndexes.set(region, (index = new RegionIndex(region)));
+  return index;
+}
+
+const coarseIndexes = new WeakMap<Region, RegionIndex>();
+function coarseIndex(region: Region, tol: number): RegionIndex {
+  let index = coarseIndexes.get(region);
+  if (!index) coarseIndexes.set(region, (index = new RegionIndex(simplifyRegion(region, tol))));
+  return index;
+}
+
 export function fitPowerDiagram(
   points: readonly Pt[],
   targets: readonly number[],
@@ -482,8 +672,8 @@ export function fitPowerDiagram(
     [rb[2] + pad, rb[3] + pad],
     [rb[0] - pad, rb[3] + pad],
   ];
-  const full = new RegionIndex(region);
-  const coarse = n > 1 && iterations > 0 ? new RegionIndex(simplifyRegion(region, span * 0.002)) : full;
+  const full = regionIndex(region);
+  const coarse = n > 1 && iterations > 0 ? coarseIndex(region, span * 0.002) : full;
   const total = regionArea(coarse.region);
   const sumT = targets.reduce((a, b) => a + b, 0) || 1;
   const want = targets.map((t) => (t / sumT) * total);
