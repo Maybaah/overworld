@@ -67,7 +67,7 @@ function stopVite() {
 
 async function startVite() {
   const port = await freePort();
-  const viteBin = join(webDir, 'node_modules', 'vite', 'bin', 'vite.js');
+  const viteBin = [webDir, repoDir].map((d) => join(d, 'node_modules', 'vite', 'bin', 'vite.js')).find((p) => existsSync(p));
   const viteArgs = [viteBin, '--host', '127.0.0.1', '--port', String(port), '--strictPort'];
   if (DATA === 'real') viteArgs.push('--mode', 'real');
   viteProc = spawn(process.execPath, viteArgs, { cwd: webDir, stdio: ['ignore', 'pipe', 'pipe'], windowsHide: true });
