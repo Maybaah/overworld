@@ -118,6 +118,8 @@ Worker secrets set with `wrangler secret put` stay as they are between deploys.
 
 Free plan limits: 20,000 files per deploy (a full build has about 13,600: 10,000 game share pages and 3,400 country and studio pages), 25 MiB per file, 100,000 Worker requests a day. Static files do not count toward the request limit; only `/api/*` calls do.
 
+Abuse limits: `wrangler.toml` caps each IP at 10 Steam lookups and 60 event batches a minute (Cloudflare rate limiting bindings, free). `log_events` takes at most 3,000 events and 300 new tabs a minute site-wide and stops writing once the database passes 300 MB, so the free Supabase quota cannot be filled. If `/api/*` is flooded past 100,000 requests a day, only My globe and usage stats stop until the next UTC day; the free plan never bills.
+
 ## 5. Usage stats (optional)
 
 1. Create a project at <https://supabase.com>. Note its **project ref** (in the URL) and, under **Project Settings → API keys**, the **publishable** key (for the admin page) and a **secret** key (for the Worker only).

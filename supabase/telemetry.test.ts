@@ -106,6 +106,20 @@ describe('log_events', () => {
     const [{ n }] = await rows<{ n: number }>('select count(*)::int as n from public.events');
     expect(n).toBe(120);
   });
+
+  it('stops opening new tabs past 300 a minute site-wide', async () => {
+    await db.exec(`insert into public.event_sessions (sid) select 'tab_' || lpad(g::text, 16, '0') from generate_series(1, 300) g`);
+    await log({ sid: 'tab_newnewnewnewnewn', events: [{ type: 'ready', p: { ms: 900 } }] });
+    const [{ n }] = await rows<{ n: number }>(`select count(*)::int as n from public.event_sessions where sid = 'tab_newnewnewnewnewn'`);
+    expect(n).toBe(0);
+  });
+
+  it('stops taking events past 3000 a minute site-wide', async () => {
+    await db.exec(`insert into public.events (sid, type) select 'tab_other', 'ready' from generate_series(1, 3000)`);
+    await log({ sid: SID, events: [{ type: 'ready', p: { ms: 900 } }] });
+    const [{ n }] = await rows<{ n: number }>(`select count(*)::int as n from public.events where sid = '${SID}'`);
+    expect(n).toBe(0);
+  });
 });
 
 describe('admin_stats', () => {
