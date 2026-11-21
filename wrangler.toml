@@ -11,3 +11,13 @@ enabled = true
 
 [observability.logs]
 invocation_logs = false
+
+[[ratelimits]]
+name = "STEAM_LIMITER"
+namespace_id = "1001"
+simple = { limit = 10, period = 60 }
+
+[[ratelimits]]
+name = "EVENTS_LIMITER"
+namespace_id = "1002"
+simple = { limit = 60, period = 60 }
