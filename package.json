@@ -25,7 +25,9 @@
     "fixture": "tsx pipeline/src/fixture.ts",
     "sprites": "tsx web/scripts/cover-sprites.ts",
     "layouts": "tsx web/scripts/mosaic-layouts.ts",
-    "supabase": "node scripts/supabase.mjs"
+    "supabase": "node scripts/supabase.mjs",
+    "data:upload": "node scripts/data-release.mjs upload",
+    "data:download": "node scripts/data-release.mjs download"
   },
   "devDependencies": {
     "@electric-sql/pglite": "^0.5.14",
