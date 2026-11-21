@@ -49,6 +49,8 @@ Keys live only in `.env`, which is git-ignored.
 | `npm run typecheck` | TypeScript, pipeline and app |
 | `npm run build` | production build into `web/dist/`, with `/admin.html` and share pages |
 | `npm run deploy` | build and deploy to Cloudflare (`wrangler.toml`) |
+| `npm run data:upload` | upload `web/public/data/` to the `data` GitHub release, which the push deploy builds from |
+| `npm run data:download` | replace `web/public/data/` with the copy from that release |
 | `npm run pipeline` | fetch, merge, write and validate the data |
 | `npm run sprites`, `npm run layouts` | cover sprite sheets and yearly mosaic layouts, after the pipeline |
 | `npm run supabase -- migrate` | apply the usage stats schema to your Supabase project |

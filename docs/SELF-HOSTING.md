@@ -98,6 +98,22 @@ VITE_SUPABASE_PUBLISHABLE_KEY=<publishable key>
 
 5. Use your own domain: Cloudflare dashboard → **Workers & Pages** → the Worker → **Settings → Domains & Routes → Add → Custom domain**. The domain must be on Cloudflare DNS. Then set `SITE_URL` and `VITE_TELEMETRY_HOSTS` to it and deploy again.
 
+### Deploy on every push (optional)
+
+The `deploy` job in `.github/workflows/ci.yml` runs after the tests on every push to `main`: it downloads the data from the `data` release, builds, and runs `wrangler deploy`. The data folder is not in git, so upload it once and again after each data refresh:
+
+```bash
+npm run data:upload
+```
+
+On a public repository that release is public, as the data already is on the site. Then, under **Settings → Secrets and variables → Actions** in the repository:
+
+- secret `CLOUDFLARE_API_TOKEN`: a token from **Cloudflare dashboard → My Profile → API Tokens → Create Token → Edit Cloudflare Workers**;
+- variable `CLOUDFLARE_ACCOUNT_ID`: shown by `npx wrangler whoami`;
+- variables `SITE_URL`, `VITE_EVENTS_URL`, `VITE_TELEMETRY_HOSTS`, `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY`: the same values as in `web/.env.production.local`.
+
+Worker secrets set with `wrangler secret put` stay as they are between deploys.
+
 `web/public/_headers` sets the security headers, including a Content Security Policy that allows images from `images.igdb.com` and the admin page's calls to `*.supabase.co`. If you add another outside host, add it there too, or the browser will block it.
 
 Free plan limits: 20,000 files per deploy (a full build has about 13,600: 10,000 game share pages and 3,400 country and studio pages), 25 MiB per file, 100,000 Worker requests a day. Static files do not count toward the request limit; only `/api/*` calls do.
@@ -156,8 +172,8 @@ To see events arrive: open the site in a normal window (not with `?noanalytics=1
 
 ## 7. Updating
 
-- **Code:** `git pull`, then `npm run deploy`.
-- **Data:** `npm run pipeline -- --refresh`, `npm run sprites`, `npm run layouts`, then `npm run deploy`. Without `--refresh` the pipeline reuses its cache and only reruns what changed.
+- **Code:** `git pull`, then `npm run deploy`, or push to `main` when the push deploy is set up.
+- **Data:** `npm run pipeline -- --refresh`, `npm run sprites`, `npm run layouts`, then `npm run deploy`. With the push deploy, also run `npm run data:upload`, or the next push deploys the old data. Without `--refresh` the pipeline reuses its cache and only reruns what changed.
 - **Schema:** `npm run supabase -- migrate`. Migrations are idempotent.
 - `.github/workflows/refresh-data.yml` is a weekly rebuild for GitHub Pages and stays off until the repository variable `REFRESH_ENABLED` is `true`. It does not deploy to Cloudflare, and a full refresh does not fit in its one-hour limit without a cache, so refresh by hand as above.
 
