@@ -208,6 +208,10 @@ class View {
     this.lines = new THREE.LineSegments(l, this.lineMaterial);
     this.mesh.frustumCulled = false;
     this.lines.frustumCulled = false;
+    // three sizes up every transparent mesh for depth sorting by walking all its vertices; the mosaic's
+    // draw order comes from renderOrder, so a globe-sized sphere spares that walk on each rebuild.
+    g.boundingSphere = new THREE.Sphere(new THREE.Vector3(), GLOBE_RADIUS * 1.01);
+    l.boundingSphere = g.boundingSphere.clone();
     this.setAlpha(1, false);
   }
 
