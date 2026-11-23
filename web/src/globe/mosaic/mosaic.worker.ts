@@ -1,7 +1,6 @@
 /// <reference lib="webworker" />
-import { feature } from 'topojson-client';
-import type { GeometryCollection, Topology } from 'topojson-specification';
-import type { CountryShape } from '../countries';
+import type { Topology } from 'topojson-specification';
+import { countryShapesOf } from '../atlas';
 import { countryRegions, MosaicBuilder, type BuildResult, type CountryMosaic, type CountryRegion, type Layout, type MosaicFocus } from './build';
 import { pointInRing, type Pt } from './geometry';
 import { decodeLayouts, gamesUpTo } from './layouts';
@@ -28,9 +27,7 @@ async function init(layoutsUrl: string): Promise<void> {
       .then((r) => (r.ok ? r.arrayBuffer() : null))
       .catch(() => null),
   ]);
-  const topo = mod.default as unknown as Topology;
-  const shapes = feature(topo, topo.objects.countries as GeometryCollection).features as unknown as CountryShape[];
-  regions = countryRegions(shapes);
+  regions = countryRegions(countryShapesOf(mod.default as unknown as Topology));
   builder = new MosaicBuilder(regions);
   layouts = buf ? decodeLayouts(buf, games) : null;
 }

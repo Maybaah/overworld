@@ -3,12 +3,11 @@ import { mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import sharp from 'sharp';
-import { feature } from 'topojson-client';
-import type { GeometryCollection, Topology } from 'topojson-specification';
+import type { Topology } from 'topojson-specification';
 import atlas from 'world-atlas/countries-50m.json';
 import type { Company, GameSummary } from '@shared';
 import { cellBudget, countryRegions, DEFAULT_OPTIONS } from '../src/globe/mosaic/build';
-import type { CountryShape } from '../src/globe/countries';
+import { countryShapesOf } from '../src/globe/atlas';
 import { SPRITE_LAYOUT, type SpriteIndex } from '../src/globe/mosaic/sprites';
 import { TITLE_PREFIX, titleKey } from '../src/globe/titleCovers';
 import { titleCardSvg } from './title-cards';
@@ -23,8 +22,7 @@ const CONCURRENCY = 8;
 
 const games = JSON.parse(await readFile(path.join(dataDir, 'games.json'), 'utf8')) as GameSummary[];
 const companies = new Map((JSON.parse(await readFile(path.join(dataDir, 'companies.json'), 'utf8')) as Company[]).map((c) => [c.id, c]));
-const topo = atlas as unknown as Topology;
-const regions = countryRegions(feature(topo, topo.objects.countries as GeometryCollection).features as unknown as CountryShape[]);
+const regions = countryRegions(countryShapesOf(atlas as unknown as Topology));
 const areas = new Map([...regions].map(([c, r]) => [c, r.area]));
 
 const placed = games.flatMap((g) => {

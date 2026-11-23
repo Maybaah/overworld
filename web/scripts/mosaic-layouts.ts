@@ -1,12 +1,11 @@
 import { readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { feature } from 'topojson-client';
-import type { GeometryCollection, Topology } from 'topojson-specification';
+import type { Topology } from 'topojson-specification';
 import atlas from 'world-atlas/countries-50m.json';
 import type { Company, GameSummary } from '@shared';
 import { countryRegions, MosaicBuilder, type Layout } from '../src/globe/mosaic/build';
-import type { CountryShape } from '../src/globe/countries';
+import { countryShapesOf } from '../src/globe/atlas';
 import { encodeLayouts, gamesUpTo, mosaicInput } from '../src/globe/mosaic/layouts';
 
 const FIRST_YEAR = 1970;
@@ -16,8 +15,7 @@ const dataDir = path.resolve(here, '..', dataArg ?? 'public/data');
 
 const games = JSON.parse(await readFile(path.join(dataDir, 'games.json'), 'utf8')) as GameSummary[];
 const companies = new Map((JSON.parse(await readFile(path.join(dataDir, 'companies.json'), 'utf8')) as Company[]).map((c) => [c.id, c]));
-const topo = atlas as unknown as Topology;
-const regions = countryRegions(feature(topo, topo.objects.countries as GeometryCollection).features as unknown as CountryShape[]);
+const regions = countryRegions(countryShapesOf(atlas as unknown as Topology));
 const input = mosaicInput(games, companies);
 const lastYear = Math.max(FIRST_YEAR, ...games.map((g) => g.year ?? 0));
 

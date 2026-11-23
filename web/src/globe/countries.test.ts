@@ -1,5 +1,14 @@
 import { describe, expect, it } from 'vitest';
-import { alpha2OfNumeric, loadCountryShapes, shadeBucket, shadeColor, SHADE_BUCKETS } from './countries';
+import { ringContains } from './atlas';
+import {
+  alpha2OfNumeric,
+  loadCountryShapes,
+  loadDetailedCountryShapes,
+  shadeBucket,
+  shadeColor,
+  SHADE_BUCKETS,
+  type CountryShape,
+} from './countries';
 
 describe('alpha2OfNumeric', () => {
   it('maps ten known countries', () => {
@@ -27,6 +36,28 @@ describe('alpha2OfNumeric', () => {
     const shapes = loadCountryShapes();
     const resolved = shapes.filter((s) => alpha2OfNumeric(s.id) !== null).length;
     expect(resolved / shapes.length).toBeGreaterThan(0.95);
+  });
+});
+
+describe('Crimea', () => {
+  const simferopol: [number, number] = [34.1, 44.95];
+  const owners = (shapes: CountryShape[]) =>
+    shapes
+      .filter((s) => {
+        const polygons = (s.geometry.type === 'Polygon' ? [s.geometry.coordinates] : s.geometry.coordinates) as unknown as number[][][][];
+        return polygons.some((p) => ringContains(p[0]!, simferopol));
+      })
+      .map((s) => alpha2OfNumeric(s.id));
+
+  it('is part of Ukraine at both resolutions', async () => {
+    expect(owners(loadCountryShapes())).toEqual(['UA']);
+    expect(owners(await loadDetailedCountryShapes())).toEqual(['UA']);
+  });
+
+  it('is one piece with mainland Ukraine', () => {
+    const ukraine = loadCountryShapes().find((s) => alpha2OfNumeric(s.id) === 'UA')!;
+    const polygons = (ukraine.geometry.type === 'Polygon' ? [ukraine.geometry.coordinates] : ukraine.geometry.coordinates) as unknown as unknown[];
+    expect(polygons).toHaveLength(1);
   });
 });
 

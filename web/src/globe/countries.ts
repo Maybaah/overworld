@@ -1,6 +1,6 @@
-import { feature } from 'topojson-client';
-import type { GeometryCollection, Topology } from 'topojson-specification';
+import type { Topology } from 'topojson-specification';
 import worldAtlas from 'world-atlas/countries-110m.json';
+import { countryShapesOf } from './atlas';
 
 export interface CountryShape {
   id?: string | number;
@@ -31,18 +31,13 @@ export function alpha2OfNumeric(id: string | number | undefined): string | null 
   return ALPHA2_BY_NUMERIC.get(Number(id)) ?? null;
 }
 
-function toShapes(topology: Topology): CountryShape[] {
-  const collection = feature(topology, topology.objects.countries as GeometryCollection);
-  return collection.features as unknown as CountryShape[];
-}
-
 export function loadCountryShapes(): CountryShape[] {
-  return toShapes(worldAtlas as unknown as Topology);
+  return countryShapesOf(worldAtlas as unknown as Topology);
 }
 
 export async function loadDetailedCountryShapes(): Promise<CountryShape[]> {
   const mod = await import('world-atlas/countries-50m.json');
-  return toShapes(mod.default as unknown as Topology);
+  return countryShapesOf(mod.default as unknown as Topology);
 }
 
 export const SHADE_BUCKETS = 16;
