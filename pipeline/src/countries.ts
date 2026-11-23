@@ -22,9 +22,12 @@ export function alpha2ToNumeric(alpha2: string | null | undefined): number | nul
   return null;
 }
 
+// IGDB files South Korean studios under 408 (North Korea) instead of 410; no North Korean studio is in the data.
+const IGDB_MISCODED: Record<number, string> = { 408: 'KR' };
+
 export function numericToAlpha2(n: number | null | undefined): string | null {
   if (n === null || n === undefined) return null;
-  return byNumeric.get(n) ?? null;
+  return IGDB_MISCODED[n] ?? byNumeric.get(n) ?? null;
 }
 
 // Wikidata still names dissolved states for studios that closed with them; they are placed in the successor state

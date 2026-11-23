@@ -10,6 +10,11 @@ describe('countries', () => {
     expect(numericToAlpha2(null)).toBeNull();
   });
 
+  it('places IGDB North Korea codes in South Korea', () => {
+    expect(numericToAlpha2(408)).toBe('KR');
+    expect(numericToAlpha2(410)).toBe('KR');
+  });
+
   it('returns a centre for known countries only', () => {
     const jp = countryCentre('JP')!;
     expect(jp.lat).toBeGreaterThan(30);
